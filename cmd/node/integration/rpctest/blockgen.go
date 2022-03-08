@@ -7,15 +7,15 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/btcaddr"
 
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // solveBlock attempts to find a nonce which makes the passed block header hash to a value less than the target
@@ -80,7 +80,9 @@ func solveBlock(header *wire.BlockHeader, targetDifficulty *big.Int) bool {
 
 // standardCoinbaseScript returns a standard script suitable for use as the signature script of the coinbase transaction
 // of a new block. In particular, it starts with the block height that is required by version 2 blocks.
-func standardCoinbaseScript(nextBlockHeight int32, extraNonce uint64) ([]byte, error) {
+func standardCoinbaseScript(nextBlockHeight int32, extraNonce uint64) ([]byte,
+	error,
+) {
 	return txscript.NewScriptBuilder().AddInt64(int64(nextBlockHeight)).
 		AddInt64(int64(extraNonce)).Script()
 }
@@ -115,7 +117,9 @@ func createCoinbaseTx(
 	if len(mineTo) == 0 {
 		tx.AddTxOut(
 			&wire.TxOut{
-				Value:    blockchain.CalcBlockSubsidy(nextBlockHeight, net, version),
+				Value: blockchain.CalcBlockSubsidy(nextBlockHeight, net,
+					version,
+				),
 				PkScript: pkScript,
 			},
 		)

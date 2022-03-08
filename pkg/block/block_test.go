@@ -2,17 +2,17 @@ package block_test
 
 import (
 	"bytes"
-	"github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/util"
 	"io"
 	"reflect"
 	"testing"
 	"time"
-	
+
 	"github.com/davecgh/go-spew/spew"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // TestBlock tests the API for Block.

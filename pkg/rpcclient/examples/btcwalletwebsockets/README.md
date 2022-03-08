@@ -11,7 +11,7 @@ client after 10 seconds to demonstrate clean shutdown.
 The first step is to use `go get` to download and install the rpcclient package:
 
 ```bash
-$ go get github.com/p9c/p9/rpcclient
+$ go get github.com/cybriq/p9/rpcclient
 ```
 
 Next, modify the `main.go` source to specify the correct RPC username and
@@ -25,7 +25,7 @@ Pass: "yourrpcpass",
 Finally, navigate to the example's directory and run it with:
 
 ```bash
-$ cd $GOPATH/src/github.com/p9c/p9/rpcclient/examples/btcwalletwebsockets
+$ cd $GOPATH/src/github.com/cybriq/p9/rpcclient/examples/btcwalletwebsockets
 $ go run *.go
 ```
 

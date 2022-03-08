@@ -2,15 +2,15 @@ package builder_test
 
 import (
 	"encoding/hex"
-	"github.com/p9c/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/btcaddr"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/gcs"
-	"github.com/p9c/p9/pkg/gcs/builder"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/gcs"
+	"github.com/cybriq/p9/pkg/gcs/builder"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 var (

@@ -15,9 +15,9 @@ to a ui/app.Window's Update method.
 
 Drawing a colored square:
 
-	import "github.com/p9c/p9/pkg/gel/gio/unit"
-	import "github.com/p9c/p9/pkg/gel/gio/app"
-	import "github.com/p9c/p9/pkg/gel/gio/op/paint"
+	import "github.com/cybriq/p9/pkg/gel/gio/unit"
+	import "github.com/cybriq/p9/pkg/gel/gio/app"
+	import "github.com/cybriq/p9/pkg/gel/gio/op/paint"
 
 	var w app.Window
 	var e system.FrameEvent
@@ -70,8 +70,8 @@ import (
 	"math"
 	"time"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/opconst"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/opconst"
 )
 
 // Ops holds a list of operations. Operations are stored in

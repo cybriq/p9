@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/walletdb"
-	_ "github.com/p9c/p9/pkg/walletdb/bdb"
+
+	"github.com/cybriq/p9/pkg/walletdb"
+	_ "github.com/cybriq/p9/pkg/walletdb/bdb"
 )
 
 var (

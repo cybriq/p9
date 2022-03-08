@@ -2,8 +2,8 @@ package hdkeychain_test
 
 import (
 	"testing"
-	
-	"github.com/p9c/p9/pkg/util/hdkeychain"
+
+	"github.com/cybriq/p9/pkg/util/hdkeychain"
 )
 
 // bip0032MasterPriv1 is the master private extended key from the first set of test vectors in BIP0032.
@@ -54,7 +54,7 @@ func BenchmarkPrivToPub(b *testing.B) {
 func BenchmarkDeserialize(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_, _ = hdkeychain.NewKeyFromString(bip0032MasterPriv1)
-		
+
 	}
 }
 

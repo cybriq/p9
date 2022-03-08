@@ -10,14 +10,14 @@ import (
 
 	"go.uber.org/atomic"
 
-	blockchain "github.com/p9c/p9/pkg/chain"
-	"github.com/p9c/p9/pkg/chain/config/netparams"
-	"github.com/p9c/p9/pkg/chain/fork"
-	chainhash "github.com/p9c/p9/pkg/chain/hash"
-	"github.com/p9c/p9/pkg/chain/mining"
-	"github.com/p9c/p9/pkg/chain/wire"
-	log "github.com/p9c/p9/pkg/logi"
-	"github.com/p9c/p9/pkg/util"
+	blockchain "github.com/cybriq/p9/pkg/chain"
+	"github.com/cybriq/p9/pkg/chain/config/netparams"
+	"github.com/cybriq/p9/pkg/chain/fork"
+	chainhash "github.com/cybriq/p9/pkg/chain/hash"
+	"github.com/cybriq/p9/pkg/chain/mining"
+	"github.com/cybriq/p9/pkg/chain/wire"
+	log "github.com/cybriq/p9/pkg/logi"
+	"github.com/cybriq/p9/pkg/util"
 )
 
 var tn = time.Now()

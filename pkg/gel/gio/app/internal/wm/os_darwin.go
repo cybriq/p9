@@ -27,7 +27,7 @@ import (
 	"unicode/utf16"
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
 )
 
 // displayLink is the state for a display link (CVDisplayLinkRef on macOS,
@@ -90,7 +90,9 @@ func nsstringToString(str C.CFTypeRef) string {
 		return ""
 	}
 	chars := make([]uint16, n)
-	C.gio_nsstringGetCharacters(str, (*C.unichar)(unsafe.Pointer(&chars[0])), 0, n)
+	C.gio_nsstringGetCharacters(str, (*C.unichar)(unsafe.Pointer(&chars[0])), 0,
+		n,
+	)
 	utf8 := utf16.Decode(chars)
 	return string(utf8)
 }
@@ -211,7 +213,8 @@ func windowSetCursor(from, to pointer.CursorName) pointer.CursorName {
 	case pointer.CursorNone:
 		runOnMain(func() {
 			C.gio_hideCursor()
-		})
+		},
+		)
 		return to
 	}
 	runOnMain(func() {
@@ -219,6 +222,7 @@ func windowSetCursor(from, to pointer.CursorName) pointer.CursorName {
 			C.gio_showCursor()
 		}
 		C.gio_setCursor(C.NSUInteger(curID))
-	})
+	},
+	)
 	return to
 }

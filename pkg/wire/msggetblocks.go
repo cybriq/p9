@@ -3,8 +3,8 @@ package wire
 import (
 	"fmt"
 	"io"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // MaxBlockLocatorsPerMsg is the maximum number of block locator hashes allowed per message.
@@ -44,7 +44,9 @@ func (msg *MsgGetBlocks) AddBlockLocatorHash(hash *chainhash.Hash) (e error) {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receive r. This is part of the Message interface
 // implementation.
-func (msg *MsgGetBlocks) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgGetBlocks) BtcDecode(r io.Reader, pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	if e = readElement(r, &msg.ProtocolVersion); E.Chk(e) {
 		return
 	}
@@ -55,7 +57,8 @@ func (msg *MsgGetBlocks) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding
 	}
 	if count > MaxBlockLocatorsPerMsg {
 		str := fmt.Sprintf(
-			"too many block locator hashes for message [count %v, max %v]", count, MaxBlockLocatorsPerMsg,
+			"too many block locator hashes for message [count %v, max %v]",
+			count, MaxBlockLocatorsPerMsg,
 		)
 		return messageError("MsgGetBlocks.BtcDecode", str)
 	}
@@ -76,7 +79,9 @@ func (msg *MsgGetBlocks) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgGetBlocks) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgGetBlocks) BtcEncode(w io.Writer, pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	count := len(msg.BlockLocatorHashes)
 	if count > MaxBlockLocatorsPerMsg {
 		str := fmt.Sprintf(
@@ -86,7 +91,7 @@ func (msg *MsgGetBlocks) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding
 		return messageError("MsgGetBlocks.BtcEncode", str)
 	}
 	if e = writeElement(w, msg.ProtocolVersion); E.Chk(e) {
-		
+
 		return
 	}
 	if e = WriteVarInt(w, pver, uint64(count)); E.Chk(e) {

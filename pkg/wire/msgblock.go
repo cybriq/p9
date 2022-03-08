@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // defaultTransactionAlloc is the default size used for the backing array for transactions. The transaction array will
@@ -50,7 +50,8 @@ func (msg *Block) ClearTransactions() {
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation. See Deserialize for decoding blocks stored to disk, such as in a database, as opposed to decoding
 // blocks from the wire.
-func (msg *Block) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e error) {
+func (msg *Block) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding,
+) (e error) {
 	if e = readBlockHeader(r, pver, &msg.Header); E.Chk(e) {
 		return
 	}
@@ -126,7 +127,8 @@ func (msg *Block) DeserializeTxLoc(r *bytes.Buffer) (txLocs []TxLoc, e error) {
 	// and panics without a sane upper bound on this count.
 	if txCount > maxTxPerBlock {
 		str := fmt.Sprintf(
-			"too many transactions to fit into a block [count %d, max %d]", txCount, maxTxPerBlock,
+			"too many transactions to fit into a block [count %d, max %d]",
+			txCount, maxTxPerBlock,
 		)
 		return nil, messageError("Block.DeserializeTxLoc", str)
 	}
@@ -148,7 +150,8 @@ func (msg *Block) DeserializeTxLoc(r *bytes.Buffer) (txLocs []TxLoc, e error) {
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation. See Serialize for encoding blocks to be stored to disk, such as in a database, as opposed to encoding
 // blocks for the wire.
-func (msg *Block) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) (e error) {
+func (msg *Block) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding,
+) (e error) {
 	if e = writeBlockHeader(w, pver, &msg.Header); E.Chk(e) {
 		return
 	}

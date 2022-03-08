@@ -2,21 +2,22 @@ package blockchain
 
 import (
 	"fmt"
-	bits2 "github.com/p9c/p9/pkg/bits"
-	"github.com/p9c/p9/pkg/fork"
+	bits2 "github.com/cybriq/p9/pkg/bits"
+	"github.com/cybriq/p9/pkg/fork"
 	"math/big"
 	"strings"
-	
+
 	"github.com/VividCortex/ewma"
-	
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // GetAlgStamps ...
-func GetAlgStamps(algoName string, startHeight int32, lastNode *BlockNode) (last *BlockNode,
+func GetAlgStamps(algoName string, startHeight int32, lastNode *BlockNode,
+) (last *BlockNode,
 	found bool, algStamps []int64, version int32,
 ) {
-	
+
 	version = fork.P9Algos[algoName].Version
 	for ln := lastNode; ln != nil && ln.height > startHeight &&
 		len(algStamps) <= int(fork.List[1].AveragingInterval); ln = ln.
@@ -41,7 +42,7 @@ func GetAlgStamps(algoName string, startHeight int32, lastNode *BlockNode) (last
 }
 
 func GetAllStamps(startHeight int32, lastNode *BlockNode) (allStamps []int64) {
-	
+
 	for ln := lastNode; ln != nil && ln.height > startHeight &&
 		len(allStamps) <= int(fork.List[1].AveragingInterval); ln = ln.RelativeAncestor(1) {
 		allStamps = append(allStamps, ln.timestamp)
@@ -81,7 +82,8 @@ func GetAll(allStamps []int64) (allAv, allAdj float64) {
 	return
 }
 
-func GetAlg(algStamps []int64, targetTimePerBlock float64) (algAv, algAdj float64) {
+func GetAlg(algStamps []int64, targetTimePerBlock float64,
+) (algAv, algAdj float64) {
 	// calculate intervals
 	algIntervals := make([]int64, len(algStamps)-1)
 	for i := range algStamps {
@@ -104,11 +106,12 @@ func GetAlg(algStamps []int64, targetTimePerBlock float64) (algAv, algAdj float6
 }
 
 // CalcNextRequiredDifficultyPlan9 returns the consensus difficulty adjustment by processing recent past blocks
-func (b *BlockChain) CalcNextRequiredDifficultyPlan9(lastNodeP *BlockNode, algoName string,
+func (b *BlockChain) CalcNextRequiredDifficultyPlan9(lastNodeP *BlockNode,
+	algoName string,
 	l bool,
 ) (newTargetBits uint32, adjustment float64, e error) {
 	lastNode := lastNodeP
-	
+
 	algoVer := fork.GetAlgoVer(algoName, lastNode.height+1)
 	ttpb := float64(fork.List[1].Algos[algoName].VersionInterval)
 	newTargetBits = fork.SecondPowLimitBits
@@ -142,9 +145,9 @@ func (b *BlockChain) CalcNextRequiredDifficultyPlan9(lastNodeP *BlockNode, algoN
 	//	"algAv", algAv,
 	//	"algAdj", algAdj,
 	//	"allAdj", allAdj)
-	
+
 	adjustment = algAdj * allAdj
-	
+
 	// thisInterval := fork.P9AlgosNumeric[algoVer].VersionInterval
 	// baseInterval := fork.P9AlgosNumeric[5].VersionInterval
 	// timeFactor := float64(baseInterval) / float64(thisInterval)
@@ -152,7 +155,7 @@ func (b *BlockChain) CalcNextRequiredDifficultyPlan9(lastNodeP *BlockNode, algoN
 	// // if the difficulty is adjusting upwards, accelerate it in proportion with block interval's ratio
 	// adjustment *= timeFactor
 	// // }
-	
+
 	// adjustment *= adjustment
 	bigAdjustment := big.NewFloat(adjustment)
 	bigOldTarget := big.NewFloat(1.0).SetInt(bits2.CompactToBig(bits))
@@ -209,9 +212,10 @@ func (b *BlockChain) CalcNextRequiredDifficultyPlan9(lastNodeP *BlockNode, algoN
 // based on the difficulty retarget rules. This function differs from the exported CalcNextRequiredDifficulty in that
 // the exported version uses the current best chain as the previous block node while this function accepts any block
 // node.
-func (b *BlockChain) CalcNextRequiredDifficultyPlan9old(lastNode *BlockNode, algoName string, l bool,
+func (b *BlockChain) CalcNextRequiredDifficultyPlan9old(lastNode *BlockNode,
+	algoName string, l bool,
 ) (newTargetBits uint32, adjustment float64, e error) {
-	
+
 	nH := lastNode.height + 1
 	newTargetBits = fork.SecondPowLimitBits
 	adjustment = 1.0
@@ -219,9 +223,11 @@ func (b *BlockChain) CalcNextRequiredDifficultyPlan9old(lastNode *BlockNode, alg
 		return
 	}
 	allTimeAv, allTimeDiv, qhourDiv, hourDiv,
-	dayDiv := b.GetCommonP9Averages(lastNode, nH)
+		dayDiv := b.GetCommonP9Averages(lastNode, nH)
 	algoVer := fork.GetAlgoVer(algoName, nH)
-	since, ttpb, timeSinceAlgo, startHeight, last := b.GetP9Since(lastNode, algoVer)
+	since, ttpb, timeSinceAlgo, startHeight, last := b.GetP9Since(lastNode,
+		algoVer,
+	)
 	if last == nil {
 		return
 	}
@@ -259,7 +265,8 @@ func (b *BlockChain) CalcNextRequiredDifficultyPlan9old(lastNode *BlockNode, alg
 				RightJustify(fmt.Sprintf("%3.2fq", qhourDiv*ttpb), 7),
 				RightJustify(fmt.Sprintf("%3.2fA", algDiv*ttpb), 7),
 				RightJustify(fmt.Sprintf("%3.0f %3.3fD",
-					since-ttpb*float64(len(fork.List[1].Algos)), timeSinceAlgo*ttpb,
+					since-ttpb*float64(len(fork.List[1].Algos)),
+					timeSinceAlgo*ttpb,
 				), 13,
 				),
 				RightJustify(fmt.Sprintf("%4.4fx", 1/adjustment), 11),

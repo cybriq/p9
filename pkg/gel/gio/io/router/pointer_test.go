@@ -8,11 +8,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 func TestPointerWakeup(t *testing.T) {
@@ -54,7 +54,9 @@ func TestPointerDrag(t *testing.T) {
 			Position: f32.Pt(150, 150),
 		},
 	)
-	assertEventSequence(t, r.Events(handler), pointer.Cancel, pointer.Enter, pointer.Press, pointer.Leave, pointer.Drag)
+	assertEventSequence(t, r.Events(handler), pointer.Cancel, pointer.Enter,
+		pointer.Press, pointer.Leave, pointer.Drag,
+	)
 }
 
 func TestPointerDragNegative(t *testing.T) {
@@ -76,7 +78,9 @@ func TestPointerDragNegative(t *testing.T) {
 			Position: f32.Pt(-150, -150),
 		},
 	)
-	assertEventSequence(t, r.Events(handler), pointer.Cancel, pointer.Enter, pointer.Press, pointer.Leave, pointer.Drag)
+	assertEventSequence(t, r.Events(handler), pointer.Cancel, pointer.Enter,
+		pointer.Press, pointer.Leave, pointer.Drag,
+	)
 }
 
 func TestPointerGrab(t *testing.T) {
@@ -150,8 +154,12 @@ func TestPointerMove(t *testing.T) {
 			Type: pointer.Cancel,
 		},
 	)
-	assertEventSequence(t, r.Events(handler1), pointer.Cancel, pointer.Enter, pointer.Move, pointer.Move, pointer.Leave, pointer.Cancel)
-	assertEventSequence(t, r.Events(handler2), pointer.Cancel, pointer.Enter, pointer.Move, pointer.Leave, pointer.Cancel)
+	assertEventSequence(t, r.Events(handler1), pointer.Cancel, pointer.Enter,
+		pointer.Move, pointer.Move, pointer.Leave, pointer.Cancel,
+	)
+	assertEventSequence(t, r.Events(handler2), pointer.Cancel, pointer.Enter,
+		pointer.Move, pointer.Leave, pointer.Cancel,
+	)
 }
 
 func TestPointerTypes(t *testing.T) {
@@ -179,7 +187,9 @@ func TestPointerTypes(t *testing.T) {
 			Position: f32.Pt(150, 150),
 		},
 	)
-	assertEventSequence(t, r.Events(handler), pointer.Cancel, pointer.Press, pointer.Release)
+	assertEventSequence(t, r.Events(handler), pointer.Cancel, pointer.Press,
+		pointer.Release,
+	)
 }
 
 func TestPointerPriority(t *testing.T) {
@@ -245,7 +255,9 @@ func TestPointerPriority(t *testing.T) {
 	assertEventSequence(t, hev1, pointer.Cancel, pointer.Scroll, pointer.Scroll)
 	assertEventSequence(t, hev2, pointer.Cancel, pointer.Scroll)
 	assertEventSequence(t, hev3, pointer.Cancel, pointer.Scroll)
-	assertEventPriorities(t, hev1, pointer.Shared, pointer.Shared, pointer.Foremost)
+	assertEventPriorities(t, hev1, pointer.Shared, pointer.Shared,
+		pointer.Foremost,
+	)
 	assertEventPriorities(t, hev2, pointer.Shared, pointer.Foremost)
 	assertEventPriorities(t, hev3, pointer.Shared, pointer.Foremost)
 	assertScrollEvent(t, hev1[1], f32.Pt(30, 0))
@@ -278,7 +290,9 @@ func TestPointerEnterLeave(t *testing.T) {
 	// Only handler2 should receive the enter/move events because it is on top
 	// and handler1 is not an ancestor in the hit tree.
 	assertEventSequence(t, r.Events(handler1), pointer.Cancel)
-	assertEventSequence(t, r.Events(handler2), pointer.Cancel, pointer.Enter, pointer.Move)
+	assertEventSequence(t, r.Events(handler2), pointer.Cancel, pointer.Enter,
+		pointer.Move,
+	)
 
 	// Leave the second area by moving into the first.
 	r.Queue(
@@ -335,14 +349,17 @@ func TestPointerEnterLeave(t *testing.T) {
 		},
 	)
 	assertEventSequence(t, r.Events(handler1))
-	assertEventSequence(t, r.Events(handler2), pointer.Leave, pointer.Drag, pointer.Enter, pointer.Drag)
+	assertEventSequence(t, r.Events(handler2), pointer.Leave, pointer.Drag,
+		pointer.Enter, pointer.Drag,
+	)
 
 	// Check that a Release event generates Enter/Leave Events.
 	r.Queue(
 		pointer.Event{
 			Type: pointer.Release,
 			Position: f32.Pt(25,
-				25),
+				25,
+			),
 		},
 	)
 	assertEventSequence(t, r.Events(handler1), pointer.Enter)
@@ -381,7 +398,9 @@ func TestMultipleAreas(t *testing.T) {
 			Position: f32.Pt(50, 50),
 		},
 	)
-	assertEventSequence(t, r.Events(handler), pointer.Cancel, pointer.Enter, pointer.Move, pointer.Move, pointer.Move)
+	assertEventSequence(t, r.Events(handler), pointer.Cancel, pointer.Enter,
+		pointer.Move, pointer.Move, pointer.Move,
+	)
 }
 
 func TestPointerEnterLeaveNested(t *testing.T) {
@@ -410,8 +429,12 @@ func TestPointerEnterLeaveNested(t *testing.T) {
 	)
 	// First event for a handler is always a Cancel.
 	// Both handlers should receive the Enter and Move events because handler2 is a child of handler1.
-	assertEventSequence(t, r.Events(handler1), pointer.Cancel, pointer.Enter, pointer.Move)
-	assertEventSequence(t, r.Events(handler2), pointer.Cancel, pointer.Enter, pointer.Move)
+	assertEventSequence(t, r.Events(handler1), pointer.Cancel, pointer.Enter,
+		pointer.Move,
+	)
+	assertEventSequence(t, r.Events(handler2), pointer.Cancel, pointer.Enter,
+		pointer.Move,
+	)
 
 	// Leave the second area by moving into the first.
 	r.Queue(
@@ -479,7 +502,9 @@ func TestPointerActiveInputDisappears(t *testing.T) {
 			Position: f32.Pt(25, 25),
 		},
 	)
-	assertEventSequence(t, r.Events(handler1), pointer.Cancel, pointer.Enter, pointer.Move)
+	assertEventSequence(t, r.Events(handler1), pointer.Cancel, pointer.Enter,
+		pointer.Move,
+	)
 
 	// Re-render with handler missing.
 	ops.Reset()
@@ -527,8 +552,12 @@ func TestMultitouch(t *testing.T) {
 			PointerID: p2,
 		},
 	)
-	assertEventSequence(t, r.Events(h1), pointer.Cancel, pointer.Enter, pointer.Press)
-	assertEventSequence(t, r.Events(h2), pointer.Cancel, pointer.Enter, pointer.Press, pointer.Release)
+	assertEventSequence(t, r.Events(h1), pointer.Cancel, pointer.Enter,
+		pointer.Press,
+	)
+	assertEventSequence(t, r.Events(h2), pointer.Cancel, pointer.Enter,
+		pointer.Press, pointer.Release,
+	)
 }
 
 func TestCursorNameOp(t *testing.T) {
@@ -645,7 +674,8 @@ func TestCursorNameOp(t *testing.T) {
 			if got, want := r.Cursor(), tc.want; got != want {
 				t.Errorf("got %q; want %q", got, want)
 			}
-		})
+		},
+		)
 	}
 }
 
@@ -675,7 +705,9 @@ func pointerTypes(events []event.Event) []pointer.Type {
 
 // assertEventSequence checks that the provided events match the expected pointer event types
 // in the provided order.
-func assertEventSequence(t *testing.T, events []event.Event, expected ...pointer.Type) {
+func assertEventSequence(t *testing.T, events []event.Event,
+	expected ...pointer.Type,
+) {
 	t.Helper()
 	got := pointerTypes(events)
 	if !reflect.DeepEqual(got, expected) {
@@ -684,7 +716,9 @@ func assertEventSequence(t *testing.T, events []event.Event, expected ...pointer
 }
 
 // assertEventPriorities checks that the pointer.Event priorities of events match prios.
-func assertEventPriorities(t *testing.T, events []event.Event, prios ...pointer.Priority) {
+func assertEventPriorities(t *testing.T, events []event.Event,
+	prios ...pointer.Priority,
+) {
 	t.Helper()
 	var got []pointer.Priority
 	for _, e := range events {
@@ -729,7 +763,8 @@ func BenchmarkRouterAdd(b *testing.B) {
 						X: 100,
 						Y: 100,
 					},
-				}).Add(&ops)
+				},
+				).Add(&ops)
 				pointer.InputOp{
 					Tag:   handlers[i],
 					Types: pointer.Move,
@@ -747,7 +782,8 @@ func BenchmarkRouterAdd(b *testing.B) {
 					},
 				)
 			}
-		})
+		},
+		)
 	}
 }
 

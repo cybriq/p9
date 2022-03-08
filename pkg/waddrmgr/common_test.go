@@ -7,12 +7,12 @@ import (
 	"path/filepath"
 	"testing"
 	"time"
-	
-	"github.com/p9c/p9/pkg/addrmgr"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/walletdb"
-	_ "github.com/p9c/p9/pkg/walletdb/bdb"
+
+	"github.com/cybriq/p9/pkg/addrmgr"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/walletdb"
+	_ "github.com/cybriq/p9/pkg/walletdb/bdb"
 )
 
 var (
@@ -199,7 +199,9 @@ var (
 
 // checkManagerError ensures the passed error is a ManagerError with an error
 // code that matches the passed error code.
-func checkManagerError(t *testing.T, testName string, gotErr error, wantErrCode waddrmgr.ErrorCode) bool {
+func checkManagerError(t *testing.T, testName string, gotErr error,
+	wantErrCode waddrmgr.ErrorCode,
+) bool {
 	merr, ok := gotErr.(waddrmgr.ManagerError)
 	if !ok {
 		t.Errorf("%s: unexpected error type - got %T, want %T",
@@ -247,7 +249,9 @@ func emptyDB(t *testing.T) (tearDownFunc func(), db walletdb.DB) {
 
 // setupManager creates a new address manager and returns a teardown function
 // that should be invoked to ensure it is closed and removed upon completion.
-func setupManager(t *testing.T) (tearDownFunc func(), db walletdb.DB, mgr *waddrmgr.Manager) {
+func setupManager(t *testing.T) (tearDownFunc func(), db walletdb.DB,
+	mgr *waddrmgr.Manager,
+) {
 	// Create a new manager in a temp directory.
 	dirName, e := ioutil.TempDir("", "mgrtest")
 	if e != nil {

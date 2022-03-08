@@ -1,9 +1,9 @@
 package list
 
 import (
-	"github.com/p9c/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/log"
 
-	"github.com/p9c/p9/version"
+	"github.com/cybriq/p9/version"
 )
 
 var subsystem = log.AddLoggerSubsystem(version.PathBase)

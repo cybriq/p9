@@ -16,8 +16,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/p9c/p9/pkg/apputil"
-	"github.com/p9c/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/apputil"
+	"github.com/cybriq/p9/pkg/ecc"
 )
 
 func main() {
@@ -59,7 +59,8 @@ func main() {
 	a1, b1, a2, b2 := ecc.S256().EndomorphismVectors()
 	fmt.Println("The following values are the computed linearly " +
 		"independent vectors needed to make use of the secp256k1 " +
-		"endomorphism:")
+		"endomorphism:",
+	)
 	fmt.Printf("a1: %x\n", a1)
 	fmt.Printf("b1: %x\n", b1)
 	fmt.Printf("a2: %x\n", a2)

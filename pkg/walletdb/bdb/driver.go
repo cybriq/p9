@@ -2,8 +2,8 @@ package bdb
 
 import (
 	"fmt"
-	
-	"github.com/p9c/p9/pkg/walletdb"
+
+	"github.com/cybriq/p9/pkg/walletdb"
 )
 
 const (

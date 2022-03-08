@@ -8,11 +8,11 @@ import (
 	"runtime"
 	"strings"
 	"syscall"
-	
+
 	uberatomic "go.uber.org/atomic"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
+
+	"github.com/cybriq/p9/pkg/qu"
+
 	"github.com/kardianos/osext"
 )
 
@@ -22,7 +22,7 @@ type HandlerWithSource struct {
 }
 
 var (
-	Restart bool // = true
+	Restart   bool // = true
 	requested uberatomic.Bool
 	// ch is used to receive SIGINT (Ctrl+C) signals.
 	ch chan os.Signal
@@ -75,11 +75,11 @@ func Listener() {
 				}
 			} else {
 				D.Ln("doing windows restart")
-				
+
 				// procAttr := new(os.ProcAttr)
 				// procAttr.Files = []*os.File{os.Stdin, os.Stdout, os.Stderr}
 				// os.StartProcess(os.Args[0], os.Args[1:], procAttr)
-				
+
 				var s []string
 				// s = []string{"cmd.exe", "/C", "start"}
 				s = append(s, os.Args[0])
@@ -120,7 +120,9 @@ out:
 			// if !requested {
 			// D.Ln("adding handler")
 			interruptCallbacks = append(interruptCallbacks, handler.Fn)
-			interruptCallbackSources = append(interruptCallbackSources, handler.Source)
+			interruptCallbackSources = append(interruptCallbackSources,
+				handler.Source,
+			)
 			// }
 		case <-HandlersDone.Wait():
 			break out

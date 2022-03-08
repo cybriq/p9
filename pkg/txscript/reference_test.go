@@ -6,15 +6,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/p9c/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/amt"
 	"io/ioutil"
 	"strconv"
 	"strings"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // scriptTestName returns a descriptive test name for the given reference script test data.

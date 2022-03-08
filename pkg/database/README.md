@@ -1,7 +1,7 @@
 # database
 
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/p9c/p9/database)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/cybriq/p9/database)
 
 Package database provides a block and metadata storage database.
 
@@ -12,9 +12,9 @@ onlyone entity can have the database open at a time (for most database backends)
 
 When a client wants programmatic access to the data provided by pod, they'll
 likely want to use
-the [rpcclient](https://github.com/p9c/p9/tree/master/rpcclient) package which
+the [rpcclient](https://github.com/cybriq/p9/tree/master/rpcclient) package which
 makes use of
-the [JSON-RPC API](https://github.com/p9c/p9/tree/master/docs/json_rpc_api.md).
+the [JSON-RPC API](https://github.com/cybriq/p9/tree/master/docs/json_rpc_api.md).
 
 However, this package could be extremely useful for any applications requiring
 Bitcoin block storage capabilities.
@@ -44,16 +44,16 @@ blockstorage, and strict checksums in key areas to ensure data integrity.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/p9c/p9/database
+$ go get -u github.com/cybriq/p9/database
 ```
 
 ## Examples
 
-- [Basic Usage Example](http://godoc.org/github.com/p9c/p9/database#example-package--BasicUsage)  
+- [Basic Usage Example](http://godoc.org/github.com/cybriq/p9/database#example-package--BasicUsage)  
   Demonstrates creating a new database and using a managed read-write
   transaction to store and retrieve metadata.
 
-- [Block Storage and Retrieval Example](http://godoc.org/github.com/p9c/p9/database#example-package--BlockStorageAndRetrieval)  
+- [Block Storage and Retrieval Example](http://godoc.org/github.com/cybriq/p9/database#example-package--BlockStorageAndRetrieval)  
   Demonstrates creating a new database, using a managed read-write transaction
   to store a block, and then using a managed read-only transaction to fetch the
   block.

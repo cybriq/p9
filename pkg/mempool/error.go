@@ -1,8 +1,8 @@
 package mempool
 
 import (
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // RuleError identifies a rule violation. It is used to indicate that processing of a transaction failed due to one of

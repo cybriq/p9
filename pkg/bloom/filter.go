@@ -4,11 +4,11 @@ import (
 	"encoding/binary"
 	"math"
 	"sync"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // ln2Squared is simply the square of the natural log of 2.
@@ -34,7 +34,9 @@ type Filter struct {
 //
 // Thus, providing any false positive rates less than 0 or greater than 1 will be adjusted to the valid range. For more
 // information on what values to use for both elements and fprate, see https://en.wikipedia.org/wiki/Bloom_filter.
-func NewFilter(elements, tweak uint32, fprate float64, flags wire.BloomUpdateType) *Filter {
+func NewFilter(elements, tweak uint32, fprate float64,
+	flags wire.BloomUpdateType,
+) *Filter {
 	// Massage the false positive rate to sane values.
 	if fprate > 1.0 {
 		fprate = 1.0
@@ -215,7 +217,9 @@ func (bf *Filter) AddOutPoint(outpoint *wire.OutPoint) {
 }
 
 // maybeAddOutpoint potentially adds the passed outpoint to the bloom filter depending on the bloom update flags and the type of the passed public key script. This function MUST be called with the filter lock held.
-func (bf *Filter) maybeAddOutpoint(pkScript []byte, outHash *chainhash.Hash, outIdx uint32) {
+func (bf *Filter) maybeAddOutpoint(pkScript []byte, outHash *chainhash.Hash,
+	outIdx uint32,
+) {
 	switch bf.msgFilterLoad.Flags {
 	case wire.BloomUpdateAll:
 		outpoint := wire.NewOutPoint(outHash, outIdx)

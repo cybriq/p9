@@ -2,8 +2,8 @@ package wallet
 
 import (
 	"errors"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // TODO(jrick): There are several error paths which 'replace' various errors

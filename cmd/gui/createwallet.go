@@ -6,18 +6,18 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 	"golang.org/x/exp/shiny/materialdesign/icons"
 
-	"github.com/p9c/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/interrupt"
 
-	"github.com/p9c/p9/pkg/gel"
-	"github.com/p9c/p9/cmd/wallet"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/constant"
-	"github.com/p9c/p9/pkg/fork"
+	"github.com/cybriq/p9/cmd/wallet"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/constant"
+	"github.com/cybriq/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/gel"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 )
 
 const slash = string(os.PathSeparator)
@@ -198,7 +198,10 @@ func (wg *WalletGUI) createWalletInputsAreValid() bool {
 func (wg *WalletGUI) createWalletAction() {
 	// wg.NodeRunCommandChan <- "stop"
 	D.Ln("clicked submit wallet")
-	wg.cx.Config.WalletFile.Set(filepath.Join(wg.cx.Config.DataDir.V(), wg.cx.ActiveNet.Name, constant.DbName))
+	wg.cx.Config.WalletFile.Set(filepath.Join(wg.cx.Config.DataDir.V(),
+		wg.cx.ActiveNet.Name, constant.DbName,
+	),
+	)
 	dbDir := wg.cx.Config.WalletFile.V()
 	loader := wallet.NewLoader(wg.cx.ActiveNet, dbDir, 250)
 	// seed, _ := hex.DecodeString(wg.inputs["walletSeed"].GetText())
@@ -283,7 +286,9 @@ func (wg *WalletGUI) createWalletTestnetToggle(b bool) {
 		[]string{"0.0.0.0:" + wg.cx.ActiveNet.DefaultPort},
 	)
 	wg.cx.Config.P2PConnect.Set([]string{"127.0.0.1:" + wg.cx.ActiveNet.
-		DefaultPort})
+		DefaultPort,
+	},
+	)
 	address := fmt.Sprintf(
 		"127.0.0.1:%s",
 		wg.cx.ActiveNet.RPCClientPort,

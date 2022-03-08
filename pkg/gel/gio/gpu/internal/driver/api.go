@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/internal/gl"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/gl"
 )
 
 // See gpu/api.go for documentation for the API types

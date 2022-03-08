@@ -3,8 +3,8 @@ package rpcclient
 import (
 	js "encoding/json"
 	"errors"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // FutureRawResult is a future promise to deliver the result of a RawRequest RPC invocation (or an applicable error).
@@ -19,7 +19,8 @@ func (r FutureRawResult) Receive() (js.RawMessage, error) {
 // future time by invoking the Receive function on the returned instance.
 //
 // See RawRequest for the blocking version and more details.
-func (c *Client) RawRequestAsync(method string, params []js.RawMessage) FutureRawResult {
+func (c *Client) RawRequestAsync(method string, params []js.RawMessage,
+) FutureRawResult {
 	// Method may not be empty.
 	if method == "" {
 		return newFutureError(errors.New("no method"))
@@ -59,6 +60,7 @@ func (c *Client) RawRequestAsync(method string, params []js.RawMessage) FutureRa
 // This method may be used to send and receive requests and responses for requests that are not handled by this client
 // package, or to proxy partially unmarshalled requests to another JSON-RPC server if a request cannot be handled
 // directly.
-func (c *Client) RawRequest(method string, params []js.RawMessage) (js.RawMessage, error) {
+func (c *Client) RawRequest(method string, params []js.RawMessage,
+) (js.RawMessage, error) {
 	return c.RawRequestAsync(method, params).Receive()
 }

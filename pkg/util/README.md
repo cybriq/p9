@@ -1,7 +1,7 @@
 # btcutil
 
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](http://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/p9c/p9/btcutil)
+[![GoDoc](http://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/cybriq/p9/btcutil)
 
 Package btcutil provides bitcoin-specific convenience functions and types.
 
@@ -19,7 +19,7 @@ provided.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/p9c/p9/btcutil
+$ go get -u github.com/cybriq/p9/btcutil
 ```
 
 ## License

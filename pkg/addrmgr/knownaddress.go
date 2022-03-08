@@ -2,8 +2,8 @@ package addrmgr
 
 import (
 	"time"
-	
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // KnownAddress tracks information about a known network address that is used to determine how viable an address is.

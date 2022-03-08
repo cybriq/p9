@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/log"
 	"net"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
-	"github.com/p9c/p9/pkg/transport"
-	"github.com/p9c/p9/pkg/util/loop"
+
+	"github.com/cybriq/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/transport"
+	"github.com/cybriq/p9/pkg/util/loop"
 )
 
 const (
@@ -46,7 +46,9 @@ func main() {
 	loop.To(
 		10, func(i int) {
 			text := []byte(fmt.Sprintf("this is a test %d", i))
-			I.F("%s -> %s [%d] '%s'", c.Sender.LocalAddr(), c.Sender.RemoteAddr(), n-4, text)
+			I.F("%s -> %s [%d] '%s'", c.Sender.LocalAddr(),
+				c.Sender.RemoteAddr(), n-4, text,
+			)
 			if e = c.SendMany(TestMagicB, transport.GetShards(text)); E.Chk(e) {
 			} else {
 			}

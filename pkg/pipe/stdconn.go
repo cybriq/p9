@@ -6,8 +6,8 @@ import (
 	"net"
 	"runtime"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/qu"
 )
 
 type StdConn struct {

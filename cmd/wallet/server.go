@@ -13,14 +13,14 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
+
+	"github.com/cybriq/p9/pkg/qu"
+
 	"github.com/btcsuite/websocket"
-	
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pkg/chainclient"
-	"github.com/p9c/p9/pkg/interrupt"
+
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/chainclient"
+	"github.com/cybriq/p9/pkg/interrupt"
 )
 
 type WebsocketClient struct {
@@ -33,7 +33,9 @@ type WebsocketClient struct {
 	wg            sync.WaitGroup
 }
 
-func NewWebsocketClient(c *websocket.Conn, authenticated bool, remoteAddr string) *WebsocketClient {
+func NewWebsocketClient(c *websocket.Conn, authenticated bool,
+	remoteAddr string,
+) *WebsocketClient {
 	return &WebsocketClient{
 		conn:          c,
 		authenticated: authenticated,
@@ -79,7 +81,9 @@ func JSONAuthFail(w http.ResponseWriter) {
 }
 
 // NewServer creates a new server for serving legacy RPC client connections, both HTTP POST and websocket.
-func NewServer(opts *Options, walletLoader *Loader, listeners []net.Listener, quit qu.C) *Server {
+func NewServer(opts *Options, walletLoader *Loader, listeners []net.Listener,
+	quit qu.C,
+) *Server {
 	serveMux := http.NewServeMux()
 	const rpcAuthTimeoutSeconds = 10
 	server := &Server{
@@ -311,7 +315,8 @@ func Throttled(threshold int64, h http.Handler) http.Handler {
 			defer atomic.AddInt64(&active, -1)
 			if current-1 >= threshold {
 				W.F(
-					"reached threshold of %d concurrent active clients", threshold,
+					"reached threshold of %d concurrent active clients",
+					threshold,
 				)
 				http.Error(w, "429 Too Many Requests", 429)
 				return
@@ -574,7 +579,9 @@ func (s *Server) POSTClientRPC(w http.ResponseWriter, r *http.Request) {
 	e = js.Unmarshal(rpcRequest, &req)
 	if e != nil {
 		var resp []byte
-		resp, e = btcjson.MarshalResponse(req.ID, nil, btcjson.ErrRPCInvalidRequest)
+		resp, e = btcjson.MarshalResponse(req.ID, nil,
+			btcjson.ErrRPCInvalidRequest,
+		)
 		if e != nil {
 			E.Ln(
 				"Unable to marshal response:", e,
@@ -617,7 +624,9 @@ func (s *Server) POSTClientRPC(w http.ResponseWriter, r *http.Request) {
 		E.Ln(
 			"unable to marshal response:", e,
 		)
-		http.Error(w, "500 Internal Server BTCJSONError", http.StatusInternalServerError)
+		http.Error(w, "500 Internal Server BTCJSONError",
+			http.StatusInternalServerError,
+		)
 		return
 	}
 	_, e = w.Write(mResp)

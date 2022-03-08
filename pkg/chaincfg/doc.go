@@ -17,8 +17,8 @@
 //  import (
 //          "flag"
 //          "fmt"
-//          "github.com/p9c/p9/pkg/util"
-//          "github.com/p9c/p9/pkg/chain/config"
+//          "github.com/cybriq/p9/pkg/util"
+//          "github.com/cybriq/p9/pkg/chain/config"
 //  )
 //  var testnet = flag.Bool("testnet", false, "operate on the testnet Bitcoin network")
 //  // By default (without -testnet), use mainnet.

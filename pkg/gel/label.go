@@ -6,12 +6,12 @@ import (
 	"image/color"
 	"unicode/utf8"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/text"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 	"golang.org/x/image/math/fixed"
 )
 
@@ -53,7 +53,9 @@ type segmentIterator struct {
 	y, prevDesc fixed.Int26_6
 }
 
-func (l *segmentIterator) Next() (text.Layout, image.Point, bool, int, image.Point, bool) {
+func (l *segmentIterator) Next() (text.Layout, image.Point, bool, int,
+	image.Point, bool,
+) {
 	for l.pos.Y < len(l.Lines) {
 		if l.pos.X == 0 {
 			l.line = l.Lines[l.pos.Y]
@@ -65,7 +67,9 @@ func (l *segmentIterator) Next() (text.Layout, image.Point, bool, int, image.Poi
 			l.y += l.prevDesc + l.line.Ascent
 			l.prevDesc = l.line.Descent
 			// Align baseline and line start to the pixel grid.
-			l.off = fixed.Point26_6{X: fixed.I(x.Floor()), Y: fixed.I(l.y.Ceil())}
+			l.off = fixed.Point26_6{X: fixed.I(x.Floor()),
+				Y: fixed.I(l.y.Ceil()),
+			}
 			l.y = l.off.Y
 			l.off.Y += fixed.I(l.Offset.Y)
 			if (l.off.Y + l.line.Bounds.Min.Y).Floor() > l.Clip.Max.Y {
@@ -239,7 +243,8 @@ func linesDimens(lines []text.Line) l.Dimensions {
 	}
 }
 
-func align(align text.Alignment, width fixed.Int26_6, maxWidth int) fixed.Int26_6 {
+func align(align text.Alignment, width fixed.Int26_6, maxWidth int,
+) fixed.Int26_6 {
 	mw := fixed.I(maxWidth)
 	switch align {
 	case text.Middle:

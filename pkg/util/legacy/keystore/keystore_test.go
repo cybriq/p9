@@ -3,18 +3,18 @@ package keystore
 import (
 	"bytes"
 	"crypto/rand"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 	"math/big"
 	"reflect"
 	"testing"
-	
+
 	"github.com/davecgh/go-spew/spew"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	ec "github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	ec "github.com/cybriq/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
 )
 
 const dummyDir = ""
@@ -215,22 +215,28 @@ func TestChaining(t *testing.T) {
 		// in the test case.
 		if !bytes.Equal(nextPrivUncompressed, test.nextPrivateKeyUncompressed) {
 			t.Errorf("%s: Next private key (from uncompressed pubkey) does not match expected.\nGot: %s\nExpected: %s",
-				test.name, spew.Sdump(nextPrivUncompressed), spew.Sdump(test.nextPrivateKeyUncompressed),
+				test.name, spew.Sdump(nextPrivUncompressed),
+				spew.Sdump(test.nextPrivateKeyUncompressed),
 			)
 			return
 		}
 		if !bytes.Equal(nextPrivCompressed, test.nextPrivateKeyCompressed) {
 			t.Errorf("%s: Next private key (from compressed pubkey) does not match expected.\nGot: %s\nExpected: %s",
-				test.name, spew.Sdump(nextPrivCompressed), spew.Sdump(test.nextPrivateKeyCompressed),
+				test.name, spew.Sdump(nextPrivCompressed),
+				spew.Sdump(test.nextPrivateKeyCompressed),
 			)
 			return
 		}
 		// Create the next pubkeys generated from the next private keys.
-		nextPubUncompressedFromPriv := pubkeyFromPrivkey(nextPrivUncompressed, false)
+		nextPubUncompressedFromPriv := pubkeyFromPrivkey(nextPrivUncompressed,
+			false,
+		)
 		nextPubCompressedFromPriv := pubkeyFromPrivkey(nextPrivCompressed, true)
 		// Create the next pubkeys by chaining directly off the original
 		// pubkeys (without using the original's private key).
-		nextPubUncompressedFromPub, e := chainedPubKey(origPubUncompressed, test.cc)
+		nextPubUncompressedFromPub, e := chainedPubKey(origPubUncompressed,
+			test.cc,
+		)
 		if e != nil {
 			t.Errorf("%s: Uncompressed chainedPubKey failed: %v", test.name, e)
 			return
@@ -249,28 +255,40 @@ func TestChaining(t *testing.T) {
 		}
 		// Verify that all generated public keys match the expected
 		// values in the test case.
-		if !bytes.Equal(nextPubUncompressedFromPub, test.nextPublicKeyUncompressed) {
+		if !bytes.Equal(nextPubUncompressedFromPub,
+			test.nextPublicKeyUncompressed,
+		) {
 			t.Errorf("%s: Next uncompressed public keys do not match expected value.\nGot: %s\nExpected: %s",
-				test.name, spew.Sdump(nextPubUncompressedFromPub), spew.Sdump(test.nextPublicKeyUncompressed),
+				test.name, spew.Sdump(nextPubUncompressedFromPub),
+				spew.Sdump(test.nextPublicKeyUncompressed),
 			)
 			return
 		}
 		if !bytes.Equal(nextPubCompressedFromPub, test.nextPublicKeyCompressed) {
 			t.Errorf("%s: Next compressed public keys do not match expected value.\nGot: %s\nExpected: %s",
-				test.name, spew.Sdump(nextPubCompressedFromPub), spew.Sdump(test.nextPublicKeyCompressed),
+				test.name, spew.Sdump(nextPubCompressedFromPub),
+				spew.Sdump(test.nextPublicKeyCompressed),
 			)
 			return
 		}
 		// Sign data with the next private keys and verify signature with
 		// the next pubkeys.
-		pubkeyUncompressed, e := ec.ParsePubKey(nextPubUncompressedFromPub, ec.S256())
+		pubkeyUncompressed, e := ec.ParsePubKey(nextPubUncompressedFromPub,
+			ec.S256(),
+		)
 		if e != nil {
-			t.Errorf("%s: Unable to parse next uncompressed pubkey: %v", test.name, e)
+			t.Errorf("%s: Unable to parse next uncompressed pubkey: %v",
+				test.name, e,
+			)
 			return
 		}
-		pubkeyCompressed, e := ec.ParsePubKey(nextPubCompressedFromPub, ec.S256())
+		pubkeyCompressed, e := ec.ParsePubKey(nextPubCompressedFromPub,
+			ec.S256(),
+		)
 		if e != nil {
-			t.Errorf("%s: Unable to parse next compressed pubkey: %v", test.name, e)
+			t.Errorf("%s: Unable to parse next compressed pubkey: %v",
+				test.name, e,
+			)
 			return
 		}
 		privkeyUncompressed := &ec.PrivateKey{
@@ -417,7 +435,9 @@ func TestWalletPubkeyChaining(t *testing.T) {
 	}
 	nextAddr, e := w.NextChainedAddress(makeBS(0))
 	if e != nil {
-		t.Errorf("Unable to create next address after finding the privkey: %v", e)
+		t.Errorf("Unable to create next address after finding the privkey: %v",
+			e,
+		)
 		return
 	}
 	nextInfo, e := w.Address(nextAddr)
@@ -428,7 +448,9 @@ func TestWalletPubkeyChaining(t *testing.T) {
 	nextPkInfo := nextInfo.(PubKeyAddress)
 	nextKey, e := nextPkInfo.PrivKey()
 	if e != nil {
-		t.Errorf("Couldn't get private key for the next address in the chain: %v", e)
+		t.Errorf("Couldn't get private key for the next address in the chain: %v",
+			e,
+		)
 		return
 	}
 	// Do a signature check here as well, this time for the next
@@ -539,7 +561,9 @@ func TestWatchingWalletExport(t *testing.T) {
 		delete(activeAddrs, apkh)
 	}
 	if len(activeAddrs) != 0 {
-		t.Errorf("%v address(es) were not exported to watching wallet.", len(activeAddrs))
+		t.Errorf("%v address(es) were not exported to watching wallet.",
+			len(activeAddrs),
+		)
 		return
 	}
 	// Chk that the new addresses created by each wallet match.  The
@@ -554,7 +578,9 @@ func TestWatchingWalletExport(t *testing.T) {
 		var addr btcaddr.Address
 		addr, e = w.NextChainedAddress(createdAt)
 		if e != nil {
-			t.Errorf("Cannot get next chained address for original wallet: %v", e)
+			t.Errorf("Cannot get next chained address for original wallet: %v",
+				e,
+			)
 			return
 		}
 		newAddrs = append(newAddrs, addr)
@@ -577,7 +603,9 @@ func TestWatchingWalletExport(t *testing.T) {
 		var addr btcaddr.Address
 		addr, e = ww.NextChainedAddress(createdAt)
 		if e != nil {
-			t.Errorf("Cannot get next chained address for watching wallet: %v", e)
+			t.Errorf("Cannot get next chained address for watching wallet: %v",
+				e,
+			)
 			return
 		}
 		newWWAddrs = append(newWWAddrs, addr)
@@ -617,7 +645,9 @@ func TestWatchingWalletExport(t *testing.T) {
 		return
 	}
 	if e = ww.Unlock([]byte("banana")); e != ErrWatchingOnly {
-		t.Errorf("Nonsensical func Unlock returned no or incorrect error: %v", e)
+		t.Errorf("Nonsensical func Unlock returned no or incorrect error: %v",
+			e,
+		)
 		return
 	}
 	generator, e := ww.Address(w.keyGenerator.Address())
@@ -626,11 +656,15 @@ func TestWatchingWalletExport(t *testing.T) {
 	}
 	gpk := generator.(PubKeyAddress)
 	if _, e = gpk.PrivKey(); e != ErrWatchingOnly {
-		t.Errorf("Nonsensical func AddressKey returned no or incorrect error: %v", e)
+		t.Errorf("Nonsensical func AddressKey returned no or incorrect error: %v",
+			e,
+		)
 		return
 	}
 	if _, e = ww.ExportWatchingWallet(); e != ErrWatchingOnly {
-		t.Errorf("Nonsensical func ExportWatchingWallet returned no or incorrect error: %v", e)
+		t.Errorf("Nonsensical func ExportWatchingWallet returned no or incorrect error: %v",
+			e,
+		)
 		return
 	}
 	pk, _ := ec.PrivKeyFromBytes(ec.S256(), make([]byte, 32))
@@ -639,7 +673,9 @@ func TestWatchingWalletExport(t *testing.T) {
 		t.Fatal(e)
 	}
 	if _, e = ww.ImportPrivateKey(wif, createdAt); e != ErrWatchingOnly {
-		t.Errorf("Nonsensical func ImportPrivateKey returned no or incorrect error: %v", e)
+		t.Errorf("Nonsensical func ImportPrivateKey returned no or incorrect error: %v",
+			e,
+		)
 		return
 	}
 }
@@ -665,7 +701,9 @@ func TestImportPrivateKey(t *testing.T) {
 	// verify that the entire wallet's sync height matches the
 	// expected createHeight.
 	if _, h := w.SyncedTo(); h != createHeight {
-		t.Errorf("Initial sync height %v does not match expected %v.", h, createHeight)
+		t.Errorf("Initial sync height %v does not match expected %v.", h,
+			createHeight,
+		)
 		return
 	}
 	// import priv key
@@ -697,7 +735,9 @@ func TestImportPrivateKey(t *testing.T) {
 	}
 	// verify that the sync height now match the (smaller) import height.
 	if _, h := w.SyncedTo(); h != importHeight {
-		t.Errorf("After import sync height %v does not match expected %v.", h, importHeight)
+		t.Errorf("After import sync height %v does not match expected %v.", h,
+			importHeight,
+		)
 		return
 	}
 	// serialise and deseralise and check still there.
@@ -716,7 +756,9 @@ func TestImportPrivateKey(t *testing.T) {
 	}
 	// Verify that the  sync height match expected after the reserialization.
 	if _, h := w2.SyncedTo(); h != importHeight {
-		t.Errorf("After reserialization sync height %v does not match expected %v.", h, importHeight)
+		t.Errorf("After reserialization sync height %v does not match expected %v.",
+			h, importHeight,
+		)
 		return
 	}
 	// Mark imported address as partially synced with a block somewhere inbetween
@@ -727,7 +769,9 @@ func TestImportPrivateKey(t *testing.T) {
 		return
 	}
 	if _, h := w2.SyncedTo(); h != partialHeight {
-		t.Errorf("After address partial sync, sync height %v does not match expected %v.", h, partialHeight)
+		t.Errorf("After address partial sync, sync height %v does not match expected %v.",
+			h, partialHeight,
+		)
 		return
 	}
 	// Test serialization with the partial sync.
@@ -757,7 +801,9 @@ func TestImportPrivateKey(t *testing.T) {
 		return
 	}
 	if _, h := w3.SyncedTo(); h != importHeight {
-		t.Errorf("After address unsync, sync height %v does not match expected %v.", h, importHeight)
+		t.Errorf("After address unsync, sync height %v does not match expected %v.",
+			h, importHeight,
+		)
 		return
 	}
 	// Mark imported address as synced with the recently-seen blocks, and verify
@@ -768,7 +814,9 @@ func TestImportPrivateKey(t *testing.T) {
 		return
 	}
 	if _, h := w3.SyncedTo(); h != createHeight {
-		t.Errorf("After address sync, sync height %v does not match expected %v.", h, createHeight)
+		t.Errorf("After address sync, sync height %v does not match expected %v.",
+			h, createHeight,
+		)
 		return
 	}
 	if e = w3.Unlock([]byte("banana")); E.Chk(e) {
@@ -810,7 +858,9 @@ func TestImportScript(t *testing.T) {
 	// verify that the entire wallet's sync height matches the
 	// expected createHeight.
 	if _, h := w.SyncedTo(); h != createHeight {
-		t.Errorf("Initial sync height %v does not match expected %v.", h, createHeight)
+		t.Errorf("Initial sync height %v does not match expected %v.", h,
+			createHeight,
+		)
 		return
 	}
 	script := []byte{txscript.OP_TRUE, txscript.OP_DUP,
@@ -871,7 +921,9 @@ func TestImportScript(t *testing.T) {
 	}
 	// verify that the sync height now match the (smaller) import height.
 	if _, h := w.SyncedTo(); h != importHeight {
-		t.Errorf("After import sync height %v does not match expected %v.", h, importHeight)
+		t.Errorf("After import sync height %v does not match expected %v.", h,
+			importHeight,
+		)
 		return
 	}
 	// Chk that it's included along with the active payment addresses.
@@ -906,7 +958,9 @@ func TestImportScript(t *testing.T) {
 	}
 	// Verify that the sync height matches expected after the reserialization.
 	if _, h := w2.SyncedTo(); h != importHeight {
-		t.Errorf("After reserialization sync height %v does not match expected %v.", h, importHeight)
+		t.Errorf("After reserialization sync height %v does not match expected %v.",
+			h, importHeight,
+		)
 		return
 	}
 	// lookup address
@@ -995,7 +1049,9 @@ func TestImportScript(t *testing.T) {
 		return
 	}
 	if _, h := w2.SyncedTo(); h != partialHeight {
-		t.Errorf("After address partial sync, sync height %v does not match expected %v.", h, partialHeight)
+		t.Errorf("After address partial sync, sync height %v does not match expected %v.",
+			h, partialHeight,
+		)
 		return
 	}
 	// Test serialization with the partial sync.
@@ -1025,7 +1081,9 @@ func TestImportScript(t *testing.T) {
 		return
 	}
 	if _, h := w3.SyncedTo(); h != importHeight {
-		t.Errorf("After address unsync, sync height %v does not match expected %v.", h, importHeight)
+		t.Errorf("After address unsync, sync height %v does not match expected %v.",
+			h, importHeight,
+		)
 		return
 	}
 	// Mark imported address as synced with the recently-seen blocks, and verify
@@ -1036,7 +1094,9 @@ func TestImportScript(t *testing.T) {
 		return
 	}
 	if _, h := w3.SyncedTo(); h != createHeight {
-		t.Errorf("After address sync, sync height %v does not match expected %v.", h, createHeight)
+		t.Errorf("After address sync, sync height %v does not match expected %v.",
+			h, createHeight,
+		)
 		return
 	}
 	if e = w3.Unlock([]byte("banana")); E.Chk(e) {
@@ -1057,7 +1117,9 @@ func TestChangePassphrase(t *testing.T) {
 	}
 	// Changing the passphrase with a locked wallet must fail with ErrWalletLocked.
 	if e = w.ChangePassphrase([]byte("potato")); e != ErrLocked {
-		t.Errorf("Changing passphrase on a locked wallet did not fail correctly: %v", e)
+		t.Errorf("Changing passphrase on a locked wallet did not fail correctly: %v",
+			e,
+		)
 		return
 	}
 	// Unlock wallet so the passphrase can be changed.
@@ -1113,7 +1175,9 @@ func TestChangePassphrase(t *testing.T) {
 	rapka2 := rootAddrInfo2.(PubKeyAddress)
 	rootPrivKey2, e := rapka2.PrivKey()
 	if e != nil {
-		t.Errorf("Cannot get root address' private key after passphrase change: %v", e)
+		t.Errorf("Cannot get root address' private key after passphrase change: %v",
+			e,
+		)
 		return
 	}
 	// Private keys must match.

@@ -10,7 +10,7 @@ import (
 	"math"
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
 )
 
 type Op uint32

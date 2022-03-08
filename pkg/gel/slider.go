@@ -3,15 +3,15 @@ package gel
 import (
 	"image"
 	"image/color"
-	
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
-	
-	"github.com/p9c/p9/pkg/gel/f32color"
+
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
+
+	"github.com/cybriq/p9/pkg/gel/f32color"
 )
 
 type Slider struct {
@@ -60,7 +60,7 @@ func (s *Slider) Fn(gtx l.Context) l.Dimensions {
 	thumbRadius := float32(thumbRadiusInt)
 	halfWidthInt := 2 * thumbRadiusInt
 	halfWidth := float32(halfWidthInt)
-	
+
 	size := gtx.Constraints.Min
 	// Keep a minimum length so that the track is always visible.
 	minLength := halfWidthInt + 3*thumbRadiusInt + halfWidthInt
@@ -68,19 +68,19 @@ func (s *Slider) Fn(gtx l.Context) l.Dimensions {
 		size.X = minLength
 	}
 	size.Y = 2 * halfWidthInt
-	
+
 	st := op.Save(gtx.Ops)
 	op.Offset(f32.Pt(halfWidth, 0)).Add(gtx.Ops)
 	gtx.Constraints.Min = image.Pt(size.X-2*halfWidthInt, size.Y)
 	s.float.Fn(gtx, halfWidthInt, s.min, s.max)
 	thumbPos := halfWidth + s.float.Pos()
 	st.Load()
-	
+
 	col := s.color
 	if gtx.Queue == nil {
 		col = f32color.MulAlpha(col, 150)
 	}
-	
+
 	// Draw track before thumb.
 	st = op.Save(gtx.Ops)
 	track := f32.Rectangle{
@@ -97,7 +97,7 @@ func (s *Slider) Fn(gtx l.Context) l.Dimensions {
 	paint.ColorOp{Color: col}.Add(gtx.Ops)
 	paint.PaintOp{}.Add(gtx.Ops)
 	st.Load()
-	
+
 	// Draw track after thumb.
 	st = op.Save(gtx.Ops)
 	track.Min.X = thumbPos
@@ -106,7 +106,7 @@ func (s *Slider) Fn(gtx l.Context) l.Dimensions {
 	paint.ColorOp{Color: f32color.MulAlpha(col, 96)}.Add(gtx.Ops)
 	paint.PaintOp{}.Add(gtx.Ops)
 	st.Load()
-	
+
 	// Draw thumb.
 	st = op.Save(gtx.Ops)
 	thumb := f32.Rectangle{
@@ -127,6 +127,6 @@ func (s *Slider) Fn(gtx l.Context) l.Dimensions {
 	paint.ColorOp{Color: col}.Add(gtx.Ops)
 	paint.PaintOp{}.Add(gtx.Ops)
 	st.Load()
-	
+
 	return l.Dimensions{Size: size}
 }

@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/p9c/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/amt"
 
 	"github.com/atotto/clipboard"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/text"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
 
-	"github.com/p9c/p9/pkg/gel"
+	"github.com/cybriq/p9/pkg/gel"
 )
 
 const Break1 = 48
@@ -58,7 +58,9 @@ func (rp *ReceivePage) SmallList(gtx l.Context) l.Dimensions {
 		rp.RegenerateButton(),
 		rp.AddressbookHeader(),
 	}
-	smallWidgets = append(smallWidgets, rp.GetAddressbookHistoryCards("DocBg")...)
+	smallWidgets = append(smallWidgets,
+		rp.GetAddressbookHistoryCards("DocBg")...,
+	)
 	le := func(gtx l.Context, index int) l.Dimensions {
 		return wg.Inset(0.25, smallWidgets[index]).Fn(gtx)
 	}
@@ -91,7 +93,9 @@ func (rp *ReceivePage) MediumList(gtx l.Context) l.Dimensions {
 	}
 	var historyWidget []l.Widget
 
-	historyWidget = append(historyWidget, rp.GetAddressbookHistoryCards("DocBg")...)
+	historyWidget = append(historyWidget,
+		rp.GetAddressbookHistoryCards("DocBg")...,
+	)
 	historyLE := func(gtx l.Context, index int) l.Dimensions {
 		return wg.Inset(
 			0.25,
@@ -128,7 +132,9 @@ func (rp *ReceivePage) MediumList(gtx l.Context) l.Dimensions {
 }
 
 func (rp *ReceivePage) Spacer() l.Widget {
-	return rp.wg.Flex().AlignMiddle().Flexed(1, rp.wg.Inset(0.25, gel.EmptySpace(0, 0)).Fn).Fn
+	return rp.wg.Flex().AlignMiddle().Flexed(1,
+		rp.wg.Inset(0.25, gel.EmptySpace(0, 0)).Fn,
+	).Fn
 }
 
 func (rp *ReceivePage) GetAddressbookHistoryCards(bg string) (widgets []l.Widget) {
@@ -137,7 +143,9 @@ func (rp *ReceivePage) GetAddressbookHistoryCards(bg string) (widgets []l.Widget
 	req := len(wg.State.receiveAddresses)
 	if req > avail {
 		for i := 0; i < req-avail; i++ {
-			wg.receiveAddressbookClickables = append(wg.receiveAddressbookClickables, wg.WidgetPool.GetClickable())
+			wg.receiveAddressbookClickables = append(wg.receiveAddressbookClickables,
+				wg.WidgetPool.GetClickable(),
+			)
 		}
 	}
 	for x := range wg.State.receiveAddresses {

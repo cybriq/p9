@@ -17,15 +17,15 @@ import (
 
 	syscall "golang.org/x/sys/windows"
 
-	"github.com/p9c/p9/pkg/gel/gio/app/internal/windows"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/app/internal/windows"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 	gowindows "golang.org/x/sys/windows"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/io/clipboard"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/io/system"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/io/clipboard"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/io/system"
 )
 
 type winConstraints struct {
@@ -144,7 +144,9 @@ func initResources() error {
 		return err
 	}
 	resources.cursor = c
-	icon, _ := windows.LoadImage(hInst, iconID, windows.IMAGE_ICON, 0, 0, windows.LR_DEFAULTSIZE|windows.LR_SHARED)
+	icon, _ := windows.LoadImage(hInst, iconID, windows.IMAGE_ICON, 0, 0,
+		windows.LR_DEFAULTSIZE|windows.LR_SHARED,
+	)
 	wcls := windows.WndClassEx{
 		CbSize:        uint32(unsafe.Sizeof(windows.WndClassEx{})),
 		Style:         windows.CS_HREDRAW | windows.CS_VREDRAW | windows.CS_OWNDC,
@@ -178,7 +180,8 @@ func createNativeWindow(opts *Options) (*window, error) {
 	var resErr error
 	resources.once.Do(func() {
 		resErr = initResources()
-	})
+	},
+	)
 	if resErr != nil {
 		return nil, resErr
 	}
@@ -196,7 +199,8 @@ func createNativeWindow(opts *Options) (*window, error) {
 		0,
 		0,
 		resources.handle,
-		0)
+		0,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -212,7 +216,8 @@ func createNativeWindow(opts *Options) (*window, error) {
 	return w, nil
 }
 
-func windowProc(hwnd syscall.Handle, msg uint32, wParam, lParam uintptr) uintptr {
+func windowProc(hwnd syscall.Handle, msg uint32, wParam, lParam uintptr,
+) uintptr {
 	win, exists := winMap.Load(hwnd)
 	if !exists {
 		return windows.DefWindowProc(hwnd, msg, wParam, lParam)
@@ -273,7 +278,8 @@ func windowProc(hwnd syscall.Handle, msg uint32, wParam, lParam uintptr) uintptr
 	case windows.WM_CANCELMODE:
 		w.w.Event(pointer.Event{
 			Type: pointer.Cancel,
-		})
+		},
+		)
 	case windows.WM_SETFOCUS:
 		w.w.Event(key.FocusEvent{Focus: true})
 	case windows.WM_KILLFOCUS:
@@ -287,7 +293,8 @@ func windowProc(hwnd syscall.Handle, msg uint32, wParam, lParam uintptr) uintptr
 			Position: p,
 			Buttons:  w.pointerBtns,
 			Time:     windows.GetMessageTime(),
-		})
+		},
+		)
 	case windows.WM_MOUSEWHEEL:
 		w.scrollEvent(wParam, lParam, false)
 	case windows.WM_MOUSEHWHEEL:
@@ -349,7 +356,9 @@ func getModifiers() key.Modifiers {
 	return kmods
 }
 
-func (w *window) pointerButton(btn pointer.Buttons, press bool, lParam uintptr, kmods key.Modifiers) {
+func (w *window) pointerButton(btn pointer.Buttons, press bool, lParam uintptr,
+	kmods key.Modifiers,
+) {
 	var typ pointer.Type
 	if press {
 		typ = pointer.Press
@@ -373,7 +382,8 @@ func (w *window) pointerButton(btn pointer.Buttons, press bool, lParam uintptr, 
 		Buttons:   w.pointerBtns,
 		Time:      windows.GetMessageTime(),
 		Modifiers: kmods,
-	})
+	},
+	)
 }
 
 func coordsFromlParam(lParam uintptr) (int, int) {
@@ -403,7 +413,8 @@ func (w *window) scrollEvent(wParam, lParam uintptr, horizontal bool) {
 		Buttons:  w.pointerBtns,
 		Scroll:   sp,
 		Time:     windows.GetMessageTime(),
-	})
+	},
+	)
 }
 
 // Adapted from https://blogs.msdn.microsoft.com/oldnewthing/20060126-00/?p=32513/
@@ -472,7 +483,8 @@ func (w *window) draw(sync bool) {
 			Metric: cfg,
 		},
 		Sync: sync,
-	})
+	},
+	)
 }
 
 func (w *window) destroy() {
@@ -489,7 +501,8 @@ func (w *window) destroy() {
 func (w *window) NewContext() (Context, error) {
 	sort.Slice(drivers, func(i, j int) bool {
 		return drivers[i].priority < drivers[j].priority
-	})
+	},
+	)
 	var errs []string
 	for _, b := range drivers {
 		ctx, err := b.initializer(w)
@@ -499,7 +512,9 @@ func (w *window) NewContext() (Context, error) {
 		errs = append(errs, err.Error())
 	}
 	if len(errs) > 0 {
-		return nil, fmt.Errorf("NewContext: failed to create a GPU device, tried: %s", strings.Join(errs, ", "))
+		return nil, fmt.Errorf("NewContext: failed to create a GPU device, tried: %s",
+			strings.Join(errs, ", "),
+		)
 	}
 	return nil, errors.New("NewContext: no available GPU drivers")
 }
@@ -590,7 +605,9 @@ func (w *window) SetWindowMode(mode WindowMode) {
 		windows.SetWindowPlacement(w.hwnd, w.placement)
 		w.placement = nil
 		style := windows.GetWindowLong(w.hwnd)
-		windows.SetWindowLong(w.hwnd, windows.GWL_STYLE, style|windows.WS_OVERLAPPEDWINDOW)
+		windows.SetWindowLong(w.hwnd, windows.GWL_STYLE,
+			style|windows.WS_OVERLAPPEDWINDOW,
+		)
 		windows.SetWindowPos(w.hwnd, windows.HWND_TOPMOST,
 			0, 0, 0, 0,
 			windows.SWP_NOOWNERZORDER|windows.SWP_FRAMECHANGED,
@@ -601,7 +618,9 @@ func (w *window) SetWindowMode(mode WindowMode) {
 		}
 		w.placement = windows.GetWindowPlacement(w.hwnd)
 		style := windows.GetWindowLong(w.hwnd)
-		windows.SetWindowLong(w.hwnd, windows.GWL_STYLE, style&^windows.WS_OVERLAPPEDWINDOW)
+		windows.SetWindowLong(w.hwnd, windows.GWL_STYLE,
+			style&^windows.WS_OVERLAPPEDWINDOW,
+		)
 		mi := windows.GetMonitorInfo(w.hwnd)
 		windows.SetWindowPos(w.hwnd, 0,
 			mi.Monitor.Left, mi.Monitor.Top,

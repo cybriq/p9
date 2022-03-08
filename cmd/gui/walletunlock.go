@@ -11,13 +11,13 @@ import (
 	"golang.org/x/exp/shiny/materialdesign/icons"
 	"lukechampine.com/blake3"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/text"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
 
-	"github.com/p9c/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/interrupt"
 
-	"github.com/p9c/p9/pkg/gel"
-	"github.com/p9c/p9/pkg/p9icons"
+	"github.com/cybriq/p9/pkg/gel"
+	"github.com/cybriq/p9/pkg/p9icons"
 )
 
 func (wg *WalletGUI) unlockWallet(pass string) {
@@ -129,8 +129,7 @@ func (wg *WalletGUI) getWalletUnlockAppWidget() (a *gel.App) {
 			"home": wg.Page(
 				"home", gel.Widgets{
 					gel.WidgetSize{
-						Widget:
-						func(gtx l.Context) l.Dimensions {
+						Widget: func(gtx l.Context) l.Dimensions {
 							var dims l.Dimensions
 							return wg.Flex().
 								AlignMiddle().
@@ -144,7 +143,8 @@ func (wg *WalletGUI) getWalletUnlockAppWidget() (a *gel.App) {
 												AlignMiddle().
 												Rigid(
 													wg.Fill(
-														"DocBg", l.Center, wg.TextSize.V, 0,
+														"DocBg", l.Center,
+														wg.TextSize.V, 0,
 														wg.Inset(
 															0.5,
 															wg.Flex().
@@ -174,7 +174,9 @@ func (wg *WalletGUI) getWalletUnlockAppWidget() (a *gel.App) {
 																					Rigid(
 																						wg.Inset(
 																							0.5,
-																							gel.EmptySpace(0, 0),
+																							gel.EmptySpace(0,
+																								0,
+																							),
 																						).Fn,
 																					).
 																					Rigid(
@@ -184,10 +186,15 @@ func (wg *WalletGUI) getWalletUnlockAppWidget() (a *gel.App) {
 																				return dims
 																			},
 																		).
-																		Rigid(wg.Inset(0.5, gel.EmptySpace(0, 0)).Fn).
+																		Rigid(wg.Inset(0.5,
+																			gel.EmptySpace(0,
+																				0,
+																			),
+																		).Fn,
+																		).
 																		Rigid(
 																			func(gtx l.Context) l.
-																			Dimensions {
+																				Dimensions {
 																				gtx.Constraints.Max.
 																					X = dims.Size.X
 																				return wg.
@@ -195,7 +202,12 @@ func (wg *WalletGUI) getWalletUnlockAppWidget() (a *gel.App) {
 																					Fn(gtx)
 																			},
 																		).
-																		Rigid(wg.Inset(0.5, gel.EmptySpace(0, 0)).Fn).
+																		Rigid(wg.Inset(0.5,
+																			gel.EmptySpace(0,
+																				0,
+																			),
+																		).Fn,
+																		).
 																		Rigid(
 																			wg.Body1(
 																				fmt.Sprintf(

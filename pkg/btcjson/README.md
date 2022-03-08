@@ -1,7 +1,7 @@
 # btcjson
 
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/p9c/p9/btcjson)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/cybriq/p9/btcjson)
 
 package json implements concrete types for marshalling to and from the bitcoin
 JSON-RPC API. A comprehensive suite of tests is provided to ensure proper
@@ -14,7 +14,7 @@ projects needing to marshal to and from bitcoin JSON-RPC requests and responses.
 Note that although it's possible to use this package directly to implement an
 client, it is not recommended since it is only intended as an infrastructure
 package. Instead, RPC clients should use
-the [btcrpcclient](https://github.com/p9c/p9/rpcclient) package which provides
+the [btcrpcclient](https://github.com/cybriq/p9/rpcclient) package which provides
 a full blown RPC client with many features such as automatic connection
 management, websocket support, automatic notification re-registration on
 reconnect, and conversion from the raw underlying RPC types (strings, floats,
@@ -23,22 +23,22 @@ ints, etc) to higher-level types with many nice and useful properties.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/p9c/p9/btcjson
+$ go get -u github.com/cybriq/p9/btcjson
 ```
 
 ## Examples
 
-- [Marshal Command](http://godoc.org/github.com/p9c/p9/btcjson#example-MarshalCmd)  
+- [Marshal Command](http://godoc.org/github.com/cybriq/p9/btcjson#example-MarshalCmd)  
   Demonstrates how to create and marshal a command into a JSON-RPC request.
 
-- [Unmarshal Command](http://godoc.org/github.com/p9c/p9/btcjson#example-UnmarshalCmd)  
+- [Unmarshal Command](http://godoc.org/github.com/cybriq/p9/btcjson#example-UnmarshalCmd)  
   Demonstrates how to unmarshal a JSON-RPC request and then unmarshal the
   concrete request into a concrete command.
 
-- [Marshal Response](http://godoc.org/github.com/p9c/p9/btcjson#example-MarshalResponse)  
+- [Marshal Response](http://godoc.org/github.com/cybriq/p9/btcjson#example-MarshalResponse)  
   Demonstrates how to marshal a JSON-RPC response.
 
-- [Unmarshal Response](http://godoc.org/github.com/p9c/p9/btcjson#example-package--UnmarshalResponse)  
+- [Unmarshal Response](http://godoc.org/github.com/cybriq/p9/btcjson#example-package--UnmarshalResponse)  
   Demonstrates how to unmarshal a JSON-RPC response and then unmarshal the
   result field in the response to a concrete type.
 

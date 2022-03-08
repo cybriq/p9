@@ -7,10 +7,10 @@ import (
 	"reflect"
 	"strings"
 	"testing"
-	
+
 	"github.com/davecgh/go-spew/spew"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // mainNetGenesisHash is the hash of the first block in the block chain for the main network (genesis block).
@@ -319,7 +319,9 @@ func TestVarIntWireErrors(t *testing.T) {
 		// Force errors on 4-byte read/write.
 		{0x10000, []byte{0xfe}, pver, 2, io.ErrShortWrite, io.ErrUnexpectedEOF},
 		// Force errors on 8-byte read/write.
-		{0x100000000, []byte{0xff}, pver, 2, io.ErrShortWrite, io.ErrUnexpectedEOF},
+		{0x100000000, []byte{0xff}, pver, 2, io.ErrShortWrite,
+			io.ErrUnexpectedEOF,
+		},
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
@@ -451,7 +453,9 @@ func TestVarStringWire(t *testing.T) {
 		// Single byte varint + string
 		{"Test", "Test", append([]byte{0x04}, []byte("Test")...), pver},
 		// 2-byte varint + string
-		{str256, str256, append([]byte{0xfd, 0x00, 0x01}, []byte(str256)...), pver},
+		{str256, str256, append([]byte{0xfd, 0x00, 0x01}, []byte(str256)...),
+			pver,
+		},
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
@@ -628,7 +632,9 @@ func TestVarBytesWireErrors(t *testing.T) {
 		// Force errors on empty byte array.
 		{[]byte{}, []byte{0x00}, pver, 0, io.ErrShortWrite, io.EOF},
 		// Force error on single byte varint + byte array.
-		{[]byte{0x01, 0x02, 0x03}, []byte{0x04}, pver, 2, io.ErrShortWrite, io.ErrUnexpectedEOF},
+		{[]byte{0x01, 0x02, 0x03}, []byte{0x04}, pver, 2, io.ErrShortWrite,
+			io.ErrUnexpectedEOF,
+		},
 		// Force errors on 2-byte varint + byte array.
 		{bytes256, []byte{0xfd}, pver, 2, io.ErrShortWrite, io.ErrUnexpectedEOF},
 	}

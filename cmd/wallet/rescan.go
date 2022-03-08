@@ -1,13 +1,13 @@
 package wallet
 
 import (
-	"github.com/p9c/p9/pkg/log"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chainclient"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/wire"
-	"github.com/p9c/p9/pkg/wtxmgr"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chainclient"
+	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/wtxmgr"
 )
 
 // RescanProgressMsg reports the current progress made by a rescan for a set of
@@ -227,7 +227,8 @@ out:
 // Rescan begins a rescan for all active addresses and unspent outputs of a
 // wallet. This is intended to be used to sync a wallet back up to the current
 // best block in the main chain, and is considered an initial sync rescan.
-func (w *Wallet) Rescan(addrs []btcaddr.Address, unspent []wtxmgr.Credit) (e error) {
+func (w *Wallet) Rescan(addrs []btcaddr.Address, unspent []wtxmgr.Credit,
+) (e error) {
 	return w.rescanWithTarget(addrs, unspent, nil)
 }
 

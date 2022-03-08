@@ -1,7 +1,7 @@
 # wire
 
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/p9c/p9/wire)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/cybriq/p9/wire)
 
 Package wire implements the bitcoin wire protocol. A comprehensive suite of
 tests with 100% test coverage is provided to ensure proper functionality.
@@ -13,7 +13,7 @@ protocol level.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/p9c/p9/wire
+$ go get -u github.com/cybriq/p9/wire
 ```
 
 ## Bitcoin Message Overview

@@ -6,15 +6,15 @@ import (
 	"image"
 	"image/color"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/f32color"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/text"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
-	"github.com/p9c/p9/pkg/gel/gio/widget"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/f32color"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/widget"
 )
 
 type checkable struct {
@@ -29,7 +29,8 @@ type checkable struct {
 	uncheckedStateIcon *widget.Icon
 }
 
-func (c *checkable) layout(gtx layout.Context, checked, hovered bool) layout.Dimensions {
+func (c *checkable) layout(gtx layout.Context, checked, hovered bool,
+) layout.Dimensions {
 	var icon *widget.Icon
 	if checked {
 		icon = c.checkedStateIcon
@@ -56,32 +57,43 @@ func (c *checkable) layout(gtx layout.Context, checked, hovered bool) layout.Dim
 						clip.Circle{
 							Center: f32.Point{X: radius, Y: radius},
 							Radius: radius,
-						}.Op(gtx.Ops))
+						}.Op(gtx.Ops),
+					)
 
 					return dims
-				}),
+				},
+				),
 				layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-					return layout.UniformInset(unit.Dp(2)).Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-						size := gtx.Px(c.Size)
-						icon.Color = c.IconColor
-						if gtx.Queue == nil {
-							icon.Color = f32color.Disabled(icon.Color)
-						}
-						icon.Layout(gtx, unit.Px(float32(size)))
-						return layout.Dimensions{
-							Size: image.Point{X: size, Y: size},
-						}
-					})
-				}),
+					return layout.UniformInset(unit.Dp(2)).Layout(gtx,
+						func(gtx layout.Context) layout.Dimensions {
+							size := gtx.Px(c.Size)
+							icon.Color = c.IconColor
+							if gtx.Queue == nil {
+								icon.Color = f32color.Disabled(icon.Color)
+							}
+							icon.Layout(gtx, unit.Px(float32(size)))
+							return layout.Dimensions{
+								Size: image.Point{X: size, Y: size},
+							}
+						},
+					)
+				},
+				),
 			)
-		}),
+		},
+		),
 
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
-			return layout.UniformInset(unit.Dp(2)).Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-				paint.ColorOp{Color: c.Color}.Add(gtx.Ops)
-				return widget.Label{}.Layout(gtx, c.shaper, c.Font, c.TextSize, c.Label)
-			})
-		}),
+			return layout.UniformInset(unit.Dp(2)).Layout(gtx,
+				func(gtx layout.Context) layout.Dimensions {
+					paint.ColorOp{Color: c.Color}.Add(gtx.Ops)
+					return widget.Label{}.Layout(gtx, c.shaper, c.Font,
+						c.TextSize, c.Label,
+					)
+				},
+			)
+		},
+		),
 	)
 	pointer.Rect(image.Rectangle{Max: dims.Size}).Add(gtx.Ops)
 	return dims

@@ -3,15 +3,15 @@ package blockchain
 import (
 	"errors"
 	"fmt"
-	"github.com/p9c/p9/pkg/bits"
-	"github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/fork"
-	"github.com/p9c/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/bits"
+	"github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/log"
 
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/database"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/database"
 )
 
 // BehaviorFlags is a bitmask defining tweaks to the normal behavior when
@@ -44,7 +44,7 @@ const (
 func (b *BlockChain) ProcessBlock(
 	workerNumber uint32, candidateBlock *block.Block,
 	flags BehaviorFlags, blockHeight int32,
-) (bool, bool, error,) {
+) (bool, bool, error) {
 	T.Ln("blockchain.ProcessBlock", blockHeight, log.Caller("\nfrom", 1))
 	var prevBlock *block.Block
 	var e error
@@ -78,20 +78,28 @@ func (b *BlockChain) ProcessBlock(
 		return false, false, e
 	}
 	if exists {
-		str := ruleError(ErrDuplicateBlock, fmt.Sprintf("already have candidateBlock %v", bhwa(blockHeight).String()))
+		str := ruleError(ErrDuplicateBlock,
+			fmt.Sprintf("already have candidateBlock %v",
+				bhwa(blockHeight).String(),
+			),
+		)
 		E.Ln(str)
 		return false, false, str
 	}
 	// The candidateBlock must not already exist as an orphan.
 	if _, exists := b.orphans[*blockHash]; exists {
-		str := ruleError(ErrDuplicateBlock, fmt.Sprintf("already have candidateBlock (orphan)"))
+		str := ruleError(ErrDuplicateBlock,
+			fmt.Sprintf("already have candidateBlock (orphan)"),
+		)
 		E.Ln(str)
 		return false, false, str
 	}
 	// Perform preliminary sanity checks on the candidateBlock and its transactions.
 	var DoNotCheckPow bool
 	pl := fork.GetMinDiff(fork.GetAlgoName(algo, blockHeight), blockHeight)
-	T.F("powLimit %d %s %d %064x", algo, fork.GetAlgoName(algo, blockHeight), blockHeight, pl)
+	T.F("powLimit %d %s %d %064x", algo, fork.GetAlgoName(algo, blockHeight),
+		blockHeight, pl,
+	)
 	ph := &candidateBlock.WireBlock().Header.PrevBlock
 	pn := b.Index.LookupNode(ph)
 	if pn == nil {
@@ -102,7 +110,8 @@ func (b *BlockChain) ProcessBlock(
 	if pb == nil {
 		DoNotCheckPow = true
 	}
-	T.F("checkBlockSanity powLimit %d %s %d %064x ts %v", algo, fork.GetAlgoName(algo, blockHeight), blockHeight, pl,
+	T.F("checkBlockSanity powLimit %d %s %d %064x ts %v", algo,
+		fork.GetAlgoName(algo, blockHeight), blockHeight, pl,
 		pn.Header().Timestamp,
 	)
 	if e = checkBlockSanity(
@@ -134,7 +143,8 @@ func (b *BlockChain) ProcessBlock(
 		if blockHeader.Timestamp.Before(checkpointTime) {
 			str := fmt.Sprintf(
 				"candidateBlock %v has timestamp %v before last checkpoint timestamp %v",
-				bhwa(blockHeight).String(), blockHeader.Timestamp, checkpointTime,
+				bhwa(blockHeight).String(), blockHeader.Timestamp,
+				checkpointTime,
 			)
 			T.Ln(str)
 			return false, false, ruleError(ErrCheckpointTimeTooOld, str)

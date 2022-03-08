@@ -1,10 +1,10 @@
 package bloom
 
 import (
-	"github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // merkleBlock is used to house intermediate information needed to generate a wire.MsgMerkleBlock according to a filter.
@@ -63,7 +63,9 @@ func (m *merkleBlock) traverseAndBuild(height, pos uint32) {
 
 // NewMerkleBlock returns a new *wire.MsgMerkleBlock and an array of the matched transaction index numbers based on the
 // passed block and filter.
-func NewMerkleBlock(block *block.Block, filter *Filter) (*wire.MsgMerkleBlock, []uint32) {
+func NewMerkleBlock(block *block.Block, filter *Filter) (*wire.MsgMerkleBlock,
+	[]uint32,
+) {
 	numTx := uint32(len(block.Transactions()))
 	mBlock := merkleBlock{
 		numTx:       numTx,

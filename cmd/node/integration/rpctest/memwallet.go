@@ -6,20 +6,20 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/chainhash"
-	ec "github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/rpcclient"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/util/hdkeychain"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/chainhash"
+	ec "github.com/cybriq/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/rpcclient"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/util/hdkeychain"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 var (
@@ -152,7 +152,9 @@ func (m *memWallet) SetRPCClient(rpcClient *rpcclient.Client) {
 
 // IngestBlock is a call-back which is to be triggered each time a new block is connected to the main chain. It queues
 // the update for the chain syncer, calling the private version in sequential order.
-func (m *memWallet) IngestBlock(height int32, header *wire.BlockHeader, filteredTxns []*util.Tx) {
+func (m *memWallet) IngestBlock(height int32, header *wire.BlockHeader,
+	filteredTxns []*util.Tx,
+) {
 	// Append this new chain update to the end of the queue of new chain
 	// updates.
 	m.chainMtx.Lock()
@@ -488,7 +490,9 @@ func (m *memWallet) ConfirmedBalance() amt.Amount {
 }
 
 // keyToAddr maps the passed private to corresponding p2pkh address.
-func keyToAddr(key *ec.PrivateKey, net *chaincfg.Params) (btcaddr.Address, error) {
+func keyToAddr(key *ec.PrivateKey, net *chaincfg.Params) (btcaddr.Address,
+	error,
+) {
 	serializedKey := key.PubKey().SerializeCompressed()
 	pubKeyAddr, e := btcaddr.NewPubKey(serializedKey, net)
 	if e != nil {

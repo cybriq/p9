@@ -4,12 +4,12 @@ package gel
 
 import (
 	"image"
-	
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 )
 
 // Image is a widget that displays an image.

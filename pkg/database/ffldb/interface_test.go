@@ -18,14 +18,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/p9c/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/block"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 var (
@@ -38,7 +38,8 @@ var (
 )
 
 // loadBlocks loads the blocks contained in the tstdata directory and returns a slice of them.
-func loadBlocks(t *testing.T, dataFile string, network wire.BitcoinNet) ([]*block.Block, error) {
+func loadBlocks(t *testing.T, dataFile string, network wire.BitcoinNet,
+) ([]*block.Block, error) {
 	// Open the file that contains the blocks for reading.
 	fi, e := os.Open(dataFile)
 	if e != nil {
@@ -108,7 +109,9 @@ func loadBlocks(t *testing.T, dataFile string, network wire.BitcoinNet) ([]*bloc
 }
 
 // checkDbError ensures the passed error is a database.DBError with an error code that matches the passed  error code.
-func checkDbError(t *testing.T, testName string, gotErr error, wantErrCode database.ErrorCode) bool {
+func checkDbError(t *testing.T, testName string, gotErr error,
+	wantErrCode database.ErrorCode,
+) bool {
 	dbErr, ok := gotErr.(database.DBError)
 	if !ok {
 		t.Errorf(
@@ -180,7 +183,9 @@ func rollbackValues(values []keyPair) []keyPair {
 
 // testCursorKeyPair checks that the provide key and value match the expected keypair at the provided index. It also
 // ensures the index is in range for the provided slice of expected keypairs.
-func testCursorKeyPair(tc *testContext, k, v []byte, index int, values []keyPair) bool {
+func testCursorKeyPair(tc *testContext, k, v []byte, index int,
+	values []keyPair,
+) bool {
 	if index >= len(values) || index < 0 {
 		tc.t.Errorf(
 			"Cursor: exceeded the expected range of values - "+
@@ -210,7 +215,8 @@ func testCursorKeyPair(tc *testContext, k, v []byte, index int, values []keyPair
 
 // testGetValues checks that all of the provided key/value pairs can be retrieved from the database and the retrieved
 // values match the provided values.
-func testGetValues(tc *testContext, bucket database.Bucket, values []keyPair) bool {
+func testGetValues(tc *testContext, bucket database.Bucket, values []keyPair,
+) bool {
 	for _, item := range values {
 		gotValue := bucket.Get(item.key)
 		if !reflect.DeepEqual(gotValue, item.value) {
@@ -225,7 +231,8 @@ func testGetValues(tc *testContext, bucket database.Bucket, values []keyPair) bo
 }
 
 // testPutValues stores all of the provided key/value pairs in the provided bucket while checking for errors.
-func testPutValues(tc *testContext, bucket database.Bucket, values []keyPair) bool {
+func testPutValues(tc *testContext, bucket database.Bucket, values []keyPair,
+) bool {
 	for _, item := range values {
 		if e := bucket.Put(item.key, item.value); E.Chk(e) {
 			tc.t.Errorf("Put: unexpected error: %v", e)
@@ -236,7 +243,8 @@ func testPutValues(tc *testContext, bucket database.Bucket, values []keyPair) bo
 }
 
 // testDeleteValues removes all of the provided key/value pairs from the provided bucket.
-func testDeleteValues(tc *testContext, bucket database.Bucket, values []keyPair) bool {
+func testDeleteValues(tc *testContext, bucket database.Bucket, values []keyPair,
+) bool {
 	for _, item := range values {
 		if e := bucket.Delete(item.key); E.Chk(e) {
 			tc.t.Errorf("Delete: unexpected error: %v", e)
@@ -1948,7 +1956,9 @@ func testConcurrency(tc *testContext) bool {
 	)
 	// Consider it a failure if it took longer than half the time it would take with no concurrency.
 	if elapsed > sleepTime*time.Duration(numReaders/2) {
-		tc.t.Errorf("Concurrent views for same block did not appear to run simultaneously: elapsed %v", elapsed)
+		tc.t.Errorf("Concurrent views for same block did not appear to run simultaneously: elapsed %v",
+			elapsed,
+		)
 		return false
 	}
 	// Start up several concurrent readers for different blocks and wait for the results.
@@ -1962,7 +1972,9 @@ func testConcurrency(tc *testContext) bool {
 		}
 	}
 	elapsed = time.Since(startTime)
-	tc.t.Logf("%d concurrent reads of different blocks elapsed: %v", numReaders, elapsed)
+	tc.t.Logf("%d concurrent reads of different blocks elapsed: %v", numReaders,
+		elapsed,
+	)
 	// Consider it a failure if it took longer than half the time it would take with no concurrency.
 	if elapsed > sleepTime*time.Duration(numReaders/2) {
 		tc.t.Errorf(

@@ -3,9 +3,9 @@ package wallet
 import (
 	"strings"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pkg/rpchelp"
+
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/rpchelp"
 )
 
 func serverMethods() map[string]struct{} {
@@ -37,7 +37,9 @@ func TestRPCMethodHelpGeneration(t *testing.T) {
 		generatedDescs := LocaleHelpDescs[locale]()
 		for _, m := range rpchelp.Methods {
 			delete(svrMethods, m.Method)
-			helpText, e := btcjson.GenerateHelp(m.Method, rpchelp.HelpDescs[i].Descs, m.ResultTypes...)
+			helpText, e := btcjson.GenerateHelp(m.Method,
+				rpchelp.HelpDescs[i].Descs, m.ResultTypes...,
+			)
 			if e != nil {
 				t.Errorf("Cannot generate '%s' help for method '%s': missing description for '%s'",
 					locale, m.Method, e,

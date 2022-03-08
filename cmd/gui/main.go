@@ -13,31 +13,31 @@ import (
 	"github.com/niubaoshu/gotiny"
 	"github.com/tyler-smith/go-bip39"
 
-	"github.com/p9c/p9/pkg/log"
-	"github.com/p9c/p9/pkg/opts/meta"
-	"github.com/p9c/p9/pkg/opts/text"
-	"github.com/p9c/p9/pkg/chainrpc/p2padvt"
-	"github.com/p9c/p9/pkg/pipe"
-	"github.com/p9c/p9/pkg/transport"
-	"github.com/p9c/p9/pod/state"
+	"github.com/cybriq/p9/pkg/chainrpc/p2padvt"
+	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/opts/meta"
+	"github.com/cybriq/p9/pkg/opts/text"
+	"github.com/cybriq/p9/pkg/pipe"
+	"github.com/cybriq/p9/pkg/transport"
+	"github.com/cybriq/p9/pod/state"
 
 	uberatomic "go.uber.org/atomic"
 
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/interrupt"
 
-	"github.com/p9c/p9/pkg/gel"
-	"github.com/p9c/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/gel"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 
-	"github.com/p9c/p9/cmd/gui/cfg"
-	"github.com/p9c/p9/pkg/apputil"
-	"github.com/p9c/p9/pkg/rpcclient"
-	"github.com/p9c/p9/pkg/util/rununit"
+	"github.com/cybriq/p9/cmd/gui/cfg"
+	"github.com/cybriq/p9/pkg/apputil"
+	"github.com/cybriq/p9/pkg/rpcclient"
+	"github.com/cybriq/p9/pkg/util/rununit"
 )
 
 // Main is the entrypoint for the wallet GUI
@@ -52,7 +52,6 @@ func Main(cx *state.State) (e error) {
 		noWallet:   &noWallet,
 		otherNodes: make(map[uint64]*nodeSpec),
 		certs:      cx.Config.ReadCAFile(),
-
 	}
 	return wg.Run()
 }
@@ -181,17 +180,17 @@ func (wg *WalletGUI) Run() (e error) {
 	wg.node = wg.GetRunUnit(
 		"NODE", before, after,
 		append(options, "node")...,
-		// "node",
+	// "node",
 	)
 	wg.wallet = wg.GetRunUnit(
 		"WLLT", before, after,
 		append(options, "wallet")...,
-		// "wallet",
+	// "wallet",
 	)
 	wg.miner = wg.GetRunUnit(
 		"MINE", before, after,
 		append(options, "kopach")...,
-		// "wallet",
+	// "wallet",
 	)
 	// I.S(wg.node, wg.wallet, wg.miner)
 	wg.bools = wg.GetBools()
@@ -347,7 +346,9 @@ func (wg *WalletGUI) ShuffleSeed() {
 func (wg *WalletGUI) GetInputs() Inputs {
 	wg.ShuffleSeed()
 	return Inputs{
-		"receiveAmount": wg.Input("", "Amount", "DocText", "PanelBg", "DocBg", func(amt string) {}, func(string) {}),
+		"receiveAmount": wg.Input("", "Amount", "DocText", "PanelBg", "DocBg",
+			func(amt string) {}, func(string) {},
+		),
 		"receiveMessage": wg.Input(
 			"",
 			"Title",
@@ -367,7 +368,9 @@ func (wg *WalletGUI) GetInputs() Inputs {
 			func(amt string) {},
 			func(string) {},
 		),
-		"sendAmount": wg.Input("", "Amount", "DocText", "PanelBg", "DocBg", func(amt string) {}, func(string) {}),
+		"sendAmount": wg.Input("", "Amount", "DocText", "PanelBg", "DocBg",
+			func(amt string) {}, func(string) {},
+		),
 		"sendMessage": wg.Input(
 			"",
 			"Title",
@@ -388,14 +391,16 @@ func (wg *WalletGUI) GetInputs() Inputs {
 			func(string) {},
 		),
 		"walletWords": wg.Input(
-			/*wg.createWords*/ "", "wallet word seed", "DocText", "DocBg", "PanelBg", func(string) {},
+			/*wg.createWords*/ "", "wallet word seed", "DocText", "DocBg",
+			"PanelBg", func(string) {},
 			func(seedWords string) {
 				wg.createMatch = seedWords
 				wg.Invalidate()
 			},
 		),
 		"walletRestore": wg.Input(
-			/*wg.createWords*/ "", "enter seed to restore", "DocText", "DocBg", "PanelBg", func(string) {},
+			/*wg.createWords*/ "", "enter seed to restore", "DocText", "DocBg",
+			"PanelBg", func(string) {},
 			func(seedWords string) {
 				var e error
 				wg.createMatch = seedWords
@@ -511,7 +516,8 @@ func (wg *WalletGUI) GetRunUnit(
 	argsCopy := make([]string, len(args))
 	copy(argsCopy, args)
 	return rununit.New(name, before, after, pipe.SimpleLog(name),
-		pipe.FilterNone, wg.quit, argsCopy...)
+		pipe.FilterNone, wg.quit, argsCopy...,
+	)
 }
 
 func (wg *WalletGUI) GetLists() (o ListMap) {

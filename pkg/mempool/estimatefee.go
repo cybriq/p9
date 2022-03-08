@@ -5,18 +5,18 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/block"
 	"io"
 	"math"
 	"math/rand"
 	"sort"
 	"strings"
 	"sync"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/mining"
-	"github.com/p9c/p9/pkg/util"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/mining"
+	"github.com/cybriq/p9/pkg/util"
 )
 
 // DUOPerKilobyte is number with units of parallelcoins per kilobyte.

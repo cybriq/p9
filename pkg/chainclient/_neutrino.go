@@ -3,23 +3,23 @@ package chainclient
 import (
 	"errors"
 	"fmt"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 	"sync"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
-	sac "github.com/p9c/p9/cmd/spv"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/gcs"
-	"github.com/p9c/p9/pkg/gcs/builder"
-	"github.com/p9c/p9/pkg/rpcclient"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/wire"
-	"github.com/p9c/p9/pkg/wtxmgr"
+
+	"github.com/cybriq/p9/pkg/qu"
+
+	sac "github.com/cybriq/p9/cmd/spv"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/gcs"
+	"github.com/cybriq/p9/pkg/gcs/builder"
+	"github.com/cybriq/p9/pkg/rpcclient"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/wtxmgr"
 )
 
 // NeutrinoClient is an implementation of the btcwallet chainclient.Interface interface.
@@ -119,7 +119,9 @@ func (s *NeutrinoClient) GetBlockHeight(hash *chainhash.Hash) (int32, error) {
 }
 
 // GetBestBlock replicates the RPC client's GetBestBlock command.
-func (s *NeutrinoClient) GetBestBlock() (h *chainhash.Hash, height int32, e error) {
+func (s *NeutrinoClient) GetBestBlock() (h *chainhash.Hash, height int32,
+	e error,
+) {
 	var chainTip *waddrmgr.BlockStamp
 	chainTip, e = s.CS.BestBlock()
 	if e != nil {
@@ -153,7 +155,8 @@ func (s *NeutrinoClient) GetBlockHeader(
 }
 
 // SendRawTransaction replicates the RPC client's SendRawTransaction command.
-func (s *NeutrinoClient) SendRawTransaction(tx *wire.MsgTx, allowHighFees bool) (
+func (s *NeutrinoClient) SendRawTransaction(tx *wire.MsgTx, allowHighFees bool,
+) (
 	*chainhash.Hash, error,
 ) {
 	e := s.CS.SendTransaction(tx)
@@ -262,7 +265,9 @@ func buildFilterBlocksWatchList(req *FilterBlocksRequest) ([][]byte, error) {
 
 // pollCFilter attempts to fetch a CFilter from the neutrino client. This is used to get around the fact that the filter
 // headers may lag behind the highest known block header.
-func (s *NeutrinoClient) pollCFilter(hash *chainhash.Hash) (filter *gcs.Filter, e error) {
+func (s *NeutrinoClient) pollCFilter(hash *chainhash.Hash) (filter *gcs.Filter,
+	e error,
+) {
 	var (
 		count int
 	)

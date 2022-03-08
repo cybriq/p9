@@ -3,16 +3,16 @@ package job
 //
 // import (
 // 	"errors"
-// 	"github.com/p9c/p9/pkg/chaincfg"
+// 	"github.com/cybriq/p9/pkg/chaincfg"
 // 	"time"
 //
 // 	"github.com/niubaoshu/gotiny"
 //
-// 	"github.com/p9c/p9/pkg/blockchain"
-// 	"github.com/p9c/p9/pkg/chainhash"
-// 	"github.com/p9c/p9/pkg/blockchain/fork"
-// 	"github.com/p9c/p9/pkg/wire"
-// 	"github.com/p9c/p9/pkg/util"
+// 	"github.com/cybriq/p9/pkg/blockchain"
+// 	"github.com/cybriq/p9/pkg/chainhash"
+// 	"github.com/cybriq/p9/pkg/blockchain/fork"
+// 	"github.com/cybriq/p9/pkg/wire"
+// 	"github.com/cybriq/p9/pkg/util"
 // )
 //
 

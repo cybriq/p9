@@ -4,10 +4,10 @@ import (
 	"io"
 	"os"
 
-	"github.com/p9c/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/log"
 
-	"github.com/p9c/p9/pkg/interrupt"
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/qu"
 )
 
 // Consume listens for messages from a child process over a stdio pipe.

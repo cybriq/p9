@@ -5,10 +5,10 @@ import (
 	"io"
 	"reflect"
 	"testing"
-	
+
 	"github.com/davecgh/go-spew/spew"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // TestGetBlocks tests the MsgGetBlocks API.
@@ -332,15 +332,25 @@ func TestGetBlocksWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in protocol version.
-		{baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 0,
+			io.ErrShortWrite, io.EOF,
+		},
 		// Force error in block locator hash count.
-		{baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 4, io.ErrShortWrite, io.EOF},
+		{baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 4,
+			io.ErrShortWrite, io.EOF,
+		},
 		// Force error in block locator hashes.
-		{baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 5, io.ErrShortWrite, io.EOF},
+		{baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 5,
+			io.ErrShortWrite, io.EOF,
+		},
 		// Force error in stop hash.
-		{baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 69, io.ErrShortWrite, io.EOF},
+		{baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 69,
+			io.ErrShortWrite, io.EOF,
+		},
 		// Force error with greater than max block locator hashes.
-		{maxGetBlocks, maxGetBlocksEncoded, pver, BaseEncoding, 7, wireErr, wireErr},
+		{maxGetBlocks, maxGetBlocksEncoded, pver, BaseEncoding, 7, wireErr,
+			wireErr,
+		},
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {

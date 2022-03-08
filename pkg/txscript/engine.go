@@ -5,12 +5,12 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"math/big"
-	
-	"github.com/p9c/p9/pkg/wire"
-	
+
+	"github.com/cybriq/p9/pkg/wire"
+
 	"go.uber.org/atomic"
 
-	ec "github.com/p9c/p9/pkg/ecc"
+	ec "github.com/cybriq/p9/pkg/ecc"
 )
 
 // ScriptFlags is a bitmask defining additional operations or tests that will be done when executing a script pair.
@@ -172,11 +172,14 @@ func (vm *Engine) executeOpcode(pop *parsedOpcode) (e error) {
 // to provide a valid offset.
 func (vm *Engine) disasm(scriptIdx int, scriptOff int) string {
 	if scriptIdx >= len(vm.scripts) {
-		return fmt.Sprintf("disasm array index out of bounds ERR: %02x:%04x", scriptIdx, scriptOff)
+		return fmt.Sprintf("disasm array index out of bounds ERR: %02x:%04x",
+			scriptIdx, scriptOff,
+		)
 	}
 	if scriptOff >= len(vm.scripts[scriptIdx]) {
 		return fmt.Sprintf(
-			"disasm scriptoff array index out of bounds ERR: %02x:%04x", scriptIdx, scriptOff,
+			"disasm scriptoff array index out of bounds ERR: %02x:%04x",
+			scriptIdx, scriptOff,
 		)
 	}
 	return fmt.Sprintf(
@@ -232,7 +235,8 @@ func (vm *Engine) verifyWitnessProgram(witness [][]byte) (e error) {
 			// pubkey.
 			if len(witness) != 2 {
 				e := fmt.Sprintf(
-					"should have exactly two items in witness, instead have %v", len(witness),
+					"should have exactly two items in witness, instead have %v",
+					len(witness),
 				)
 				return scriptError(ErrWitnessProgramMismatch, e)
 			}
@@ -253,7 +257,8 @@ func (vm *Engine) verifyWitnessProgram(witness [][]byte) (e error) {
 			// Additionally, The witness stack MUST NOT be empty at this point.
 			if len(witness) == 0 {
 				return scriptError(
-					ErrWitnessProgramEmpty, "witness program empty passed empty witness",
+					ErrWitnessProgramEmpty,
+					"witness program empty passed empty witness",
 				)
 			}
 			// Obtain the witness script which should be the last element in the passed

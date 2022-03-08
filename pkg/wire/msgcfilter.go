@@ -3,8 +3,8 @@ package wire
 import (
 	"fmt"
 	"io"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // FilterType is used to represent a filter type.
@@ -31,7 +31,8 @@ type MsgCFilter struct {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver.
 // This is part of the Message interface implementation.
-func (msg *MsgCFilter) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding) (e error) {
+func (msg *MsgCFilter) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding,
+) (e error) {
 	// Read filter type
 	if e = readElement(r, &msg.FilterType); E.Chk(e) {
 		return
@@ -47,7 +48,8 @@ func (msg *MsgCFilter) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding) (e
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This
 // is part of the Message interface implementation.
-func (msg *MsgCFilter) BtcEncode(w io.Writer, pver uint32, _ MessageEncoding) (e error) {
+func (msg *MsgCFilter) BtcEncode(w io.Writer, pver uint32, _ MessageEncoding,
+) (e error) {
 	size := len(msg.Data)
 	if size > MaxCFilterDataSize {
 		str := fmt.Sprintf(

@@ -15,14 +15,14 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 
-	"github.com/p9c/p9/pkg/gel/gio/internal/fling"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/fling"
 )
 
 // The duration is somewhat arbitrary.
@@ -164,9 +164,11 @@ func (c *Click) Events(q event.Queue) []ClickEvent {
 				}
 				c.clickedAt = e.Time
 				events = append(events, ClickEvent{
-					Type: TypeClick, Position: e.Position, Source: e.Source, Modifiers: e.Modifiers,
-					Button: e.Buttons, NumClicks: c.clicks,
-				})
+					Type: TypeClick, Position: e.Position, Source: e.Source,
+					Modifiers: e.Modifiers,
+					Button:    e.Buttons, NumClicks: c.clicks,
+				},
+				)
 			} else {
 				events = append(events, ClickEvent{Type: TypeCancel})
 			}
@@ -192,8 +194,10 @@ func (c *Click) Events(q event.Queue) []ClickEvent {
 			}
 			c.pressed = true
 			events = append(events, ClickEvent{
-				Type: TypePress, Position: e.Position, Source: e.Source, Modifiers: e.Modifiers, Button: e.Buttons,
-			})
+				Type: TypePress, Position: e.Position, Source: e.Source,
+				Modifiers: e.Modifiers, Button: e.Buttons,
+			},
+			)
 		case pointer.Leave:
 			if !c.pressed {
 				c.pid = e.PointerID
@@ -236,7 +240,8 @@ func (s *Scroll) Stop() {
 
 // Scroll detects the scrolling distance from the available events and
 // ongoing fling gestures.
-func (s *Scroll) Scroll(cfg unit.Metric, q event.Queue, t time.Time, axis Axis) int {
+func (s *Scroll) Scroll(cfg unit.Metric, q event.Queue, t time.Time, axis Axis,
+) int {
 	if s.axis != axis {
 		s.axis = axis
 		return 0
@@ -340,7 +345,8 @@ func (d *Drag) Add(ops *op.Ops) {
 }
 
 // Events returns the next drag events, if any.
-func (d *Drag) Events(cfg unit.Metric, q event.Queue, axis Axis) []pointer.Event {
+func (d *Drag) Events(cfg unit.Metric, q event.Queue, axis Axis,
+) []pointer.Event {
 	var events []pointer.Event
 	for _, e := range q.Events(d) {
 		e, ok := e.(pointer.Event)

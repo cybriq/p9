@@ -5,8 +5,8 @@ package gpu
 import (
 	"fmt"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/ops"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/ops"
 )
 
 type resourceCache struct {

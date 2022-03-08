@@ -27,17 +27,17 @@ import (
 
 	"lukechampine.com/blake3"
 
-	"github.com/p9c/p9/pkg/log"
-	"github.com/p9c/p9/pkg/apputil"
-	"github.com/p9c/p9/pkg/constant"
-	"github.com/p9c/p9/pkg/opts/binary"
-	"github.com/p9c/p9/pkg/opts/cmds"
-	"github.com/p9c/p9/pkg/opts/duration"
-	"github.com/p9c/p9/pkg/opts/float"
-	"github.com/p9c/p9/pkg/opts/integer"
-	"github.com/p9c/p9/pkg/opts/list"
-	"github.com/p9c/p9/pkg/opts/opt"
-	"github.com/p9c/p9/pkg/opts/text"
+	"github.com/cybriq/p9/pkg/apputil"
+	"github.com/cybriq/p9/pkg/constant"
+	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/opts/binary"
+	"github.com/cybriq/p9/pkg/opts/cmds"
+	"github.com/cybriq/p9/pkg/opts/duration"
+	"github.com/cybriq/p9/pkg/opts/float"
+	"github.com/cybriq/p9/pkg/opts/integer"
+	"github.com/cybriq/p9/pkg/opts/list"
+	"github.com/cybriq/p9/pkg/opts/opt"
+	"github.com/cybriq/p9/pkg/opts/text"
 )
 
 // Configs is the source location for the Config items, which is used to generate the Config struct
@@ -105,7 +105,9 @@ func (c *Config) Initialize(hf func(ifc interface{}) error) (e error) {
 				if c.ConfigFile.V() == c.ConfigFile.Def {
 					e = c.ConfigFile.Set(filepath.Join(datadir, "pod.json"))
 				}
-				c.ConfigFile.Def = filepath.Join(datadir, constant.PodConfigFilename)
+				c.ConfigFile.Def = filepath.Join(datadir,
+					constant.PodConfigFilename,
+				)
 				if c.RPCKey.V() == c.RPCKey.Def {
 					e = c.RPCKey.Set(filepath.Join(datadir, "rpc.key"))
 				}
@@ -121,9 +123,14 @@ func (c *Config) Initialize(hf func(ifc interface{}) error) (e error) {
 		if options[i].Name() == "network" {
 			I.Ln("network was set", optVals[i])
 			if c.WalletFile.V() == c.WalletFile.Def {
-				_, e = c.WalletFile.ReadInput(filepath.Join(datadir, optVals[i], "wallet.db"))
+				_, e = c.WalletFile.ReadInput(filepath.Join(datadir, optVals[i],
+					"wallet.db",
+				),
+				)
 			}
-			c.WalletFile.Def = filepath.Join(datadir, optVals[i], constant.DbName)
+			c.WalletFile.Def = filepath.Join(datadir, optVals[i],
+				constant.DbName,
+			)
 			if c.LogDir.V() == c.LogDir.Def {
 				_, e = c.LogDir.ReadInput(filepath.Join(datadir, optVals[i]))
 			}
@@ -153,7 +160,8 @@ func (c *Config) Initialize(hf func(ifc interface{}) error) (e error) {
 				datadir = strings.Replace(datadir, "~", homeDir, 1)
 			}
 
-			if resolvedConfigPath, e = filepath.Abs(filepath.Clean(filepath.Join(datadir, constant.PodConfigFilename,
+			if resolvedConfigPath, e = filepath.Abs(filepath.Clean(filepath.Join(datadir,
+				constant.PodConfigFilename,
 			),
 			),
 			); E.Chk(e) {
@@ -236,7 +244,7 @@ func (c *Config) WriteToFile(filename string) (e error) {
 	I.S(c.MulticastPass.Bytes())
 	wpp := c.WalletPass.Bytes()
 	wp := make([]byte, len(wpp))
-	copy(wp,wpp)
+	copy(wp, wpp)
 	if len(wp) > 0 {
 		bhb := blake3.Sum256(wpp)
 		bh := hex.EncodeToString(bhb[:])
@@ -434,9 +442,13 @@ func (c *Config) processCommandlineArgs(args []string) (
 	var commandsStart, commandsEnd int = -1, -1
 	var found, helpFound bool
 	for i := range args {
-		T.Ln("checking for commands:", args[i], commandsStart, commandsEnd, "current arg index:", i)
+		T.Ln("checking for commands:", args[i], commandsStart, commandsEnd,
+			"current arg index:", i,
+		)
 		var depth, dist int
-		if found, depth, dist, cm, e = c.Commands.Find(args[i], depth, dist, false); E.Chk(e) {
+		if found, depth, dist, cm, e = c.Commands.Find(args[i], depth, dist,
+			false,
+		); E.Chk(e) {
 			continue
 		}
 		if cm != nil {
@@ -459,23 +471,29 @@ func (c *Config) processCommandlineArgs(args []string) (
 			}
 			if oc, ok := commands[depth]; ok {
 				if !helpFound {
-					e = fmt.Errorf("second command found at same depth '%s' and '%s'", oc.Name, cm.Name)
+					e = fmt.Errorf("second command found at same depth '%s' and '%s'",
+						oc.Name, cm.Name,
+					)
 					return
 				} else {
 					// if this is a command match after help is found it is a
 					// help command, resume the search
 					if cmdd, ok := commands[depth]; ok {
 						I.Ln("base level command is already occupied by",
-							cmdd.Name+"; marking end of commands")
+							cmdd.Name+"; marking end of commands",
+						)
 						// commandsEnd--
-						T.Ln("commandStart", commandsStart, commandsEnd, args[commandsStart:commandsEnd])
+						T.Ln("commandStart", commandsStart, commandsEnd,
+							args[commandsStart:commandsEnd],
+						)
 						break
 					}
 					I.Ln("found help subcommand:", cm.Name, depth)
 					depth--
 					dist++
 					if found, depth, dist, cm, e = c.Commands.Find(args[i],
-						depth, dist, true); E.Chk(e) {
+						depth, dist, true,
+					); E.Chk(e) {
 						I.Ln("we didn't attach this help command")
 						continue
 					}
@@ -483,14 +501,20 @@ func (c *Config) processCommandlineArgs(args []string) (
 				}
 			}
 			commandsEnd = i + 1
-			T.Ln("commandStart", commandsStart, commandsEnd, args[commandsStart:commandsEnd])
-			T.Ln("found command", cm.Name, "argument number", i, "at depth", depth, "distance", dist)
+			T.Ln("commandStart", commandsStart, commandsEnd,
+				args[commandsStart:commandsEnd],
+			)
+			T.Ln("found command", cm.Name, "argument number", i, "at depth",
+				depth, "distance", dist,
+			)
 			commands[depth] = *cm
 		} else {
 			// commandsStart=i+1
 			// commandsEnd=i+1
 			// T.Ln("not found:", args[i], "commandStart", commandsStart, commandsEnd, args[commandsStart:commandsEnd])
-			T.Ln("argument", args[i], "is not a command", commandsStart, commandsEnd)
+			T.Ln("argument", args[i], "is not a command", commandsStart,
+				commandsEnd,
+			)
 			c.FoundArgs = append(c.FoundArgs, args[i])
 		}
 	}
@@ -519,7 +543,9 @@ func (c *Config) processCommandlineArgs(args []string) (
 				cms = append(cms, commands[i].Name)
 			}
 			if cmds[0] != 1 {
-				e = fmt.Errorf("commands must include base level item for disambiguation %v", cms)
+				e = fmt.Errorf("commands must include base level item for disambiguation %v",
+					cms,
+				)
 			}
 			prev := cmds[0]
 			for i := range cmds {
@@ -537,7 +563,9 @@ func (c *Config) processCommandlineArgs(args []string) (
 					}
 				}
 				if !found {
-					e = fmt.Errorf("multiple commands are not a path on the command tree %v", cms)
+					e = fmt.Errorf("multiple commands are not a path on the command tree %v",
+						cms,
+					)
 					return
 				}
 			}
@@ -573,7 +601,9 @@ func (c *Config) processCommandlineArgs(args []string) (
 			var val string
 			var o opt.Option
 			if o, val, e = c.GetOption(args[i]); E.Chk(e) {
-				e = fmt.Errorf("argument %d: '%s' lacks a valid opt prefix", i, args[i])
+				e = fmt.Errorf("argument %d: '%s' lacks a valid opt prefix", i,
+					args[i],
+				)
 				return
 			}
 			if _, e = o.ReadInput(val); E.Chk(e) {
@@ -584,7 +614,9 @@ func (c *Config) processCommandlineArgs(args []string) (
 			optVals = append(optVals, val)
 		}
 	}
-	T.Ln("options to pass to child processes to match config:", args[:commandsStart])
+	T.Ln("options to pass to child processes to match config:",
+		args[:commandsStart],
+	)
 
 	if len(cmds) < 1 {
 		cmds = []int{0}
@@ -756,7 +788,10 @@ func (c *Config) GetHelp(hf func(ifc interface{}) error) {
 					case *duration.Opt:
 						def = fmt.Sprint(ii.Def)
 					}
-					descs[meta.Group] += oo + fmt.Sprintf(strings.Repeat(" ", 32-nrunes)+"%s, default: %s\n", meta.Description, def)
+					descs[meta.Group] += oo + fmt.Sprintf(strings.Repeat(" ",
+						32-nrunes,
+					)+"%s, default: %s\n", meta.Description, def,
+					)
 					return true
 				},
 				)
@@ -776,7 +811,8 @@ func (c *Config) GetHelp(hf func(ifc interface{}) error) {
 				return
 			},
 			Parent: &helpCommand,
-		})
+		},
+		)
 		return true
 	}, 0, 0,
 	)
@@ -789,7 +825,9 @@ func getAllOptionStrings(c *Config) (s map[string][]string, e error) {
 	if c.ForEach(func(ifc opt.Option) bool {
 		md := ifc.GetMetadata()
 		if _, ok := s[ifc.Name()]; ok {
-			e = fmt.Errorf("conflicting opt names: %v %v", ifc.GetAllOptionStrings(), s[ifc.Name()])
+			e = fmt.Errorf("conflicting opt names: %v %v",
+				ifc.GetAllOptionStrings(), s[ifc.Name()],
+			)
 			return false
 		}
 		s[ifc.Name()] = md.GetAllOptionStrings()

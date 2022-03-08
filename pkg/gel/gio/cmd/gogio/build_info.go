@@ -85,10 +85,18 @@ func getLdFlags(appID string) string {
 		ldflags = append(ldflags, strings.Split(extra, " ")...)
 	}
 	// Pass appID along, to be used for logging on platforms like Android.
-	ldflags = append(ldflags, fmt.Sprintf("-X github.com/p9c/p9/pkg/gel/gio/app/internal/log.appID=%s", appID))
+	ldflags = append(ldflags,
+		fmt.Sprintf("-X github.com/cybriq/p9/pkg/gel/gio/app/internal/log.appID=%s",
+			appID,
+		),
+	)
 	// Pass along all remaining arguments to the app.
 	if appArgs := flag.Args()[1:]; len(appArgs) > 0 {
-		ldflags = append(ldflags, fmt.Sprintf("-X github.com/p9c/p9/pkg/gel/gio/app.extraArgs=%s", strings.Join(appArgs, "|")))
+		ldflags = append(ldflags,
+			fmt.Sprintf("-X github.com/cybriq/p9/pkg/gel/gio/app.extraArgs=%s",
+				strings.Join(appArgs, "|"),
+			),
+		)
 	}
 	if m := *linkMode; m != "" {
 		ldflags = append(ldflags, "-linkmode="+m)
@@ -102,7 +110,10 @@ type packageMetadata struct {
 }
 
 func getPkgMetadata(pkgPath string) (*packageMetadata, error) {
-	pkgImportPath, err := runCmd(exec.Command("go", "list", "-f", "{{.ImportPath}}", pkgPath))
+	pkgImportPath, err := runCmd(exec.Command("go", "list", "-f",
+		"{{.ImportPath}}", pkgPath,
+	),
+	)
 	if err != nil {
 		return nil, err
 	}

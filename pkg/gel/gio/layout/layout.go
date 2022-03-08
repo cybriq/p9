@@ -5,9 +5,9 @@ package layout
 import (
 	"image"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 )
 
 // Constraints represent the minimum and maximum size of a widget.
@@ -264,9 +264,13 @@ func (a Axis) crossConstraint(cs Constraints) (int, int) {
 // constraints returns the constraints for axis a.
 func (a Axis) constraints(mainMin, mainMax, crossMin, crossMax int) Constraints {
 	if a == Horizontal {
-		return Constraints{Min: image.Pt(mainMin, crossMin), Max: image.Pt(mainMax, crossMax)}
+		return Constraints{Min: image.Pt(mainMin, crossMin),
+			Max: image.Pt(mainMax, crossMax),
+		}
 	}
-	return Constraints{Min: image.Pt(crossMin, mainMin), Max: image.Pt(crossMax, mainMax)}
+	return Constraints{Min: image.Pt(crossMin, mainMin),
+		Max: image.Pt(crossMax, mainMax),
+	}
 }
 
 func (a Axis) String() string {

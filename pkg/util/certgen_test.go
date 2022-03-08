@@ -6,8 +6,8 @@ import (
 	"net"
 	"testing"
 	"time"
-	
-	"github.com/p9c/p9/pkg/util"
+
+	"github.com/cybriq/p9/pkg/util"
 	// "github.com/davecgh/go-spew/spew"
 )
 
@@ -87,7 +87,9 @@ func TestNewTLSCertPair(t *testing.T) {
 	}
 	for ipStr, count := range ipCounts {
 		if count != 1 {
-			t.Errorf("ip %s appears %d times in certificate", net.IP(ipStr), count)
+			t.Errorf("ip %s appears %d times in certificate", net.IP(ipStr),
+				count,
+			)
 		}
 	}
 	// Ensure the cert can be use for the intended purposes.

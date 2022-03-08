@@ -3,11 +3,11 @@ package rununit
 import (
 	uberatomic "go.uber.org/atomic"
 
-	"github.com/p9c/p9/pkg/log"
-	"github.com/p9c/p9/pkg/pipe"
+	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/pipe"
 
-	"github.com/p9c/p9/pkg/interrupt"
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/qu"
 )
 
 // RunUnit handles correctly starting and stopping child processes that have StdConn pipe logging enabled, allowing
@@ -54,7 +54,9 @@ func New(
 						}
 					}
 					// quit from rununit's quit, which closes after the main quit triggers stopping in the watcher loop
-					r.worker = pipe.LogConsume(r.quit, logger, pkgFilter, args...)
+					r.worker = pipe.LogConsume(r.quit, logger, pkgFilter,
+						args...,
+					)
 					// D.S(r.worker)
 					pipe.Start(r.worker)
 					r.running.Store(true)

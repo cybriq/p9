@@ -3,8 +3,8 @@ package base58_test
 import (
 	"bytes"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/base58"
+
+	"github.com/cybriq/p9/pkg/base58"
 )
 
 func BenchmarkBase58Encode(b *testing.B) {

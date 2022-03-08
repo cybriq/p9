@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build linux || freebsd || windows || openbsd
 // +build linux freebsd windows openbsd
 
 package headless
 
 import (
-	"github.com/p9c/p9/pkg/gel/gio/internal/egl"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/egl"
 )
 
 func newGLContext() (context, error) {

@@ -3,8 +3,8 @@
 package headless
 
 import (
-	"github.com/p9c/p9/pkg/gel/gio/gpu"
-	_ "github.com/p9c/p9/pkg/gel/gio/internal/cocoainit"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu"
+	_ "github.com/cybriq/p9/pkg/gel/gio/internal/cocoainit"
 )
 
 /*

@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
-	"github.com/p9c/p9/pkg/pipe"
+
+	"github.com/cybriq/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/pipe"
 )
 
 func main() {

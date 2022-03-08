@@ -2,13 +2,13 @@ package mempool
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/amt"
 	"time"
-	
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -46,13 +46,14 @@ const (
 // calcMinRequiredTxRelayFee returns the minimum transaction fee required for a
 // transaction with the passed serialized size to be accepted into the memory
 // pool and relayed.
-func calcMinRequiredTxRelayFee(serializedSize int64, minRelayTxFee amt.Amount) int64 {
+func calcMinRequiredTxRelayFee(serializedSize int64, minRelayTxFee amt.Amount,
+) int64 {
 	// Calculate the minimum fee for a transaction to be allowed into the mempool
 	// and relayed by scaling the base fee ( which is the minimum free transaction
 	// relay fee). minTxRelayFee is in Satoshi/kB so multiply by serializedSize (
 	// which is in bytes) and divide by 1000 to get minimum Satoshis.
 	minFee := (serializedSize * int64(minRelayTxFee)) / 1000
-	
+
 	if minFee == 0 && minRelayTxFee > 0 {
 		minFee = int64(minRelayTxFee)
 	}
@@ -74,7 +75,8 @@ func calcMinRequiredTxRelayFee(serializedSize int64, minRelayTxFee amt.Amount) i
 // not perform those checks because the script engine already does this more
 // accurately and concisely via the txscript. ScriptVerifyCleanStack and
 // txscript.ScriptVerifySigPushOnly flags.
-func checkInputsStandard(tx *util.Tx, utxoView *blockchain.UtxoViewpoint) (e error) {
+func checkInputsStandard(tx *util.Tx, utxoView *blockchain.UtxoViewpoint,
+) (e error) {
 	// NOTE: The reference implementation also does a coinbase check here, but
 	// coinbases have already been rejected prior to calling this function so no
 	// need to recheck.
@@ -112,7 +114,8 @@ func checkInputsStandard(tx *util.Tx, utxoView *blockchain.UtxoViewpoint) (e err
 // standard public key script is one that is a recognized form, and for
 // multi-signature scripts only contains from 1 to maxStandardMultiSigKeys
 // public keys.
-func checkPkScriptStandard(pkScript []byte, scriptClass txscript.ScriptClass) (e error) {
+func checkPkScriptStandard(pkScript []byte, scriptClass txscript.ScriptClass,
+) (e error) {
 	switch scriptClass {
 	case txscript.MultiSigTy:
 		numPubKeys, numSigs, e := txscript.CalcMultiSigStats(pkScript)

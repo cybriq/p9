@@ -2,21 +2,21 @@ package mempool
 
 import (
 	"encoding/hex"
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/btcaddr"
 	"reflect"
 	"runtime"
 	"sync"
 	"testing"
 	"time"
-	
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // fakeChain is used by the pool harness to provide generated test utxos and a current faked chain height to the pool
@@ -31,7 +31,9 @@ type fakeChain struct {
 // FetchUtxoView loads utxo details about the inputs referenced by the passed transaction from the point of view of the
 // fake chain. It also attempts to fetch the utxos for the outputs of the transaction itself so the returned view can be
 // examined for duplicate transactions. This function is safe for concurrent access however the returned view is NOT.
-func (s *fakeChain) FetchUtxoView(tx *util.Tx) (*blockchain.UtxoViewpoint, error) {
+func (s *fakeChain) FetchUtxoView(tx *util.Tx) (*blockchain.UtxoViewpoint,
+	error,
+) {
 	s.RLock()
 	defer s.RUnlock()
 	// All entries are cloned to ensure modifications to the returned view do not affect the fake chain's view. Add an
@@ -122,7 +124,9 @@ type poolHarness struct {
 // CreateCoinbaseTx returns a coinbase transaction with the requested number of outputs paying an appropriate subsidy
 // based on the passed block height to the address associated with the harness. It automatically uses a standard
 // signature script that starts with the block height that is required by version 2 blocks.
-func (p *poolHarness) CreateCoinbaseTx(blockHeight int32, numOutputs uint32, version int32) (*util.Tx, error) {
+func (p *poolHarness) CreateCoinbaseTx(blockHeight int32, numOutputs uint32,
+	version int32,
+) (*util.Tx, error) {
 	// Create standard coinbase script.
 	extraNonce := int64(0)
 	coinbaseScript, e := txscript.NewScriptBuilder().
@@ -142,7 +146,9 @@ func (p *poolHarness) CreateCoinbaseTx(blockHeight int32, numOutputs uint32, ver
 			Sequence:        wire.MaxTxInSequenceNum,
 		},
 	)
-	totalInput := blockchain.CalcBlockSubsidy(blockHeight, p.chainParams, version)
+	totalInput := blockchain.CalcBlockSubsidy(blockHeight, p.chainParams,
+		version,
+	)
 	amountPerOutput := totalInput / int64(numOutputs)
 	remainder := totalInput - amountPerOutput*int64(numOutputs)
 	for i := uint32(0); i < numOutputs; i++ {
@@ -164,7 +170,9 @@ func (p *poolHarness) CreateCoinbaseTx(blockHeight int32, numOutputs uint32, ver
 // CreateSignedTx creates a new signed transaction that consumes the provided inputs and generates the provided number
 // of outputs by evenly splitting the total input amount. All outputs will be to the payment script associated with the
 // harness and all inputs are assumed to do the same.
-func (p *poolHarness) CreateSignedTx(inputs []spendableOutput, numOutputs uint32) (*util.Tx, error) {
+func (p *poolHarness) CreateSignedTx(inputs []spendableOutput,
+	numOutputs uint32,
+) (*util.Tx, error) {
 	// Calculate the total input amount and split it amongst the requested number of outputs.
 	var totalInput amt.Amount
 	for _, input := range inputs {
@@ -212,7 +220,8 @@ func (p *poolHarness) CreateSignedTx(inputs []spendableOutput, numOutputs uint32
 // CreateTxChain creates a chain of zero-fee transactions (each subsequent transaction spends the entire amount from the
 // previous one) with the first one spending the provided outpoint. Each transaction spends the entire amount of the
 // previous one and as such does not include any fees.
-func (p *poolHarness) CreateTxChain(firstOutput spendableOutput, numTxns uint32) ([]*util.Tx, error) {
+func (p *poolHarness) CreateTxChain(firstOutput spendableOutput, numTxns uint32,
+) ([]*util.Tx, error) {
 	txChain := make([]*util.Tx, 0, numTxns)
 	prevOutPoint := firstOutput.outPoint
 	spendableAmount := firstOutput.amount
@@ -252,7 +261,9 @@ func (p *poolHarness) CreateTxChain(firstOutput spendableOutput, numTxns uint32)
 // newPoolHarness returns a new instance of a pool harness initialized with a fake chain and a TxPool bound to it that
 // is configured with a policy suitable for testing. Also the fake chain is populated with the returned spendable
 // outputs so the caller can easily create new valid transactions which podbuild off of it.
-func newPoolHarness(chainParams *chaincfg.Params) (*poolHarness, []spendableOutput, error) {
+func newPoolHarness(chainParams *chaincfg.Params) (*poolHarness,
+	[]spendableOutput, error,
+) {
 	// Use a hard coded key pair for deterministic results.
 	keyBytes, e := hex.DecodeString(
 		"700868df1838811ffbdf918fb482c1f7e" +
@@ -330,7 +341,9 @@ type testContext struct {
 // testPoolMembership tests the transaction pool associated with the provided test context to determine if the passed
 // transaction matches the provided orphan pool and transaction pool status. It also further determines if it should be
 // reported as available by the HaveTransaction function based upon the two flags and tests that condition as well.
-func testPoolMembership(tc *testContext, tx *util.Tx, inOrphanPool, inTxPool bool) {
+func testPoolMembership(tc *testContext, tx *util.Tx,
+	inOrphanPool, inTxPool bool,
+) {
 	txHash := tx.Hash()
 	gotOrphanPool := tc.harness.txPool.IsOrphanInPool(txHash)
 	if inOrphanPool != gotOrphanPool {

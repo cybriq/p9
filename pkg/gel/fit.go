@@ -4,11 +4,11 @@ package gel
 
 import (
 	"image"
-	
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
+
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
 )
 
 // Fit scales a widget to fit and clip to the constraints.
@@ -35,24 +35,25 @@ const (
 // scale adds clip and scale operations to fit dims to the constraints.
 // It positions the widget to the appropriate position.
 // It returns dimensions modified accordingly.
-func (fit Fit) scale(gtx l.Context, pos l.Direction, dims l.Dimensions) l.Dimensions {
+func (fit Fit) scale(gtx l.Context, pos l.Direction, dims l.Dimensions,
+) l.Dimensions {
 	widgetSize := dims.Size
-	
+
 	if fit == Unscaled || dims.Size.X == 0 || dims.Size.Y == 0 {
 		dims.Size = gtx.Constraints.Constrain(dims.Size)
 		clip.Rect{Max: dims.Size}.Add(gtx.Ops)
-		
+
 		offset := pos.Position(widgetSize, dims.Size)
 		op.Offset(l.FPt(offset)).Add(gtx.Ops)
 		dims.Baseline += offset.Y
 		return dims
 	}
-	
+
 	scale := f32.Point{
 		X: float32(gtx.Constraints.Max.X) / float32(dims.Size.X),
 		Y: float32(gtx.Constraints.Max.Y) / float32(dims.Size.Y),
 	}
-	
+
 	switch fit {
 	case Contain:
 		if scale.Y < scale.X {
@@ -72,12 +73,12 @@ func (fit Fit) scale(gtx l.Context, pos l.Direction, dims l.Dimensions) l.Dimens
 		} else {
 			scale.Y = scale.X
 		}
-		
+
 		// The widget would need to be scaled up, no change needed.
 		if scale.X >= 1 {
 			dims.Size = gtx.Constraints.Constrain(dims.Size)
 			clip.Rect{Max: dims.Size}.Add(gtx.Ops)
-			
+
 			offset := pos.Position(widgetSize, dims.Size)
 			op.Offset(l.FPt(offset)).Add(gtx.Ops)
 			dims.Baseline += offset.Y
@@ -85,22 +86,22 @@ func (fit Fit) scale(gtx l.Context, pos l.Direction, dims l.Dimensions) l.Dimens
 		}
 	case Stretch:
 	}
-	
+
 	var scaledSize image.Point
 	scaledSize.X = int(float32(widgetSize.X) * scale.X)
 	scaledSize.Y = int(float32(widgetSize.Y) * scale.Y)
 	dims.Size = gtx.Constraints.Constrain(scaledSize)
 	dims.Baseline = int(float32(dims.Baseline) * scale.Y)
-	
+
 	clip.Rect{Max: dims.Size}.Add(gtx.Ops)
-	
+
 	offset := pos.Position(scaledSize, dims.Size)
 	op.Affine(f32.Affine2D{}.
 		Scale(f32.Point{}, scale).
 		Offset(l.FPt(offset)),
 	).Add(gtx.Ops)
-	
+
 	dims.Baseline += offset.Y
-	
+
 	return dims
 }

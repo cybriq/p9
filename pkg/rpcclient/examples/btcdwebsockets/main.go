@@ -6,13 +6,13 @@ import (
 	"log"
 	"path/filepath"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
-	"github.com/p9c/p9/pkg/appdata"
-	"github.com/p9c/p9/pkg/rpcclient"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/appdata"
+	"github.com/cybriq/p9/pkg/rpcclient"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 func main() {
@@ -20,13 +20,17 @@ func main() {
 	// if you register for notifications. See the documentation of the rpcclient NotificationHandlers type for more
 	// details about each handler.
 	ntfnHandlers := rpcclient.NotificationHandlers{
-		OnFilteredBlockConnected: func(height int32, header *wire.BlockHeader, txns []*util.Tx) {
+		OnFilteredBlockConnected: func(height int32, header *wire.BlockHeader,
+			txns []*util.Tx,
+		) {
 			log.Printf(
 				"Block connected: %v (%d) %v",
 				header.BlockHash(), height, header.Timestamp,
 			)
 		},
-		OnFilteredBlockDisconnected: func(height int32, header *wire.BlockHeader) {
+		OnFilteredBlockDisconnected: func(height int32,
+			header *wire.BlockHeader,
+		) {
 			log.Printf(
 				"Block disconnected: %v (%d) %v",
 				header.BlockHash(), height, header.Timestamp,

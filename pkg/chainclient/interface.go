@@ -1,13 +1,13 @@
 package chainclient
 
 import (
-	"github.com/p9c/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/btcaddr"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/wire"
-	"github.com/p9c/p9/pkg/wtxmgr"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/wtxmgr"
 )
 
 // BackEnds returns a list of the available back ends.
@@ -33,7 +33,9 @@ type Interface interface {
 	FilterBlocks(*FilterBlocksRequest) (*FilterBlocksResponse, error)
 	BlockStamp() (*waddrmgr.BlockStamp, error)
 	SendRawTransaction(*wire.MsgTx, bool) (*chainhash.Hash, error)
-	Rescan(*chainhash.Hash, []btcaddr.Address, map[wire.OutPoint]btcaddr.Address) error
+	Rescan(*chainhash.Hash, []btcaddr.Address,
+		map[wire.OutPoint]btcaddr.Address,
+	) error
 	NotifyReceived([]btcaddr.Address) error
 	NotifyBlocks() error
 	Notifications() <-chan interface{}

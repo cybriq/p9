@@ -1,17 +1,17 @@
 package blockchain
 
 import (
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/fork"
 	"math/big"
 	"sort"
 	"sync"
 	"sync/atomic"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // blockStatus is a bit field representing the validation state of the block.
@@ -83,7 +83,9 @@ type BlockNode struct {
 // initBlockNode initializes a block node from the given header and parent node, calculating the height and workSum from
 // the respective fields on the parent. This function is NOT safe for concurrent access. It must only be called when
 // initially creating a node.
-func initBlockNode(node *BlockNode, blockHeader *wire.BlockHeader, parent *BlockNode) {
+func initBlockNode(node *BlockNode, blockHeader *wire.BlockHeader,
+	parent *BlockNode,
+) {
 	*node = BlockNode{
 		hash:       blockHeader.BlockHash(),
 		version:    blockHeader.Version,
@@ -315,7 +317,9 @@ func (node *BlockNode) GetLastWithAlgo(algo int32) (prev *BlockNode) {
 			// F.Ln("checking pre-hardfork algo versions")
 			if prev.version != 514 &&
 				prev.version != 2 {
-				D.Ln("irregular version block", prev.version, ", assuming 2 (sha256d)")
+				D.Ln("irregular version block", prev.version,
+					", assuming 2 (sha256d)",
+				)
 				prevversion = 2
 			}
 		}

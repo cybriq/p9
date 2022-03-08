@@ -3,9 +3,9 @@
 package router
 
 import (
-	"github.com/p9c/p9/pkg/gel/gio/internal/opconst"
-	"github.com/p9c/p9/pkg/gel/gio/internal/ops"
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/opconst"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/ops"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
 )
 
 type clipboardQueue struct {

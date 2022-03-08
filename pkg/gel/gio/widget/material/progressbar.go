@@ -6,12 +6,12 @@ import (
 	"image"
 	"image/color"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/f32color"
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/f32color"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 )
 
 type ProgressBarStyle struct {
@@ -47,7 +47,8 @@ func (p ProgressBarStyle) Layout(gtx layout.Context) layout.Dimensions {
 	return layout.Stack{Alignment: layout.W}.Layout(gtx,
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 			return shader(progressBarWidth, p.TrackColor)
-		}),
+		},
+		),
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 			fillWidth := progressBarWidth * clamp1(p.Progress)
 			fillColor := p.Color
@@ -55,7 +56,8 @@ func (p ProgressBarStyle) Layout(gtx layout.Context) layout.Dimensions {
 				fillColor = f32color.Disabled(fillColor)
 			}
 			return shader(fillWidth, fillColor)
-		}),
+		},
+		),
 	)
 }
 

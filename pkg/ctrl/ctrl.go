@@ -12,28 +12,28 @@ import (
 	"github.com/niubaoshu/gotiny"
 	"go.uber.org/atomic"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/cmd/node/active"
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chainrpc"
-	"github.com/p9c/p9/pkg/chainrpc/hashrate"
-	"github.com/p9c/p9/pkg/chainrpc/job"
-	"github.com/p9c/p9/pkg/chainrpc/p2padvt"
-	"github.com/p9c/p9/pkg/chainrpc/pause"
-	"github.com/p9c/p9/pkg/chainrpc/sol"
-	"github.com/p9c/p9/pkg/chainrpc/templates"
-	"github.com/p9c/p9/pkg/constant"
-	"github.com/p9c/p9/pkg/fork"
-	"github.com/p9c/p9/pkg/mining"
-	rav "github.com/p9c/p9/pkg/ring"
-	"github.com/p9c/p9/pkg/rpcclient"
-	"github.com/p9c/p9/pkg/transport"
-	"github.com/p9c/p9/pkg/wire"
-	"github.com/p9c/p9/pod/config"
+	"github.com/cybriq/p9/cmd/node/active"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chainrpc"
+	"github.com/cybriq/p9/pkg/chainrpc/hashrate"
+	"github.com/cybriq/p9/pkg/chainrpc/job"
+	"github.com/cybriq/p9/pkg/chainrpc/p2padvt"
+	"github.com/cybriq/p9/pkg/chainrpc/pause"
+	"github.com/cybriq/p9/pkg/chainrpc/sol"
+	"github.com/cybriq/p9/pkg/chainrpc/templates"
+	"github.com/cybriq/p9/pkg/constant"
+	"github.com/cybriq/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/mining"
+	rav "github.com/cybriq/p9/pkg/ring"
+	"github.com/cybriq/p9/pkg/rpcclient"
+	"github.com/cybriq/p9/pkg/transport"
+	"github.com/cybriq/p9/pkg/wire"
+	"github.com/cybriq/p9/pod/config"
 )
 
 const (
@@ -294,7 +294,7 @@ out:
 				}
 			case bu := <-s.blockUpdate:
 				// _ = bu
-				go func(){
+				go func() {
 
 					I.Ln("received new block update while running")
 					s.doBlockUpdate(bu)
@@ -615,7 +615,8 @@ func processSolMsg(
 	}
 
 	I.Ln("sending pause to workers")
-	if e = s.multiConn.SendMany(pause.Magic, transport.GetShards(p2padvt.Get(s.uuid, (s.cfg.P2PListeners.S())[0])),
+	if e = s.multiConn.SendMany(pause.Magic,
+		transport.GetShards(p2padvt.Get(s.uuid, (s.cfg.P2PListeners.S())[0])),
 	); E.Chk(e) {
 		return
 	}
@@ -631,7 +632,8 @@ func processSolMsg(
 		// error as an internal error.
 		if _, ok := e.(blockchain.RuleError); !ok {
 			W.F(
-				"Unexpected error while processing blk submitted via kopach miner:", e,
+				"Unexpected error while processing blk submitted via kopach miner:",
+				e,
 			)
 			return
 		} else {

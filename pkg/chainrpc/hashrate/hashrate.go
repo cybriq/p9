@@ -9,10 +9,10 @@ import (
 	"io"
 	"net"
 	"time"
-	
+
 	"github.com/niubaoshu/gotiny"
-	
-	"github.com/p9c/p9/pkg/util/routeable"
+
+	"github.com/cybriq/p9/pkg/util/routeable"
 )
 
 var Magic = []byte{'h', 'a', 's', 1}

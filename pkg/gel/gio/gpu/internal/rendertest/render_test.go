@@ -8,11 +8,11 @@ import (
 
 	"golang.org/x/image/colornames"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/f32color"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/f32color"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
 )
 
 func TestTransformMacro(t *testing.T) {
@@ -57,7 +57,8 @@ func TestTransformMacro(t *testing.T) {
 		r.expect(5, 15, colornames.Red)
 		r.expect(15, 15, colornames.Black)
 		r.expect(11, 51, transparent)
-	})
+	},
+	)
 }
 
 func TestRepeatedPaintsZ(t *testing.T) {
@@ -81,7 +82,8 @@ func TestRepeatedPaintsZ(t *testing.T) {
 		r.expect(5, 5, colornames.Red)
 		r.expect(11, 15, colornames.Black)
 		r.expect(11, 51, transparent)
-	})
+	},
+	)
 }
 
 func TestNoClipFromPaint(t *testing.T) {
@@ -100,7 +102,8 @@ func TestNoClipFromPaint(t *testing.T) {
 		r.expect(20, 20, colornames.Black)
 		r.expect(49, 49, colornames.Black)
 		r.expect(51, 51, transparent)
-	})
+	},
+	)
 }
 
 func TestDeferredPaint(t *testing.T) {
@@ -124,7 +127,8 @@ func TestDeferredPaint(t *testing.T) {
 		paint.ColorOp{Color: color.NRGBA{A: 0xff, B: 0xff}}.Add(o)
 		paint.PaintOp{}.Add(o)
 	}, func(r result) {
-	})
+	},
+	)
 }
 
 func constSqPath() op.CallOp {
@@ -146,7 +150,8 @@ func constSqCirc() op.CallOp {
 	innerOps := new(op.Ops)
 	m := op.Record(innerOps)
 	clip.RRect{Rect: f32.Rect(0, 0, 40, 40),
-		NW: 20, NE: 20, SW: 20, SE: 20}.Add(innerOps)
+		NW: 20, NE: 20, SW: 20, SE: 20,
+	}.Add(innerOps)
 	return m.Stop()
 }
 
@@ -175,7 +180,8 @@ func TestReuseStencil(t *testing.T) {
 	}, func(r result) {
 		r.expect(5, 5, colornames.Black)
 		r.expect(5, 55, colornames.Black)
-	})
+	},
+	)
 }
 
 func TestBuildOffscreen(t *testing.T) {
@@ -199,7 +205,8 @@ func TestBuildOffscreen(t *testing.T) {
 			}, func(r result) {
 				r.expect(5, 5, transparent)
 				r.expect(20, 20, transparent)
-			}),
+			},
+		),
 		frame(
 			func(ops *op.Ops) {
 				draw(0, ops)
@@ -207,7 +214,9 @@ func TestBuildOffscreen(t *testing.T) {
 				r.expect(2, 2, transparent)
 				r.expect(20, 20, colornames.Black)
 				r.expect(38, 38, transparent)
-			}))
+			},
+		),
+	)
 }
 
 func TestNegativeOverlaps(t *testing.T) {
@@ -220,7 +229,8 @@ func TestNegativeOverlaps(t *testing.T) {
 		r.expect(60, 110, transparent)
 		r.expect(60, 120, transparent)
 		r.expect(60, 122, transparent)
-	})
+	},
+	)
 }
 
 func TestDepthOverlap(t *testing.T) {
@@ -236,7 +246,8 @@ func TestDepthOverlap(t *testing.T) {
 		r.expect(96, 32, colornames.Red)
 		r.expect(32, 96, colornames.Green)
 		r.expect(32, 32, colornames.Green)
-	})
+	},
+	)
 }
 
 type Gradient struct {
@@ -244,12 +255,24 @@ type Gradient struct {
 }
 
 var gradients = []Gradient{
-	{From: color.NRGBA{R: 0x00, G: 0x00, B: 0x00, A: 0xFF}, To: color.NRGBA{R: 0xFF, G: 0xFF, B: 0xFF, A: 0xFF}},
-	{From: color.NRGBA{R: 0x19, G: 0xFF, B: 0x19, A: 0xFF}, To: color.NRGBA{R: 0xFF, G: 0x19, B: 0x19, A: 0xFF}},
-	{From: color.NRGBA{R: 0xFF, G: 0x19, B: 0x19, A: 0xFF}, To: color.NRGBA{R: 0x19, G: 0x19, B: 0xFF, A: 0xFF}},
-	{From: color.NRGBA{R: 0x19, G: 0x19, B: 0xFF, A: 0xFF}, To: color.NRGBA{R: 0x19, G: 0xFF, B: 0x19, A: 0xFF}},
-	{From: color.NRGBA{R: 0x19, G: 0xFF, B: 0xFF, A: 0xFF}, To: color.NRGBA{R: 0xFF, G: 0x19, B: 0x19, A: 0xFF}},
-	{From: color.NRGBA{R: 0xFF, G: 0xFF, B: 0x19, A: 0xFF}, To: color.NRGBA{R: 0x19, G: 0x19, B: 0xFF, A: 0xFF}},
+	{From: color.NRGBA{R: 0x00, G: 0x00, B: 0x00, A: 0xFF},
+		To: color.NRGBA{R: 0xFF, G: 0xFF, B: 0xFF, A: 0xFF},
+	},
+	{From: color.NRGBA{R: 0x19, G: 0xFF, B: 0x19, A: 0xFF},
+		To: color.NRGBA{R: 0xFF, G: 0x19, B: 0x19, A: 0xFF},
+	},
+	{From: color.NRGBA{R: 0xFF, G: 0x19, B: 0x19, A: 0xFF},
+		To: color.NRGBA{R: 0x19, G: 0x19, B: 0xFF, A: 0xFF},
+	},
+	{From: color.NRGBA{R: 0x19, G: 0x19, B: 0xFF, A: 0xFF},
+		To: color.NRGBA{R: 0x19, G: 0xFF, B: 0x19, A: 0xFF},
+	},
+	{From: color.NRGBA{R: 0x19, G: 0xFF, B: 0xFF, A: 0xFF},
+		To: color.NRGBA{R: 0xFF, G: 0x19, B: 0x19, A: 0xFF},
+	},
+	{From: color.NRGBA{R: 0xFF, G: 0xFF, B: 0x19, A: 0xFF},
+		To: color.NRGBA{R: 0x19, G: 0x19, B: 0xFF, A: 0xFF},
+	},
 }
 
 func TestLinearGradient(t *testing.T) {
@@ -285,11 +308,14 @@ func TestLinearGradient(t *testing.T) {
 			to := f32color.LinearFromSRGB(g.To)
 			for _, p := range samples {
 				exp := lerp(from, to, float32(p)/float32(r.img.Bounds().Dx()-1))
-				r.expect(p, int(gr.Min.Y+gradienth/2), f32color.NRGBAToRGBA(exp.SRGB()))
+				r.expect(p, int(gr.Min.Y+gradienth/2),
+					f32color.NRGBAToRGBA(exp.SRGB()),
+				)
 			}
 			gr = gr.Add(f32.Pt(0, gradienth))
 		}
-	})
+	},
+	)
 }
 
 func TestLinearGradientAngled(t *testing.T) {
@@ -337,7 +363,8 @@ func TestLinearGradientAngled(t *testing.T) {
 		clip.Rect(image.Rect(0, 64, 64, 128)).Add(ops)
 		paint.PaintOp{}.Add(ops)
 		st.Load()
-	}, func(r result) {})
+	}, func(r result) {},
+	)
 }
 
 // lerp calculates linear interpolation with color b and p.

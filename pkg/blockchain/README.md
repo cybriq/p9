@@ -1,7 +1,7 @@
 # blockchain
 
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/p9c/p9/blockchain)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/cybriq/p9/blockchain)
 
 Package blockchain implements bitcoin block handling and chain selection rules.
 
@@ -20,7 +20,7 @@ block chain.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/p9c/p9/blockchain
+$ go get -u github.com/cybriq/p9/blockchain
 ```
 
 ## Bitcoin Chain Processing Overview
@@ -68,18 +68,18 @@ is by no means exhaustive:
 
 ## Examples
 
-- [ProcessBlock Example](http://godoc.org/github.com/p9c/p9/blockchain#example-BlockChain-ProcessBlock)  
+- [ProcessBlock Example](http://godoc.org/github.com/cybriq/p9/blockchain#example-BlockChain-ProcessBlock)  
   Demonstrates how to create a new chain instance and use ProcessBlock to
   attempt to add a block to the chain. This example intentionally attempts to
   insert a duplicate genesis block to illustrate how an invalid block is
   handled.
 
-- [CompactToBig Example](http://godoc.org/github.com/p9c/p9/blockchain#example-CompactToBig)  
+- [CompactToBig Example](http://godoc.org/github.com/cybriq/p9/blockchain#example-CompactToBig)  
   Demonstrates how to convert the compact "bits" in a block header which
   represent the target difficulty to a big integer and display it using the
   typical hex notation.
 
-- [BigToCompact Example](http://godoc.org/github.com/p9c/p9/blockchain#example-BigToCompact)  
+- [BigToCompact Example](http://godoc.org/github.com/cybriq/p9/blockchain#example-BigToCompact)  
   Demonstrates how to convert a target difficulty into the compact "bits" in a
   block header which represent that target difficulty.
 

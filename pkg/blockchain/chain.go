@@ -3,23 +3,23 @@ package blockchain
 import (
 	"container/list"
 	"fmt"
-	block2 "github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/fork"
+	block2 "github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/fork"
 	"sync"
 	"time"
-	
+
 	"go.uber.org/atomic"
-	
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const // maxOrphanBlocks is the maximum number of orphan blocks that can be
-	// queued.
-	maxOrphanBlocks = 100
+// queued.
+maxOrphanBlocks = 100
 
 // BlockLocator is used to help locate a specific block. The algorithm for building the block locator is to add the
 // hashes in reverse order until the genesis block is reached. In order to keep the list of locator hashes to a
@@ -409,7 +409,9 @@ func (b *BlockChain) addOrphanBlock(block *block2.Block) {
 // passed node is not on a side chain. This function may modify node statuses in
 // the block index without flushing. This function MUST be called with the chain
 // state lock held ( for reads).
-func (b *BlockChain) getReorganizeNodes(node *BlockNode) (*list.List, *list.List) {
+func (b *BlockChain) getReorganizeNodes(node *BlockNode) (*list.List,
+	*list.List,
+) {
 	attachNodes := list.New()
 	detachNodes := list.New()
 	// Do not reorganize to a known invalid chain. Ancestors deeper than the direct
@@ -485,7 +487,7 @@ func (b *BlockChain) connectBlock(
 		D.Ln(str)
 		return AssertError(str)
 	}
-	
+
 	// // No warnings about unknown rules or versions until the chain is current.
 	// if b.isCurrent() {
 	// 	// // Warn if any unknown new rules are either about to activate or have already
@@ -535,7 +537,7 @@ func (b *BlockChain) connectBlock(
 				T.Ln("dbPutUtxoView", e)
 				return e
 			}
-			
+
 			// Update the transaction spend journal by adding a record for the block that contains all txos spent by it.
 			e = dbPutSpendJournalEntry(dbTx, block.Hash(), stxos)
 			if e != nil {
@@ -562,7 +564,7 @@ func (b *BlockChain) connectBlock(
 	// committed to the database.
 	T.Ln("committing new view")
 	view.commit()
-	
+
 	// This node is now the end of the best chain.
 	T.Ln("setting new chain tip")
 	b.BestChain.SetTip(node)
@@ -949,7 +951,9 @@ func (b *BlockChain) reorganizeChain(detachNodes, attachNodes *list.List) (e err
 //    This is useful when using checkpoints.
 //
 // This function MUST be called with the chain state lock held (for writes).
-func (b *BlockChain) connectBestChain(node *BlockNode, block *block2.Block, flags BehaviorFlags) (bool, error) {
+func (b *BlockChain) connectBestChain(node *BlockNode, block *block2.Block,
+	flags BehaviorFlags,
+) (bool, error) {
 	T.Ln("running connectBestChain")
 	fastAdd := flags&BFFastAdd == BFFastAdd
 	flushIndexState := func() {
@@ -1108,7 +1112,9 @@ func (b *BlockChain) BestSnapshot() *BestState {
 // HeaderByHash returns the block header identified by the given hash or an error if it doesn't exist.
 //
 // Note that this will return headers from both the main and side chains.
-func (b *BlockChain) HeaderByHash(hash *chainhash.Hash) (bh wire.BlockHeader, e error) {
+func (b *BlockChain) HeaderByHash(hash *chainhash.Hash) (bh wire.BlockHeader,
+	e error,
+) {
 	node := b.Index.LookupNode(hash)
 	if node == nil {
 		e = fmt.Errorf("block %s is not known", hash)
@@ -1162,7 +1168,9 @@ func (b *BlockChain) BlockHeightByHash(hash *chainhash.Hash) (int32, error) {
 
 // BlockHashByHeight returns the hash of the block at the given height in the main chain. This function is safe for
 // concurrent access.
-func (b *BlockChain) BlockHashByHeight(blockHeight int32) (*chainhash.Hash, error) {
+func (b *BlockChain) BlockHashByHeight(blockHeight int32) (*chainhash.Hash,
+	error,
+) {
 	node := b.BestChain.NodeByHeight(blockHeight)
 	if node == nil {
 		str := fmt.Sprintf(
@@ -1180,7 +1188,7 @@ func (b *BlockChain) BlockHashByHeight(blockHeight int32) (*chainhash.Hash, erro
 // This function is safe for concurrent access.
 func (b *BlockChain) HeightRange(startHeight, endHeight int32) (
 	[]chainhash.
-	Hash, error,
+		Hash, error,
 ) {
 	// Ensure requested heights are sane.
 	if startHeight < 0 {
@@ -1387,7 +1395,9 @@ func (b *BlockChain) locateBlocks(
 // - When locators are provided, but none of them are known, hashes starting after the genesis block will be returned
 //
 // This function is safe for concurrent access.
-func (b *BlockChain) LocateBlocks(locator BlockLocator, hashStop *chainhash.Hash, maxHashes uint32) []chainhash.Hash {
+func (b *BlockChain) LocateBlocks(locator BlockLocator,
+	hashStop *chainhash.Hash, maxHashes uint32,
+) []chainhash.Hash {
 	b.ChainLock.RLock()
 	hashes := b.locateBlocks(locator, hashStop, maxHashes)
 	b.ChainLock.RUnlock()
@@ -1431,7 +1441,9 @@ func (b *BlockChain) locateHeaders(
 // - When locators are provided, but none of them are known, headers starting after the genesis block will be returned
 //
 // This function is safe for concurrent access.
-func (b *BlockChain) LocateHeaders(locator BlockLocator, hashStop *chainhash.Hash) []wire.BlockHeader {
+func (b *BlockChain) LocateHeaders(locator BlockLocator,
+	hashStop *chainhash.Hash,
+) []wire.BlockHeader {
 	b.ChainLock.RLock()
 	headers := b.locateHeaders(locator, hashStop, wire.MaxBlockHeadersPerMsg)
 	b.ChainLock.RUnlock()

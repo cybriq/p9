@@ -11,10 +11,10 @@ import (
 	"math"
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/gpu/internal/driver"
-	"github.com/p9c/p9/pkg/gel/gio/internal/byteslice"
-	"github.com/p9c/p9/pkg/gel/gio/internal/f32color"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu/internal/driver"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/byteslice"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/f32color"
 )
 
 type pather struct {
@@ -161,8 +161,11 @@ func newCoverer(ctx driver.Device) *coverer {
 	c.colUniforms = new(coverColUniforms)
 	c.texUniforms = new(coverTexUniforms)
 	c.linearGradientUniforms = new(coverLinearGradientUniforms)
-	prog, layout, err := createColorPrograms(ctx, shader_cover_vert, shader_cover_frag,
-		[3]interface{}{&c.colUniforms.vert, &c.linearGradientUniforms.vert, &c.texUniforms.vert},
+	prog, layout, err := createColorPrograms(ctx, shader_cover_vert,
+		shader_cover_frag,
+		[3]interface{}{&c.colUniforms.vert, &c.linearGradientUniforms.vert,
+			&c.texUniforms.vert,
+		},
 		[3]interface{}{&c.colUniforms.frag, &c.linearGradientUniforms.frag, nil},
 	)
 	if err != nil {
@@ -185,24 +188,40 @@ func newStenciler(ctx driver.Device) *stenciler {
 		indices[i*6+4] = i*4 + 1
 		indices[i*6+5] = i*4 + 3
 	}
-	indexBuf, err := ctx.NewImmutableBuffer(driver.BufferBindingIndices, byteslice.Slice(indices))
+	indexBuf, err := ctx.NewImmutableBuffer(driver.BufferBindingIndices,
+		byteslice.Slice(indices),
+	)
 	if err != nil {
 		panic(err)
 	}
-	progLayout, err := ctx.NewInputLayout(shader_stencil_vert, []driver.InputDesc{
-		{Type: driver.DataTypeFloat, Size: 1, Offset: int(unsafe.Offsetof((*(*vertex)(nil)).Corner))},
-		{Type: driver.DataTypeFloat, Size: 1, Offset: int(unsafe.Offsetof((*(*vertex)(nil)).MaxY))},
-		{Type: driver.DataTypeFloat, Size: 2, Offset: int(unsafe.Offsetof((*(*vertex)(nil)).FromX))},
-		{Type: driver.DataTypeFloat, Size: 2, Offset: int(unsafe.Offsetof((*(*vertex)(nil)).CtrlX))},
-		{Type: driver.DataTypeFloat, Size: 2, Offset: int(unsafe.Offsetof((*(*vertex)(nil)).ToX))},
-	})
+	progLayout, err := ctx.NewInputLayout(shader_stencil_vert,
+		[]driver.InputDesc{
+			{Type: driver.DataTypeFloat, Size: 1,
+				Offset: int(unsafe.Offsetof((*(*vertex)(nil)).Corner)),
+			},
+			{Type: driver.DataTypeFloat, Size: 1,
+				Offset: int(unsafe.Offsetof((*(*vertex)(nil)).MaxY)),
+			},
+			{Type: driver.DataTypeFloat, Size: 2,
+				Offset: int(unsafe.Offsetof((*(*vertex)(nil)).FromX)),
+			},
+			{Type: driver.DataTypeFloat, Size: 2,
+				Offset: int(unsafe.Offsetof((*(*vertex)(nil)).CtrlX)),
+			},
+			{Type: driver.DataTypeFloat, Size: 2,
+				Offset: int(unsafe.Offsetof((*(*vertex)(nil)).ToX)),
+			},
+		},
+	)
 	if err != nil {
 		panic(err)
 	}
-	iprogLayout, err := ctx.NewInputLayout(shader_intersect_vert, []driver.InputDesc{
-		{Type: driver.DataTypeFloat, Size: 2, Offset: 0},
-		{Type: driver.DataTypeFloat, Size: 2, Offset: 4 * 2},
-	})
+	iprogLayout, err := ctx.NewInputLayout(shader_intersect_vert,
+		[]driver.InputDesc{
+			{Type: driver.DataTypeFloat, Size: 2, Offset: 0},
+			{Type: driver.DataTypeFloat, Size: 2, Offset: 4 * 2},
+		},
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -247,8 +266,10 @@ func (s *fboSet) resize(ctx driver.Device, sizes []image.Point) {
 				f.fbo.Release()
 				f.tex.Release()
 			}
-			tex, err := ctx.NewTexture(driver.TextureFormatFloat, sz.X, sz.Y, driver.FilterNearest, driver.FilterNearest,
-				driver.BufferBindingTexture|driver.BufferBindingFramebuffer)
+			tex, err := ctx.NewTexture(driver.TextureFormatFloat, sz.X, sz.Y,
+				driver.FilterNearest, driver.FilterNearest,
+				driver.BufferBindingTexture|driver.BufferBindingFramebuffer,
+			)
 			if err != nil {
 				panic(err)
 			}
@@ -320,7 +341,9 @@ func (p *pather) begin(sizes []image.Point) {
 	p.stenciler.begin(sizes)
 }
 
-func (p *pather) stencilPath(bounds image.Rectangle, offset f32.Point, uv image.Point, data pathData) {
+func (p *pather) stencilPath(bounds image.Rectangle, offset f32.Point,
+	uv image.Point, data pathData,
+) {
 	p.stenciler.stencilPath(bounds, offset, uv, data)
 }
 
@@ -350,13 +373,19 @@ func (s *stenciler) begin(sizes []image.Point) {
 	s.ctx.BindIndexBuffer(s.indexBuf)
 }
 
-func (s *stenciler) stencilPath(bounds image.Rectangle, offset f32.Point, uv image.Point, data pathData) {
+func (s *stenciler) stencilPath(bounds image.Rectangle, offset f32.Point,
+	uv image.Point, data pathData,
+) {
 	s.ctx.Viewport(uv.X, uv.Y, bounds.Dx(), bounds.Dy())
 	// Transform UI coordinates to OpenGL coordinates.
 	texSize := f32.Point{X: float32(bounds.Dx()), Y: float32(bounds.Dy())}
 	scale := f32.Point{X: 2 / texSize.X, Y: 2 / texSize.Y}
-	orig := f32.Point{X: -1 - float32(bounds.Min.X)*2/texSize.X, Y: -1 - float32(bounds.Min.Y)*2/texSize.Y}
-	s.prog.uniforms.vert.transform = [4]float32{scale.X, scale.Y, orig.X, orig.Y}
+	orig := f32.Point{X: -1 - float32(bounds.Min.X)*2/texSize.X,
+		Y: -1 - float32(bounds.Min.Y)*2/texSize.Y,
+	}
+	s.prog.uniforms.vert.transform = [4]float32{scale.X, scale.Y, orig.X,
+		orig.Y,
+	}
 	s.prog.uniforms.vert.pathOffset = [2]float32{offset.X, offset.Y}
 	s.prog.prog.UploadUniforms()
 	// Draw in batches that fit in uint16 indices.
@@ -374,11 +403,19 @@ func (s *stenciler) stencilPath(bounds image.Rectangle, offset f32.Point, uv ima
 	}
 }
 
-func (p *pather) cover(z float32, mat materialType, col f32color.RGBA, col1, col2 f32color.RGBA, scale, off f32.Point, uvTrans f32.Affine2D, coverScale, coverOff f32.Point) {
-	p.coverer.cover(z, mat, col, col1, col2, scale, off, uvTrans, coverScale, coverOff)
+func (p *pather) cover(z float32, mat materialType, col f32color.RGBA,
+	col1, col2 f32color.RGBA, scale, off f32.Point, uvTrans f32.Affine2D,
+	coverScale, coverOff f32.Point,
+) {
+	p.coverer.cover(z, mat, col, col1, col2, scale, off, uvTrans, coverScale,
+		coverOff,
+	)
 }
 
-func (c *coverer) cover(z float32, mat materialType, col f32color.RGBA, col1, col2 f32color.RGBA, scale, off f32.Point, uvTrans f32.Affine2D, coverScale, coverOff f32.Point) {
+func (c *coverer) cover(z float32, mat materialType, col f32color.RGBA,
+	col1, col2 f32color.RGBA, scale, off f32.Point, uvTrans f32.Affine2D,
+	coverScale, coverOff f32.Point,
+) {
 	p := c.prog[mat]
 	c.ctx.BindProgram(p.prog)
 	var uniforms *coverUniforms
@@ -402,7 +439,9 @@ func (c *coverer) cover(z float32, mat materialType, col f32color.RGBA, col1, co
 	}
 	uniforms.z = z
 	uniforms.transform = [4]float32{scale.X, scale.Y, off.X, off.Y}
-	uniforms.uvCoverTransform = [4]float32{coverScale.X, coverScale.Y, coverOff.X, coverOff.Y}
+	uniforms.uvCoverTransform = [4]float32{coverScale.X, coverScale.Y,
+		coverOff.X, coverOff.Y,
+	}
 	p.UploadUniforms()
 	c.ctx.DrawArrays(driver.DrawModeTriangleStrip, 0, 4)
 }

@@ -2,15 +2,15 @@ package mempool
 
 import (
 	"bytes"
-	"github.com/p9c/p9/pkg/amt"
-	block2 "github.com/p9c/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/amt"
+	block2 "github.com/cybriq/p9/pkg/block"
 	"math/rand"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/mining"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/mining"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // estimateFeeTester interacts with the FeeEstimator to keep track of its expected state.
@@ -140,7 +140,7 @@ func (eft *estimateFeeTester) round(
 }
 
 func (
-eft *estimateFeeTester,
+	eft *estimateFeeTester,
 ) testTx(
 	fee amt.Amount,
 ) *TxDesc {
@@ -166,7 +166,10 @@ func TestDatabase(t *testing.T) {
 	binSize := uint32(6)
 	maxReplacements := uint32(4)
 	rounds := 8
-	eft := estimateFeeTester{ef: newTestFeeEstimator(binSize, maxReplacements, uint32(rounds)+1), t: t}
+	eft := estimateFeeTester{ef: newTestFeeEstimator(binSize, maxReplacements,
+		uint32(rounds)+1,
+	), t: t,
+	}
 	var txHistory [][]*TxDesc
 	estimateHistory := [][estimateFeeDepth]DUOPerKilobyte{eft.estimates()}
 	for round := 0; round < rounds; round++ {
@@ -334,7 +337,9 @@ func TestEstimateFee(t *testing.T) {
 			expected = expectedFeePerKilobyte(txA)
 		}
 		if estimated != expected {
-			t.Errorf("Estimate fee error: expected %f on round %d; got %f", expected, i, estimated)
+			t.Errorf("Estimate fee error: expected %f on round %d; got %f",
+				expected, i, estimated,
+			)
 		}
 	}
 }

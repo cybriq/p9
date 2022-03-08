@@ -17,11 +17,11 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // AddrManager provides a concurrency safe address manager for caching potential peers on the bitcoin network.
@@ -353,7 +353,7 @@ func (a *AddrManager) savePeers() {
 // and start fresh
 func (a *AddrManager) loadPeers() {
 	T.Ln("loading peers")
-	
+
 	a.mtx.Lock()
 	defer a.mtx.Unlock()
 	e := a.deserializePeers(a.PeersFile)
@@ -455,17 +455,23 @@ func (a *AddrManager) deserializePeers(filePath string) (e error) {
 	// Sanity checking.
 	for k, v := range a.addrIndex {
 		if v.refs == 0 && !v.tried {
-			return fmt.Errorf("address %s after serialisationwith no references", k)
+			return fmt.Errorf("address %s after serialisationwith no references",
+				k,
+			)
 		}
 		if v.refs > 0 && v.tried {
-			return fmt.Errorf("address %s after serialisation which is both new and tried", k)
+			return fmt.Errorf("address %s after serialisation which is both new and tried",
+				k,
+			)
 		}
 	}
 	return nil
 }
 
 // DeserializeNetAddress converts a given address string to a *wire.NetAddress
-func (a *AddrManager) DeserializeNetAddress(addr string) (*wire.NetAddress, error) {
+func (a *AddrManager) DeserializeNetAddress(addr string) (*wire.NetAddress,
+	error,
+) {
 	host, portStr, e := net.SplitHostPort(addr)
 	if e != nil {
 		E.Ln(e)
@@ -511,7 +517,9 @@ func (a *AddrManager) Stop() (e error) {
 // It enforces a max number of addresses and silently ignores duplicate addresses.
 //
 // It is safe for concurrent access.
-func (a *AddrManager) AddAddresses(addrs []*wire.NetAddress, srcAddr *wire.NetAddress) {
+func (a *AddrManager) AddAddresses(addrs []*wire.NetAddress,
+	srcAddr *wire.NetAddress,
+) {
 	a.mtx.Lock()
 	defer a.mtx.Unlock()
 	for _, na := range addrs {
@@ -621,7 +629,9 @@ func (a *AddrManager) reset() {
 // If the address is a Tor .onion address this will be taken care of.
 //
 // Else if the host is not an IP address it will be resolved ( via Tor if required).
-func (a *AddrManager) HostToNetAddress(host string, port uint16, services wire.ServiceFlag) (*wire.NetAddress, error) {
+func (a *AddrManager) HostToNetAddress(host string, port uint16,
+	services wire.ServiceFlag,
+) (*wire.NetAddress, error) {
 	// Tor address is 16 char base32 + ".onion"
 	var ip net.IP
 	if len(host) == 22 && host[16:] == ".onion" {
@@ -697,7 +707,9 @@ func (a *AddrManager) GetAddress() *KnownAddress {
 			randval := a.rand.Intn(large)
 			if float64(randval) < (factor * ka.chance() * float64(large)) {
 				T.C(func() string {
-					return fmt.Sprintf("selected %v from tried bucket", NetAddressKey(ka.na))
+					return fmt.Sprintf("selected %v from tried bucket",
+						NetAddressKey(ka.na),
+					)
 				},
 				)
 				return ka
@@ -839,13 +851,15 @@ func (a *AddrManager) Good(addr *wire.NetAddress) {
 	a.nNew++
 	rmkey := NetAddressKey(rmka.na)
 	T.F("replacing %s with %s in tried", rmkey, addrKey)
-	
+
 	// We made sure there is space here just above.
 	a.addrNew[newBucket][rmkey] = rmka
 }
 
 // SetServices sets the services for the giiven address to the provided value.
-func (a *AddrManager) SetServices(addr *wire.NetAddress, services wire.ServiceFlag) {
+func (a *AddrManager) SetServices(addr *wire.NetAddress,
+	services wire.ServiceFlag,
+) {
 	a.mtx.Lock()
 	defer a.mtx.Unlock()
 	ka := a.find(addr)
@@ -862,7 +876,9 @@ func (a *AddrManager) SetServices(addr *wire.NetAddress, services wire.ServiceFl
 }
 
 // AddLocalAddress adds na to the list of known local addresses to advertise with the given priority.
-func (a *AddrManager) AddLocalAddress(na *wire.NetAddress, priority AddressPriority) (e error) {
+func (a *AddrManager) AddLocalAddress(na *wire.NetAddress,
+	priority AddressPriority,
+) (e error) {
 	if !IsRoutable(na) {
 		return fmt.Errorf("address %s is not routable", na.IP)
 	}
@@ -984,7 +1000,8 @@ func (a *AddrManager) GetBestLocalAddress(remoteAddr *wire.NetAddress) *wire.Net
 }
 
 // New returns a new bitcoin address manager. Use Start to begin processing asynchronous address updates.
-func New(dataDir string, lookupFunc func(string) ([]net.IP, error)) *AddrManager {
+func New(dataDir string, lookupFunc func(string) ([]net.IP, error),
+) *AddrManager {
 	am := AddrManager{
 		PeersFile:      filepath.Join(dataDir, "peers.json"),
 		lookupFunc:     lookupFunc,

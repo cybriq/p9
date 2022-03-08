@@ -2,16 +2,16 @@ package util_test
 
 import (
 	"bytes"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/wire"
 	"io"
 	"reflect"
 	"testing"
 	"time"
-	
+
 	"github.com/davecgh/go-spew/spew"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/util"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/util"
 )
 
 var Block100000 = wire.Block{

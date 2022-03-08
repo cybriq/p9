@@ -1,17 +1,17 @@
 package wallet
 
 import (
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util/hdkeychain"
-	"github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/walletdb"
-	"github.com/p9c/p9/pkg/wire"
-	"github.com/p9c/p9/pkg/wtxmgr"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util/hdkeychain"
+	"github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/walletdb"
+	"github.com/cybriq/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/wtxmgr"
 )
 
 // RecoveryManager maintains the state required to recover previously used addresses, and coordinates batched processing

@@ -1,13 +1,13 @@
 package util
 
 import (
-	"github.com/p9c/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/btcaddr"
 	"golang.org/x/crypto/ripemd160"
-	
-	"github.com/p9c/p9/pkg/appdata"
-	"github.com/p9c/p9/pkg/base58"
-	"github.com/p9c/p9/pkg/bech32"
-	ec "github.com/p9c/p9/pkg/ecc"
+
+	"github.com/cybriq/p9/pkg/appdata"
+	"github.com/cybriq/p9/pkg/base58"
+	"github.com/cybriq/p9/pkg/bech32"
+	ec "github.com/cybriq/p9/pkg/ecc"
 )
 
 // TstAppDataDir makes the internal appDataDir function available to the test package.
@@ -58,7 +58,8 @@ func TstAddressScriptHash(hash [ripemd160.Size]byte,
 // }
 
 // TstAddressPubKey makes an PubKey, setting the unexported fields with the parameters.
-func TstAddressPubKey(serializedPubKey []byte, pubKeyFormat btcaddr.PubKeyFormat,
+func TstAddressPubKey(serializedPubKey []byte,
+	pubKeyFormat btcaddr.PubKeyFormat,
 	netID byte,
 ) *btcaddr.PubKey {
 	pubKey, _ := ec.ParsePubKey(serializedPubKey, ec.S256())

@@ -7,8 +7,8 @@ import (
 
 	uberatomic "go.uber.org/atomic"
 
-	"github.com/p9c/p9/pkg/opts/meta"
-	"github.com/p9c/p9/pkg/opts/opt"
+	"github.com/cybriq/p9/pkg/opts/meta"
+	"github.com/cybriq/p9/pkg/opts/opt"
 )
 
 // Opt stores an boolean configuration value
@@ -61,7 +61,9 @@ func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 	case "f", "false", "-":
 		e = x.Set(false)
 	default:
-		e = fmt.Errorf("input on opt %s: '%s' is not valid for a boolean flag", x.Name(), input)
+		e = fmt.Errorf("input on opt %s: '%s' is not valid for a boolean flag",
+			x.Name(), input,
+		)
 	}
 	return
 }

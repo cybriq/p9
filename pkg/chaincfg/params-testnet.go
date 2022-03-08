@@ -1,8 +1,8 @@
 package chaincfg
 
 import (
-	"github.com/p9c/p9/pkg/fork"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // TestNet3Params defines the network parameters for the test Bitcoin network (version 3). Not to be confused with the
@@ -11,7 +11,7 @@ var TestNet3Params = Params{
 	Name:        "testnet",
 	Net:         wire.TestNet3,
 	DefaultPort: "21047",
-	DNSSeeds: []DNSSeed{
+	DNSSeeds:    []DNSSeed{
 		// {"seed3.parallelcoin.io", true},
 	},
 	// Chain parameters

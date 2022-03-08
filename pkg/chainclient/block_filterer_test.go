@@ -4,10 +4,10 @@ import (
 	"reflect"
 	"testing"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainclient"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainclient"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 var Block100000 = wire.Block{
@@ -30,7 +30,7 @@ var Block100000 = wire.Block{
 				0x28, 0xc3, 0x06, 0x7c, 0xc3, 0x8d, 0x48, 0x85,
 				0xef, 0xb5, 0xa4, 0xac, 0x42, 0x47, 0xe9, 0xf3,
 			},
-		),                                   // f3e94742aca4b5ef85488dc37c06c3282295ffec960994b2c0d5ac2a25a95766
+		), // f3e94742aca4b5ef85488dc37c06c3282295ffec960994b2c0d5ac2a25a95766
 		Timestamp: time.Unix(1293623863, 0), // 2010-12-29 11:57:43 +0000 UTC
 		Bits:      0x1b04864c,               // 453281356
 		Nonce:     0x10572b0f,               // 274148111
@@ -306,7 +306,9 @@ var Block100000 = wire.Block{
 // }
 
 // assertNumRelevantTxns checks that the set of relevant txns found in a block filterer is of a specific size.
-func assertNumRelevantTxns(t *testing.T, bf *chainclient.BlockFilterer, size int) {
+func assertNumRelevantTxns(t *testing.T, bf *chainclient.BlockFilterer,
+	size int,
+) {
 	count := len(bf.RelevantTxns)
 	if count != size {
 		t.Fatalf(
@@ -317,7 +319,9 @@ func assertNumRelevantTxns(t *testing.T, bf *chainclient.BlockFilterer, size int
 }
 
 // assertRelevantTxnsContains checks that the wantTx is found in the block filterers set of relevant txns.
-func assertRelevantTxnsContains(t *testing.T, bf *chainclient.BlockFilterer, wantTx *wire.MsgTx) {
+func assertRelevantTxnsContains(t *testing.T, bf *chainclient.BlockFilterer,
+	wantTx *wire.MsgTx,
+) {
 	for _, relevantTx := range bf.RelevantTxns {
 		if reflect.DeepEqual(relevantTx, wantTx) {
 			return

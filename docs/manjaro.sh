@@ -12,7 +12,7 @@ export PATH=$HOME/go/bin:$PATH
 EOF
 mkdir -p src/github.com/p9c
 cd src/github.com/p9c
-git clone https://github.com/p9c/p9.git
+git clone https://github.com/cybriq/p9.git
 cd pod
 source ~/.bashrc
 go mod tidy

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build !race
 // +build !race
 
 package layout
@@ -8,7 +9,7 @@ import (
 	"image"
 	"testing"
 
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 func TestStackAllocs(t *testing.T) {
@@ -21,9 +22,11 @@ func TestStackAllocs(t *testing.T) {
 		Stack{}.Layout(gtx,
 			Stacked(func(gtx Context) Dimensions {
 				return Dimensions{Size: image.Point{X: 50, Y: 50}}
-			}),
+			},
+			),
 		)
-	})
+	},
+	)
 	if allocs != 0 {
 		t.Errorf("expected no allocs, got %f", allocs)
 	}
@@ -39,9 +42,11 @@ func TestFlexAllocs(t *testing.T) {
 		Flex{}.Layout(gtx,
 			Rigid(func(gtx Context) Dimensions {
 				return Dimensions{Size: image.Point{X: 50, Y: 50}}
-			}),
+			},
+			),
 		)
-	})
+	},
+	)
 	if allocs != 0 {
 		t.Errorf("expected no allocs, got %f", allocs)
 	}

@@ -4,16 +4,16 @@ import (
 	"image/color"
 	"math"
 	"strings"
-	
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/text"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
-	
-	"github.com/p9c/p9/pkg/gel/f32color"
+
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
+
+	"github.com/cybriq/p9/pkg/gel/f32color"
 )
 
 // Button is a material text label icon with options to change all features
@@ -188,7 +188,7 @@ func drawInk(c l.Context, p press) {
 			// Too old.
 			return
 		}
-		
+
 		alphat = half1 + half2
 	}
 	// Compute the expand position in [0;1].

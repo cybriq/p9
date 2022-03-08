@@ -210,7 +210,7 @@ Further paragraphs come after blank lines.
 
 Prefix the summary with the subsystem/package when possible. Many other projects make use of the code and this makes it
 easier for them to tell when something they're using has changed. Have a look
-at [past commits](https://github.com/p9c/p9/commits/master) for examples of commit messages.
+at [past commits](https://github.com/cybriq/p9/commits/master) for examples of commit messages.
 
 <a name="CodeApproval"></a>
 
@@ -268,7 +268,7 @@ merged to master as we prefer to keep a clean commit history over a tangled weav
 of the specific merge method used, the code will be integrated with the master branch and the pull request will be
 closed.
 
-Rejoice as you will now be listed as a [contributor](https://github.com/p9c/p9/graphs/contributors)!
+Rejoice as you will now be listed as a [contributor](https://github.com/cybriq/p9/graphs/contributors)!
 
 <a name="Standards"></a>
 
@@ -304,5 +304,5 @@ Rejoice as you will now be listed as a [contributor](https://github.com/p9c/p9/g
 
 ### 6.2. Licensing of Contributions
 
-All contributions must be licensed with the [ISC license](https://github.com/p9c/p9/blob/master/LICENSE). This is the
+All contributions must be licensed with the [ISC license](https://github.com/cybriq/p9/blob/master/LICENSE). This is the
 same license as all of the code in the pod suite.

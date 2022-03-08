@@ -5,8 +5,8 @@ import (
 	"math"
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // TestAssignField tests the assignField function handles supported combinations properly.

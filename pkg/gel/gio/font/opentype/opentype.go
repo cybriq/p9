@@ -14,10 +14,10 @@ import (
 	"golang.org/x/image/font/sfnt"
 	"golang.org/x/image/math/fixed"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
 )
 
 // Font implements text.Face. Its methods are safe to use
@@ -109,7 +109,8 @@ func (c *Collection) Font(i int) (*Font, error) {
 	return &Font{font: c.fonts[i].Font}, nil
 }
 
-func (f *Font) Layout(ppem fixed.Int26_6, maxWidth int, txt io.Reader) ([]text.Line, error) {
+func (f *Font) Layout(ppem fixed.Int26_6, maxWidth int, txt io.Reader,
+) ([]text.Line, error) {
 	glyphs, err := readGlyphs(txt)
 	if err != nil {
 		return nil, err
@@ -121,7 +122,9 @@ func (f *Font) Layout(ppem fixed.Int26_6, maxWidth int, txt io.Reader) ([]text.L
 
 func (f *Font) Shape(ppem fixed.Int26_6, str text.Layout) op.CallOp {
 	var buf sfnt.Buffer
-	return textPath(&buf, ppem, []*opentype{{Font: f.font, Hinting: font.HintingFull}}, str)
+	return textPath(&buf, ppem,
+		[]*opentype{{Font: f.font, Hinting: font.HintingFull}}, str,
+	)
 }
 
 func (f *Font) Metrics(ppem fixed.Int26_6) font.Metrics {
@@ -130,7 +133,8 @@ func (f *Font) Metrics(ppem fixed.Int26_6) font.Metrics {
 	return o.Metrics(&buf, ppem)
 }
 
-func (c *Collection) Layout(ppem fixed.Int26_6, maxWidth int, txt io.Reader) ([]text.Line, error) {
+func (c *Collection) Layout(ppem fixed.Int26_6, maxWidth int, txt io.Reader,
+) ([]text.Line, error) {
 	glyphs, err := readGlyphs(txt)
 	if err != nil {
 		return nil, err
@@ -156,7 +160,9 @@ func fontForGlyph(buf *sfnt.Buffer, fonts []*opentype, r rune) *opentype {
 	return fonts[0] // Use replacement character from the first font if necessary
 }
 
-func layoutText(sbuf *sfnt.Buffer, ppem fixed.Int26_6, maxWidth int, fonts []*opentype, glyphs []glyph) ([]text.Line, error) {
+func layoutText(sbuf *sfnt.Buffer, ppem fixed.Int26_6, maxWidth int,
+	fonts []*opentype, glyphs []glyph,
+) ([]text.Line, error) {
 	var lines []text.Line
 	var nextLine text.Line
 	updateBounds := func(f *opentype) {
@@ -261,7 +267,9 @@ func toLayout(glyphs []glyph) text.Layout {
 	return text.Layout{Text: buf.String(), Advances: advs}
 }
 
-func textPath(buf *sfnt.Buffer, ppem fixed.Int26_6, fonts []*opentype, str text.Layout) op.CallOp {
+func textPath(buf *sfnt.Buffer, ppem fixed.Int26_6, fonts []*opentype,
+	str text.Layout,
+) op.CallOp {
 	var lastPos f32.Point
 	var builder clip.Path
 	ops := new(op.Ops)
@@ -364,7 +372,8 @@ func (f *opentype) HasGlyph(buf *sfnt.Buffer, r rune) bool {
 	return g != 0 && err == nil
 }
 
-func (f *opentype) GlyphAdvance(buf *sfnt.Buffer, ppem fixed.Int26_6, r rune) (advance fixed.Int26_6, ok bool) {
+func (f *opentype) GlyphAdvance(buf *sfnt.Buffer, ppem fixed.Int26_6, r rune,
+) (advance fixed.Int26_6, ok bool) {
 	g, err := f.Font.GlyphIndex(buf, r)
 	if err != nil {
 		return 0, false
@@ -373,7 +382,8 @@ func (f *opentype) GlyphAdvance(buf *sfnt.Buffer, ppem fixed.Int26_6, r rune) (a
 	return adv, err == nil
 }
 
-func (f *opentype) Kern(buf *sfnt.Buffer, ppem fixed.Int26_6, r0, r1 rune) fixed.Int26_6 {
+func (f *opentype) Kern(buf *sfnt.Buffer, ppem fixed.Int26_6, r0, r1 rune,
+) fixed.Int26_6 {
 	g0, err := f.Font.GlyphIndex(buf, r0)
 	if err != nil {
 		return 0
@@ -394,12 +404,14 @@ func (f *opentype) Metrics(buf *sfnt.Buffer, ppem fixed.Int26_6) font.Metrics {
 	return m
 }
 
-func (f *opentype) Bounds(buf *sfnt.Buffer, ppem fixed.Int26_6) fixed.Rectangle26_6 {
+func (f *opentype) Bounds(buf *sfnt.Buffer, ppem fixed.Int26_6,
+) fixed.Rectangle26_6 {
 	r, _ := f.Font.Bounds(buf, ppem, f.Hinting)
 	return r
 }
 
-func (f *opentype) LoadGlyph(buf *sfnt.Buffer, ppem fixed.Int26_6, r rune) ([]sfnt.Segment, bool) {
+func (f *opentype) LoadGlyph(buf *sfnt.Buffer, ppem fixed.Int26_6, r rune,
+) ([]sfnt.Segment, bool) {
 	g, err := f.Font.GlyphIndex(buf, r)
 	if err != nil {
 		return nil, false

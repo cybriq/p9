@@ -1,9 +1,10 @@
+//go:build !generate
 // +build !generate
 
 package rpchelp
 
 import (
-	"github.com/p9c/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // HelpDescs contains the locale-specific help strings along with the locale.
@@ -40,8 +41,12 @@ var Methods = []struct {
 	{"keypoolrefill", nil},
 	{"listaccounts", []interface{}{(*map[string]float64)(nil)}},
 	{"listlockunspent", []interface{}{(*[]btcjson.TransactionInput)(nil)}},
-	{"listreceivedbyaccount", []interface{}{(*[]btcjson.ListReceivedByAccountResult)(nil)}},
-	{"listreceivedbyaddress", []interface{}{(*[]btcjson.ListReceivedByAddressResult)(nil)}},
+	{"listreceivedbyaccount",
+		[]interface{}{(*[]btcjson.ListReceivedByAccountResult)(nil)},
+	},
+	{"listreceivedbyaddress",
+		[]interface{}{(*[]btcjson.ListReceivedByAddressResult)(nil)},
+	},
 	{"listsinceblock", []interface{}{(*btcjson.ListSinceBlockResult)(nil)}},
 	{"listtransactions", returnsLTRArray},
 	{"listunspent", []interface{}{(*btcjson.ListUnspentResult)(nil)}},
@@ -51,8 +56,12 @@ var Methods = []struct {
 	{"sendtoaddress", returnsString},
 	{"settxfee", returnsBool},
 	{"signmessage", returnsString},
-	{"signrawtransaction", []interface{}{(*btcjson.SignRawTransactionResult)(nil)}},
-	{"validateaddress", []interface{}{(*btcjson.ValidateAddressWalletResult)(nil)}},
+	{"signrawtransaction",
+		[]interface{}{(*btcjson.SignRawTransactionResult)(nil)},
+	},
+	{"validateaddress",
+		[]interface{}{(*btcjson.ValidateAddressWalletResult)(nil)},
+	},
 	{"verifymessage", returnsBool},
 	{"walletlock", nil},
 	{"walletpassphrase", nil},

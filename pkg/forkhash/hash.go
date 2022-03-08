@@ -1,9 +1,9 @@
 package forkhash
 
 import (
-	"github.com/p9c/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/fork"
 	"math/big"
-	
+
 	skein "github.com/enceve/crypto/skein/skein256"
 	gost "github.com/programmer10110/gostreebog"
 	"golang.org/x/crypto/argon2"
@@ -11,8 +11,8 @@ import (
 	"golang.org/x/crypto/scrypt"
 	"golang.org/x/crypto/sha3"
 	"lukechampine.com/blake3"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // HashReps allows the number of multiplication/division cycles to be repeated before the final hash, on release for
@@ -31,6 +31,7 @@ func Blake2b(bytes []byte) []byte {
 	b := blake2b.Sum256(bytes)
 	return b[:]
 }
+
 //
 // // X11 takes bytes and returns a X11 256 bit hash
 // func X11(bytes []byte) (out []byte) {

@@ -6,10 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // blockHdrOffset defines the offsets into a v1 block index row for the block header.
@@ -130,7 +130,9 @@ func migrateBlockIndex(db database.DB) (e error) {
 // readBlockTree reads the old block index bucket and constructs a mapping of each block to its parent block and all
 // child blocks. This mapping represents the full tree of blocks. This function does not populate the height or
 // mainChain fields of the returned blockChainContext values.
-func readBlockTree(v1BlockIdxBucket database.Bucket) (blocksMap map[chainhash.Hash]*blockChainContext, e error) {
+func readBlockTree(v1BlockIdxBucket database.Bucket) (blocksMap map[chainhash.Hash]*blockChainContext,
+	e error,
+) {
 	blocksMap = make(map[chainhash.Hash]*blockChainContext)
 	e = v1BlockIdxBucket.ForEach(
 		func(_, blockRow []byte) (e error) {
@@ -193,7 +195,9 @@ func determineBlockHeights(blocksMap map[chainhash.Hash]*blockChainContext) (e e
 
 // determineMainChainBlocks traverses the block graph down from the tip to determine which block hashes that are part of
 // the main chain. This function modifies the mainChain field on the blocksMap entries.
-func determineMainChainBlocks(blocksMap map[chainhash.Hash]*blockChainContext, tip *chainhash.Hash) {
+func determineMainChainBlocks(blocksMap map[chainhash.Hash]*blockChainContext,
+	tip *chainhash.Hash,
+) {
 	for nextHash := tip; *nextHash != zeroHash; nextHash = blocksMap[*nextHash].parent {
 		blocksMap[*nextHash].mainChain = true
 	}

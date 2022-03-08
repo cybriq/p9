@@ -5,15 +5,15 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/chainrpc/p2padvt"
-	"github.com/p9c/p9/pkg/transport"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/chainrpc/p2padvt"
+	"github.com/cybriq/p9/pkg/transport"
+	"github.com/cybriq/p9/pkg/wire"
 
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/rpcclient"
-	"github.com/p9c/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/rpcclient"
+	"github.com/cybriq/p9/pkg/util"
 )
 
 func (wg *WalletGUI) WalletAndClientRunning() bool {
@@ -27,7 +27,10 @@ func (wg *WalletGUI) Advertise() (e error) {
 		// I.Ln("sending out p2p advertisment")
 		if e = wg.multiConn.SendMany(
 			p2padvt.Magic,
-			transport.GetShards(p2padvt.Get(uint64(wg.cx.Config.UUID.V()), (wg.cx.Config.P2PListeners.S())[0])),
+			transport.GetShards(p2padvt.Get(uint64(wg.cx.Config.UUID.V()),
+				(wg.cx.Config.P2PListeners.S())[0],
+			),
+			),
 		); E.Chk(e) {
 		}
 	}
@@ -200,7 +203,9 @@ func (wg *WalletGUI) updateChainBlock() {
 	wg.State.SetBestBlockHash(h)
 }
 
-func (wg *WalletGUI) processChainBlockNotification(hash *chainhash.Hash, height int32, t time.Time) {
+func (wg *WalletGUI) processChainBlockNotification(hash *chainhash.Hash,
+	height int32, t time.Time,
+) {
 	D.Ln("processChainBlockNotification")
 	wg.State.SetBestBlockHeight(height)
 	wg.State.SetBestBlockHash(hash)
@@ -292,7 +297,9 @@ func (wg *WalletGUI) ChainNotifications() *rpcclient.NotificationHandlers {
 		// 	wg.RecentTransactions(-1, "history")
 		// 	wg.invalidate <- struct{}{}
 		// },
-		OnFilteredBlockConnected: func(height int32, header *wire.BlockHeader, txs []*util.Tx) {
+		OnFilteredBlockConnected: func(height int32, header *wire.BlockHeader,
+			txs []*util.Tx,
+		) {
 			nbh := header.BlockHash()
 			wg.processChainBlockNotification(&nbh, height, header.Timestamp)
 			// if time.Now().Sub(time.Unix(wg.lastUpdated.Load(), 0)) < time.Second {
@@ -301,7 +308,8 @@ func (wg *WalletGUI) ChainNotifications() *rpcclient.NotificationHandlers {
 			wg.lastUpdated.Store(time.Now().Unix())
 			hash := header.BlockHash()
 			D.Ln(
-				"(((NOTIFICATION))) OnFilteredBlockConnected hash", hash, "POW hash:",
+				"(((NOTIFICATION))) OnFilteredBlockConnected hash", hash,
+				"POW hash:",
 				header.BlockHashWithAlgos(height), "height", height,
 			)
 			// D.S(txs)
@@ -472,7 +480,7 @@ func (wg *WalletGUI) ChainNotifications() *rpcclient.NotificationHandlers {
 		// 	}
 		// },
 	}
-	
+
 }
 
 func (wg *WalletGUI) WalletNotifications() *rpcclient.NotificationHandlers {
@@ -641,7 +649,7 @@ func (wg *WalletGUI) WalletNotifications() *rpcclient.NotificationHandlers {
 		// 	}
 		// },
 	}
-	
+
 }
 
 func (wg *WalletGUI) chainClient() (e error) {

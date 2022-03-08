@@ -8,8 +8,8 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/ecc"
 )
 
 // This example demonstrates signing a message with a secp256k1 private key that
@@ -17,7 +17,8 @@ import (
 func Example_signMessage() {
 	// Decode a hex-encoded private key.
 	pkBytes, err := hex.DecodeString("22a47fa09a223f2aa079edf85a7c2d4f87" +
-		"20ee63e502ee2869afab7de234b80c")
+		"20ee63e502ee2869afab7de234b80c",
+	)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -51,7 +52,8 @@ func Example_signMessage() {
 func Example_verifySignature() {
 	// Decode hex-encoded serialized public key.
 	pubKeyBytes, err := hex.DecodeString("02a673638cb9587cb68ea08dbef685c" +
-		"6f2d2a751a8b3c6f2a7e9a4999e6e4bfaf5")
+		"6f2d2a751a8b3c6f2a7e9a4999e6e4bfaf5",
+	)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -65,7 +67,8 @@ func Example_verifySignature() {
 	// Decode hex-encoded serialized signature.
 	sigBytes, err := hex.DecodeString("30450220090ebfb3690a0ff115bb1b38b" +
 		"8b323a667b7653454f1bccb06d4bbdca42c2079022100ec95778b51e707" +
-		"1cb1205f8bde9af6592fc978b0452dafe599481c46d6b2e479")
+		"1cb1205f8bde9af6592fc978b0452dafe599481c46d6b2e479",
+	)
 
 	if err != nil {
 		fmt.Println(err)
@@ -93,7 +96,8 @@ func Example_encryptMessage() {
 	// Decode the hex-encoded pubkey of the recipient.
 	pubKeyBytes, err := hex.DecodeString("04115c42e757b2efb7671c578530ec191a1" +
 		"359381e6a71127a9d37c486fd30dae57e76dc58f693bd7e7010358ce6b165e483a29" +
-		"21010db67ac11b1b51b651953d2") // uncompressed pubkey
+		"21010db67ac11b1b51b651953d2",
+	) // uncompressed pubkey
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -114,7 +118,8 @@ func Example_encryptMessage() {
 
 	// Decode the hex-encoded private key.
 	pkBytes, err := hex.DecodeString("a11b0a4e1a132305652ee7a8eb7848f6ad" +
-		"5ea381e3ce20a2c086a2e388230811")
+		"5ea381e3ce20a2c086a2e388230811",
+	)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -140,7 +145,8 @@ func Example_encryptMessage() {
 func Example_decryptMessage() {
 	// Decode the hex-encoded private key.
 	pkBytes, err := hex.DecodeString("a11b0a4e1a132305652ee7a8eb7848f6ad" +
-		"5ea381e3ce20a2c086a2e388230811")
+		"5ea381e3ce20a2c086a2e388230811",
+	)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -152,7 +158,8 @@ func Example_decryptMessage() {
 		"002047a2f1b38aa1a8f1d5121778378414f708fe13ebf7b4a7bb74407288c1958969" +
 		"00207cf4ac6057406e40f79961c973309a892732ae7a74ee96cd89823913b8b8d650" +
 		"a44166dc61ea1c419d47077b748a9c06b8d57af72deb2819d98a9d503efc59fc8307" +
-		"d14174f8b83354fac3ff56075162")
+		"d14174f8b83354fac3ff56075162",
+	)
 
 	// Try decrypting the message.
 	plaintext, err := ecc.Decrypt(privKey, ciphertext)

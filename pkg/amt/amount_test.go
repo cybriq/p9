@@ -1,7 +1,7 @@
 package amt_test
 
 import (
-	"github.com/p9c/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/amt"
 	"math"
 	"testing"
 )
@@ -89,14 +89,20 @@ func TestAmountCreation(t *testing.T) {
 		a, e := amt.NewAmount(test.amount)
 		switch {
 		case test.valid && e != nil:
-			t.Errorf("%v: Positive test Amount creation failed with: %v", test.name, e)
+			t.Errorf("%v: Positive test Amount creation failed with: %v",
+				test.name, e,
+			)
 			continue
 		case !test.valid && e == nil:
-			t.Errorf("%v: Negative test Amount creation succeeded (value %v) when should fail", test.name, a)
+			t.Errorf("%v: Negative test Amount creation succeeded (value %v) when should fail",
+				test.name, a,
+			)
 			continue
 		}
 		if a != test.expected {
-			t.Errorf("%v: Created amount %v does not match expected %v", test.name, a, test.expected)
+			t.Errorf("%v: Created amount %v does not match expected %v",
+				test.name, a, test.expected,
+			)
 			continue
 		}
 	}
@@ -162,25 +168,33 @@ func TestAmountUnitConversions(t *testing.T) {
 	for _, test := range tests {
 		f := test.amount.ToUnit(test.unit)
 		if f != test.converted {
-			t.Errorf("%v: converted value %v does not match expected %v", test.name, f, test.converted)
+			t.Errorf("%v: converted value %v does not match expected %v",
+				test.name, f, test.converted,
+			)
 			continue
 		}
 		s := test.amount.Format(test.unit)
 		if s != test.s {
-			t.Errorf("%v: format '%v' does not match expected '%v'", test.name, s, test.s)
+			t.Errorf("%v: format '%v' does not match expected '%v'", test.name,
+				s, test.s,
+			)
 			continue
 		}
 		// Verify that Amount.ToDUO works as advertised.
 		f1 := test.amount.ToUnit(amt.DUO)
 		f2 := test.amount.ToDUO()
 		if f1 != f2 {
-			t.Errorf("%v: ToDUO does not match ToUnit(AmountDUO): %v != %v", test.name, f1, f2)
+			t.Errorf("%v: ToDUO does not match ToUnit(AmountDUO): %v != %v",
+				test.name, f1, f2,
+			)
 		}
 		// Verify that Amount.String works as advertised.
 		s1 := test.amount.Format(amt.DUO)
 		s2 := test.amount.String()
 		if s1 != s2 {
-			t.Errorf("%v: String does not match Format(AmountBitcoin): %v != %v", test.name, s1, s2)
+			t.Errorf("%v: String does not match Format(AmountBitcoin): %v != %v",
+				test.name, s1, s2,
+			)
 		}
 	}
 }

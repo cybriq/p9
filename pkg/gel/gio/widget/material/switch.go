@@ -6,15 +6,15 @@ import (
 	"image"
 	"image/color"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/f32color"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
-	"github.com/p9c/p9/pkg/gel/gio/widget"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/f32color"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/widget"
 )
 
 type SwitchStyle struct {
@@ -50,7 +50,8 @@ func (s SwitchStyle) Layout(gtx layout.Context) layout.Dimensions {
 	trackRect := f32.Rectangle{Max: f32.Point{
 		X: float32(trackWidth),
 		Y: float32(trackHeight),
-	}}
+	},
+	}
 	col := s.Color.Disabled
 	if s.Switch.Value {
 		col = s.Color.Enabled
@@ -98,7 +99,8 @@ func (s SwitchStyle) Layout(gtx layout.Context) layout.Dimensions {
 			clip.Circle{
 				Center: f32.Point{X: thumbRadius, Y: thumbRadius},
 				Radius: r,
-			}.Op(gtx.Ops))
+			}.Op(gtx.Ops),
+		)
 	}
 
 	// Draw thumb shadow, a translucent disc slightly larger than the
@@ -108,14 +110,16 @@ func (s SwitchStyle) Layout(gtx layout.Context) layout.Dimensions {
 		clip.Circle{
 			Center: f32.Point{X: thumbRadius, Y: thumbRadius + .25},
 			Radius: thumbRadius + 1,
-		}.Op(gtx.Ops))
+		}.Op(gtx.Ops),
+	)
 
 	// Draw thumb.
 	paint.FillShape(gtx.Ops, col,
 		clip.Circle{
 			Center: f32.Point{X: thumbRadius, Y: thumbRadius},
 			Radius: thumbRadius,
-		}.Op(gtx.Ops))
+		}.Op(gtx.Ops),
+	)
 
 	// Set up click area.
 	stack = op.Save(gtx.Ops)

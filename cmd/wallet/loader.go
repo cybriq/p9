@@ -7,13 +7,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/util/prompt"
-	"github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/walletdb"
-	"github.com/p9c/p9/pod/config"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/util/prompt"
+	"github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/walletdb"
+	"github.com/cybriq/p9/pod/config"
 )
 
 // Loader implements the creating of new and opening of existing wallets, while providing a callback system for other
@@ -79,12 +79,14 @@ func (ld *Loader) CreateNewWallet(
 	}
 	// Initialize the newly created database for the wallet before opening.
 	if e = Create(db, pubPassphrase, privPassphrase, seed, ld.ChainParams,
-		bday); E.Chk(e) {
+		bday,
+	); E.Chk(e) {
 		return nil, e
 	}
 	// Open the newly-created wallet.
 	if w, e = Open(db, pubPassphrase, nil, ld.ChainParams, ld.RecoveryWindow,
-		podConfig, quit); E.Chk(e) {
+		podConfig, quit,
+	); E.Chk(e) {
 		return nil, e
 	}
 	if !noStart {

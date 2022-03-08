@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"sync"
-	
-	"github.com/p9c/p9/pkg/util/gobin"
+
+	"github.com/cybriq/p9/pkg/util/gobin"
 )
 
 var (

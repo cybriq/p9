@@ -3,12 +3,12 @@ package gel
 import (
 	"image"
 	"time"
-	
-	"github.com/p9c/p9/pkg/gel/gio/gesture"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
+
+	"github.com/cybriq/p9/pkg/gel/gio/gesture"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
 )
 
 type scrollChild struct {
@@ -36,7 +36,7 @@ type List struct {
 	maxSize  int
 	children []scrollChild
 	dir      iterationDir
-	
+
 	// all below are additional fields to implement the scrollbar
 	*Window
 	// we store the constraints here instead of in the `cs` field
@@ -158,8 +158,12 @@ func (li *List) Dragging() bool {
 
 // update the scrolling
 func (li *List) update() {
-	d := li.scroll.Scroll(li.ctx.Metric, li.ctx, li.ctx.Now, gesture.Axis(li.axis))
-	d += li.sideScroll.Scroll(li.ctx.Metric, li.ctx, li.ctx.Now, gesture.Axis(li.axis))
+	d := li.scroll.Scroll(li.ctx.Metric, li.ctx, li.ctx.Now,
+		gesture.Axis(li.axis),
+	)
+	d += li.sideScroll.Scroll(li.ctx.Metric, li.ctx, li.ctx.Now,
+		gesture.Axis(li.axis),
+	)
 	li.scrollDelta = d
 	li.position.Offset += d
 }
@@ -323,7 +327,7 @@ func (li *List) layout(macro op.MacroOp) l.Dimensions {
 	pointer.Rect(bounds).Add(ops)
 	// li.sideScroll.Add(ops, bounds)
 	// li.scroll.Add(ops, bounds)
-	
+
 	var min, max int
 	if o := li.position.Offset; o > 0 {
 		// Use the size of the invisible part as scroll boundary.
@@ -342,12 +346,12 @@ func (li *List) layout(macro op.MacroOp) l.Dimensions {
 	}
 	li.scroll.Add(ops, scrollRange)
 	li.sideScroll.Add(ops, scrollRange)
-	
+
 	call.Add(ops)
 	return l.Dimensions{Size: dims}
 }
 
-// Everything below is extensions on the original from github.com/p9c/p9/pkg/gel/gio/layout
+// Everything below is extensions on the original from github.com/cybriq/p9/pkg/gel/gio/layout
 
 // Position returns the current position of the scroller
 func (li *List) Position() Position {
@@ -467,7 +471,9 @@ func (li *List) Active(color string) *List {
 }
 
 func (li *List) Slice(gtx l.Context, widgets ...l.Widget) l.Widget {
-	return li.Length(len(widgets)).Vertical().ListElement(func(gtx l.Context, index int) l.Dimensions {
+	return li.Length(len(widgets)).Vertical().ListElement(func(gtx l.Context,
+		index int,
+	) l.Dimensions {
 		return widgets[index](gtx)
 	},
 	).Fn
@@ -531,7 +537,10 @@ func (li *List) Fn(gtx l.Context) l.Dimensions {
 		containerFlex := li.Theme.VFlex()
 		if !li.leftSide {
 			containerFlex.Rigid(li.embedWidget(li.scrollWidth /* + int(li.TextSize.True)/4)*/))
-			containerFlex.Rigid(EmptySpace(int(li.TextSize.V)/4, int(li.TextSize.V)/4))
+			containerFlex.Rigid(EmptySpace(int(li.TextSize.V)/4,
+				int(li.TextSize.V)/4,
+			),
+			)
 		}
 		containerFlex.Rigid(
 			li.VFlex().
@@ -564,7 +573,10 @@ func (li *List) Fn(gtx l.Context) l.Dimensions {
 				Fn,
 		)
 		if li.leftSide {
-			containerFlex.Rigid(EmptySpace(int(li.TextSize.V)/4, int(li.TextSize.V)/4))
+			containerFlex.Rigid(EmptySpace(int(li.TextSize.V)/4,
+				int(li.TextSize.V)/4,
+			),
+			)
 			containerFlex.Rigid(li.embedWidget(li.scrollWidth)) // li.scrollWidth)) // + li.scrollBarPad))
 		}
 		container = containerFlex.Fn
@@ -572,7 +584,10 @@ func (li *List) Fn(gtx l.Context) l.Dimensions {
 		containerFlex := li.Theme.Flex()
 		if !li.leftSide {
 			containerFlex.Rigid(li.embedWidget(li.scrollWidth + int(li.TextSize.V)/2)) // + li.scrollBarPad))
-			containerFlex.Rigid(EmptySpace(int(li.TextSize.V)/2, int(li.TextSize.V)/2))
+			containerFlex.Rigid(EmptySpace(int(li.TextSize.V)/2,
+				int(li.TextSize.V)/2,
+			),
+			)
 		}
 		containerFlex.Rigid(
 			li.Fill(li.background, l.Center, li.TextSize.V/4, 0, li.Flex().
@@ -605,10 +620,15 @@ func (li *List) Fn(gtx l.Context) l.Dimensions {
 			).Fn,
 		)
 		if li.leftSide {
-			containerFlex.Rigid(EmptySpace(int(li.TextSize.V)/2, int(li.TextSize.V)/2))
+			containerFlex.Rigid(EmptySpace(int(li.TextSize.V)/2,
+				int(li.TextSize.V)/2,
+			),
+			)
 			containerFlex.Rigid(li.embedWidget(li.scrollWidth + int(li.TextSize.V)/2))
 		}
-		container = li.Fill(li.background, l.Center, li.TextSize.V/4, 0, containerFlex.Fn).Fn
+		container = li.Fill(li.background, l.Center, li.TextSize.V/4, 0,
+			containerFlex.Fn,
+		).Fn
 	}
 	return container(gtx)
 }
@@ -628,7 +648,8 @@ func (li *List) embedWidget(scrollWidth int) func(l.Context) l.Dimensions {
 }
 
 // pageUpDown creates the clickable areas either side of the grabber that trigger a page up/page down action
-func (li *List) pageUpDown(dims DimensionList, view, total, x, y int, down bool) func(l.Context) l.Dimensions {
+func (li *List) pageUpDown(dims DimensionList, view, total, x, y int, down bool,
+) func(l.Context) l.Dimensions {
 	button := li.pageUp
 	if down {
 		button = li.pageDown
@@ -660,7 +681,9 @@ func (li *List) pageUpDown(dims DimensionList, view, total, x, y int, down bool)
 			li.Flex().
 				Rigid(EmptySpace(x/4, y)).
 				Rigid(
-					li.Fill("scrim", l.Center, li.TextSize.V/4, 0, EmptySpace(x/2, y)).Fn,
+					li.Fill("scrim", l.Center, li.TextSize.V/4, 0,
+						EmptySpace(x/2, y),
+					).Fn,
 				).
 				Rigid(EmptySpace(x/4, y)).
 				Fn,
@@ -669,7 +692,8 @@ func (li *List) pageUpDown(dims DimensionList, view, total, x, y int, down bool)
 }
 
 // grabber renders the grabber
-func (li *List) grabber(dims DimensionList, x, y, viewAxis, viewCross int) func(l.Context) l.Dimensions {
+func (li *List) grabber(dims DimensionList, x, y, viewAxis, viewCross int,
+) func(l.Context) l.Dimensions {
 	return func(gtx l.Context) l.Dimensions {
 		ax := gesture.Vertical
 		if li.axis == l.Horizontal {
@@ -697,13 +721,15 @@ func (li *List) grabber(dims DimensionList, x, y, viewAxis, viewCross int) func(
 						deltaX := int(de.Position.X)
 						if deltaX > 8 || deltaX < -8 {
 							d = deltaX * (total / viewAxis)
-							li.SetPosition(dims.CoordinateToPosition(d, li.axis))
+							li.SetPosition(dims.CoordinateToPosition(d, li.axis),
+							)
 						}
 					} else {
 						deltaY := int(de.Position.Y)
 						if deltaY > 8 || deltaY < -8 {
 							d = deltaY * (total / viewAxis)
-							li.SetPosition(dims.CoordinateToPosition(d, li.axis))
+							li.SetPosition(dims.CoordinateToPosition(d, li.axis),
+							)
 						}
 					}
 				}

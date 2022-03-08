@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // TestWalletSvrWsCmds tests all of the wallet server websocket-specific commands marshal and unmarshal into valid
@@ -54,7 +54,9 @@ func TestWalletSvrWsCmds(t *testing.T) {
 				return btcjson.NewCmd("exportwatchingwallet", "acct")
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewExportWatchingWalletCmd(btcjson.String("acct"), nil)
+				return btcjson.NewExportWatchingWalletCmd(btcjson.String("acct"),
+					nil,
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"exportwatchingwallet","netparams":["acct"],"id":1}`,
 			unmarshalled: &btcjson.ExportWatchingWalletCmd{
@@ -110,7 +112,9 @@ func TestWalletSvrWsCmds(t *testing.T) {
 				return btcjson.NewCmd("listaddresstransactions", `["1Address"]`)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListAddressTransactionsCmd([]string{"1Address"}, nil)
+				return btcjson.NewListAddressTransactionsCmd([]string{"1Address"},
+					nil,
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"listaddresstransactions","netparams":[["1Address"]],"id":1}`,
 			unmarshalled: &btcjson.ListAddressTransactionsCmd{
@@ -121,7 +125,9 @@ func TestWalletSvrWsCmds(t *testing.T) {
 		{
 			name: "listaddresstransactions optional1",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("listaddresstransactions", `["1Address"]`, "acct")
+				return btcjson.NewCmd("listaddresstransactions", `["1Address"]`,
+					"acct",
+				)
 			},
 			staticCmd: func() interface{} {
 				return btcjson.NewListAddressTransactionsCmd([]string{"1Address"},

@@ -9,13 +9,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/p9c/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/log"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/fec"
-	"github.com/p9c/p9/pkg/gcm"
-	"github.com/p9c/p9/pkg/multicast"
+	"github.com/cybriq/p9/pkg/fec"
+	"github.com/cybriq/p9/pkg/gcm"
+	"github.com/cybriq/p9/pkg/multicast"
 )
 
 const (
@@ -40,8 +40,8 @@ type (
 	HandlerFunc func(
 		ctx interface{}, src net.Addr, dst string, b []byte,
 	) (e error)
-	Handlers    map[string]HandlerFunc
-	Channel     struct {
+	Handlers map[string]HandlerFunc
+	Channel  struct {
 		buffers         map[string]*MsgBuffer
 		Ready           qu.C
 		context         interface{}
@@ -145,11 +145,15 @@ func NewUnicastChannel(
 		bytes[i] = 0
 		key[i] = 0
 	}
-	if channel.Receiver, e = Listen(receiver, channel, maxDatagramSize, handlers, quit); E.Chk(e) {
+	if channel.Receiver, e = Listen(receiver, channel, maxDatagramSize,
+		handlers, quit,
+	); E.Chk(e) {
 	}
 	if channel.Sender, e = NewSender(sender, maxDatagramSize); E.Chk(e) {
 	}
-	D.Ln("starting unicast multicast:", channel.Creator, sender, receiver, magics)
+	D.Ln("starting unicast multicast:", channel.Creator, sender, receiver,
+		magics,
+	)
 	return
 }
 
@@ -220,7 +224,9 @@ func NewBroadcastChannel(
 		key[i] = 0
 		bytes[i] = 0
 	}
-	if channel.Receiver, e = ListenBroadcast(port, channel, maxDatagramSize, handlers, quit); E.Chk(e) {
+	if channel.Receiver, e = ListenBroadcast(port, channel, maxDatagramSize,
+		handlers, quit,
+	); E.Chk(e) {
 	}
 	if channel.Sender, e = NewBroadcaster(port, maxDatagramSize); E.Chk(e) {
 	}
@@ -320,7 +326,9 @@ out:
 			nonceBytes := msg[4 : 4+nL]
 			nonce := string(nonceBytes)
 			var shard []byte
-			if shard, e = channel.receiveCiph.Open(nil, nonceBytes, msg[4+len(nonceBytes):], nil); e != nil {
+			if shard, e = channel.receiveCiph.Open(nil, nonceBytes,
+				msg[4+len(nonceBytes):], nil,
+			); e != nil {
 				continue
 			}
 			// D.Ln("read", numBytes, "from", src, e, hex.EncodeToString(msg))
@@ -335,7 +343,9 @@ out:
 						}
 						// D.F("received packet with magic %s from %s len %d bytes", magic, src.String(), len(cipherText))
 						bn.Decoded = true
-						if e = handler(channel.context, src, address, cipherText); E.Chk(e) {
+						if e = handler(channel.context, src, address,
+							cipherText,
+						); E.Chk(e) {
 							continue
 						}
 						// src = nil

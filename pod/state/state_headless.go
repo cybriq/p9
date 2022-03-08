@@ -1,3 +1,4 @@
+//go:build headless
 // +build headless
 
 package state
@@ -10,19 +11,19 @@ import (
 	"sync"
 	"time"
 
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/chainclient"
-	"github.com/p9c/p9/pkg/ctrl"
-	"github.com/p9c/p9/pod/config"
-	"github.com/p9c/p9/pod/podcfgs"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chainclient"
+	"github.com/cybriq/p9/pkg/ctrl"
+	"github.com/cybriq/p9/pod/config"
+	"github.com/cybriq/p9/pod/podcfgs"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
 	"go.uber.org/atomic"
 
-	"github.com/p9c/p9/cmd/node/active"
-	"github.com/p9c/p9/pkg/chainrpc"
-	"github.com/p9c/p9/pkg/util/lang"
+	"github.com/cybriq/p9/cmd/node/active"
+	"github.com/cybriq/p9/pkg/chainrpc"
+	"github.com/cybriq/p9/pkg/util/lang"
 )
 
 type _dtype int
@@ -34,7 +35,7 @@ type State struct {
 	sync.Mutex
 	WaitGroup sync.WaitGroup
 	KillAll   qu.C
-	Config *config.Config
+	Config    *config.Config
 	// ConfigMap
 	ConfigMap map[string]interface{}
 	// StateCfg is a reference to the main node state configuration struct
@@ -163,8 +164,10 @@ func (cx *State) IsCurrent() (is bool) {
 		connected &&
 		rn.Chain.BestChain.Height() >= rn.HighestKnown.Load() || *cx.Config.Solo
 	D.Ln(
-		"is current:", is, "-", rn.Chain.IsCurrent(), rn.SyncManager.IsCurrent(),
-		*cx.Config.Solo, "connected", rn.HighestKnown.Load(), rn.Chain.BestChain.Height(),
+		"is current:", is, "-", rn.Chain.IsCurrent(),
+		rn.SyncManager.IsCurrent(),
+		*cx.Config.Solo, "connected", rn.HighestKnown.Load(),
+		rn.Chain.BestChain.Height(),
 		othernodes,
 	)
 	return is

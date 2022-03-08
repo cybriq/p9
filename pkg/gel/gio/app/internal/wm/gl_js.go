@@ -6,9 +6,9 @@ import (
 	"errors"
 	"syscall/js"
 
-	"github.com/p9c/p9/pkg/gel/gio/gpu"
-	"github.com/p9c/p9/pkg/gel/gio/internal/gl"
-	"github.com/p9c/p9/pkg/gel/gio/internal/srgb"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/gl"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/srgb"
 )
 
 type context struct {

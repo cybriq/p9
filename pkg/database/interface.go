@@ -1,8 +1,8 @@
 package database
 
 import (
-	"github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // Cursor represents a cursor over key/value pairs and nested buckets of a bucket.

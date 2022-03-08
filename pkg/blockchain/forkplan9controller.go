@@ -1,8 +1,8 @@
 package blockchain
 
 import (
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/fork"
 	"sort"
 )
 
@@ -59,7 +59,9 @@ func (b *BlockChain) CalcNextRequiredDifficultyPlan9Controller(lastNode *BlockNo
 			}
 			sort.Sort(algos)
 			for _, v := range algos {
-				nTB[v.Params.Version], _, e = b.CalcNextRequiredDifficultyPlan9(lastNode, v.Name, true)
+				nTB[v.Params.Version], _, e = b.CalcNextRequiredDifficultyPlan9(lastNode,
+					v.Name, true,
+				)
 			}
 			diffs = nTB
 			// Traces(diffs)

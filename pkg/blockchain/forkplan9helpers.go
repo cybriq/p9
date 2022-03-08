@@ -2,9 +2,9 @@ package blockchain
 
 import (
 	"github.com/VividCortex/ewma"
-	"github.com/p9c/p9/pkg/fork"
-	
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/fork"
+
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 func (b *BlockChain) GetCommonP9Averages(lastNode *BlockNode, nH int32) (
@@ -222,7 +222,7 @@ func (b *BlockChain) GetP9Since(lastNode *BlockNode, algoVer int32) (
 	// ratio of seconds since to target seconds per block times the all time divergence ensures the change scales with
 	// the divergence from the target, and favours algos that are later
 	timeSinceAlgo = capP9Adjustment((since / tspb) / 5)
-	
+
 	return
 }
 

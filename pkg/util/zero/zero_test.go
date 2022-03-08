@@ -6,8 +6,8 @@ import (
 	"math/big"
 	"strings"
 	"testing"
-	
-	. "github.com/p9c/p9/pkg/util/zero"
+
+	. "github.com/cybriq/p9/pkg/util/zero"
 )
 
 func makeOneBytes(n int) []byte {
@@ -98,7 +98,9 @@ func TestBigInt(t *testing.T) {
 			continue
 		}
 		if v.Cmp(bigZero) != 0 {
-			t.Errorf("Test %d (s=%s) zeroed big.Int represents non-zero number %v", i, s, v)
+			t.Errorf("Test %d (s=%s) zeroed big.Int represents non-zero number %v",
+				i, s, v,
+			)
 			continue
 		}
 	}

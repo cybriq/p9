@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/p9c/p9/pkg/gel/gio/app/internal/wm"
+	"github.com/cybriq/p9/pkg/gel/gio/app/internal/wm"
 )
 
 // extraArgs contains extra arguments to append to

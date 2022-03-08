@@ -15,23 +15,23 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/io/clipboard"
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/text"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/io/clipboard"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 
-	"github.com/p9c/p9/pkg/gel/gio/gesture"
+	"github.com/cybriq/p9/pkg/gel/gio/gesture"
 
 	"golang.org/x/image/math/fixed"
 
-	clipboard3 "github.com/p9c/p9/pkg/gel/clipboard"
+	clipboard3 "github.com/cybriq/p9/pkg/gel/clipboard"
 )
 
 func (w *Window) Editor() *Editor {
@@ -270,7 +270,8 @@ func (e *Editor) processPointer(gtx layout.Context) {
 					e.moveCoord(image.Point{
 						X: int(math.Round(float64(evt.Position.X))),
 						Y: int(math.Round(float64(evt.Position.Y))),
-					})
+					},
+					)
 					e.requestFocus = true
 					if e.scroller.State() != gesture.StateFlinging {
 						e.caret.scroll = true
@@ -295,10 +296,12 @@ func (e *Editor) processPointer(gtx layout.Context) {
 						e.moveWord(1, selectionExtend)
 						e.dragging = false
 					}
-					// process a triple click - select all. This required forking github.com/p9c/p9/pkg/gel/gio/gesture
+					// process a triple click - select all. This required forking github.com/cybriq/p9/pkg/gel/gio/gesture
 					if evt.NumClicks == 3 {
 						e.dragging = false
-						e.caret.end, e.caret.start = e.offsetToScreenPos2(0, e.Len())
+						e.caret.end, e.caret.start = e.offsetToScreenPos2(0,
+							e.Len(),
+						)
 						evt.NumClicks = 0
 					}
 				}
@@ -307,7 +310,8 @@ func (e *Editor) processPointer(gtx layout.Context) {
 					e.moveCoord(image.Point{
 						X: int(math.Round(float64(evt.Position.X))),
 						Y: int(math.Round(float64(evt.Position.Y))),
-					})
+					},
+					)
 					e.ClearSelection()
 					primary := clipboard3.GetPrimary()
 					e.prepend(primary)
@@ -323,7 +327,8 @@ func (e *Editor) processPointer(gtx layout.Context) {
 				e.moveCoord(image.Point{
 					X: int(math.Round(float64(evt.Position.X))),
 					Y: int(math.Round(float64(evt.Position.Y))),
-				})
+				},
+				)
 				e.prepend(clipboard3.GetPrimary())
 			case evt.Type == pointer.Release && evt.Source == pointer.Mouse:
 				release = true
@@ -334,7 +339,8 @@ func (e *Editor) processPointer(gtx layout.Context) {
 					e.moveCoord(image.Point{
 						X: int(math.Round(float64(evt.Position.X))),
 						Y: int(math.Round(float64(evt.Position.Y))),
-					})
+					},
+					)
 					e.caret.scroll = true
 
 					if release {
@@ -381,7 +387,8 @@ func (e *Editor) processKey(gtx layout.Context) {
 				if !ke.Modifiers.Contain(key.ModShift) {
 					e.events = append(e.events, SubmitEvent{
 						Text: e.Text(),
-					})
+					},
+					)
 					continue
 				}
 			}
@@ -407,8 +414,10 @@ func (e *Editor) processKey(gtx layout.Context) {
 }
 
 func (e *Editor) moveLines(distance int, selAct selectionAction) {
-	e.caret.start = e.movePosToLine(e.caret.start, e.caret.start.x+e.caret.start.xoff,
-		e.caret.start.lineCol.Y+distance)
+	e.caret.start = e.movePosToLine(e.caret.start,
+		e.caret.start.x+e.caret.start.xoff,
+		e.caret.start.lineCol.Y+distance,
+	)
 	e.updateSelection(selAct)
 }
 
@@ -508,7 +517,9 @@ func (e *Editor) Focused() bool {
 }
 
 // Layout lays out the editor.
-func (e *Editor) Layout(gtx layout.Context, sh text.Shaper, font text.Font, size unit.Value) layout.Dimensions {
+func (e *Editor) Layout(gtx layout.Context, sh text.Shaper, font text.Font,
+	size unit.Value,
+) layout.Dimensions {
 	textSize := fixed.I(gtx.Px(size))
 	if e.font != font || e.textSize != textSize {
 		e.invalidate()
@@ -666,12 +677,15 @@ func (e *Editor) PaintCaret(gtx layout.Context) {
 		e.lines[e.caret.start.lineCol.Y].Bounds.Max.Y
 	carRect := image.Rectangle{
 		Min: image.Point{X: carX.Ceil(), Y: carY - carAsc.Ceil()},
-		Max: image.Point{X: carX.Ceil() + carWidth.Ceil(), Y: carY + carDesc.Ceil()},
+		Max: image.Point{X: carX.Ceil() + carWidth.Ceil(),
+			Y: carY + carDesc.Ceil(),
+		},
 	}
 	carRect = carRect.Add(image.Point{
 		X: -e.scrollOff.X,
 		Y: -e.scrollOff.Y,
-	})
+	},
+	)
 	cl := textPadding(e.lines)
 	// Account for caret width to each side.
 	whalf := (carWidth / 2).Ceil()
@@ -824,7 +838,9 @@ func (e *Editor) offsetToScreenPos2(o1, o2 int) (combinedPos, combinedPos) {
 // This function is written this way to take advantage of previous work done
 // for offsets after the first. Otherwise you have to start from the top each
 // time.
-func (e *Editor) offsetToScreenPos(offset int) (combinedPos, func(int) combinedPos) {
+func (e *Editor) offsetToScreenPos(offset int) (combinedPos,
+	func(int) combinedPos,
+) {
 	var col, line, idx int
 	var x fixed.Int26_6
 
@@ -910,7 +926,8 @@ func (e *Editor) prepend(s string) {
 		s = strings.ReplaceAll(s, "\n", " ")
 	}
 	e.caret.start.ofs = e.editBuffer.deleteRunes(e.caret.start.ofs,
-		e.caret.end.ofs-e.caret.start.ofs) // Delete any selection first.
+		e.caret.end.ofs-e.caret.start.ofs,
+	) // Delete any selection first.
 	e.editBuffer.prepend(e.caret.start.ofs, s)
 	e.caret.start.xoff = 0
 	e.invalidate()
@@ -937,11 +954,14 @@ func (e *Editor) movePages(pages int, selAct selectionAction) {
 		y2 += h
 		carLine2++
 	}
-	e.caret.start = e.movePosToLine(e.caret.start, e.caret.start.x+e.caret.start.xoff, carLine2)
+	e.caret.start = e.movePosToLine(e.caret.start,
+		e.caret.start.x+e.caret.start.xoff, carLine2,
+	)
 	e.updateSelection(selAct)
 }
 
-func (e *Editor) movePosToLine(pos combinedPos, x fixed.Int26_6, line int) combinedPos {
+func (e *Editor) movePosToLine(pos combinedPos, x fixed.Int26_6, line int,
+) combinedPos {
 	e.makeValid(&pos)
 	if line < 0 {
 		line = 0
@@ -1255,7 +1275,8 @@ func (e *Editor) makeValidCaret(positions ...*combinedPos) {
 	positions = append(positions, &e.caret.start, &e.caret.end)
 	sort.Slice(positions, func(i, j int) bool {
 		return positions[i].ofs < positions[j].ofs
-	})
+	},
+	)
 	var iter func(offset int) combinedPos
 	*positions[0], iter = e.offsetToScreenPos(positions[0].ofs)
 	for _, cp := range positions[1:] {
@@ -1270,7 +1291,9 @@ func (e *Editor) SelectedText() string {
 		return ""
 	}
 	buf := make([]byte, l)
-	e.editBuffer.Seek(int64(min(e.caret.start.ofs, e.caret.end.ofs)), io.SeekStart)
+	e.editBuffer.Seek(int64(min(e.caret.start.ofs, e.caret.end.ofs)),
+		io.SeekStart,
+	)
 	_, err := e.editBuffer.Read(buf)
 	if err != nil {
 		// The only error that rr.Read can return is EOF, which just means no

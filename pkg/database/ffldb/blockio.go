@@ -9,10 +9,10 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -426,7 +426,9 @@ func (s *blockStore) writeBlock(rawBlock []byte) (blockLocation, error) {
 //
 // Returns ErrDriverSpecific if the data fails to read for any reason and ErrCorruption if the checksum of the read data
 // doesn't match the checksum read from the file. Format: <network><block length><serialized block><checksum>
-func (s *blockStore) readBlock(hash *chainhash.Hash, loc blockLocation) ([]byte, error) {
+func (s *blockStore) readBlock(hash *chainhash.Hash, loc blockLocation) ([]byte,
+	error,
+) {
 	// Get the referenced block file handle opening the file as needed. The function also handles closing files as
 	// needed to avoid going over the max allowed open files.
 	blockFile, e := s.blockFile(loc.blockFileNum)
@@ -479,7 +481,8 @@ func (s *blockStore) readBlock(hash *chainhash.Hash, loc blockLocation) ([]byte,
 // the maximum allowed open files limit.
 //
 // Returns ErrDriverSpecific if the data fails to read for any reason.
-func (s *blockStore) readBlockRegion(loc blockLocation, offset, numBytes uint32) ([]byte, error) {
+func (s *blockStore) readBlockRegion(loc blockLocation, offset, numBytes uint32,
+) ([]byte, error) {
 	// Get the referenced block file handle opening the file as needed. The function also handles closing files as
 	// needed to avoid going over the max allowed open files.
 	blockFile, e := s.blockFile(loc.blockFileNum)

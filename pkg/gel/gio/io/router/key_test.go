@@ -6,9 +6,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 func TestKeyWakeup(t *testing.T) {
@@ -121,7 +121,10 @@ func TestKeyRemoveFocus(t *testing.T) {
 	r.Frame(ops)
 
 	// Add some key events:
-	event := event.Event(key.Event{Name: key.NameTab, Modifiers: key.ModShortcut, State: key.Press})
+	event := event.Event(key.Event{Name: key.NameTab,
+		Modifiers: key.ModShortcut, State: key.Press,
+	},
+	)
 	r.Queue(event)
 
 	assertKeyEvent(t, r.Events(&handlers[0]), true, event)
@@ -256,7 +259,9 @@ func TestKeyFocusedInvisible(t *testing.T) {
 
 }
 
-func assertKeyEvent(t *testing.T, events []event.Event, expected bool, expectedInputs ...event.Event) {
+func assertKeyEvent(t *testing.T, events []event.Event, expected bool,
+	expectedInputs ...event.Event,
+) {
 	t.Helper()
 	var evtFocus int
 	var evtKeyPress int
@@ -264,7 +269,9 @@ func assertKeyEvent(t *testing.T, events []event.Event, expected bool, expectedI
 		switch ev := e.(type) {
 		case key.FocusEvent:
 			if ev.Focus != expected {
-				t.Errorf("focus is expected to be %v, got %v", expected, ev.Focus)
+				t.Errorf("focus is expected to be %v, got %v", expected,
+					ev.Focus,
+				)
 			}
 			evtFocus++
 		case key.Event, key.EditEvent:
@@ -272,7 +279,9 @@ func assertKeyEvent(t *testing.T, events []event.Event, expected bool, expectedI
 				t.Errorf("unexpected key events")
 			}
 			if !reflect.DeepEqual(ev, expectedInputs[evtKeyPress]) {
-				t.Errorf("expected %v events, got %v", expectedInputs[evtKeyPress], ev)
+				t.Errorf("expected %v events, got %v",
+					expectedInputs[evtKeyPress], ev,
+				)
 			}
 			evtKeyPress++
 		}
@@ -305,7 +314,9 @@ func assertKeyEventUnexpected(t *testing.T, events []event.Event) {
 func assertFocus(t *testing.T, router *Router, expected event.Tag) {
 	t.Helper()
 	if router.kqueue.focus != expected {
-		t.Errorf("expected %v to be focused, got %v", expected, router.kqueue.focus)
+		t.Errorf("expected %v to be focused, got %v", expected,
+			router.kqueue.focus,
+		)
 	}
 }
 

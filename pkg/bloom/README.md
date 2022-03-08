@@ -1,7 +1,7 @@
 # bloom
 
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](http://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/p9c/p9/util/bloom)
+[![GoDoc](http://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/cybriq/p9/util/bloom)
 
 Package bloom provides an API for dealing with bitcoin-specific bloom filters. A
 comprehensive suite of tests is provided to ensure proper functionality.
@@ -12,12 +12,12 @@ report.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/p9c/p9/bloom
+$ go get -u github.com/cybriq/p9/bloom
 ```
 
 ## Examples
 
-- [NewFilter Example](http://godoc.org/github.com/p9c/p9/util/bloom#example-NewFilter)  
+- [NewFilter Example](http://godoc.org/github.com/cybriq/p9/util/bloom#example-NewFilter)  
   Demonstrates how to create a new bloom filter, add a transaction hash to it,
   and check if the filter matches the transaction.
 

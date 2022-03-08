@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // TestPodExtCmds tests all of the pod extended commands marshal and unmarshal into valid results include handling of
@@ -67,10 +67,14 @@ func TestPodExtCmds(t *testing.T) {
 		{
 			name: "node",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("node", btcjson.NConnect, "1.1.1.1", "perm")
+				return btcjson.NewCmd("node", btcjson.NConnect, "1.1.1.1",
+					"perm",
+				)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewNodeCmd("connect", "1.1.1.1", btcjson.String("perm"))
+				return btcjson.NewNodeCmd("connect", "1.1.1.1",
+					btcjson.String("perm"),
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"node","netparams":["connect","1.1.1.1","perm"],"id":1}`,
 			unmarshalled: &btcjson.NodeCmd{
@@ -82,10 +86,14 @@ func TestPodExtCmds(t *testing.T) {
 		{
 			name: "node",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("node", btcjson.NConnect, "1.1.1.1", "temp")
+				return btcjson.NewCmd("node", btcjson.NConnect, "1.1.1.1",
+					"temp",
+				)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewNodeCmd("connect", "1.1.1.1", btcjson.String("temp"))
+				return btcjson.NewNodeCmd("connect", "1.1.1.1",
+					btcjson.String("temp"),
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"node","netparams":["connect","1.1.1.1","temp"],"id":1}`,
 			unmarshalled: &btcjson.NodeCmd{
@@ -152,7 +160,8 @@ func TestPodExtCmds(t *testing.T) {
 				return btcjson.NewCmd("getheaders", []string{
 					"000000000000000001f1739002418e2f9a84c47a4fd2a0eb7a787a6b7dc12f16",
 					"0000000000000000026f4b7f56eef057b32167eb5ad9ff62006f1807b7336d10",
-				}, "000000000000000000ba33b33e1fad70b69e234fc24414dd47113bff38f523f7",
+				},
+					"000000000000000000ba33b33e1fad70b69e234fc24414dd47113bff38f523f7",
 				)
 			},
 			staticCmd: func() interface{} {

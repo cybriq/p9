@@ -5,8 +5,8 @@ package headless
 import (
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/gpu"
-	"github.com/p9c/p9/pkg/gel/gio/internal/d3d11"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/d3d11"
 )
 
 type d3d11Context struct {

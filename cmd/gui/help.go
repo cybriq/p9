@@ -1,12 +1,12 @@
 package gui
 
 import (
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/text"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
 
-	"github.com/p9c/p9/pkg/gel"
-	"github.com/p9c/p9/pkg/p9icons"
-	"github.com/p9c/p9/version"
+	"github.com/cybriq/p9/pkg/gel"
+	"github.com/cybriq/p9/pkg/p9icons"
+	"github.com/cybriq/p9/version"
 )
 
 func (wg *WalletGUI) HelpPage() func(gtx l.Context) l.Dimensions {
@@ -23,7 +23,7 @@ func (wg *WalletGUI) HelpPage() func(gtx l.Context) l.Dimensions {
 						wg.VFlex().
 							AlignMiddle().
 							Rigid(
-								
+
 								wg.VFlex().AlignMiddle().
 									Rigid(
 										wg.Inset(
@@ -36,10 +36,9 @@ func (wg *WalletGUI) HelpPage() func(gtx l.Context) l.Dimensions {
 										wg.Caption(version.URL).Fn,
 									).
 									Fn,
-							
 							).
 							Rigid(
-								
+
 								wg.VFlex().AlignMiddle().
 									Rigid(
 										wg.Inset(
@@ -52,10 +51,9 @@ func (wg *WalletGUI) HelpPage() func(gtx l.Context) l.Dimensions {
 										wg.Caption(version.GitRef).Fn,
 									).
 									Fn,
-							
 							).
 							Rigid(
-								
+
 								wg.VFlex().AlignMiddle().
 									Rigid(
 										wg.Inset(
@@ -68,10 +66,9 @@ func (wg *WalletGUI) HelpPage() func(gtx l.Context) l.Dimensions {
 										wg.Caption(version.GitCommit).Fn,
 									).
 									Fn,
-							
 							).
 							Rigid(
-								
+
 								wg.VFlex().AlignMiddle().
 									Rigid(
 										wg.Inset(
@@ -84,10 +81,9 @@ func (wg *WalletGUI) HelpPage() func(gtx l.Context) l.Dimensions {
 										wg.Caption(version.BuildTime).Fn,
 									).
 									Fn,
-							
 							).
 							Rigid(
-								
+
 								wg.VFlex().AlignMiddle().
 									Rigid(
 										wg.Inset(
@@ -100,7 +96,6 @@ func (wg *WalletGUI) HelpPage() func(gtx l.Context) l.Dimensions {
 										wg.Caption(version.Tag).Fn,
 									).
 									Fn,
-							
 							).
 							Rigid(
 								wg.Icon().Scale(gel.Scales["H6"]).

@@ -3,8 +3,8 @@ package database_test
 import (
 	"errors"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/database"
+
+	"github.com/cybriq/p9/pkg/database"
 )
 
 // TestErrorCodeStringer tests the stringized output for the ErrorCode type.

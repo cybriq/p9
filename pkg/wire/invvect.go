@@ -3,8 +3,8 @@ package wire
 import (
 	"fmt"
 	"io"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 const (
@@ -22,10 +22,10 @@ type InvType uint32
 
 // These constants define the various supported inventory vector types.
 const (
-	InvTypeError                InvType = 0
-	InvTypeTx                   InvType = 1
-	InvTypeBlock                InvType = 2
-	InvTypeFilteredBlock        InvType = 3
+	InvTypeError         InvType = 0
+	InvTypeTx            InvType = 1
+	InvTypeBlock         InvType = 2
+	InvTypeFilteredBlock InvType = 3
 	// InvTypeWitnessBlock                 = InvTypeBlock | InvWitnessFlag
 	// InvTypeWitnessTx                    = InvTypeTx | InvWitnessFlag
 	// InvTypeFilteredWitnessBlock         = InvTypeFilteredBlock | InvWitnessFlag
@@ -33,10 +33,10 @@ const (
 
 // Map of service flags back to their constant names for pretty printing.
 var ivStrings = map[InvType]string{
-	InvTypeError:                "ERROR",
-	InvTypeTx:                   "MSG_TX",
-	InvTypeBlock:                "MSG_BLOCK",
-	InvTypeFilteredBlock:        "MSG_FILTERED_BLOCK",
+	InvTypeError:         "ERROR",
+	InvTypeTx:            "MSG_TX",
+	InvTypeBlock:         "MSG_BLOCK",
+	InvTypeFilteredBlock: "MSG_FILTERED_BLOCK",
 	// InvTypeWitnessBlock:         "MSG_WITNESS_BLOCK",
 	// InvTypeWitnessTx:            "MSG_WITNESS_TX",
 	// InvTypeFilteredWitnessBlock: "MSG_FILTERED_WITNESS_BLOCK",

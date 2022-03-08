@@ -2,10 +2,10 @@ package blockchain
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/block"
-	
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/hardfork"
+	"github.com/cybriq/p9/pkg/block"
+
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/hardfork"
 )
 
 // maybeAcceptBlock potentially accepts a block into the block chain
@@ -17,7 +17,9 @@ import (
 // The flags are also passed to checkBlockContext and connectBestChain.
 // See their documentation for how the flags modify their behavior.
 // This function MUST be called with the chain state lock held (for writes).
-func (b *BlockChain) maybeAcceptBlock(workerNumber uint32, block *block.Block, flags BehaviorFlags) (bool, error) {
+func (b *BlockChain) maybeAcceptBlock(workerNumber uint32, block *block.Block,
+	flags BehaviorFlags,
+) (bool, error) {
 	T.Ln("maybeAcceptBlock starting")
 	// The height of this block is one more than the referenced previous block.
 	prevHash := &block.WireBlock().Header.PrevBlock
@@ -64,7 +66,9 @@ func (b *BlockChain) maybeAcceptBlock(workerNumber uint32, block *block.Block, f
 	txs := block.Transactions()
 	for i := range txs {
 		if ContainsBlacklisted(b, txs[i], hardfork.Blacklist) {
-			return false, ruleError(ErrBlacklisted, "block contains a blacklisted address ")
+			return false, ruleError(ErrBlacklisted,
+				"block contains a blacklisted address ",
+			)
 		}
 	}
 	T.Ln("found no blacklisted addresses")
@@ -101,7 +105,7 @@ func (b *BlockChain) maybeAcceptBlock(workerNumber uint32, block *block.Block, f
 	if e = b.Index.flushToDB(); E.Chk(e) {
 		return false, e
 	}
-	
+
 	// Connect the passed block to the chain while respecting proper chain selection
 	// according to the chain with the most proof of work. This also handles
 	// validation of the transaction scripts.

@@ -2,13 +2,13 @@ package gel
 
 import (
 	"image/color"
-	
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
-	
-	"github.com/p9c/p9/pkg/gel/f32color"
+
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
+
+	"github.com/cybriq/p9/pkg/gel/f32color"
 )
 
 type ButtonLayout struct {
@@ -80,7 +80,8 @@ func (b *ButtonLayout) Fn(gtx l.Context) l.Dimensions {
 					Rect: f32.Rectangle{Max: f32.Point{
 						X: float32(gtx.Constraints.Min.X),
 						Y: float32(gtx.Constraints.Min.Y),
-					}},
+					},
+					},
 					NW: ifDir(rr, b.corners&NW),
 					NE: ifDir(rr, b.corners&NE),
 					SW: ifDir(rr, b.corners&SW),
@@ -95,12 +96,14 @@ func (b *ButtonLayout) Fn(gtx l.Context) l.Dimensions {
 					drawInk(gtx, c)
 				}
 				return dims
-			}).
+			},
+		).
 		Stacked(
 			func(gtx l.Context) l.Dimensions {
 				gtx.Constraints.Min = min
 				return l.Center.Layout(gtx, b.w)
-			}).
+			},
+		).
 		Expanded(b.button.Fn).
 		Fn(gtx)
 }

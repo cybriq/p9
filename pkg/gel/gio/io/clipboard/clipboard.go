@@ -3,9 +3,9 @@
 package clipboard
 
 import (
-	"github.com/p9c/p9/pkg/gel/gio/internal/opconst"
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/opconst"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 // Event is generated when the clipboard content is requested.

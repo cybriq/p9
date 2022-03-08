@@ -3,9 +3,9 @@
 package material
 
 import (
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
-	"github.com/p9c/p9/pkg/gel/gio/widget"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/widget"
 )
 
 type CheckBoxStyle struct {

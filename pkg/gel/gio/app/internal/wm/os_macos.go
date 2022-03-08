@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build darwin && !ios
 // +build darwin,!ios
 
 package wm
@@ -13,14 +14,14 @@ import (
 	"unicode/utf16"
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/io/clipboard"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/io/system"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/io/clipboard"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/io/system"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 
-	_ "github.com/p9c/p9/pkg/gel/gio/internal/cocoainit"
+	_ "github.com/cybriq/p9/pkg/gel/gio/internal/cocoainit"
 )
 
 /*
@@ -116,7 +117,8 @@ func (w *window) ReadClipboard() {
 	runOnMain(func() {
 		content := nsstringToString(C.gio_readClipboard())
 		w.w.Event(clipboard.Event{Text: content})
-	})
+	},
+	)
 }
 
 func (w *window) WriteClipboard(s string) {
@@ -127,7 +129,8 @@ func (w *window) WriteClipboard(s string) {
 			chars = (*C.unichar)(unsafe.Pointer(&u16[0]))
 		}
 		C.gio_writeClipboard(chars, C.NSUInteger(len(u16)))
-	})
+	},
+	)
 }
 
 func (w *window) Option(opts *Options) {
@@ -166,7 +169,8 @@ func (w *window) Option(opts *Options) {
 		if o := opts.WindowMode; o != nil {
 			w.SetWindowMode(*o)
 		}
-	})
+	},
+	)
 }
 
 func (w *window) SetWindowMode(mode WindowMode) {
@@ -199,13 +203,15 @@ func (w *window) runOnMain(f func()) {
 		if w.view != 0 {
 			f()
 		}
-	})
+	},
+	)
 }
 
 func (w *window) Close() {
 	w.runOnMain(func() {
 		C.gio_close(w.window)
-	})
+	},
+	)
 }
 
 func (w *window) setStage(stage system.Stage) {
@@ -217,7 +223,9 @@ func (w *window) setStage(stage system.Stage) {
 }
 
 //export gio_onKeys
-func gio_onKeys(view C.CFTypeRef, cstr *C.char, ti C.double, mods C.NSUInteger, keyDown C.bool) {
+func gio_onKeys(view C.CFTypeRef, cstr *C.char, ti C.double, mods C.NSUInteger,
+	keyDown C.bool,
+) {
 	str := C.GoString(cstr)
 	kmods := convertMods(mods)
 	ks := key.Release
@@ -231,7 +239,8 @@ func gio_onKeys(view C.CFTypeRef, cstr *C.char, ti C.double, mods C.NSUInteger, 
 				Name:      n,
 				Modifiers: kmods,
 				State:     ks,
-			})
+			},
+			)
 		}
 	}
 }
@@ -244,7 +253,9 @@ func gio_onText(view C.CFTypeRef, cstr *C.char) {
 }
 
 //export gio_onMouse
-func gio_onMouse(view C.CFTypeRef, cdir C.int, cbtns C.NSUInteger, x, y, dx, dy C.CGFloat, ti C.double, mods C.NSUInteger) {
+func gio_onMouse(view C.CFTypeRef, cdir C.int, cbtns C.NSUInteger,
+	x, y, dx, dy C.CGFloat, ti C.double, mods C.NSUInteger,
+) {
 	var typ pointer.Type
 	switch cdir {
 	case C.GIO_MOUSE_MOVE:
@@ -280,7 +291,8 @@ func gio_onMouse(view C.CFTypeRef, cdir C.int, cbtns C.NSUInteger, x, y, dx, dy 
 		Position:  f32.Point{X: xf, Y: yf},
 		Scroll:    f32.Point{X: dxf, Y: dyf},
 		Modifiers: convertMods(mods),
-	})
+	},
+	)
 }
 
 //export gio_onDraw
@@ -322,7 +334,8 @@ func (w *window) draw() {
 			Metric: cfg,
 		},
 		Sync: true,
-	})
+	},
+	)
 }
 
 func configFor(scale float32) unit.Metric {
@@ -396,7 +409,8 @@ func NewWindow(win Callbacks, opts *Options) error {
 		}
 		nextTopLeft = C.gio_cascadeTopLeftFromPoint(w.window, nextTopLeft)
 		C.gio_makeKeyAndOrderFront(w.window)
-	})
+	},
+	)
 	return <-errch
 }
 
@@ -413,8 +427,10 @@ func newWindow(opts *Options) (*window, error) {
 	dl, err := NewDisplayLink(func() {
 		w.runOnMain(func() {
 			C.gio_setNeedsDisplay(w.view)
-		})
-	})
+		},
+		)
+	},
+	)
 	w.displayLink = dl
 	if err != nil {
 		C.CFRelease(view)

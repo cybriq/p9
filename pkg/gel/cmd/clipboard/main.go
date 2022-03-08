@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 
-	"github.com/p9c/p9/pkg/gel"
-	"github.com/p9c/p9/pkg/gel/clipboard"
+	"github.com/cybriq/p9/pkg/gel"
+	"github.com/cybriq/p9/pkg/gel/clipboard"
 )
 
 type State struct {
@@ -72,9 +72,12 @@ func (s *State) rootWidget(gtx l.Context) l.Dimensions {
 																		I.Ln("user clicked show clipboard button")
 																		s.ClipboardReadReqs <- func(cs string) {
 																			*s.showText = cs
-																			I.Ln("clipboard contents:", cs)
+																			I.Ln("clipboard contents:",
+																				cs,
+																			)
 																		}
-																	}),
+																	},
+																	),
 															).CornerRadius(0.25).Corners(^0).
 																Embed(
 																	s.Border().CornerRadius(0.25).Color("DocText").Embed(
@@ -92,8 +95,11 @@ func (s *State) rootWidget(gtx l.Context) l.Dimensions {
 																s.showPrimaryClicker.
 																	SetClick(func() {
 																		*s.showText = clipboard.GetPrimary()
-																		I.Ln("clipboard contents:", *s.showText)
-																	}),
+																		I.Ln("clipboard contents:",
+																			*s.showText,
+																		)
+																	},
+																	),
 															).CornerRadius(0.25).Corners(^0).
 																Embed(
 																	s.Border().CornerRadius(0.25).Color("DocText").Embed(

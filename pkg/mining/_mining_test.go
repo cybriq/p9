@@ -5,11 +5,11 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/p9c/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/util"
 )
 
 // TestTxFeePrioHeap ensures the priority queue for transaction fees and priorities works as expected.
-func TestTxFeePrioHeap(	t *testing.T) {
+func TestTxFeePrioHeap(t *testing.T) {
 	// Create some fake priority items that exercise the expected sort edge conditions.
 	testItems := []*txPrioItem{
 		{feePerKB: 5678, priority: 3},
@@ -37,7 +37,8 @@ func TestTxFeePrioHeap(	t *testing.T) {
 		testItems = append(testItems, &txPrioItem{
 			feePerKB: int64(prng.Float64() * util.SatoshiPerBitcoin),
 			priority: prng.Float64() * 100,
-		})
+		},
+		)
 	}
 	// Test sorting by fee per KB then priority.
 	var highest *txPrioItem
@@ -61,7 +62,8 @@ func TestTxFeePrioHeap(	t *testing.T) {
 				"priority: %v) higher than than prev "+
 				"(fee per KB: %v, priority %v)",
 				prioItem.feePerKB, prioItem.priority,
-				highest.feePerKB, highest.priority)
+				highest.feePerKB, highest.priority,
+			)
 		}
 		highest = prioItem
 	}
@@ -87,7 +89,8 @@ func TestTxFeePrioHeap(	t *testing.T) {
 				"priority: %v) higher than than prev "+
 				"(fee per KB: %v, priority %v)",
 				prioItem.feePerKB, prioItem.priority,
-				highest.feePerKB, highest.priority)
+				highest.feePerKB, highest.priority,
+			)
 		}
 		highest = prioItem
 	}

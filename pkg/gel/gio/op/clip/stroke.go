@@ -6,8 +6,8 @@ import (
 	"encoding/binary"
 	"math"
 
-	"github.com/p9c/p9/pkg/gel/gio/internal/opconst"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/opconst"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 // Stroke represents a stroked path.

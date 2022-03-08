@@ -3,8 +3,8 @@ package wire
 import (
 	"fmt"
 	"io"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 const (
@@ -39,7 +39,8 @@ func (msg *MsgCFHeaders) AddCFHash(hash *chainhash.Hash) (e error) {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation.
-func (msg *MsgCFHeaders) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding) (e error) {
+func (msg *MsgCFHeaders) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding,
+) (e error) {
 	// Read filter type
 	if e = readElement(r, &msg.FilterType); E.Chk(e) {
 		return
@@ -81,7 +82,8 @@ func (msg *MsgCFHeaders) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding) 
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgCFHeaders) BtcEncode(w io.Writer, pver uint32, _ MessageEncoding) (e error) {
+func (msg *MsgCFHeaders) BtcEncode(w io.Writer, pver uint32, _ MessageEncoding,
+) (e error) {
 	// Write filter type
 	if e = writeElement(w, msg.FilterType); E.Chk(e) {
 		return

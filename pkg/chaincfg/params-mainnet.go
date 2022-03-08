@@ -1,7 +1,7 @@
 package chaincfg
 
 import (
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // MainNetParams defines the network parameters for the main Bitcoin network.
@@ -104,5 +104,4 @@ var MainNetParams = Params{
 	ScryptPowLimitBits:  ScryptPowLimitBits,
 	RPCClientPort:       "11048",
 	WalletRPCServerPort: "11046",
-	
 }

@@ -2,8 +2,8 @@ package zero_test
 
 import (
 	"testing"
-	
-	. "github.com/p9c/p9/pkg/util/zero"
+
+	. "github.com/cybriq/p9/pkg/util/zero"
 )
 
 var (

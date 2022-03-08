@@ -3,8 +3,8 @@ package btcjson_test
 import (
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // TestHelpReflectInternals ensures the various help functions which deal with reflect types work as expected for

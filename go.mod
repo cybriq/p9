@@ -1,4 +1,4 @@
-module github.com/p9c/p9
+module github.com/cybriq/p9
 
 go 1.16
 

@@ -1,7 +1,7 @@
 package gel
 
 import (
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 )
 
 type ColumnRow struct {
@@ -21,9 +21,12 @@ type Column struct {
 }
 
 func (w *Window) Column(rows Rows, font string, scale float32, color string,
-	background string) *Column {
-	return &Column{Window: w, rows: rows, font: font, scale: scale, color: color,
-		background: background, list: w.List()}
+	background string,
+) *Column {
+	return &Column{Window: w, rows: rows, font: font, scale: scale,
+		color:      color,
+		background: background, list: w.List(),
+	}
 }
 
 func (c *Column) Fn(gtx l.Context) l.Dimensions {
@@ -52,8 +55,10 @@ func (c *Column) List(gtx l.Context) (max int, out []l.Widget) {
 		_ = i
 		out = append(out, func(gtx l.Context) l.Dimensions {
 			return c.Flex(). // AlignEnd().SpaceStart().
-				Rigid(
-					c.Fill("red", l.Center, c.TextSize.V, 0, EmptySpace(max-dims[i].Size.X, dims[i].Size.Y)).Fn,
+						Rigid(
+					c.Fill("red", l.Center, c.TextSize.V, 0,
+						EmptySpace(max-dims[i].Size.X, dims[i].Size.Y),
+					).Fn,
 				).
 				Rigid(
 					c.Inset(0.5, func(gtx l.Context) l.Dimensions {
@@ -74,7 +79,8 @@ func (c *Column) List(gtx l.Context) (max int, out []l.Widget) {
 							Color(c.color).
 							Fn(gtx)
 						return dms
-					}).Fn,
+					},
+					).Fn,
 				).
 				Rigid(
 					c.Inset(0.5,
@@ -88,13 +94,14 @@ func (c *Column) List(gtx l.Context) (max int, out []l.Widget) {
 			// 		).Fn,
 			// ).
 			// Fn(gtx)
-		})
+		},
+		)
 	}
 	// le = func(gtx l.Context, index int) l.Dimensions {
 	// 	return out[index](gtx)
 	// }
 	return max, out
-	
+
 	// // render the widgets onto a second context to get their dimensions
 	// gtx1 = CopyContextDimensionsWithMaxAxis(gtx, gtx.Constraints.Max, l.Vertical)
 	// dim := GetDimension(gtx1, c.Theme.SliceToWidget(out, l.Vertical))

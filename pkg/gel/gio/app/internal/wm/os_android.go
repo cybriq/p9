@@ -51,12 +51,12 @@ import (
 	"unicode/utf16"
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/io/clipboard"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/io/system"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/io/clipboard"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/io/system"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 )
 
 type window struct {
@@ -137,7 +137,8 @@ var mainWindow = newWindowRendezvous()
 
 var mainFuncs = make(chan func(env *C.JNIEnv), 1)
 
-func getMethodID(env *C.JNIEnv, class C.jclass, method, sig string) C.jmethodID {
+func getMethodID(env *C.JNIEnv, class C.jclass, method, sig string,
+) C.jmethodID {
 	m := C.CString(method)
 	defer C.free(unsafe.Pointer(m))
 	s := C.CString(sig)
@@ -149,7 +150,8 @@ func getMethodID(env *C.JNIEnv, class C.jclass, method, sig string) C.jmethodID 
 	return jm
 }
 
-func getStaticMethodID(env *C.JNIEnv, class C.jclass, method, sig string) C.jmethodID {
+func getStaticMethodID(env *C.JNIEnv, class C.jclass, method, sig string,
+) C.jmethodID {
 	m := C.CString(method)
 	defer C.free(unsafe.Pointer(m))
 	s := C.CString(sig)
@@ -162,7 +164,9 @@ func getStaticMethodID(env *C.JNIEnv, class C.jclass, method, sig string) C.jmet
 }
 
 //export Java_org_gioui_Gio_runGoMain
-func Java_org_gioui_Gio_runGoMain(env *C.JNIEnv, class C.jclass, jdataDir C.jbyteArray, context C.jobject) {
+func Java_org_gioui_Gio_runGoMain(env *C.JNIEnv, class C.jclass,
+	jdataDir C.jbyteArray, context C.jobject,
+) {
 	initJVM(env, class, context)
 	dirBytes := C.gio_jni_GetByteArrayElements(env, jdataDir)
 	if dirBytes == nil {
@@ -184,9 +188,15 @@ func initJVM(env *C.JNIEnv, gio C.jclass, ctx C.jobject) {
 	}
 	android.appCtx = C.gio_jni_NewGlobalRef(env, ctx)
 	android.gioCls = C.jclass(C.gio_jni_NewGlobalRef(env, C.jobject(gio)))
-	android.mwriteClipboard = getStaticMethodID(env, gio, "writeClipboard", "(Landroid/content/Context;Ljava/lang/String;)V")
-	android.mreadClipboard = getStaticMethodID(env, gio, "readClipboard", "(Landroid/content/Context;)Ljava/lang/String;")
-	android.mwakeupMainThread = getStaticMethodID(env, gio, "wakeupMainThread", "()V")
+	android.mwriteClipboard = getStaticMethodID(env, gio, "writeClipboard",
+		"(Landroid/content/Context;Ljava/lang/String;)V",
+	)
+	android.mreadClipboard = getStaticMethodID(env, gio, "readClipboard",
+		"(Landroid/content/Context;)Ljava/lang/String;",
+	)
+	android.mwakeupMainThread = getStaticMethodID(env, gio, "wakeupMainThread",
+		"()V",
+	)
 }
 
 func JavaVM() uintptr {
@@ -211,16 +221,21 @@ func GetDataDir() string {
 }
 
 //export Java_org_gioui_GioView_onCreateView
-func Java_org_gioui_GioView_onCreateView(env *C.JNIEnv, class C.jclass, view C.jobject) C.jlong {
+func Java_org_gioui_GioView_onCreateView(env *C.JNIEnv, class C.jclass,
+	view C.jobject,
+) C.jlong {
 	gioView.once.Do(func() {
 		m := &gioView
 		m.getDensity = getMethodID(env, class, "getDensity", "()I")
 		m.getFontScale = getMethodID(env, class, "getFontScale", "()F")
 		m.showTextInput = getMethodID(env, class, "showTextInput", "()V")
 		m.hideTextInput = getMethodID(env, class, "hideTextInput", "()V")
-		m.postFrameCallback = getMethodID(env, class, "postFrameCallback", "()V")
+		m.postFrameCallback = getMethodID(env, class, "postFrameCallback",
+			"()V",
+		)
 		m.setCursor = getMethodID(env, class, "setCursor", "(I)V")
-	})
+	},
+	)
 	view = C.gio_jni_NewGlobalRef(env, view)
 	wopts := <-mainWindow.out
 	w, ok := windows[wopts.window]
@@ -242,7 +257,9 @@ func Java_org_gioui_GioView_onCreateView(env *C.JNIEnv, class C.jclass, view C.j
 }
 
 //export Java_org_gioui_GioView_onDestroyView
-func Java_org_gioui_GioView_onDestroyView(env *C.JNIEnv, class C.jclass, handle C.jlong) {
+func Java_org_gioui_GioView_onDestroyView(env *C.JNIEnv, class C.jclass,
+	handle C.jlong,
+) {
 	w := views[handle]
 	w.callbacks.Event(ViewEvent{View: 0})
 	w.callbacks.SetDriver(nil)
@@ -252,14 +269,18 @@ func Java_org_gioui_GioView_onDestroyView(env *C.JNIEnv, class C.jclass, handle 
 }
 
 //export Java_org_gioui_GioView_onStopView
-func Java_org_gioui_GioView_onStopView(env *C.JNIEnv, class C.jclass, handle C.jlong) {
+func Java_org_gioui_GioView_onStopView(env *C.JNIEnv, class C.jclass,
+	handle C.jlong,
+) {
 	w := views[handle]
 	w.started = false
 	w.setStage(system.StagePaused)
 }
 
 //export Java_org_gioui_GioView_onStartView
-func Java_org_gioui_GioView_onStartView(env *C.JNIEnv, class C.jclass, handle C.jlong) {
+func Java_org_gioui_GioView_onStartView(env *C.JNIEnv, class C.jclass,
+	handle C.jlong,
+) {
 	w := views[handle]
 	w.started = true
 	if w.aNativeWindow() != nil {
@@ -268,7 +289,9 @@ func Java_org_gioui_GioView_onStartView(env *C.JNIEnv, class C.jclass, handle C.
 }
 
 //export Java_org_gioui_GioView_onSurfaceDestroyed
-func Java_org_gioui_GioView_onSurfaceDestroyed(env *C.JNIEnv, class C.jclass, handle C.jlong) {
+func Java_org_gioui_GioView_onSurfaceDestroyed(env *C.JNIEnv, class C.jclass,
+	handle C.jlong,
+) {
 	w := views[handle]
 	w.mu.Lock()
 	w.win = nil
@@ -277,7 +300,9 @@ func Java_org_gioui_GioView_onSurfaceDestroyed(env *C.JNIEnv, class C.jclass, ha
 }
 
 //export Java_org_gioui_GioView_onSurfaceChanged
-func Java_org_gioui_GioView_onSurfaceChanged(env *C.JNIEnv, class C.jclass, handle C.jlong, surf C.jobject) {
+func Java_org_gioui_GioView_onSurfaceChanged(env *C.JNIEnv, class C.jclass,
+	handle C.jlong, surf C.jobject,
+) {
 	w := views[handle]
 	w.mu.Lock()
 	w.win = C.ANativeWindow_fromSurface(env, surf)
@@ -294,7 +319,9 @@ func Java_org_gioui_GioView_onLowMemory() {
 }
 
 //export Java_org_gioui_GioView_onConfigurationChanged
-func Java_org_gioui_GioView_onConfigurationChanged(env *C.JNIEnv, class C.jclass, view C.jlong) {
+func Java_org_gioui_GioView_onConfigurationChanged(env *C.JNIEnv,
+	class C.jclass, view C.jlong,
+) {
 	w := views[view]
 	w.loadConfig(env, class)
 	if w.stage >= system.StageRunning {
@@ -303,7 +330,9 @@ func Java_org_gioui_GioView_onConfigurationChanged(env *C.JNIEnv, class C.jclass
 }
 
 //export Java_org_gioui_GioView_onFrameCallback
-func Java_org_gioui_GioView_onFrameCallback(env *C.JNIEnv, class C.jclass, view C.jlong, nanos C.jlong) {
+func Java_org_gioui_GioView_onFrameCallback(env *C.JNIEnv, class C.jclass,
+	view C.jlong, nanos C.jlong,
+) {
 	w, exist := views[view]
 	if !exist {
 		return
@@ -317,13 +346,15 @@ func Java_org_gioui_GioView_onFrameCallback(env *C.JNIEnv, class C.jclass, view 
 	if anim {
 		runInJVM(javaVM(), func(env *C.JNIEnv) {
 			callVoidMethod(env, w.view, gioView.postFrameCallback)
-		})
+		},
+		)
 		w.draw(false)
 	}
 }
 
 //export Java_org_gioui_GioView_onBack
-func Java_org_gioui_GioView_onBack(env *C.JNIEnv, class C.jclass, view C.jlong) C.jboolean {
+func Java_org_gioui_GioView_onBack(env *C.JNIEnv, class C.jclass, view C.jlong,
+) C.jboolean {
 	w := views[view]
 	ev := &system.CommandEvent{Type: system.CommandBack}
 	w.callbacks.Event(ev)
@@ -334,13 +365,17 @@ func Java_org_gioui_GioView_onBack(env *C.JNIEnv, class C.jclass, view C.jlong) 
 }
 
 //export Java_org_gioui_GioView_onFocusChange
-func Java_org_gioui_GioView_onFocusChange(env *C.JNIEnv, class C.jclass, view C.jlong, focus C.jboolean) {
+func Java_org_gioui_GioView_onFocusChange(env *C.JNIEnv, class C.jclass,
+	view C.jlong, focus C.jboolean,
+) {
 	w := views[view]
 	w.callbacks.Event(key.FocusEvent{Focus: focus == C.JNI_TRUE})
 }
 
 //export Java_org_gioui_GioView_onWindowInsets
-func Java_org_gioui_GioView_onWindowInsets(env *C.JNIEnv, class C.jclass, view C.jlong, top, right, bottom, left C.jint) {
+func Java_org_gioui_GioView_onWindowInsets(env *C.JNIEnv, class C.jclass,
+	view C.jlong, top, right, bottom, left C.jint,
+) {
 	w := views[view]
 	w.insets = system.Insets{
 		Top:    unit.Px(float32(top)),
@@ -392,7 +427,10 @@ func (w *window) aNativeWindow() *C.ANativeWindow {
 
 func (w *window) loadConfig(env *C.JNIEnv, class C.jclass) {
 	dpi := int(C.gio_jni_CallIntMethod(env, w.view, gioView.getDensity))
-	w.fontScale = float32(C.gio_jni_CallFloatMethod(env, w.view, gioView.getFontScale))
+	w.fontScale = float32(C.gio_jni_CallFloatMethod(env, w.view,
+		gioView.getFontScale,
+	),
+	)
 	switch dpi {
 	case C.ACONFIGURATION_DENSITY_NONE,
 		C.ACONFIGURATION_DENSITY_DEFAULT,
@@ -415,7 +453,8 @@ func (w *window) SetAnimating(anim bool) {
 				return
 			}
 			callVoidMethod(env, w.view, gioView.postFrameCallback)
-		})
+		},
+		)
 	}
 }
 
@@ -441,7 +480,8 @@ func (w *window) draw(sync bool) {
 			},
 		},
 		Sync: sync,
-	})
+	},
+	)
 }
 
 type keyMapper func(devId, keyCode C.int32_t) rune
@@ -492,7 +532,9 @@ func convertKeyCode(code C.jint) (string, bool) {
 }
 
 //export Java_org_gioui_GioView_onKeyEvent
-func Java_org_gioui_GioView_onKeyEvent(env *C.JNIEnv, class C.jclass, handle C.jlong, keyCode, r C.jint, t C.jlong) {
+func Java_org_gioui_GioView_onKeyEvent(env *C.JNIEnv, class C.jclass,
+	handle C.jlong, keyCode, r C.jint, t C.jlong,
+) {
 	w := views[handle]
 	if n, ok := convertKeyCode(keyCode); ok {
 		w.callbacks.Event(key.Event{Name: n})
@@ -503,7 +545,10 @@ func Java_org_gioui_GioView_onKeyEvent(env *C.JNIEnv, class C.jclass, handle C.j
 }
 
 //export Java_org_gioui_GioView_onTouchEvent
-func Java_org_gioui_GioView_onTouchEvent(env *C.JNIEnv, class C.jclass, handle C.jlong, action, pointerID, tool C.jint, x, y, scrollX, scrollY C.jfloat, jbtns C.jint, t C.jlong) {
+func Java_org_gioui_GioView_onTouchEvent(env *C.JNIEnv, class C.jclass,
+	handle C.jlong, action, pointerID, tool C.jint,
+	x, y, scrollX, scrollY C.jfloat, jbtns C.jint, t C.jlong,
+) {
 	w := views[handle]
 	var typ pointer.Type
 	switch action {
@@ -551,7 +596,8 @@ func Java_org_gioui_GioView_onTouchEvent(env *C.JNIEnv, class C.jclass, handle C
 		Time:      time.Duration(t) * time.Millisecond,
 		Position:  f32.Point{X: float32(x), Y: float32(y)},
 		Scroll:    f32.Pt(float32(scrollX), float32(scrollY)),
-	})
+	},
+	)
 }
 
 func (w *window) ShowTextInput(show bool) {
@@ -564,7 +610,8 @@ func (w *window) ShowTextInput(show bool) {
 		} else {
 			callVoidMethod(env, w.view, gioView.hideTextInput)
 		}
-	})
+	},
+	)
 }
 
 func javaString(env *C.JNIEnv, str string) C.jstring {
@@ -572,7 +619,9 @@ func javaString(env *C.JNIEnv, str string) C.jstring {
 		return 0
 	}
 	utf16Chars := utf16.Encode([]rune(str))
-	return C.gio_jni_NewString(env, (*C.jchar)(unsafe.Pointer(&utf16Chars[0])), C.int(len(utf16Chars)))
+	return C.gio_jni_NewString(env, (*C.jchar)(unsafe.Pointer(&utf16Chars[0])),
+		C.int(len(utf16Chars)),
+	)
 }
 
 func varArgs(args []jvalue) *C.jvalue {
@@ -582,22 +631,30 @@ func varArgs(args []jvalue) *C.jvalue {
 	return (*C.jvalue)(unsafe.Pointer(&args[0]))
 }
 
-func callStaticVoidMethod(env *C.JNIEnv, cls C.jclass, method C.jmethodID, args ...jvalue) error {
+func callStaticVoidMethod(env *C.JNIEnv, cls C.jclass, method C.jmethodID,
+	args ...jvalue,
+) error {
 	C.gio_jni_CallStaticVoidMethodA(env, cls, method, varArgs(args))
 	return exception(env)
 }
 
-func callStaticObjectMethod(env *C.JNIEnv, cls C.jclass, method C.jmethodID, args ...jvalue) (C.jobject, error) {
+func callStaticObjectMethod(env *C.JNIEnv, cls C.jclass, method C.jmethodID,
+	args ...jvalue,
+) (C.jobject, error) {
 	res := C.gio_jni_CallStaticObjectMethodA(env, cls, method, varArgs(args))
 	return res, exception(env)
 }
 
-func callVoidMethod(env *C.JNIEnv, obj C.jobject, method C.jmethodID, args ...jvalue) error {
+func callVoidMethod(env *C.JNIEnv, obj C.jobject, method C.jmethodID,
+	args ...jvalue,
+) error {
 	C.gio_jni_CallVoidMethodA(env, obj, method, varArgs(args))
 	return exception(env)
 }
 
-func callObjectMethod(env *C.JNIEnv, obj C.jobject, method C.jmethodID, args ...jvalue) (C.jobject, error) {
+func callObjectMethod(env *C.JNIEnv, obj C.jobject, method C.jmethodID,
+	args ...jvalue,
+) (C.jobject, error) {
 	res := C.gio_jni_CallObjectMethodA(env, obj, method, varArgs(args))
 	return res, exception(env)
 }
@@ -660,20 +717,25 @@ func (w *window) WriteClipboard(s string) {
 	runOnMain(func(env *C.JNIEnv) {
 		jstr := javaString(env, s)
 		callStaticVoidMethod(env, android.gioCls, android.mwriteClipboard,
-			jvalue(android.appCtx), jvalue(jstr))
-	})
+			jvalue(android.appCtx), jvalue(jstr),
+		)
+	},
+	)
 }
 
 func (w *window) ReadClipboard() {
 	runOnMain(func(env *C.JNIEnv) {
-		c, err := callStaticObjectMethod(env, android.gioCls, android.mreadClipboard,
-			jvalue(android.appCtx))
+		c, err := callStaticObjectMethod(env, android.gioCls,
+			android.mreadClipboard,
+			jvalue(android.appCtx),
+		)
 		if err != nil {
 			return
 		}
 		content := goString(env, C.jstring(c))
 		w.callbacks.Event(clipboard.Event{Text: content})
-	})
+	},
+	)
 }
 
 func (w *window) Option(opts *Options) {}
@@ -681,7 +743,8 @@ func (w *window) Option(opts *Options) {}
 func (w *window) SetCursor(name pointer.CursorName) {
 	w.setState(func(state *windowState) {
 		state.cursor = &name
-	})
+	},
+	)
 }
 
 // setState adjust the window state on the main thread.
@@ -696,7 +759,8 @@ func (w *window) setState(f func(state *windowState)) {
 		state := w.newState
 		applyStateDiff(env, w.view, old, state)
 		w.state = state
-	})
+	},
+	)
 }
 
 func applyStateDiff(env *C.JNIEnv, view C.jobject, old, state windowState) {
@@ -737,7 +801,8 @@ func runOnMain(f func(env *C.JNIEnv)) {
 		mainFuncs <- f
 		runInJVM(javaVM(), func(env *C.JNIEnv) {
 			callStaticVoidMethod(env, android.gioCls, android.mwakeupMainThread)
-		})
+		},
+		)
 	}()
 }
 

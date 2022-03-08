@@ -2,8 +2,8 @@ package base58_test
 
 import (
 	"testing"
-	
-	"github.com/p9c/p9/pkg/base58"
+
+	"github.com/cybriq/p9/pkg/base58"
 )
 
 var checkEncodingStringTests = []struct {
@@ -20,7 +20,9 @@ var checkEncodingStringTests = []struct {
 	{20, "11", "mP7BMTDVH"},
 	{20, "abc", "4QiVtDjUdeq"},
 	{20, "1234598760", "ZmNb8uQn5zvnUohNCEPP"},
-	{20, "abcdefghijklmnopqrstuvwxyz", "K2RYDcKfupxwXdWhSAxQPCeiULntKm63UXyx5MvEH2"},
+	{20, "abcdefghijklmnopqrstuvwxyz",
+		"K2RYDcKfupxwXdWhSAxQPCeiULntKm63UXyx5MvEH2",
+	},
 	{20, "00000000000000000000000000000000000000000000000000000000000000",
 		"bi1EWXwJay2udZVxLJozuTb8Meg4W9c6xnmJaRDjg6pri5MBAxb9XwrpQXbtnqEoRV5U2pixnFfwyXC8tRAVC8XxnjK",
 	},
@@ -30,16 +32,22 @@ func TestBase58Check(t *testing.T) {
 	for x, test := range checkEncodingStringTests {
 		// test encoding
 		if res := base58.CheckEncode([]byte(test.in), test.version); res != test.out {
-			t.Errorf("CheckEncode test #%d failed: got %s, want: %s", x, res, test.out)
+			t.Errorf("CheckEncode test #%d failed: got %s, want: %s", x, res,
+				test.out,
+			)
 		}
 		// test decoding
 		res, version, e := base58.CheckDecode(test.out)
 		if e != nil {
 			t.Errorf("CheckDecode test #%d failed with e: %v", x, e)
 		} else if version != test.version {
-			t.Errorf("CheckDecode test #%d failed: got version: %d want: %d", x, version, test.version)
+			t.Errorf("CheckDecode test #%d failed: got version: %d want: %d", x,
+				version, test.version,
+			)
 		} else if string(res) != test.in {
-			t.Errorf("CheckDecode test #%d failed: got: %s want: %s", x, res, test.in)
+			t.Errorf("CheckDecode test #%d failed: got: %s want: %s", x, res,
+				test.in,
+			)
 		}
 	}
 	// test the two decoding failure cases

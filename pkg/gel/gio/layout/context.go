@@ -5,11 +5,11 @@ package layout
 import (
 	"time"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
-	"github.com/p9c/p9/pkg/gel/gio/io/system"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/io/system"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 )
 
 // Context carries the state needed by almost all layouts and widgets.
@@ -52,7 +52,8 @@ func NewContext(ops *op.Ops, e system.FrameEvent) Context {
 		op.Offset(f32.Point{
 			X: float32(left),
 			Y: float32(top),
-		}).Add(ops)
+		},
+		).Add(ops)
 
 		size.X -= left + e.Metric.Px(e.Insets.Right)
 		size.Y -= top + e.Metric.Px(e.Insets.Bottom)

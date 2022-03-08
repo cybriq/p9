@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // TestChainSvrCmds tests all of the chain server commands marshal and unmarshal into valid results include handling of
@@ -32,8 +32,10 @@ func TestChainSvrCmds(t *testing.T) {
 			staticCmd: func() interface{} {
 				return btcjson.NewAddNodeCmd("127.0.0.1", btcjson.ANRemove)
 			},
-			marshalled:   `{"jsonrpc":"1.0","method":"addnode","netparams":["127.0.0.1","remove"],"id":1}`,
-			unmarshalled: &btcjson.AddNodeCmd{Addr: "127.0.0.1", SubCmd: btcjson.ANRemove},
+			marshalled: `{"jsonrpc":"1.0","method":"addnode","netparams":["127.0.0.1","remove"],"id":1}`,
+			unmarshalled: &btcjson.AddNodeCmd{Addr: "127.0.0.1",
+				SubCmd: btcjson.ANRemove,
+			},
 		},
 		{
 			name: "createrawtransaction",
@@ -48,7 +50,9 @@ func TestChainSvrCmds(t *testing.T) {
 					{Txid: "123", Vout: 1},
 				}
 				amounts := map[string]float64{"456": .0123}
-				return btcjson.NewCreateRawTransactionCmd(txInputs, amounts, nil)
+				return btcjson.NewCreateRawTransactionCmd(txInputs, amounts,
+					nil,
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"createrawtransaction","netparams":[[{"txid":"123","vout":1}],{"456":0.0123}],"id":1}`,
 			unmarshalled: &btcjson.CreateRawTransactionCmd{
@@ -69,7 +73,9 @@ func TestChainSvrCmds(t *testing.T) {
 					{Txid: "123", Vout: 1},
 				}
 				amounts := map[string]float64{"456": .0123}
-				return btcjson.NewCreateRawTransactionCmd(txInputs, amounts, btcjson.Int64(12312333333))
+				return btcjson.NewCreateRawTransactionCmd(txInputs, amounts,
+					btcjson.Int64(12312333333),
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"createrawtransaction","netparams":[[{"txid":"123","vout":1}],{"456":0.0123},12312333333],"id":1}`,
 			unmarshalled: &btcjson.CreateRawTransactionCmd{
@@ -117,7 +123,9 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("getaddednodeinfo", true, "127.0.0.1")
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewGetAddedNodeInfoCmd(true, btcjson.String("127.0.0.1"))
+				return btcjson.NewGetAddedNodeInfoCmd(true,
+					btcjson.String("127.0.0.1"),
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"getaddednodeinfo","netparams":[true,"127.0.0.1"],"id":1}`,
 			unmarshalled: &btcjson.GetAddedNodeInfoCmd{
@@ -174,7 +182,9 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("getblock", "123", true, true)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewGetBlockCmd("123", btcjson.Bool(true), btcjson.Bool(true))
+				return btcjson.NewGetBlockCmd("123", btcjson.Bool(true),
+					btcjson.Bool(true),
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"getblock","netparams":["123",true,true],"id":1}`,
 			unmarshalled: &btcjson.GetBlockCmd{
@@ -519,7 +529,9 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("getnetworkhashps", 200, 123)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewGetNetworkHashPSCmd(btcjson.Int(200), btcjson.Int(123))
+				return btcjson.NewGetNetworkHashPSCmd(btcjson.Int(200),
+					btcjson.Int(123),
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"getnetworkhashps","netparams":[200,123],"id":1}`,
 			unmarshalled: &btcjson.GetNetworkHashPSCmd{
@@ -775,7 +787,9 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("searchrawtransactions", "1Address")
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewSearchRawTransactionsCmd("1Address", nil, nil, nil, nil, nil, nil)
+				return btcjson.NewSearchRawTransactionsCmd("1Address", nil, nil,
+					nil, nil, nil, nil,
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"searchrawtransactions","netparams":["1Address"],"id":1}`,
 			unmarshalled: &btcjson.SearchRawTransactionsCmd{
@@ -835,12 +849,15 @@ func TestChainSvrCmds(t *testing.T) {
 		{
 			name: "searchrawtransactions",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("searchrawtransactions", "1Address", 0, 5, 10)
+				return btcjson.NewCmd("searchrawtransactions", "1Address", 0, 5,
+					10,
+				)
 			},
 			staticCmd: func() interface{} {
 				return btcjson.NewSearchRawTransactionsCmd(
 					"1Address",
-					btcjson.Int(0), btcjson.Int(5), btcjson.Int(10), nil, nil, nil,
+					btcjson.Int(0), btcjson.Int(5), btcjson.Int(10), nil, nil,
+					nil,
 				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"searchrawtransactions","netparams":["1Address",0,5,10],"id":1}`,
@@ -857,12 +874,15 @@ func TestChainSvrCmds(t *testing.T) {
 		{
 			name: "searchrawtransactions",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("searchrawtransactions", "1Address", 0, 5, 10, 1)
+				return btcjson.NewCmd("searchrawtransactions", "1Address", 0, 5,
+					10, 1,
+				)
 			},
 			staticCmd: func() interface{} {
 				return btcjson.NewSearchRawTransactionsCmd(
 					"1Address",
-					btcjson.Int(0), btcjson.Int(5), btcjson.Int(10), btcjson.Int(1), nil, nil,
+					btcjson.Int(0), btcjson.Int(5), btcjson.Int(10),
+					btcjson.Int(1), nil, nil,
 				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"searchrawtransactions","netparams":["1Address",0,5,10,1],"id":1}`,
@@ -879,12 +899,15 @@ func TestChainSvrCmds(t *testing.T) {
 		{
 			name: "searchrawtransactions",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("searchrawtransactions", "1Address", 0, 5, 10, 1, true)
+				return btcjson.NewCmd("searchrawtransactions", "1Address", 0, 5,
+					10, 1, true,
+				)
 			},
 			staticCmd: func() interface{} {
 				return btcjson.NewSearchRawTransactionsCmd(
 					"1Address",
-					btcjson.Int(0), btcjson.Int(5), btcjson.Int(10), btcjson.Int(1), btcjson.Bool(true), nil,
+					btcjson.Int(0), btcjson.Int(5), btcjson.Int(10),
+					btcjson.Int(1), btcjson.Bool(true), nil,
 				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"searchrawtransactions","netparams":["1Address",0,5,10,1,true],"id":1}`,
@@ -901,7 +924,9 @@ func TestChainSvrCmds(t *testing.T) {
 		{
 			name: "searchrawtransactions",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("searchrawtransactions", "1Address", 0, 5, 10, 1, true, []string{"1Address"})
+				return btcjson.NewCmd("searchrawtransactions", "1Address", 0, 5,
+					10, 1, true, []string{"1Address"},
+				)
 			},
 			staticCmd: func() interface{} {
 				return btcjson.NewSearchRawTransactionsCmd(
@@ -945,7 +970,9 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("sendrawtransaction", "1122", false)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewSendRawTransactionCmd("1122", btcjson.Bool(false))
+				return btcjson.NewSendRawTransactionCmd("1122",
+					btcjson.Bool(false),
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"sendrawtransaction","netparams":["1122",false],"id":1}`,
 			unmarshalled: &btcjson.SendRawTransactionCmd{
@@ -1020,7 +1047,9 @@ func TestChainSvrCmds(t *testing.T) {
 		{
 			name: "submitblock optional",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("submitblock", "112233", `{"workid":"12345"}`)
+				return btcjson.NewCmd("submitblock", "112233",
+					`{"workid":"12345"}`,
+				)
 			},
 			staticCmd: func() interface{} {
 				options := btcjson.SubmitBlockOptions{
@@ -1094,7 +1123,9 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("verifychain", 2, 500)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewVerifyChainCmd(btcjson.Int32(2), btcjson.Int32(500))
+				return btcjson.NewVerifyChainCmd(btcjson.Int32(2),
+					btcjson.Int32(500),
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"verifychain","netparams":[2,500],"id":1}`,
 			unmarshalled: &btcjson.VerifyChainCmd{
@@ -1105,7 +1136,9 @@ func TestChainSvrCmds(t *testing.T) {
 		{
 			name: "verifymessage",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("verifymessage", "1Address", "301234", "test")
+				return btcjson.NewCmd("verifymessage", "1Address", "301234",
+					"test",
+				)
 			},
 			staticCmd: func() interface{} {
 				return btcjson.NewVerifyMessageCmd("1Address", "301234", "test")

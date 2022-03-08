@@ -8,8 +8,8 @@ package waddrmgr
 
 import (
 	"errors"
-	
-	"github.com/p9c/p9/pkg/snacl"
+
+	"github.com/cybriq/p9/pkg/snacl"
 )
 
 // // TstLatestMgrVersion makes the unexported latestMgrVersion variable

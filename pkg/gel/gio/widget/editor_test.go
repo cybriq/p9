@@ -12,15 +12,15 @@ import (
 	"testing/quick"
 	"unicode"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/font/gofont"
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/text"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/font/gofont"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 	"golang.org/x/image/math/fixed"
 )
 
@@ -109,10 +109,14 @@ func assertCaret(t *testing.T, e *Editor, line, col, bytes int) {
 	t.Helper()
 	gotLine, gotCol := e.CaretPos()
 	if gotLine != line || gotCol != col {
-		t.Errorf("caret at (%d, %d), expected (%d, %d)", gotLine, gotCol, line, col)
+		t.Errorf("caret at (%d, %d), expected (%d, %d)", gotLine, gotCol, line,
+			col,
+		)
 	}
 	if bytes != e.caret.start.ofs {
-		t.Errorf("caret at buffer position %d, expected %d", e.caret.start.ofs, bytes)
+		t.Errorf("caret at buffer position %d, expected %d", e.caret.start.ofs,
+			bytes,
+		)
 	}
 }
 
@@ -155,13 +159,17 @@ func TestEditorCaretConsistency(t *testing.T) {
 				return nil
 			}
 			return fmt.Errorf("caret (%d,%d) pos %s, want (%d,%d) pos %s",
-				gotLine, gotCol, gotCoords, want.lineCol.Y, want.lineCol.X, wantCoords)
+				gotLine, gotCol, gotCoords, want.lineCol.Y, want.lineCol.X,
+				wantCoords,
+			)
 		}
 		if err := consistent(); err != nil {
 			t.Errorf("initial editor inconsistency (alignment %s): %v", a, err)
 		}
 
-		move := func(mutation editMutation, str string, distance int8, x, y uint16) bool {
+		move := func(mutation editMutation, str string, distance int8,
+			x, y uint16,
+		) bool {
 			switch mutation {
 			case setText:
 				e.SetText(str)
@@ -238,7 +246,9 @@ func TestEditorMoveWord(t *testing.T) {
 		e.MoveCaret(tt.Start, tt.Start)
 		e.moveWord(tt.Skip, selectionClear)
 		if e.caret.start.ofs != tt.Want {
-			t.Fatalf("[%d] moveWord: bad caret position: got %d, want %d", ii, e.caret.start.ofs, tt.Want)
+			t.Fatalf("[%d] moveWord: bad caret position: got %d, want %d", ii,
+				e.caret.start.ofs, tt.Want,
+			)
 		}
 	}
 }
@@ -321,10 +331,14 @@ func TestEditorDeleteWord(t *testing.T) {
 		e.MoveCaret(0, tt.Selection)
 		e.deleteWord(tt.Delete)
 		if e.caret.start.ofs != tt.Want {
-			t.Fatalf("[%d] deleteWord: bad caret position: got %d, want %d", ii, e.caret.start.ofs, tt.Want)
+			t.Fatalf("[%d] deleteWord: bad caret position: got %d, want %d", ii,
+				e.caret.start.ofs, tt.Want,
+			)
 		}
 		if e.Text() != tt.Result {
-			t.Fatalf("[%d] deleteWord: invalid result: got %q, want %q", ii, e.Text(), tt.Result)
+			t.Fatalf("[%d] deleteWord: invalid result: got %q, want %q", ii,
+				e.Text(), tt.Result,
+			)
 		}
 	}
 }
@@ -355,7 +369,8 @@ d123456789d
 e123456789e
 f123456789f
 g123456789g
-`)
+`,
+	)
 
 	gtx := layout.Context{Ops: new(op.Ops)}
 	cache := text.NewCache(gofont.Collection())
@@ -373,15 +388,21 @@ g123456789g
 		tq := &testQueue{
 			events: []event.Event{
 				pointer.Event{
-					Buttons:  pointer.ButtonPrimary,
-					Type:     pointer.Press,
-					Source:   pointer.Mouse,
-					Position: f32.Pt(textWidth(e, startPos.lineCol.Y, 0, startPos.lineCol.X), textHeight(e, startPos.lineCol.Y)),
+					Buttons: pointer.ButtonPrimary,
+					Type:    pointer.Press,
+					Source:  pointer.Mouse,
+					Position: f32.Pt(textWidth(e, startPos.lineCol.Y, 0,
+						startPos.lineCol.X,
+					), textHeight(e, startPos.lineCol.Y),
+					),
 				},
 				pointer.Event{
-					Type:     pointer.Release,
-					Source:   pointer.Mouse,
-					Position: f32.Pt(textWidth(e, endPos.lineCol.Y, 0, endPos.lineCol.X), textHeight(e, endPos.lineCol.Y)),
+					Type:   pointer.Release,
+					Source: pointer.Mouse,
+					Position: f32.Pt(textWidth(e, endPos.lineCol.Y, 0,
+						endPos.lineCol.X,
+					), textHeight(e, endPos.lineCol.Y),
+					),
 				},
 			},
 		}
@@ -412,7 +433,9 @@ g123456789g
 		{0, 4, "a123", screenPos{}, screenPos{Y: 0, X: 4}},
 		{0, 11, "a123456789a", screenPos{}, screenPos{Y: 1, X: 5}},
 		{2, 6, "2345", screenPos{Y: 0, X: 2}, screenPos{Y: 1, X: 0}},
-		{41, 66, "56789d\ne123456789e\nf12345", screenPos{Y: 6, X: 5}, screenPos{Y: 11, X: 0}},
+		{41, 66, "56789d\ne123456789e\nf12345", screenPos{Y: 6, X: 5},
+			screenPos{Y: 11, X: 0},
+		},
 	} {
 		// printLines(e)
 
@@ -432,7 +455,8 @@ g123456789g
 			t.Errorf("Test %d pt2: Expected %#v, %#v; got %#v, %#v",
 				n,
 				e.caret.end.lineCol, e.caret.start.lineCol,
-				tst.startPos, tst.endPos)
+				tst.startPos, tst.endPos,
+			)
 			continue
 		}
 

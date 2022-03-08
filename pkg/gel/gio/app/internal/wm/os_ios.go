@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build darwin && ios
 // +build darwin,ios
 
 package wm
@@ -37,12 +38,12 @@ import (
 	"unicode/utf16"
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/io/clipboard"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/io/system"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/io/clipboard"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/io/system"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 )
 
 type window struct {
@@ -75,7 +76,8 @@ func onCreate(view C.CFTypeRef) {
 	}
 	dl, err := NewDisplayLink(func() {
 		w.draw(false)
-	})
+	},
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -127,7 +129,8 @@ func (w *window) draw(sync bool) {
 			},
 		},
 		Sync: sync,
-	})
+	},
+	)
 }
 
 //export onStop
@@ -191,11 +194,14 @@ func onText(view C.CFTypeRef, str *C.char) {
 	w := views[view]
 	w.w.Event(key.EditEvent{
 		Text: C.GoString(str),
-	})
+	},
+	)
 }
 
 //export onTouch
-func onTouch(last C.int, view, touchRef C.CFTypeRef, phase C.NSInteger, x, y C.CGFloat, ti C.double) {
+func onTouch(last C.int, view, touchRef C.CFTypeRef, phase C.NSInteger,
+	x, y C.CGFloat, ti C.double,
+) {
 	var typ pointer.Type
 	switch phase {
 	case C.UITouchPhaseBegan:
@@ -218,14 +224,16 @@ func onTouch(last C.int, view, touchRef C.CFTypeRef, phase C.NSInteger, x, y C.C
 		PointerID: w.lookupTouch(last != 0, touchRef),
 		Position:  p,
 		Time:      t,
-	})
+	},
+	)
 }
 
 func (w *window) ReadClipboard() {
 	runOnMain(func() {
 		content := nsstringToString(C.gio_readClipboard())
 		w.w.Event(clipboard.Event{Text: content})
-	})
+	},
+	)
 }
 
 func (w *window) WriteClipboard(s string) {
@@ -236,7 +244,8 @@ func (w *window) WriteClipboard(s string) {
 			chars = (*C.unichar)(unsafe.Pointer(&u16[0]))
 		}
 		C.gio_writeClipboard(chars, C.NSUInteger(len(u16)))
-	})
+	},
+	)
 }
 
 func (w *window) Option(opts *Options) {}
@@ -260,7 +269,8 @@ func (w *window) SetCursor(name pointer.CursorName) {
 func (w *window) onKeyCommand(name string) {
 	w.w.Event(key.Event{
 		Name: name,
-	})
+	},
+	)
 }
 
 // lookupTouch maps an UITouch pointer value to an index. If
@@ -304,7 +314,8 @@ func (w *window) ShowTextInput(show bool) {
 		} else {
 			C.gio_hideTextInput(w.view)
 		}
-	})
+	},
+	)
 }
 
 // Close the window. Not implemented for iOS.

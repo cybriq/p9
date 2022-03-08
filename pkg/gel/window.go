@@ -8,25 +8,25 @@ import (
 	"strings"
 	"time"
 
-	"github.com/p9c/p9/pkg/opts/binary"
-	"github.com/p9c/p9/pkg/opts/meta"
+	"github.com/cybriq/p9/pkg/opts/binary"
+	"github.com/cybriq/p9/pkg/opts/meta"
 
-	clipboard2 "github.com/p9c/p9/pkg/gel/gio/io/clipboard"
+	clipboard2 "github.com/cybriq/p9/pkg/gel/gio/io/clipboard"
 
-	"github.com/p9c/p9/pkg/gel/clipboard"
-	"github.com/p9c/p9/pkg/gel/fonts/p9fonts"
+	"github.com/cybriq/p9/pkg/gel/clipboard"
+	"github.com/cybriq/p9/pkg/gel/fonts/p9fonts"
 
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
 	uberatomic "go.uber.org/atomic"
 
-	"github.com/p9c/p9/pkg/gel/gio/app"
-	"github.com/p9c/p9/pkg/gel/gio/io/system"
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/app"
+	"github.com/cybriq/p9/pkg/gel/gio/io/system"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 )
 
 type CallbackQueue chan func() error
@@ -104,14 +104,14 @@ func (w *Window) Overlay(gtx l.Context) {
 // NewWindowP9 creates a new window
 func NewWindowP9(quit chan struct{}) (out *Window) {
 	out = &Window{
-		scale:              &scaledConfig{1},
-		Runner:             NewCallbackQueue(32),
-		Width:              uberatomic.NewInt32(0),
-		Height:             uberatomic.NewInt32(0),
-		ClipboardWriteReqs: make(chan string, 1),
-		ClipboardReadReqs:  make(chan func(string), 32),
-		clipboardReadReady: qu.Ts(1),
-		clipboardReadResponse: make(chan string,1),
+		scale:                 &scaledConfig{1},
+		Runner:                NewCallbackQueue(32),
+		Width:                 uberatomic.NewInt32(0),
+		Height:                uberatomic.NewInt32(0),
+		ClipboardWriteReqs:    make(chan string, 1),
+		ClipboardReadReqs:     make(chan func(string), 32),
+		clipboardReadReady:    qu.Ts(1),
+		clipboardReadResponse: make(chan string, 1),
 	}
 	out.Theme = NewTheme(
 		binary.New(meta.Data{}, false, nil),
@@ -165,7 +165,9 @@ func (w *Window) Open() (out *Window) {
 	return w
 }
 
-func (w *Window) Run(frame func(ctx l.Context) l.Dimensions, destroy func(), quit qu.C,) (e error) {
+func (w *Window) Run(frame func(ctx l.Context) l.Dimensions, destroy func(),
+	quit qu.C,
+) (e error) {
 	runner := func() {
 		ticker := time.NewTicker(time.Second)
 		for {
@@ -182,7 +184,9 @@ func (w *Window) Run(frame func(ctx l.Context) l.Dimensions, destroy func(), qui
 					var e error
 					var b []byte
 					textSize := unit.Sp(16)
-					runner := exec.Command("gsettings", "get", "org.gnome.desktop.interface", "text-scaling-factor")
+					runner := exec.Command("gsettings", "get",
+						"org.gnome.desktop.interface", "text-scaling-factor",
+					)
 					if b, e = runner.CombinedOutput(); D.Chk(e) {
 					}
 					var factor float64
@@ -249,7 +253,9 @@ func (w *Window) Run(frame func(ctx l.Context) l.Dimensions, destroy func(), qui
 	return
 }
 
-func (w *Window) processEvents(e event.Event, frame func(ctx l.Context) l.Dimensions, destroy func()) error {
+func (w *Window) processEvents(e event.Event,
+	frame func(ctx l.Context) l.Dimensions, destroy func(),
+) error {
 	switch ev := e.(type) {
 	case system.DestroyEvent:
 		D.Ln("received destroy event", ev.Err)

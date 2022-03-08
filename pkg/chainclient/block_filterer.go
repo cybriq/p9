@@ -1,12 +1,12 @@
 package chainclient
 
 import (
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	am "github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	am "github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // BlockFilterer is used to iteratively scan blocks for a set of addresses of interest. This is done by constructing

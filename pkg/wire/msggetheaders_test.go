@@ -5,10 +5,10 @@ import (
 	"io"
 	"reflect"
 	"testing"
-	
+
 	"github.com/davecgh/go-spew/spew"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // TestGetHeaders tests the MsgGetHeader API.
@@ -323,15 +323,25 @@ func TestGetHeadersWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in protocol version.
-		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 0,
+			io.ErrShortWrite, io.EOF,
+		},
 		// Force error in block locator hash count.
-		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 4, io.ErrShortWrite, io.EOF},
+		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 4,
+			io.ErrShortWrite, io.EOF,
+		},
 		// Force error in block locator hashes.
-		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 5, io.ErrShortWrite, io.EOF},
+		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 5,
+			io.ErrShortWrite, io.EOF,
+		},
 		// Force error in stop hash.
-		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 69, io.ErrShortWrite, io.EOF},
+		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 69,
+			io.ErrShortWrite, io.EOF,
+		},
 		// Force error with greater than max block locator hashes.
-		{maxGetHeaders, maxGetHeadersEncoded, pver, BaseEncoding, 7, wireErr, wireErr},
+		{maxGetHeaders, maxGetHeadersEncoded, pver, BaseEncoding, 7, wireErr,
+			wireErr,
+		},
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {

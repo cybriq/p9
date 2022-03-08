@@ -4,12 +4,12 @@ package mining
 // import (
 // 	"container/heap"
 // 	"fmt"
-// 	blockchain "github.com/p9c/p9/pkg/chain"
-// 	"github.com/p9c/p9/pkg/chain/fork"
-// 	chainhash "github.com/p9c/p9/pkg/chain/hash"
-// 	txscript "github.com/p9c/p9/pkg/chain/tx/script"
-// 	"github.com/p9c/p9/pkg/chain/wire"
-// 	"github.com/p9c/p9/pkg/util"
+// 	blockchain "github.com/cybriq/p9/pkg/chain"
+// 	"github.com/cybriq/p9/pkg/chain/fork"
+// 	chainhash "github.com/cybriq/p9/pkg/chain/hash"
+// 	txscript "github.com/cybriq/p9/pkg/chain/tx/script"
+// 	"github.com/cybriq/p9/pkg/chain/wire"
+// 	"github.com/cybriq/p9/pkg/util"
 // 	"math/rand"
 // 	"time"
 // )

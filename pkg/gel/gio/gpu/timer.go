@@ -5,7 +5,7 @@ package gpu
 import (
 	"time"
 
-	"github.com/p9c/p9/pkg/gel/gio/gpu/internal/driver"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu/internal/driver"
 )
 
 type timers struct {

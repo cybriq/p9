@@ -6,14 +6,14 @@ import (
 	"math"
 	"testing"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/font/gofont"
-	"github.com/p9c/p9/pkg/gel/gio/gpu/headless"
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/widget/material"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/font/gofont"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu/headless"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/widget/material"
 )
 
 // use some global variables for benchmarking so as to not pollute
@@ -23,7 +23,9 @@ var (
 	op1, op2, op3 op.Ops
 )
 
-func setupBenchmark(b *testing.B) (layout.Context, *headless.Window, *material.Theme) {
+func setupBenchmark(b *testing.B) (layout.Context, *headless.Window,
+	*material.Theme,
+) {
 	sz := image.Point{X: 1024, Y: 1200}
 	w := newWindow(b, sz.X, sz.Y)
 	ops := new(op.Ops)
@@ -106,7 +108,9 @@ func BenchmarkDrawUITransformed(b *testing.B) {
 
 		p := op.Save(gtx.Ops)
 		angle := float32(math.Mod(float64(i)/1000, 0.05))
-		a := f32.Affine2D{}.Shear(f32.Point{}, angle, angle).Rotate(f32.Point{}, angle)
+		a := f32.Affine2D{}.Shear(f32.Point{}, angle, angle).Rotate(f32.Point{},
+			angle,
+		)
 		op.Affine(a).Add(gtx.Ops)
 
 		drawCore(gtx, th)
@@ -157,8 +161,12 @@ func draw1000Circles(gtx layout.Context) {
 		op.Offset(f32.Pt(float32(x*10), 0)).Add(ops)
 		for y := 0; y < 10; y++ {
 			paint.FillShape(ops,
-				color.NRGBA{R: 100 + uint8(x), G: 100 + uint8(y), B: 100, A: 120},
-				clip.RRect{Rect: f32.Rect(0, 0, 10, 10), NE: 5, SE: 5, SW: 5, NW: 5}.Op(ops),
+				color.NRGBA{R: 100 + uint8(x), G: 100 + uint8(y), B: 100,
+					A: 120,
+				},
+				clip.RRect{Rect: f32.Rect(0, 0, 10, 10), NE: 5, SE: 5, SW: 5,
+					NW: 5,
+				}.Op(ops),
 			)
 			op.Offset(f32.Pt(0, float32(100))).Add(ops)
 		}
@@ -179,7 +187,10 @@ func draw1000CirclesInstanced(gtx layout.Context) {
 		op.Offset(f32.Pt(float32(x*10), 0)).Add(ops)
 		for y := 0; y < 10; y++ {
 			pi := op.Save(ops)
-			paint.ColorOp{Color: color.NRGBA{R: 100 + uint8(x), G: 100 + uint8(y), B: 100, A: 120}}.Add(ops)
+			paint.ColorOp{Color: color.NRGBA{R: 100 + uint8(x),
+				G: 100 + uint8(y), B: 100, A: 120,
+			},
+			}.Add(ops)
 			c.Add(ops)
 			pi.Load()
 			op.Offset(f32.Pt(0, float32(100))).Add(ops)
@@ -198,7 +209,8 @@ func drawCore(gtx layout.Context, th *material.Theme) {
 	(<-c3).Add(gtx.Ops)
 }
 
-func drawIndividualShapes(gtx layout.Context, th *material.Theme) chan op.CallOp {
+func drawIndividualShapes(gtx layout.Context, th *material.Theme,
+) chan op.CallOp {
 	// draw 81 rounded rectangles of different solid colors - each one individually
 	go func() {
 		ops := &op1
@@ -208,8 +220,12 @@ func drawIndividualShapes(gtx layout.Context, th *material.Theme) chan op.CallOp
 			op.Offset(f32.Pt(float32(x*50), 0)).Add(ops)
 			for y := 0; y < 9; y++ {
 				paint.FillShape(ops,
-					color.NRGBA{R: 100 + uint8(x), G: 100 + uint8(y), B: 100, A: 120},
-					clip.RRect{Rect: f32.Rect(0, 0, 25, 25), NE: 10, SE: 10, SW: 10, NW: 10}.Op(ops),
+					color.NRGBA{R: 100 + uint8(x), G: 100 + uint8(y), B: 100,
+						A: 120,
+					},
+					clip.RRect{Rect: f32.Rect(0, 0, 25, 25), NE: 10, SE: 10,
+						SW: 10, NW: 10,
+					}.Op(ops),
 				)
 				op.Offset(f32.Pt(0, float32(50))).Add(ops)
 			}

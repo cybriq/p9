@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build darwin && !ios
 // +build darwin,!ios
 
 package wm
 
 import (
-	"github.com/p9c/p9/pkg/gel/gio/gpu"
-	"github.com/p9c/p9/pkg/gel/gio/internal/gl"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/gl"
 )
 
 /*

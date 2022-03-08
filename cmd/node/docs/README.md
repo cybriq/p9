@@ -66,7 +66,7 @@ transactions).
 One key difference between pod and Bitcoin Core is that pod does _NOT_ include wallet functionality and this was a very
 intentional design decision. See the blog entry [here](https://blog.conformal.com/pod-not-your-moms-bitcoin-daemon) for
 more details. This means you can't actually make or receive payments directly with pod. That functionality is provided
-by the [btcwallet](https://github.com/p9c/p9/walletmain).
+by the [btcwallet](https://github.com/cybriq/p9/walletmain).
 
 <a name="GettingStarted" />
 
@@ -83,7 +83,7 @@ operating systems.
 
 **2.1.1 Windows Installation**<br />
 
-- Install the MSI available at: https://github.com/p9c/p9/releases
+- Install the MSI available at: https://github.com/cybriq/p9/releases
 
 - Launch pod from the Start Menu
 
@@ -230,19 +230,19 @@ optional method to use a `bootstrap.dat` file that may speed up the initial bloc
 
 **3.1.1 bootstrap.dat**
 
-- [Using bootstrap.dat](https://github.com/p9c/p9/tree/master/docs/using_bootstrap_dat.md)
+- [Using bootstrap.dat](https://github.com/cybriq/p9/tree/master/docs/using_bootstrap_dat.md)
 
 <a name="NetworkConfig" />
 
 **3.1.2 Network Configuration**
 
-- [What Ports Are Used by Default?](https://github.com/p9c/p9/tree/master/docs/default_ports.md)
+- [What Ports Are Used by Default?](https://github.com/cybriq/p9/tree/master/docs/default_ports.md)
 
-- [How To Listen on Specific Interfaces](https://github.com/p9c/p9/tree/master/docs/configure_peer_server_listen_interfaces.md)
+- [How To Listen on Specific Interfaces](https://github.com/cybriq/p9/tree/master/docs/configure_peer_server_listen_interfaces.md)
 
-- [How To Configure RPC Server to Listen on Specific Interfaces](https://github.com/p9c/p9/tree/master/docs/configure_rpc_server_listen_interfaces.md)
+- [How To Configure RPC Server to Listen on Specific Interfaces](https://github.com/cybriq/p9/tree/master/docs/configure_rpc_server_listen_interfaces.md)
 
-- [Configuring pod with Tor](https://github.com/p9c/p9/tree/master/docs/configuring_tor.md)
+- [Configuring pod with Tor](https://github.com/cybriq/p9/tree/master/docs/configuring_tor.md)
 
 <a name="Wallet" />
 
@@ -276,51 +276,51 @@ see [btcwallet](https://github.com/btcsuite/btcwallet) for more information.
 
 <a name="ContributionGuidelines" />
 
-- [Code Contribution Guidelines](https://github.com/p9c/p9/tree/master/docs/code_contribution_guidelines.md)
+- [Code Contribution Guidelines](https://github.com/cybriq/p9/tree/master/docs/code_contribution_guidelines.md)
 
 <a name="JSONRPCReference" />
 
-- [JSON-RPC Reference](https://github.com/p9c/p9/tree/master/docs/json_rpc_api.md)
+- [JSON-RPC Reference](https://github.com/cybriq/p9/tree/master/docs/json_rpc_api.md)
 
-- [RPC Examples](https://github.com/p9c/p9/tree/master/docs/json_rpc_api.md#ExampleCode)
+- [RPC Examples](https://github.com/cybriq/p9/tree/master/docs/json_rpc_api.md#ExampleCode)
 
 <a name="GoPackages" />
 
 - The btcsuite Bitcoin-related Go Packages:
 
-    - [btcrpcclient](https://github.com/p9c/p9/tree/master/rpcclient) - Implements a robust and easy to use
+    - [btcrpcclient](https://github.com/cybriq/p9/tree/master/rpcclient) - Implements a robust and easy to use
       Websocket-enabled Bitcoin JSON-RPC client
 
-    - [btcjson](https://github.com/p9c/p9/tree/master/btcjson) - Provides an extensive API for the underlying JSON-RPC
+    - [btcjson](https://github.com/cybriq/p9/tree/master/btcjson) - Provides an extensive API for the underlying JSON-RPC
       command and return values
 
-    - [wire](https://github.com/p9c/p9/tree/master/wire) - Implements the Bitcoin wire protocol
+    - [wire](https://github.com/cybriq/p9/tree/master/wire) - Implements the Bitcoin wire protocol
 
-    - [peer](https://github.com/p9c/p9/tree/master/peer) - Provides a common base for creating and managing Bitcoin
+    - [peer](https://github.com/cybriq/p9/tree/master/peer) - Provides a common base for creating and managing Bitcoin
       network peers.
 
-    - [blockchain](https://github.com/p9c/p9/tree/master/blockchain) - Implements Bitcoin block handling and chain
+    - [blockchain](https://github.com/cybriq/p9/tree/master/blockchain) - Implements Bitcoin block handling and chain
       selection rules
 
-    - [blockchain/fullblocktests](https://github.com/p9c/p9/tree/master/blockchain/fullblocktests) - Provides a set of
+    - [blockchain/fullblocktests](https://github.com/cybriq/p9/tree/master/blockchain/fullblocktests) - Provides a set of
       block tests for testing the consensus validation rules
 
-    - [txscript](https://github.com/p9c/p9/tree/master/txscript) - Implements the Bitcoin transaction scripting
+    - [txscript](https://github.com/cybriq/p9/tree/master/txscript) - Implements the Bitcoin transaction scripting
       language
 
-    - [btcec](https://github.com/p9c/p9/tree/master/btcec) - Implements support for the elliptic curve cryptographic
+    - [btcec](https://github.com/cybriq/p9/tree/master/btcec) - Implements support for the elliptic curve cryptographic
       functions needed for the Bitcoin scripts
 
-    - [database](https://github.com/p9c/p9/tree/master/database) - Provides a database interface for the Bitcoin block
+    - [database](https://github.com/cybriq/p9/tree/master/database) - Provides a database interface for the Bitcoin block
       chain
 
-    - [mempool](https://github.com/p9c/p9/tree/master/mempool) - Package mempool provides a policy-enforced pool of
+    - [mempool](https://github.com/cybriq/p9/tree/master/mempool) - Package mempool provides a policy-enforced pool of
       unmined bitcoin transactions.
 
-    - [util](https://github.com/p9c/p9/util) - Provides Bitcoin-specific convenience functions and types
+    - [util](https://github.com/cybriq/p9/util) - Provides Bitcoin-specific convenience functions and types
 
-    - [chainhash](https://github.com/p9c/p9/tree/master/chaincfg/chainhash) - Provides a generic hash type and
+    - [chainhash](https://github.com/cybriq/p9/tree/master/chaincfg/chainhash) - Provides a generic hash type and
       associated functions that allows the specific hash algorithm to be abstracted.
 
-    - [connmgr](https://github.com/p9c/p9/tree/master/connmgr) - Package connmgr implements a generic Bitcoin network
+    - [connmgr](https://github.com/cybriq/p9/tree/master/connmgr) - Package connmgr implements a generic Bitcoin network
       connection manager.

@@ -5,23 +5,22 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	_ "github.com/p9c/p9/pkg/gel/gio/app/permission/networkstate" // todo: integrate this into routeable package
-	_ "github.com/p9c/p9/pkg/gel/gio/app/permission/storage"      // this enables the home folder appdata directory to work on android (and ios)
+	_ "github.com/cybriq/p9/pkg/gel/gio/app/permission/networkstate" // todo: integrate this into routeable package
+	_ "github.com/cybriq/p9/pkg/gel/gio/app/permission/storage"      // this enables the home folder appdata directory to work on android (and ios)
 
-	"github.com/p9c/p9/pkg/log"
-	"github.com/p9c/p9/pod/config"
-	"github.com/p9c/p9/pod/podcfgs"
-	"github.com/p9c/p9/pod/podhelp"
-	"github.com/p9c/p9/pod/state"
-	"github.com/p9c/p9/version"
+	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pod/config"
+	"github.com/cybriq/p9/pod/podcfgs"
+	"github.com/cybriq/p9/pod/podhelp"
+	"github.com/cybriq/p9/pod/state"
+	"github.com/cybriq/p9/version"
 
 	// This ensures the database drivers get registered
-	_ "github.com/p9c/p9/pkg/database/ffldb"
-
-	// _ "github.com/p9c/p9/pkg/gel/gio/app/permission/bluetooth"
-	// _ "github.com/p9c/p9/pkg/gel/gio/app/permission/camera"
+	_ "github.com/cybriq/p9/pkg/database/ffldb"
+	// _ "github.com/cybriq/p9/pkg/gel/gio/app/permission/bluetooth"
+	// _ "github.com/cybriq/p9/pkg/gel/gio/app/permission/camera"
 )
 
 func main() {
@@ -36,7 +35,9 @@ func Main() (quit qu.C) {
 		T.Ln(version.Get())
 		var cx *state.State
 		var e error
-		if cx, e = state.GetNew(podcfgs.GetDefaultConfig(), podhelp.HelpFunction, quit); E.Chk(e) {
+		if cx, e = state.GetNew(podcfgs.GetDefaultConfig(),
+			podhelp.HelpFunction, quit,
+		); E.Chk(e) {
 			fail()
 		}
 
@@ -69,6 +70,6 @@ func debugConfig(c *config.Config) (e error) {
 	if e = json.Indent(jj, j, "", "\t"); E.Chk(e) {
 		return
 	}
-	T.Ln("\n"+jj.String())
+	T.Ln("\n" + jj.String())
 	return
 }

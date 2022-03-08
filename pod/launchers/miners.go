@@ -1,3 +1,4 @@
+//go:build !nominers
 // +build !nominers
 
 package launchers
@@ -7,15 +8,15 @@ import (
 	"net/rpc"
 	"os"
 
-	"github.com/p9c/p9/pkg/log"
-	"github.com/p9c/p9/cmd/kopach"
-	"github.com/p9c/p9/cmd/kopach/worker"
-	"github.com/p9c/p9/pod/state"
+	"github.com/cybriq/p9/cmd/kopach"
+	"github.com/cybriq/p9/cmd/kopach/worker"
+	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pod/state"
 
-	"github.com/p9c/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/interrupt"
 
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/fork"
 )
 
 // Kopach runs the kopach miner
@@ -57,7 +58,8 @@ func Worker(ifc interface{}) (e error) {
 	}
 	D.Ln("miner worker starting")
 	w, conn := worker.New(cx.Config.ExtraArgs[0], cx.KillAll,
-		uint64(cx.Config.UUID.V()))
+		uint64(cx.Config.UUID.V()),
+	)
 	e = rpc.Register(w)
 	if e != nil {
 		D.Ln(e)

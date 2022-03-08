@@ -5,7 +5,7 @@ package gel
 import (
 	"golang.org/x/exp/shiny/materialdesign/icons"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 )
 
 type RadioButton struct {
@@ -17,7 +17,8 @@ type RadioButton struct {
 
 // RadioButton returns a RadioButton with a label. The key specifies the value for the Enum.
 func (w *Window) RadioButton(checkable *Checkable, group *Enum, key,
-	label string) *RadioButton {
+	label string,
+) *RadioButton {
 	// if checkable == nil {
 	// 	debug.PrintStack()
 	// 	os.Exit(0)
@@ -26,9 +27,9 @@ func (w *Window) RadioButton(checkable *Checkable, group *Enum, key,
 		group:  group,
 		Window: w,
 		Checkable: checkable.
-			CheckedStateIcon(&icons.ToggleRadioButtonChecked). // Color("Primary").
+			CheckedStateIcon(&icons.ToggleRadioButtonChecked).     // Color("Primary").
 			UncheckedStateIcon(&icons.ToggleRadioButtonUnchecked). // Color("PanelBg").
-			Label(label), // .Color("DocText").IconColor("PanelBg"),
+			Label(label),                                          // .Color("DocText").IconColor("PanelBg"),
 		key: key,
 	}
 }

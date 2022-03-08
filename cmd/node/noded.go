@@ -36,19 +36,19 @@ import (
 	"path/filepath"
 	"runtime/pprof"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/interrupt"
 
-	"github.com/p9c/p9/pkg/apputil"
-	"github.com/p9c/p9/pkg/chainrpc"
-	"github.com/p9c/p9/pkg/constant"
-	"github.com/p9c/p9/pkg/ctrl"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/database/blockdb"
-	"github.com/p9c/p9/pkg/indexers"
-	"github.com/p9c/p9/pkg/log"
-	"github.com/p9c/p9/pod/state"
+	"github.com/cybriq/p9/pkg/apputil"
+	"github.com/cybriq/p9/pkg/chainrpc"
+	"github.com/cybriq/p9/pkg/constant"
+	"github.com/cybriq/p9/pkg/ctrl"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/database/blockdb"
+	"github.com/cybriq/p9/pkg/indexers"
+	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pod/state"
 )
 
 // // This enables pprof
@@ -71,7 +71,9 @@ func NodeMain(cx *state.State) (e error) {
 		go func() {
 			listenAddr := net.JoinHostPort("", cx.Config.Profile.V())
 			I.Ln("profile server listening on", listenAddr)
-			profileRedirect := http.RedirectHandler("/debug/pprof", http.StatusSeeOther)
+			profileRedirect := http.RedirectHandler("/debug/pprof",
+				http.StatusSeeOther,
+			)
 			http.Handle("/", profileRedirect)
 			D.Ln("profile server", http.ListenAndServe(listenAddr, nil))
 		}()
@@ -339,7 +341,9 @@ func warnMultipleDBs(cx *state.State) {
 	}
 	// warn if there are extra databases
 	if len(duplicateDbPaths) > 0 {
-		selectedDbPath := state.BlockDb(cx, cx.Config.DbType.V(), blockdb.NamePrefix)
+		selectedDbPath := state.BlockDb(cx, cx.Config.DbType.V(),
+			blockdb.NamePrefix,
+		)
 		W.F(
 			"\nThere are multiple block chain databases using different"+
 				" database types.\nYou probably don't want to waste disk"+
@@ -480,8 +484,12 @@ func upgradeDataPaths() (e error) {
 			return e
 		}
 		// Move old pod.conf into new location if needed
-		oldConfPath := filepath.Join(oldHomePath, constant.DefaultConfigFilename)
-		newConfPath := filepath.Join(newHomePath, constant.DefaultConfigFilename)
+		oldConfPath := filepath.Join(oldHomePath,
+			constant.DefaultConfigFilename,
+		)
+		newConfPath := filepath.Join(newHomePath,
+			constant.DefaultConfigFilename,
+		)
 		if apputil.FileExists(oldConfPath) && !apputil.FileExists(newConfPath) {
 			e = os.Rename(oldConfPath, newConfPath)
 			if e != nil {

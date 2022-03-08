@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/waddrmgr"
+
+	"github.com/cybriq/p9/pkg/waddrmgr"
 )
 
 // TestErrorCodeStringer tests the stringized output for the ErrorCode type.

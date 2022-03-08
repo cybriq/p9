@@ -3,9 +3,9 @@ package gel
 import (
 	"image"
 	"sort"
-	
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 type Cell struct {
@@ -120,7 +120,7 @@ func (t *Table) Fn(gtx l.Context) l.Dimensions {
 	// if len(t.body) == 0 || len(t.header) == 0 {
 	// 	return l.Dimensions{}
 	// }
-	
+
 	for i := range t.body {
 		if len(t.header) != len(t.body[i]) {
 			// this should never happen hence panic
@@ -140,7 +140,7 @@ func (t *Table) Fn(gtx l.Context) l.Dimensions {
 		}
 	}
 	// D.S(t.body)
-	
+
 	// find the max of each row and column
 	var table CellGrid
 	table = append(table, t.header)
@@ -244,12 +244,15 @@ func (t *Table) Fn(gtx l.Context) l.Dimensions {
 			cs.Max.Y = tyi
 			cs.Min.Y = gtx.Constraints.Max.Y
 			// gtx.Constraints.Constrain(image.Point{X: txi, Y: tyi})
-			dims := t.Fill(t.headerBackground, l.Center, t.TextSize.V, 0, EmptySpace(txi, tyi)).Fn(gtx)
+			dims := t.Fill(t.headerBackground, l.Center, t.TextSize.V, 0,
+				EmptySpace(txi, tyi),
+			).Fn(gtx)
 			oie.Widget(gtx)
 			return dims
-		})
+		},
+		)
 	}
-	
+
 	var out CellGrid
 	out = CellGrid{t.header}
 	if t.reverse {
@@ -276,24 +279,27 @@ func (t *Table) Fn(gtx l.Context) l.Dimensions {
 				oie := oiee
 				txi := t.X[i]
 				tyi := t.Y[index]
-				f.Rigid(t.Fill(t.cellBackground, l.Center, t.TextSize.V, 0, func(gtx l.Context) l.Dimensions {
-					cs := gtx.Constraints
-					cs.Max.X = txi
-					cs.Min.X = gtx.Constraints.Max.X
-					cs.Max.Y = tyi
-					cs.Min.Y = gtx.Constraints.Max.Y // gtx.Constraints.Constrain(image.Point{
-					// 	X: t.X[i],
-					// 	Y: t.Y[index],
-					// })
-					gtx.Constraints.Max.X = txi
-					// gtx.Constraints.Min.X = gtx.Constraints.Max.X
-					gtx.Constraints.Max.Y = tyi
-					// gtx.Constraints.Min.Y = gtx.Constraints.Max.Y
-					dims := EmptySpace(txi, tyi)(gtx)
-					// dims
-					oie.Widget(gtx)
-					return dims
-				}).Fn)
+				f.Rigid(t.Fill(t.cellBackground, l.Center, t.TextSize.V, 0,
+					func(gtx l.Context) l.Dimensions {
+						cs := gtx.Constraints
+						cs.Max.X = txi
+						cs.Min.X = gtx.Constraints.Max.X
+						cs.Max.Y = tyi
+						cs.Min.Y = gtx.Constraints.Max.Y // gtx.Constraints.Constrain(image.Point{
+						// 	X: t.X[i],
+						// 	Y: t.Y[index],
+						// })
+						gtx.Constraints.Max.X = txi
+						// gtx.Constraints.Min.X = gtx.Constraints.Max.X
+						gtx.Constraints.Max.Y = tyi
+						// gtx.Constraints.Min.Y = gtx.Constraints.Max.Y
+						dims := EmptySpace(txi, tyi)(gtx)
+						// dims
+						oie.Widget(gtx)
+						return dims
+					},
+				).Fn,
+				)
 			}
 		}
 		return f.Fn(gtx)
@@ -301,16 +307,21 @@ func (t *Table) Fn(gtx l.Context) l.Dimensions {
 	return t.Theme.VFlex().
 		Rigid(func(gtx l.Context) l.Dimensions {
 			// header is fixed to the top of the widget
-			return t.Fill(t.headerBackground, l.Center, t.TextSize.V, 0, header.Fn).Fn(gtx)
-		}).
+			return t.Fill(t.headerBackground, l.Center, t.TextSize.V, 0,
+				header.Fn,
+			).Fn(gtx)
+		},
+		).
 		Flexed(1,
-			t.Fill(t.cellBackground, l.Center, t.TextSize.V, 0, func(gtx l.Context) l.Dimensions {
-				return t.list.Vertical().
-					Length(len(out)).
-					Background(t.cellBackground).
-					ListElement(le).
-					Fn(gtx)
-			}).Fn,
+			t.Fill(t.cellBackground, l.Center, t.TextSize.V, 0,
+				func(gtx l.Context) l.Dimensions {
+					return t.list.Vertical().
+						Length(len(out)).
+						Background(t.cellBackground).
+						ListElement(le).
+						Fn(gtx)
+				},
+			).Fn,
 		).
 		Fn(gtx)
 }

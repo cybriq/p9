@@ -4,10 +4,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/io/router"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/io/router"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 func TestMouseClicks(t *testing.T) {
@@ -25,14 +25,16 @@ func TestMouseClicks(t *testing.T) {
 			label: "double click",
 			events: mouseClickEvents(
 				100*time.Millisecond,
-				100*time.Millisecond+doubleClickDuration-1),
+				100*time.Millisecond+doubleClickDuration-1,
+			),
 			clicks: []int{1, 2},
 		},
 		{
 			label: "two single clicks",
 			events: mouseClickEvents(
 				100*time.Millisecond,
-				100*time.Millisecond+doubleClickDuration+1),
+				100*time.Millisecond+doubleClickDuration+1,
+			),
 			clicks: []int{1, 1},
 		},
 	} {
@@ -53,10 +55,13 @@ func TestMouseClicks(t *testing.T) {
 
 			for i, click := range clicks {
 				if got, want := click.NumClicks, tc.clicks[i]; got != want {
-					t.Errorf("got %d combined mouse clicks, expected %d", got, want)
+					t.Errorf("got %d combined mouse clicks, expected %d", got,
+						want,
+					)
 				}
 			}
-		})
+		},
+		)
 	}
 }
 

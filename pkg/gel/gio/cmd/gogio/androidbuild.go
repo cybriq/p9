@@ -98,7 +98,7 @@ func buildAndroid(tmpDir string, bi *buildInfo) error {
 		androidjar: filepath.Join(platform, "android.jar"),
 	}
 	perms := []string{"default"}
-	const permPref = "github.com/p9c/p9/pkg/gel/gio/app/permission/"
+	const permPref = "github.com/cybriq/p9/pkg/gel/gio/app/permission/"
 	cfg := &packages.Config{
 		Mode: packages.NeedName +
 			packages.NeedFiles +
@@ -164,7 +164,9 @@ func buildAndroid(tmpDir string, bi *buildInfo) error {
 		case ".aab":
 			isBundle = true
 		default:
-			return fmt.Errorf("the specified output %q does not end in '.apk' or '.aab'", file)
+			return fmt.Errorf("the specified output %q does not end in '.apk' or '.aab'",
+				file,
+			)
 		}
 
 		if err := exeAndroid(tmpDir, tools, bi, extraJars, perms, isBundle); err != nil {
@@ -179,7 +181,8 @@ func buildAndroid(tmpDir string, bi *buildInfo) error {
 	}
 }
 
-func compileAndroid(tmpDir string, tools *androidTools, bi *buildInfo) (err error) {
+func compileAndroid(tmpDir string, tools *androidTools, bi *buildInfo,
+) (err error) {
 	androidHome := os.Getenv("ANDROID_SDK_ROOT")
 	if androidHome == "" {
 		return errors.New("ANDROID_SDK_ROOT is not set. Please point it to the root of the Android SDK")
@@ -196,13 +199,17 @@ func compileAndroid(tmpDir string, tools *androidTools, bi *buildInfo) (err erro
 	if bi.minsdk > minSDK {
 		minSDK = bi.minsdk
 	}
-	tcRoot := filepath.Join(ndkRoot, "toolchains", "llvm", "prebuilt", archNDK())
+	tcRoot := filepath.Join(ndkRoot, "toolchains", "llvm", "prebuilt",
+		archNDK(),
+	)
 	var builds errgroup.Group
 	for _, a := range bi.archs {
 		arch := allArchs[a]
 		clang, err := latestCompiler(tcRoot, a, minSDK)
 		if err != nil {
-			return fmt.Errorf("%s. Please make sure you have NDK >= r19c installed. Use the command `sdkmanager ndk-bundle` to install it.", err)
+			return fmt.Errorf("%s. Please make sure you have NDK >= r19c installed. Use the command `sdkmanager ndk-bundle` to install it.",
+				err,
+			)
 		}
 		if runtime.GOOS == "windows" {
 			// Because of https://github.com/android-ndk/ndk/issues/920,
@@ -238,9 +245,13 @@ func compileAndroid(tmpDir string, tools *androidTools, bi *buildInfo) (err erro
 		builds.Go(func() error {
 			_, err := runCmd(cmd)
 			return err
-		})
+		},
+		)
 	}
-	appDir, err := runCmd(exec.Command("go", "list", "-f", "{{.Dir}}", "github.com/p9c/p9/pkg/gel/gio/app/internal/wm"))
+	appDir, err := runCmd(exec.Command("go", "list", "-f", "{{.Dir}}",
+		"github.com/cybriq/p9/pkg/gel/gio/app/internal/wm",
+	),
+	)
 	if err != nil {
 		return err
 	}
@@ -265,7 +276,8 @@ func compileAndroid(tmpDir string, tools *androidTools, bi *buildInfo) (err erro
 		builds.Go(func() error {
 			_, err := runCmd(javac)
 			return err
-		})
+		},
+		)
 	}
 	return builds.Wait()
 }
@@ -276,7 +288,9 @@ func archiveAndroid(tmpDir string, bi *buildInfo, perms []string) (err error) {
 		aarFile = fmt.Sprintf("%s.aar", bi.name)
 	}
 	if filepath.Ext(aarFile) != ".aar" {
-		return fmt.Errorf("the specified output %q does not end in '.aar'", aarFile)
+		return fmt.Errorf("the specified output %q does not end in '.aar'",
+			aarFile,
+		)
 	}
 	aar, err := os.Create(aarFile)
 	if err != nil {
@@ -309,7 +323,8 @@ func archiveAndroid(tmpDir string, bi *buildInfo, perms []string) (err error) {
 {{range .Permissions}}	<uses-permission android:name="{{.}}"/>
 {{end}}{{range .Features}}	<uses-feature android:{{.}} android:required="false"/>
 {{end}}</manifest>
-`)
+`,
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -333,18 +348,22 @@ func archiveAndroid(tmpDir string, bi *buildInfo, perms []string) (err error) {
 	return aarw.Close()
 }
 
-func exeAndroid(tmpDir string, tools *androidTools, bi *buildInfo, extraJars, perms []string, isBundle bool) (err error) {
+func exeAndroid(tmpDir string, tools *androidTools, bi *buildInfo,
+	extraJars, perms []string, isBundle bool,
+) (err error) {
 	classes := filepath.Join(tmpDir, "classes")
 	var classFiles []string
-	err = filepath.Walk(classes, func(path string, f os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if filepath.Ext(path) == ".class" {
-			classFiles = append(classFiles, path)
-		}
-		return nil
-	})
+	err = filepath.Walk(classes,
+		func(path string, f os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if filepath.Ext(path) == ".class" {
+				classFiles = append(classFiles, path)
+			}
+			return nil
+		},
+	)
 	classFiles = append(classFiles, extraJars...)
 	dexDir := filepath.Join(tmpDir, "apk")
 	if err := os.MkdirAll(dexDir, 0755); err != nil {
@@ -377,18 +396,25 @@ func exeAndroid(tmpDir string, tools *androidTools, bi *buildInfo, extraJars, pe
 			{path: filepath.Join("mipmap-hdpi", "ic_launcher.png"), size: 72},
 			{path: filepath.Join("mipmap-xhdpi", "ic_launcher.png"), size: 96},
 			{path: filepath.Join("mipmap-xxhdpi", "ic_launcher.png"), size: 144},
-			{path: filepath.Join("mipmap-xxxhdpi", "ic_launcher.png"), size: 192},
-		})
+			{path: filepath.Join("mipmap-xxxhdpi", "ic_launcher.png"),
+				size: 192,
+			},
+		},
+		)
 		if err != nil {
 			return err
 		}
 		iconSnip = `android:icon="@mipmap/ic_launcher"`
 	}
-	err = ioutil.WriteFile(filepath.Join(valDir, "themes.xml"), []byte(themes), 0660)
+	err = ioutil.WriteFile(filepath.Join(valDir, "themes.xml"), []byte(themes),
+		0660,
+	)
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(filepath.Join(v21Dir, "themes.xml"), []byte(themesV21), 0660)
+	err = ioutil.WriteFile(filepath.Join(v21Dir, "themes.xml"),
+		[]byte(themesV21), 0660,
+	)
 	if err != nil {
 		return err
 	}
@@ -398,7 +424,9 @@ func exeAndroid(tmpDir string, tools *androidTools, bi *buildInfo, extraJars, pe
 		aapt2,
 		"compile",
 		"-o", resZip,
-		"--dir", resDir))
+		"--dir", resDir,
+	),
+	)
 	if err != nil {
 		return err
 	}
@@ -447,7 +475,8 @@ func exeAndroid(tmpDir string, tools *androidTools, bi *buildInfo, extraJars, pe
 			</intent-filter>
 		</activity>
 	</application>
-</manifest>`)
+</manifest>`,
+	)
 	var manifestBuffer bytes.Buffer
 	if err := tmpl.Execute(&manifestBuffer, manifestSrc); err != nil {
 		return err
@@ -537,7 +566,8 @@ func exeAndroid(tmpDir string, tools *androidTools, bi *buildInfo, extraJars, pe
 		w, err := unsignedAPKZip.CreateHeader(&zip.FileHeader{
 			Name:   filepath.ToSlash(path),
 			Method: zip.Deflate,
-		})
+		},
+		)
 		if err != nil {
 			return err
 		}
@@ -549,7 +579,9 @@ func exeAndroid(tmpDir string, tools *androidTools, bi *buildInfo, extraJars, pe
 	for _, a := range bi.archs {
 		arch := allArchs[a]
 		libFile := filepath.Join(arch.jniArch, "libgio.so")
-		if err := appendToZip(filepath.Join("lib", libFile), filepath.Join(tmpDir, "jni", libFile)); err != nil {
+		if err := appendToZip(filepath.Join("lib", libFile),
+			filepath.Join(tmpDir, "jni", libFile),
+		); err != nil {
 			return err
 		}
 	}
@@ -566,7 +598,8 @@ func exeAndroid(tmpDir string, tools *androidTools, bi *buildInfo, extraJars, pe
 	return unsignedAPKZip.Close()
 }
 
-func signAPK(tmpDir string, apkFile string, tools *androidTools, bi *buildInfo) error {
+func signAPK(tmpDir string, apkFile string, tools *androidTools, bi *buildInfo,
+) error {
 	if err := zipalign(tools, filepath.Join(tmpDir, "app.zip"), apkFile); err != nil {
 		return err
 	}
@@ -583,13 +616,18 @@ func signAPK(tmpDir string, apkFile string, tools *androidTools, bi *buildInfo) 
 		"--ks-pass", "pass:"+bi.password,
 		"--ks", bi.key,
 		apkFile,
-	))
+	),
+	)
 
 	return err
 }
 
-func signAAB(tmpDir string, aabFile string, tools *androidTools, bi *buildInfo) error {
-	allBundleTools, err := filepath.Glob(filepath.Join(tools.buildtools, "bundletool*.jar"))
+func signAAB(tmpDir string, aabFile string, tools *androidTools, bi *buildInfo,
+) error {
+	allBundleTools, err := filepath.Glob(filepath.Join(tools.buildtools,
+		"bundletool*.jar",
+	),
+	)
 	if err != nil {
 		return err
 	}
@@ -601,7 +639,9 @@ func signAAB(tmpDir string, aabFile string, tools *androidTools, bi *buildInfo) 
 	}
 
 	if bundletool == "" {
-		return fmt.Errorf("bundletool was not found at %s. Download it from https://github.com/google/bundletool/releases and move to the respective folder", tools.buildtools)
+		return fmt.Errorf("bundletool was not found at %s. Download it from https://github.com/google/bundletool/releases and move to the respective folder",
+			tools.buildtools,
+		)
 	}
 
 	_, err = runCmd(exec.Command(
@@ -610,7 +650,8 @@ func signAAB(tmpDir string, aabFile string, tools *androidTools, bi *buildInfo) 
 		"build-bundle",
 		"--modules="+filepath.Join(tmpDir, "app.zip"),
 		"--output="+filepath.Join(tmpDir, "app.aab"),
-	))
+	),
+	)
 	if err != nil {
 		return err
 	}
@@ -631,7 +672,8 @@ func signAAB(tmpDir string, aabFile string, tools *androidTools, bi *buildInfo) 
 		"-list",
 		"-keypass", bi.password,
 		"-v",
-	))
+	),
+	)
 	if err != nil {
 		return err
 	}
@@ -651,7 +693,8 @@ func signAAB(tmpDir string, aabFile string, tools *androidTools, bi *buildInfo) 
 		"-storepass", bi.password,
 		aabFile,
 		strings.TrimSpace(alias),
-	))
+	),
+	)
 
 	return err
 }
@@ -663,7 +706,8 @@ func zipalign(tools *androidTools, input, output string) error {
 		"4", // 32-bit alignment.
 		input,
 		output,
-	))
+	),
+	)
 	return err
 }
 
@@ -696,7 +740,8 @@ func defaultAndroidKeystore(tmpDir string, bi *buildInfo) error {
 		"-validity", "10000",
 		"-noprompt",
 		"-dname", "CN=android",
-	))
+	),
+	)
 	return err
 }
 
@@ -721,7 +766,9 @@ func findNDK(androidHome string) (string, error) {
 		}
 	}
 
-	return "", fmt.Errorf("no NDK found in $ANDROID_SDK_ROOT (%s). Set $ANDROID_NDK_ROOT or use `sdkmanager ndk-bundle` to install the NDK", androidHome)
+	return "", fmt.Errorf("no NDK found in $ANDROID_SDK_ROOT (%s). Set $ANDROID_NDK_ROOT or use `sdkmanager ndk-bundle` to install the NDK",
+		androidHome,
+	)
 }
 
 func findKeytool() (string, error) {
@@ -784,7 +831,8 @@ Created-By: 1.0 (Go)
 			jarw.Add(rel, path)
 		}
 		return nil
-	})
+	},
+	)
 	if err != nil {
 		return err
 	}
@@ -854,7 +902,10 @@ func latestPlatform(sdk string) (string, error) {
 
 func latestCompiler(tcRoot, a string, minsdk int) (string, error) {
 	arch := allArchs[a]
-	allComps, err := filepath.Glob(filepath.Join(tcRoot, "bin", arch.clangArch+"*-clang"))
+	allComps, err := filepath.Glob(filepath.Join(tcRoot, "bin",
+		arch.clangArch+"*-clang",
+	),
+	)
 	if err != nil {
 		return "", err
 	}
@@ -885,7 +936,9 @@ func latestCompiler(tcRoot, a string, minsdk int) (string, error) {
 		bestCompiler = firstCompiler
 	}
 	if bestCompiler == "" {
-		return "", fmt.Errorf("no NDK compiler found for architecture %s in %s", a, tcRoot)
+		return "", fmt.Errorf("no NDK compiler found for architecture %s in %s",
+			a, tcRoot,
+		)
 	}
 	return bestCompiler, nil
 }

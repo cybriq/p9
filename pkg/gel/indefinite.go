@@ -5,12 +5,12 @@ import (
 	"image/color"
 	"math"
 	"time"
-	
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
+
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
 )
 
 type Indefinite struct {
@@ -74,12 +74,12 @@ func clipLoader(ops *op.Ops, startAngle, endAngle, radius float64) {
 	var (
 		width = float32(radius * thickness)
 		delta = float32(endAngle - startAngle)
-		
+
 		vy, vx = math.Sincos(startAngle)
-		
+
 		pen    = f32.Pt(float32(vx), float32(vy)).Mul(float32(radius))
 		center = f32.Pt(0, 0).Sub(pen)
-		
+
 		p clip.Path
 	)
 	p.Begin(ops)

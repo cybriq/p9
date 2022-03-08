@@ -3,8 +3,8 @@ package waddrmgr
 import (
 	"fmt"
 	"strconv"
-	
-	"github.com/p9c/p9/pkg/util/hdkeychain"
+
+	"github.com/cybriq/p9/pkg/util/hdkeychain"
 )
 
 // ErrorCode identifies a kind of error.

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build (linux && !android) || freebsd || openbsd
 // +build linux,!android freebsd openbsd
 
 // Package xkb implements a Go interface for the X Keyboard Extension library.
@@ -14,8 +15,8 @@ import (
 	"unicode/utf8"
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
 )
 
 /*
@@ -80,12 +81,16 @@ func New() (*Context, error) {
 	}
 	cloc := C.CString(locale)
 	defer C.free(unsafe.Pointer(cloc))
-	ctx.compTable = C.xkb_compose_table_new_from_locale(ctx.Ctx, cloc, C.XKB_COMPOSE_COMPILE_NO_FLAGS)
+	ctx.compTable = C.xkb_compose_table_new_from_locale(ctx.Ctx, cloc,
+		C.XKB_COMPOSE_COMPILE_NO_FLAGS,
+	)
 	if ctx.compTable == nil {
 		ctx.Destroy()
 		return nil, errors.New("newXKB: xkb_compose_table_new_from_locale failed")
 	}
-	ctx.compState = C.xkb_compose_state_new(ctx.compTable, C.XKB_COMPOSE_STATE_NO_FLAGS)
+	ctx.compState = C.xkb_compose_state_new(ctx.compTable,
+		C.XKB_COMPOSE_STATE_NO_FLAGS,
+	)
 	if ctx.compState == nil {
 		ctx.Destroy()
 		return nil, errors.New("newXKB: xkb_compose_state_new failed")
@@ -114,12 +119,17 @@ func (x *Context) SetKeymap(xkbKeyMap, xkbState unsafe.Pointer) {
 
 func (x *Context) LoadKeymap(format int, fd int, size int) error {
 	x.DestroyKeymapState()
-	mapData, err := syscall.Mmap(int(fd), 0, int(size), syscall.PROT_READ, syscall.MAP_SHARED)
+	mapData, err := syscall.Mmap(int(fd), 0, int(size), syscall.PROT_READ,
+		syscall.MAP_SHARED,
+	)
 	if err != nil {
 		return fmt.Errorf("newXKB: mmap of keymap failed: %v", err)
 	}
 	defer syscall.Munmap(mapData)
-	keyMap := C.xkb_keymap_new_from_buffer(x.Ctx, (*C.char)(unsafe.Pointer(&mapData[0])), C.size_t(size-1), C.XKB_KEYMAP_FORMAT_TEXT_V1, C.XKB_KEYMAP_COMPILE_NO_FLAGS)
+	keyMap := C.xkb_keymap_new_from_buffer(x.Ctx,
+		(*C.char)(unsafe.Pointer(&mapData[0])), C.size_t(size-1),
+		C.XKB_KEYMAP_FORMAT_TEXT_V1, C.XKB_KEYMAP_COMPILE_NO_FLAGS,
+	)
 	if keyMap == nil {
 		return errors.New("newXKB: xkb_keymap_new_from_buffer failed")
 	}
@@ -135,22 +145,35 @@ func (x *Context) LoadKeymap(format int, fd int, size int) error {
 
 func (x *Context) Modifiers() key.Modifiers {
 	var mods key.Modifiers
-	if C.xkb_state_mod_name_is_active(x.state, (*C.char)(unsafe.Pointer(&_XKB_MOD_NAME_CTRL[0])), C.XKB_STATE_MODS_EFFECTIVE) == 1 {
+	if C.xkb_state_mod_name_is_active(x.state,
+		(*C.char)(unsafe.Pointer(&_XKB_MOD_NAME_CTRL[0])),
+		C.XKB_STATE_MODS_EFFECTIVE,
+	) == 1 {
 		mods |= key.ModCtrl
 	}
-	if C.xkb_state_mod_name_is_active(x.state, (*C.char)(unsafe.Pointer(&_XKB_MOD_NAME_SHIFT[0])), C.XKB_STATE_MODS_EFFECTIVE) == 1 {
+	if C.xkb_state_mod_name_is_active(x.state,
+		(*C.char)(unsafe.Pointer(&_XKB_MOD_NAME_SHIFT[0])),
+		C.XKB_STATE_MODS_EFFECTIVE,
+	) == 1 {
 		mods |= key.ModShift
 	}
-	if C.xkb_state_mod_name_is_active(x.state, (*C.char)(unsafe.Pointer(&_XKB_MOD_NAME_ALT[0])), C.XKB_STATE_MODS_EFFECTIVE) == 1 {
+	if C.xkb_state_mod_name_is_active(x.state,
+		(*C.char)(unsafe.Pointer(&_XKB_MOD_NAME_ALT[0])),
+		C.XKB_STATE_MODS_EFFECTIVE,
+	) == 1 {
 		mods |= key.ModAlt
 	}
-	if C.xkb_state_mod_name_is_active(x.state, (*C.char)(unsafe.Pointer(&_XKB_MOD_NAME_LOGO[0])), C.XKB_STATE_MODS_EFFECTIVE) == 1 {
+	if C.xkb_state_mod_name_is_active(x.state,
+		(*C.char)(unsafe.Pointer(&_XKB_MOD_NAME_LOGO[0])),
+		C.XKB_STATE_MODS_EFFECTIVE,
+	) == 1 {
 		mods |= key.ModSuper
 	}
 	return mods
 }
 
-func (x *Context) DispatchKey(keyCode uint32, state key.State) (events []event.Event) {
+func (x *Context) DispatchKey(keyCode uint32, state key.State,
+) (events []event.Event) {
 	if x.state == nil {
 		return
 	}
@@ -178,10 +201,15 @@ func (x *Context) DispatchKey(keyCode uint32, state key.State) (events []event.E
 	case C.XKB_COMPOSE_CANCELLED, C.XKB_COMPOSE_COMPOSING:
 		return
 	case C.XKB_COMPOSE_COMPOSED:
-		size := C.xkb_compose_state_get_utf8(x.compState, (*C.char)(unsafe.Pointer(&x.utf8Buf[0])), C.size_t(len(x.utf8Buf)))
+		size := C.xkb_compose_state_get_utf8(x.compState,
+			(*C.char)(unsafe.Pointer(&x.utf8Buf[0])), C.size_t(len(x.utf8Buf)),
+		)
 		if int(size) >= len(x.utf8Buf) {
 			x.utf8Buf = make([]byte, size+1)
-			size = C.xkb_compose_state_get_utf8(x.compState, (*C.char)(unsafe.Pointer(&x.utf8Buf[0])), C.size_t(len(x.utf8Buf)))
+			size = C.xkb_compose_state_get_utf8(x.compState,
+				(*C.char)(unsafe.Pointer(&x.utf8Buf[0])),
+				C.size_t(len(x.utf8Buf)),
+			)
 		}
 		C.xkb_compose_state_reset(x.compState)
 		str = x.utf8Buf[:size]
@@ -209,10 +237,14 @@ func (x *Context) DispatchKey(keyCode uint32, state key.State) (events []event.E
 }
 
 func (x *Context) charsForKeycode(keyCode C.xkb_keycode_t) []byte {
-	size := C.xkb_state_key_get_utf8(x.state, keyCode, (*C.char)(unsafe.Pointer(&x.utf8Buf[0])), C.size_t(len(x.utf8Buf)))
+	size := C.xkb_state_key_get_utf8(x.state, keyCode,
+		(*C.char)(unsafe.Pointer(&x.utf8Buf[0])), C.size_t(len(x.utf8Buf)),
+	)
 	if int(size) >= len(x.utf8Buf) {
 		x.utf8Buf = make([]byte, size+1)
-		size = C.xkb_state_key_get_utf8(x.state, keyCode, (*C.char)(unsafe.Pointer(&x.utf8Buf[0])), C.size_t(len(x.utf8Buf)))
+		size = C.xkb_state_key_get_utf8(x.state, keyCode,
+			(*C.char)(unsafe.Pointer(&x.utf8Buf[0])), C.size_t(len(x.utf8Buf)),
+		)
 	}
 	return x.utf8Buf[:size]
 }
@@ -226,8 +258,11 @@ func (x *Context) UpdateMask(depressed, latched, locked, depressedGroup, latched
 	if x.state == nil {
 		return
 	}
-	C.xkb_state_update_mask(x.state, C.xkb_mod_mask_t(depressed), C.xkb_mod_mask_t(latched), C.xkb_mod_mask_t(locked),
-		C.xkb_layout_index_t(depressedGroup), C.xkb_layout_index_t(latchedGroup), C.xkb_layout_index_t(lockedGroup))
+	C.xkb_state_update_mask(x.state, C.xkb_mod_mask_t(depressed),
+		C.xkb_mod_mask_t(latched), C.xkb_mod_mask_t(locked),
+		C.xkb_layout_index_t(depressedGroup),
+		C.xkb_layout_index_t(latchedGroup), C.xkb_layout_index_t(lockedGroup),
+	)
 }
 
 func convertKeysym(s C.xkb_keysym_t) (string, bool) {

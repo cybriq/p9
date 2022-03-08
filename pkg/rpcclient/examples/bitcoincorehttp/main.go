@@ -2,10 +2,10 @@ package main
 
 import (
 	"log"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
-	"github.com/p9c/p9/pkg/rpcclient"
+
+	"github.com/cybriq/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/rpcclient"
 )
 
 func main() {
@@ -19,13 +19,13 @@ func main() {
 	}
 	// Notice the notification parameter is nil since notifications are not supported in HTTP POST mode.
 	client, e := rpcclient.New(connCfg, nil, qu.T())
-	if e != nil  {
+	if e != nil {
 		F.Ln(e)
 	}
 	defer client.Shutdown()
 	// Get the current block count.
 	blockCount, e := client.GetBlockCount()
-	if e != nil  {
+	if e != nil {
 		F.Ln(e)
 	}
 	log.Printf("Block count: %d", blockCount)

@@ -3,11 +3,11 @@
 package router
 
 import (
-	"github.com/p9c/p9/pkg/gel/gio/internal/opconst"
-	"github.com/p9c/p9/pkg/gel/gio/internal/ops"
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/opconst"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/ops"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 type TextInputState uint8
@@ -86,7 +86,9 @@ func (q *keyQueue) Push(e event.Event, events *handlerEvents) {
 	}
 }
 
-func (q *keyQueue) resolveFocus(events *handlerEvents) (focus event.Tag, changed bool, state TextInputState) {
+func (q *keyQueue) resolveFocus(events *handlerEvents) (focus event.Tag,
+	changed bool, state TextInputState,
+) {
 	for encOp, ok := q.reader.Decode(); ok; encOp, ok = q.reader.Decode() {
 		switch opconst.OpType(encOp.Data[0]) {
 		case opconst.TypeKeyFocus:

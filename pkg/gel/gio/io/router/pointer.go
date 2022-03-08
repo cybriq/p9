@@ -6,12 +6,12 @@ import (
 	"encoding/binary"
 	"image"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/opconst"
-	"github.com/p9c/p9/pkg/gel/gio/internal/ops"
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/opconst"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/ops"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 type pointerQueue struct {
@@ -122,13 +122,16 @@ func (q *pointerQueue) collectHandlers(r *ops.Reader, events *handlerEvents) {
 		case opconst.TypeArea:
 			var op areaOp
 			op.Decode(encOp.Data)
-			q.areas = append(q.areas, areaNode{trans: state.t, next: state.area, area: op})
+			q.areas = append(q.areas,
+				areaNode{trans: state.t, next: state.area, area: op},
+			)
 			state.area = len(q.areas) - 1
 			q.hitTree = append(q.hitTree, hitNode{
 				next: state.node,
 				area: state.area,
 				pass: state.pass,
-			})
+			},
+			)
 			state.node = len(q.hitTree) - 1
 		case opconst.TypeTransform:
 			dop := ops.DecodeTransform(encOp.Data)
@@ -144,7 +147,8 @@ func (q *pointerQueue) collectHandlers(r *ops.Reader, events *handlerEvents) {
 				area: state.area,
 				pass: state.pass,
 				tag:  op.Tag,
-			})
+			},
+			)
 			state.node = len(q.hitTree) - 1
 			h, ok := q.handlers[op.Tag]
 			if !ok {
@@ -173,7 +177,8 @@ func (q *pointerQueue) collectHandlers(r *ops.Reader, events *handlerEvents) {
 			q.cursors = append(q.cursors, cursorNode{
 				name: encOp.Refs[0].(pointer.CursorName),
 				area: len(q.areas) - 1,
-			})
+			},
+			)
 		}
 	}
 }
@@ -347,7 +352,9 @@ func (q *pointerQueue) Push(e pointer.Event, events *handlerEvents) {
 	}
 }
 
-func (q *pointerQueue) deliverEvent(p *pointerInfo, events *handlerEvents, e pointer.Event) {
+func (q *pointerQueue) deliverEvent(p *pointerInfo, events *handlerEvents,
+	e pointer.Event,
+) {
 	foremost := true
 	if p.pressed && len(p.handlers) == 1 {
 		e.Priority = pointer.Grabbed
@@ -368,7 +375,9 @@ func (q *pointerQueue) deliverEvent(p *pointerInfo, events *handlerEvents, e poi
 	}
 }
 
-func (q *pointerQueue) deliverScrollEvent(p *pointerInfo, events *handlerEvents, e pointer.Event) {
+func (q *pointerQueue) deliverScrollEvent(p *pointerInfo, events *handlerEvents,
+	e pointer.Event,
+) {
 	foremost := true
 	if p.pressed && len(p.handlers) == 1 {
 		e.Priority = pointer.Grabbed
@@ -381,8 +390,12 @@ func (q *pointerQueue) deliverScrollEvent(p *pointerInfo, events *handlerEvents,
 		}
 		h := q.handlers[k]
 		// Distribute the scroll to the handler based on its ScrollRange.
-		sx, e.Scroll.X = setScrollEvent(sx, h.scrollRange.Min.X, h.scrollRange.Max.X)
-		sy, e.Scroll.Y = setScrollEvent(sy, h.scrollRange.Min.Y, h.scrollRange.Max.Y)
+		sx, e.Scroll.X = setScrollEvent(sx, h.scrollRange.Min.X,
+			h.scrollRange.Max.X,
+		)
+		sy, e.Scroll.Y = setScrollEvent(sy, h.scrollRange.Min.Y,
+			h.scrollRange.Max.Y,
+		)
 		e := e
 		if foremost {
 			foremost = false
@@ -393,7 +406,9 @@ func (q *pointerQueue) deliverScrollEvent(p *pointerInfo, events *handlerEvents,
 	}
 }
 
-func (q *pointerQueue) deliverEnterLeaveEvents(p *pointerInfo, events *handlerEvents, e pointer.Event) {
+func (q *pointerQueue) deliverEnterLeaveEvents(p *pointerInfo,
+	events *handlerEvents, e pointer.Event,
+) {
 	q.scratch = q.scratch[:0]
 	q.opHit(&q.scratch, e.Position)
 	if p.pressed {

@@ -1,14 +1,16 @@
 package blockchain
 
 import (
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/fork"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
 )
 
 // ContainsBlacklisted returns true if one of the given addresses is found in the transaction
-func ContainsBlacklisted(b *BlockChain, tx *util.Tx, blacklist []btcaddr.Address) (hasBlacklisted bool) {
+func ContainsBlacklisted(b *BlockChain, tx *util.Tx,
+	blacklist []btcaddr.Address,
+) (hasBlacklisted bool) {
 	// in tests this function is not relevant
 	if b == nil {
 		return false
@@ -35,7 +37,9 @@ func ContainsBlacklisted(b *BlockChain, tx *util.Tx, blacklist []btcaddr.Address
 				txitxo := txs[j].TxOut
 				for k := range txitxo {
 					script := txitxo[k].PkScript
-					_, a, _, _ := txscript.ExtractPkScriptAddrs(script, b.params)
+					_, a, _, _ := txscript.ExtractPkScriptAddrs(script,
+						b.params,
+					)
 					addrs = append(addrs, a...)
 				}
 			}

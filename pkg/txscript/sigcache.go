@@ -2,9 +2,9 @@ package txscript
 
 import (
 	"sync"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/ecc"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/ecc"
 )
 
 // sigCacheEntry represents an entry in the SigCache. Entries within the SigCache are keyed according to the sigHash of
@@ -42,7 +42,9 @@ func NewSigCache(maxEntries uint) *SigCache {
 // Exists returns true if an existing entry of 'sig' over 'sigHash' for public key 'pubKey' is found within the
 // SigCache. Otherwise, false is returned. NOTE: This function is safe for concurrent access. Readers won't be blocked
 // unless there exists a writer, adding an entry to the SigCache.
-func (s *SigCache) Exists(sigHash chainhash.Hash, sig *ecc.Signature, pubKey *ecc.PublicKey) bool {
+func (s *SigCache) Exists(sigHash chainhash.Hash, sig *ecc.Signature,
+	pubKey *ecc.PublicKey,
+) bool {
 	s.RLock()
 	entry, ok := s.validSigs[sigHash]
 	s.RUnlock()
@@ -53,7 +55,9 @@ func (s *SigCache) Exists(sigHash chainhash.Hash, sig *ecc.Signature, pubKey *ec
 // the SigCache is 'full', an existing entry is randomly chosen to be evicted in order to make space for the new entry.
 // NOTE: This function is safe for concurrent access. Writers will block simultaneous readers until function execution
 // has concluded.
-func (s *SigCache) Add(sigHash chainhash.Hash, sig *ecc.Signature, pubKey *ecc.PublicKey) {
+func (s *SigCache) Add(sigHash chainhash.Hash, sig *ecc.Signature,
+	pubKey *ecc.PublicKey,
+) {
 	s.Lock()
 	defer s.Unlock()
 	if s.maxEntries <= 0 {

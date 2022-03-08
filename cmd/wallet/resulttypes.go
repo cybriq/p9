@@ -2,7 +2,7 @@ package wallet
 
 //
 // import (
-// 	"github.com/p9c/p9/pkg/btcjson"
+// 	"github.com/cybriq/p9/pkg/btcjson"
 // )
 //
 // // errors are returned as *btcjson.RPCError type

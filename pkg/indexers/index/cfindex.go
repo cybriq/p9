@@ -2,17 +2,17 @@ package index
 
 import (
 	"errors"
-	"github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/chaincfg"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/gcs"
-	"github.com/p9c/p9/pkg/gcs/builder"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/chaincfg"
+
+	"github.com/cybriq/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/gcs"
+	"github.com/cybriq/p9/pkg/gcs/builder"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -45,19 +45,23 @@ var (
 
 // dbFetchFilterIdxEntry retrieves a data blob from the filter index database. An entry's absence is not considered an
 // error.
-func dbFetchFilterIdxEntry(dbTx database.Tx, key []byte, h *chainhash.Hash) ([]byte, error) {
+func dbFetchFilterIdxEntry(dbTx database.Tx, key []byte, h *chainhash.Hash,
+) ([]byte, error) {
 	idx := dbTx.Metadata().Bucket(cfIndexParentBucketKey).Bucket(key)
 	return idx.Get(h[:]), nil
 }
 
 // dbStoreFilterIdxEntry stores a data blob in the filter index database.
-func dbStoreFilterIdxEntry(dbTx database.Tx, key []byte, h *chainhash.Hash, f []byte) (e error) {
+func dbStoreFilterIdxEntry(dbTx database.Tx, key []byte, h *chainhash.Hash,
+	f []byte,
+) (e error) {
 	idx := dbTx.Metadata().Bucket(cfIndexParentBucketKey).Bucket(key)
 	return idx.Put(h[:], f)
 }
 
 // dbDeleteFilterIdxEntry deletes a data blob from the filter index database.
-func dbDeleteFilterIdxEntry(dbTx database.Tx, key []byte, h *chainhash.Hash) (e error) {
+func dbDeleteFilterIdxEntry(dbTx database.Tx, key []byte, h *chainhash.Hash,
+) (e error) {
 	idx := dbTx.Metadata().Bucket(cfIndexParentBucketKey).Bucket(key)
 	return idx.Delete(h[:])
 }

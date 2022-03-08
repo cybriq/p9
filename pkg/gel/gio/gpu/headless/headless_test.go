@@ -7,11 +7,11 @@ import (
 	"image/color"
 	"testing"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/f32color"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/f32color"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
 )
 
 func TestHeadless(t *testing.T) {
@@ -23,7 +23,9 @@ func TestHeadless(t *testing.T) {
 	var ops op.Ops
 	paint.ColorOp{Color: col}.Add(&ops)
 	// Paint only part of the screen to avoid the glClear optimization.
-	paint.FillShape(&ops, col, clip.Rect(image.Rect(0, 0, sz.X-100, sz.Y-100)).Op())
+	paint.FillShape(&ops, col,
+		clip.Rect(image.Rect(0, 0, sz.X-100, sz.Y-100)).Op(),
+	)
 	if err := w.Frame(&ops); err != nil {
 		t.Fatal(err)
 	}
@@ -90,7 +92,9 @@ func TestClipping(t *testing.T) {
 	}
 	for _, test := range tests {
 		if got := img.RGBAAt(test.x, test.y); got != f32color.NRGBAToRGBA(test.color) {
-			t.Errorf("(%d,%d): got color %v, expected %v", test.x, test.y, got, f32color.NRGBAToRGBA(test.color))
+			t.Errorf("(%d,%d): got color %v, expected %v", test.x, test.y, got,
+				f32color.NRGBAToRGBA(test.color),
+			)
 		}
 	}
 }
@@ -127,7 +131,9 @@ func TestDepth(t *testing.T) {
 	}
 	for _, test := range tests {
 		if got := img.RGBAAt(test.x, test.y); got != f32color.NRGBAToRGBA(test.color) {
-			t.Errorf("(%d,%d): got color %v, expected %v", test.x, test.y, got, f32color.NRGBAToRGBA(test.color))
+			t.Errorf("(%d,%d): got color %v, expected %v", test.x, test.y, got,
+				f32color.NRGBAToRGBA(test.color),
+			)
 		}
 	}
 }

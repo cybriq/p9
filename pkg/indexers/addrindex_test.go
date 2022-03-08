@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // addrIndexBucket provides a mock address index database bucket by implementing the internalBucket interface.
@@ -88,7 +88,9 @@ func (b *addrIndexBucket) printLevels(addrKey [addrKeySize]byte) string {
 
 // sanityCheck ensures that all data stored in the bucket for the given address adheres to the level-based rules
 // described by the address index documentation.
-func (b *addrIndexBucket) sanityCheck(addrKey [addrKeySize]byte, expectedTotal int) (e error) {
+func (b *addrIndexBucket) sanityCheck(addrKey [addrKeySize]byte,
+	expectedTotal int,
+) (e error) {
 	// Find the highest level for the key.
 	highestLevel := uint8(0)
 	for k := range b.levels {

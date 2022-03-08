@@ -21,7 +21,7 @@ the means for declaring handlers for specific event types.
 
 The following example declares a handler ready for key input:
 
-	import github.com/p9c/p9/pkg/gel/gio/io/key
+	import github.com/cybriq/p9/pkg/gel/gio/io/key
 
 	ops := new(op.Ops)
 	var h *Handler = ...

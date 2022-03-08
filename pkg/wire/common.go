@@ -7,8 +7,8 @@ import (
 	"io"
 	"math"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 const (
@@ -74,7 +74,8 @@ func (l binaryFreeList) Uint8(r io.Reader) (rv uint8, e error) {
 // Uint16 reads two bytes from the provided reader using a buffer from the free
 // list, converts it to a number using the provided byte order, and returns the
 // resulting uint16.
-func (l binaryFreeList) Uint16(r io.Reader, byteOrder binary.ByteOrder) (rv uint16, e error) {
+func (l binaryFreeList) Uint16(r io.Reader, byteOrder binary.ByteOrder,
+) (rv uint16, e error) {
 	buf := l.Borrow()[:2]
 	if _, e = io.ReadFull(r, buf); E.Chk(e) {
 		l.Return(buf)
@@ -88,7 +89,8 @@ func (l binaryFreeList) Uint16(r io.Reader, byteOrder binary.ByteOrder) (rv uint
 // Uint32 reads four bytes from the provided reader using a buffer from the free
 // list, converts it to a number using the provided byte order, and returns the
 // resulting uint32.
-func (l binaryFreeList) Uint32(r io.Reader, byteOrder binary.ByteOrder) (rv uint32, e error) {
+func (l binaryFreeList) Uint32(r io.Reader, byteOrder binary.ByteOrder,
+) (rv uint32, e error) {
 	buf := l.Borrow()[:4]
 	if _, e = io.ReadFull(r, buf); E.Chk(e) {
 		l.Return(buf)
@@ -102,7 +104,8 @@ func (l binaryFreeList) Uint32(r io.Reader, byteOrder binary.ByteOrder) (rv uint
 // Uint64 reads eight bytes from the provided reader using a buffer from the
 // free list, converts it to a number using the provided byte order, and returns
 // the resulting uint64.
-func (l binaryFreeList) Uint64(r io.Reader, byteOrder binary.ByteOrder) (rv uint64, e error) {
+func (l binaryFreeList) Uint64(r io.Reader, byteOrder binary.ByteOrder,
+) (rv uint64, e error) {
 	buf := l.Borrow()[:8]
 	if _, e = io.ReadFull(r, buf); E.Chk(e) {
 		l.Return(buf)
@@ -125,7 +128,9 @@ func (l binaryFreeList) PutUint8(w io.Writer, val uint8) (e error) {
 
 // PutUint16 serializes the provided uint16 using the given byte order into a buffer from the free list and writes the
 // resulting two bytes to the given writer.
-func (l binaryFreeList) PutUint16(w io.Writer, byteOrder binary.ByteOrder, val uint16) (e error) {
+func (l binaryFreeList) PutUint16(w io.Writer, byteOrder binary.ByteOrder,
+	val uint16,
+) (e error) {
 	buf := l.Borrow()[:2]
 	byteOrder.PutUint16(buf, val)
 	_, e = w.Write(buf)
@@ -135,7 +140,9 @@ func (l binaryFreeList) PutUint16(w io.Writer, byteOrder binary.ByteOrder, val u
 
 // PutUint32 serializes the provided uint32 using the given byte order into a buffer from the free list and writes the
 // resulting four bytes to the given writer.
-func (l binaryFreeList) PutUint32(w io.Writer, byteOrder binary.ByteOrder, val uint32) (e error) {
+func (l binaryFreeList) PutUint32(w io.Writer, byteOrder binary.ByteOrder,
+	val uint32,
+) (e error) {
 	buf := l.Borrow()[:4]
 	byteOrder.PutUint32(buf, val)
 	_, e = w.Write(buf)
@@ -145,7 +152,9 @@ func (l binaryFreeList) PutUint32(w io.Writer, byteOrder binary.ByteOrder, val u
 
 // PutUint64 serializes the provided uint64 using the given byte order into a buffer from the free list and writes the
 // resulting eight bytes to the given writer.
-func (l binaryFreeList) PutUint64(w io.Writer, byteOrder binary.ByteOrder, val uint64) (e error) {
+func (l binaryFreeList) PutUint64(w io.Writer, byteOrder binary.ByteOrder,
+	val uint64,
+) (e error) {
 	buf := l.Borrow()[:8]
 	byteOrder.PutUint64(buf, val)
 	_, e = w.Write(buf)
@@ -524,7 +533,8 @@ func WriteVarString(w io.Writer, pver uint32, str string) (e error) {
 // array followed by the bytes themselves. An error is returned if the length is greater than the passed maxAllowed
 // parameter which helps protect against memory exhaustion attacks and forced panics through malformed messages. The
 // fieldName parameter is only used for the error message so it provides more context in the error.
-func ReadVarBytes(r io.Reader, pver uint32, maxAllowed uint32, fieldName string) (b []byte, e error) {
+func ReadVarBytes(r io.Reader, pver uint32, maxAllowed uint32, fieldName string,
+) (b []byte, e error) {
 	var count uint64
 	if count, e = ReadVarInt(r, pver); E.Chk(e) {
 		return

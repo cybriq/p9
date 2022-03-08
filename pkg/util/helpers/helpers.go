@@ -3,8 +3,8 @@
 package helpers
 
 import (
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // SumOutputValues sums up the list of TxOuts and returns an Amount.

@@ -1,6 +1,6 @@
 package gel
 
-import l "github.com/p9c/p9/pkg/gel/gio/layout"
+import l "github.com/cybriq/p9/pkg/gel/gio/layout"
 
 type Direction struct {
 	l.Direction

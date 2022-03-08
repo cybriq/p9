@@ -4,12 +4,12 @@ import (
 	"image"
 	"unicode/utf8"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/text"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 
 	"golang.org/x/image/math/fixed"
 )
@@ -45,7 +45,7 @@ type lineIterator struct {
 	Alignment text.Alignment
 	Width     int
 	Offset    image.Point
-	
+
 	y, prevDesc fixed.Int26_6
 	txtOff      int
 }
@@ -126,7 +126,9 @@ func (l *lineIterator) Next() (text.Layout, image.Point, bool) {
 // 	}
 // }
 
-func (t *Text) Fn(gtx l.Context, s text.Shaper, font text.Font, size unit.Value, txt string) l.Dimensions {
+func (t *Text) Fn(gtx l.Context, s text.Shaper, font text.Font, size unit.Value,
+	txt string,
+) l.Dimensions {
 	cs := gtx.Constraints
 	textSize := fixed.I(gtx.Px(size))
 	lines := s.LayoutString(font, textSize, cs.Max.X, txt)

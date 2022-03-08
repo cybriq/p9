@@ -1,7 +1,7 @@
 package opt
 
 import (
-	"github.com/p9c/p9/pkg/opts/meta"
+	"github.com/cybriq/p9/pkg/opts/meta"
 )
 
 type (

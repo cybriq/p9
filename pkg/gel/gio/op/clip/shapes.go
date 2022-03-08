@@ -6,8 +6,8 @@ import (
 	"image"
 	"math"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 // Rect represents the clip area of a pixel-aligned rectangle.
@@ -86,22 +86,26 @@ func (rr RRect) Path(ops *op.Ops) PathSpec {
 	p.CubeTo(                            // NE
 		f32.Point{X: e - ne*iq, Y: n},
 		f32.Point{X: e, Y: n + ne*iq},
-		f32.Point{X: e, Y: n + ne})
+		f32.Point{X: e, Y: n + ne},
+	)
 	p.LineTo(f32.Point{X: e, Y: s - se}) // E
 	p.CubeTo(                            // SE
 		f32.Point{X: e, Y: s - se*iq},
 		f32.Point{X: e - se*iq, Y: s},
-		f32.Point{X: e - se, Y: s})
+		f32.Point{X: e - se, Y: s},
+	)
 	p.LineTo(f32.Point{X: w + sw, Y: s}) // S
 	p.CubeTo(                            // SW
 		f32.Point{X: w + sw*iq, Y: s},
 		f32.Point{X: w, Y: s - sw*iq},
-		f32.Point{X: w, Y: s - sw})
+		f32.Point{X: w, Y: s - sw},
+	)
 	p.LineTo(f32.Point{X: w, Y: n + nw}) // W
 	p.CubeTo(                            // NW
 		f32.Point{X: w, Y: n + nw*iq},
 		f32.Point{X: w + nw*iq, Y: n},
-		f32.Point{X: w + nw, Y: n})
+		f32.Point{X: w + nw, Y: n},
+	)
 
 	return p.End()
 }

@@ -12,16 +12,18 @@ import (
 	"strings"
 	"time"
 
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pod/config"
-	"github.com/p9c/p9/pod/state"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pod/config"
+	"github.com/cybriq/p9/pod/state"
 )
 
 type listenFunc func(net string, laddr string) (net.Listener, error)
 
 // GenerateRPCKeyPair generates a new RPC TLS keypair and writes the cert and possibly also the key in PEM format to the
 // paths specified by the config. If successful, the new keypair is returned.
-func GenerateRPCKeyPair(config *config.Config, writeKey bool) (tls.Certificate, error) {
+func GenerateRPCKeyPair(config *config.Config, writeKey bool) (tls.Certificate,
+	error,
+) {
 	D.Ln("generating TLS certificates")
 	// Create directories for cert and key files if they do not yet exist.
 	D.Ln("rpc tls ", *config.RPCCert, " ", *config.RPCKey)
@@ -83,7 +85,8 @@ func GenerateRPCKeyPair(config *config.Config, writeKey bool) (tls.Certificate, 
 
 // makeListeners splits the normalized listen addresses into IPv4 and IPv6 addresses and creates new net.Listeners for
 // each with the passed listen func. Invalid addresses are logged and skipped.
-func makeListeners(normalizedListenAddrs []string, listen listenFunc) []net.Listener {
+func makeListeners(normalizedListenAddrs []string, listen listenFunc,
+) []net.Listener {
 	ipv4Addrs := make([]string, 0, len(normalizedListenAddrs)*2)
 	// ipv6Addrs := make([]string, 0, len(normalizedListenAddrs)*2)
 	for _, addr := range normalizedListenAddrs {
@@ -164,7 +167,8 @@ func OpenRPCKeyPair(config *config.Config) (tls.Certificate, error) {
 	switch {
 	case config.OneTimeTLSKey.True() && keyExists:
 		if e = fmt.Errorf(
-			"one time TLS keys are enabled, but TLS key `%s` already exists", config.RPCKey.V(),
+			"one time TLS keys are enabled, but TLS key `%s` already exists",
+			config.RPCKey.V(),
 		); E.Chk(e) {
 		}
 		return tls.Certificate{}, e
@@ -205,7 +209,9 @@ func startRPCServers(cx *state.State, walletLoader *Loader) (*Server, error) {
 	if cx.Config.Username.V() == "" || cx.Config.Password.V() == "" {
 		I.Ln("legacy RPC server disabled (requires username and password)")
 	} else if len(cx.Config.WalletRPCListeners.S()) != 0 {
-		listeners := makeListeners(cx.Config.WalletRPCListeners.S(), walletListen)
+		listeners := makeListeners(cx.Config.WalletRPCListeners.S(),
+			walletListen,
+		)
 		if len(listeners) == 0 {
 			e := errors.New("failed to create listeners for legacy RPC server")
 			return nil, e

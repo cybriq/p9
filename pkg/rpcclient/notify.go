@@ -6,14 +6,14 @@ import (
 	js "encoding/json"
 	"errors"
 	"fmt"
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/btcaddr"
 	"time"
-	
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 var (
@@ -91,7 +91,9 @@ type NotificationHandlers struct {
 	// invoked if a preceding call to NotifyBlocks has been made to register for the notification and the function is
 	// non-nil. Its parameters differ from OnBlockConnected: it receives the block's height, header, and relevant
 	// transactions.
-	OnFilteredBlockConnected func(height int32, header *wire.BlockHeader, txs []*util.Tx)
+	OnFilteredBlockConnected func(height int32, header *wire.BlockHeader,
+		txs []*util.Tx,
+	)
 	// OnBlockDisconnected is invoked when a block is disconnected from the longest (best) chain. It will only be
 	// invoked if a preceding call to NotifyBlocks has been made to register for the notification and the function is
 	// non-nil. NOTE: Deprecated. Use OnFilteredBlockDisconnected instead.
@@ -505,7 +507,9 @@ func parseHexParam(param js.RawMessage) ([]byte, error) {
 }
 
 // parseRelevantTxAcceptedParams parses out the parameter included in a relevanttxaccepted notification.
-func parseRelevantTxAcceptedParams(params []js.RawMessage) (transaction []byte, e error) {
+func parseRelevantTxAcceptedParams(params []js.RawMessage) (transaction []byte,
+	e error,
+) {
 	if len(params) < 1 {
 		return nil, wrongNumParams(len(params))
 	}
@@ -553,7 +557,9 @@ func parseChainTxNtfnParams(params []js.RawMessage) (
 
 // parseRescanProgressParams parses out the height of the last rescanned block from the parameters of rescanfinished and
 // rescanprogress notifications.
-func parseRescanProgressParams(params []js.RawMessage) (*chainhash.Hash, int32, time.Time, error) {
+func parseRescanProgressParams(params []js.RawMessage) (*chainhash.Hash, int32,
+	time.Time, error,
+) {
 	if len(params) != 3 {
 		return nil, 0, time.Time{}, wrongNumParams(len(params))
 	}
@@ -1153,6 +1159,8 @@ func (c *Client) LoadTxFilterAsync(
 // for all rescanned blocks.
 //
 // NOTE: This is a pod extension ported from github. com/decred/dcrrpcclient and requires a websocket connection.
-func (c *Client) LoadTxFilter(reload bool, addresses []btcaddr.Address, outPoints []wire.OutPoint) (e error) {
+func (c *Client) LoadTxFilter(reload bool, addresses []btcaddr.Address,
+	outPoints []wire.OutPoint,
+) (e error) {
 	return c.LoadTxFilterAsync(reload, addresses, outPoints).Receive()
 }

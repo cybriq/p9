@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 )
 
 type Animation struct {

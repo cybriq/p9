@@ -2,9 +2,9 @@ package ffldb
 
 import (
 	"fmt"
-	
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -12,7 +12,9 @@ const (
 )
 
 // parseArgs parses the arguments from the database Open/Create methods.
-func parseArgs(funcName string, args ...interface{}) (string, wire.BitcoinNet, error) {
+func parseArgs(funcName string, args ...interface{}) (string, wire.BitcoinNet,
+	error,
+) {
 	if len(args) != 2 {
 		return "", 0, fmt.Errorf(
 			"invalid arguments to %s.%s -- "+

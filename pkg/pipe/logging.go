@@ -1,16 +1,16 @@
 package pipe
 
 import (
+	"github.com/cybriq/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/qu"
 	"github.com/niubaoshu/gotiny"
-	"github.com/p9c/p9/pkg/interrupt"
-	"github.com/p9c/p9/pkg/qu"
 	"go.uber.org/atomic"
 
-	"github.com/p9c/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/log"
 )
 
 func LogConsume(
-	quit qu.C, handler func(ent *log.Entry) (e error,),
+	quit qu.C, handler func(ent *log.Entry) (e error),
 	filter func(pkg string) (out bool), args ...string,
 ) *Worker {
 	D.Ln("starting log consumer")
@@ -128,7 +128,9 @@ func LogServe(quit qu.C, appName string) {
 					D.Ln("setting level", log.Levels[b[4]])
 					log.SetLogLevel(log.Levels[b[4]])
 				case "kill":
-					D.Ln("received kill signal from pipe, shutting down", appName)
+					D.Ln("received kill signal from pipe, shutting down",
+						appName,
+					)
 					interrupt.Request()
 					quit.Q()
 				}

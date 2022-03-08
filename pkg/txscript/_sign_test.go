@@ -3,13 +3,13 @@ package txscript
 import (
 	"errors"
 	"fmt"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	ec "github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	ec "github.com/cybriq/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 type addressToKey struct {
@@ -59,7 +59,9 @@ func mkGetScript(scripts map[string][]byte) ScriptDB {
 		},
 	)
 }
-func checkScripts(msg string, tx *wire.MsgTx, idx int, inputAmt int64, sigScript, pkScript []byte) (e error) {
+func checkScripts(msg string, tx *wire.MsgTx, idx int, inputAmt int64,
+	sigScript, pkScript []byte,
+) (e error) {
 	tx.TxIn[idx].SignatureScript = sigScript
 	vm, e := NewEngine(
 		pkScript, tx, idx,
@@ -1745,7 +1747,9 @@ var sigScriptTests = []tstSigScript{
 		name: "one input uncompressed",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal, uncompressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal,
+					uncompressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,
@@ -1759,13 +1763,17 @@ var sigScriptTests = []tstSigScript{
 		name: "two inputs uncompressed",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal, uncompressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal,
+					uncompressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,
 			},
 			{
-				txout:              wire.NewTxOut(coinbaseVal+fee, uncompressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal+fee,
+					uncompressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,
@@ -1779,7 +1787,9 @@ var sigScriptTests = []tstSigScript{
 		name: "one input compressed",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal, compressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal,
+					compressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,
@@ -1793,13 +1803,17 @@ var sigScriptTests = []tstSigScript{
 		name: "two inputs compressed",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal, compressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal,
+					compressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,
 			},
 			{
-				txout:              wire.NewTxOut(coinbaseVal+fee, compressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal+fee,
+					compressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,
@@ -1813,7 +1827,9 @@ var sigScriptTests = []tstSigScript{
 		name: "hashType SigHashNone",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal, uncompressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal,
+					uncompressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,
@@ -1827,7 +1843,9 @@ var sigScriptTests = []tstSigScript{
 		name: "hashType SigHashSingle",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal, uncompressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal,
+					uncompressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,
@@ -1841,7 +1859,9 @@ var sigScriptTests = []tstSigScript{
 		name: "hashType SigHashAnyoneCanPay",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal, uncompressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal,
+					uncompressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,
@@ -1855,7 +1875,9 @@ var sigScriptTests = []tstSigScript{
 		name: "hashType non-standard",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal, uncompressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal,
+					uncompressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,
@@ -1869,7 +1891,9 @@ var sigScriptTests = []tstSigScript{
 		name: "invalid compression",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal, uncompressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal,
+					uncompressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     false,
 				indexOutOfRange:    false,
@@ -1896,13 +1920,17 @@ var sigScriptTests = []tstSigScript{
 		name: "valid script at wrong index",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal, uncompressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal,
+					uncompressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,
 			},
 			{
-				txout:              wire.NewTxOut(coinbaseVal+fee, uncompressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal+fee,
+					uncompressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,
@@ -1916,13 +1944,17 @@ var sigScriptTests = []tstSigScript{
 		name: "index out of range",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal, uncompressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal,
+					uncompressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,
 			},
 			{
-				txout:              wire.NewTxOut(coinbaseVal+fee, uncompressedPkScript),
+				txout:              wire.NewTxOut(coinbaseVal+fee,
+					uncompressedPkScript,
+				),
 				sigscriptGenerates: true,
 				inputValidates:     true,
 				indexOutOfRange:    false,

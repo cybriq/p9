@@ -11,12 +11,12 @@ import (
 	"github.com/atotto/clipboard"
 	"golang.org/x/exp/shiny/materialdesign/icons"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	ctl2 "github.com/p9c/p9/cmd/ctl"
+	ctl2 "github.com/cybriq/p9/cmd/ctl"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 
 	icons2 "golang.org/x/exp/shiny/materialdesign/icons"
 
-	"github.com/p9c/p9/pkg/gel"
+	"github.com/cybriq/p9/pkg/gel"
 )
 
 type Console struct {
@@ -89,13 +89,17 @@ func (wg *WalletGUI) ConsolePage() *Console {
 				if len(args) == 0 {
 					D.Ln("rpc called help")
 					var result1, result2 []byte
-					if result1, e = ctl2.Call(wg.cx.Config, false, method, params...); E.Chk(e) {
+					if result1, e = ctl2.Call(wg.cx.Config, false, method,
+						params...,
+					); E.Chk(e) {
 					}
 					r1 := string(result1)
 					if r1, e = strconv.Unquote(r1); E.Chk(e) {
 					}
 					o = r1 + "\n"
-					if result2, e = ctl2.Call(wg.cx.Config, true, method, params...); E.Chk(e) {
+					if result2, e = ctl2.Call(wg.cx.Config, true, method,
+						params...,
+					); E.Chk(e) {
 					}
 					r2 := string(result2)
 					if r2, e = strconv.Unquote(r2); E.Chk(e) {
@@ -140,7 +144,9 @@ func (wg *WalletGUI) ConsolePage() *Console {
 				} else {
 					var out string
 					var isErr bool
-					if result, e = ctl2.Call(wg.cx.Config, false, method, params...); E.Chk(e) {
+					if result, e = ctl2.Call(wg.cx.Config, false, method,
+						params...,
+					); E.Chk(e) {
 						isErr = true
 						out = e.Error()
 						I.Ln(out)
@@ -177,9 +183,12 @@ func (wg *WalletGUI) ConsolePage() *Console {
 				}
 			} else {
 				D.Ln("method", method, "args", args)
-				if result, e = ctl2.Call(wg.cx.Config, false, method, params...); E.Chk(e) {
+				if result, e = ctl2.Call(wg.cx.Config, false, method, params...,
+				); E.Chk(e) {
 					var errR string
-					if result, e = ctl2.Call(wg.cx.Config, true, method, params...); E.Chk(e) {
+					if result, e = ctl2.Call(wg.cx.Config, true, method,
+						params...,
+					); E.Chk(e) {
 						if e != nil {
 							errR = e.Error()
 						}
@@ -199,7 +208,9 @@ func (wg *WalletGUI) ConsolePage() *Console {
 							).Fn,
 					)
 				}
-				c.output = append(c.output, wg.console.JSONWidget("DocText", result)...)
+				c.output = append(c.output,
+					wg.console.JSONWidget("DocText", result)...,
+				)
 			}
 			c.outputList.JumpToEnd()
 		}()
@@ -275,7 +286,8 @@ func (c *Console) Fn(gtx l.Context) l.Dimensions {
 		Flexed(
 			0.1,
 			c.Fill(
-				"PanelBg", l.Center, c.TextSize.V, 0, func(gtx l.Context) l.Dimensions {
+				"PanelBg", l.Center, c.TextSize.V, 0,
+				func(gtx l.Context) l.Dimensions {
 					return c.Inset(
 						0.25,
 						c.outputList.
@@ -300,7 +312,9 @@ func (c *Console) Fn(gtx l.Context) l.Dimensions {
 					c.Theme.Flex().
 						Flexed(
 							1,
-							c.TextInput(c.editor.SetSubmit(c.submitFunc), "enter an rpc command").
+							c.TextInput(c.editor.SetSubmit(c.submitFunc),
+								"enter an rpc command",
+							).
 								Color("DocText").
 								Fn,
 						).
@@ -347,7 +361,8 @@ func GetJSONElements(in map[string]interface{}) (je JSONElements) {
 	return
 }
 
-func (c *Console) getIndent(n int, size float32, widget l.Widget) (out l.Widget) {
+func (c *Console) getIndent(n int, size float32, widget l.Widget,
+) (out l.Widget) {
 	o := c.Theme.Flex()
 	for i := 0; i < n; i++ {
 		o.Rigid(c.Inset(size/2, gel.EmptySpace(0, 0)).Fn)
@@ -365,7 +380,9 @@ func (c *Console) JSONWidget(color string, j []byte) (out []l.Widget) {
 	return c.jsonWidget(color, 0, "", ifc)
 }
 
-func (c *Console) jsonWidget(color string, depth int, key string, in interface{}) (out []l.Widget) {
+func (c *Console) jsonWidget(color string, depth int, key string,
+	in interface{},
+) (out []l.Widget) {
 	switch in.(type) {
 	case []interface{}:
 		if key != "" {
@@ -392,7 +409,9 @@ func (c *Console) jsonWidget(color string, depth int, key string, in interface{}
 		} else {
 			for i := range res {
 				// D.S(res[i])
-				out = append(out, c.jsonWidget(color, depth+1, fmt.Sprint(i), res[i])...)
+				out = append(out,
+					c.jsonWidget(color, depth+1, fmt.Sprint(i), res[i])...,
+				)
 			}
 		}
 	case map[string]interface{}:
@@ -422,7 +441,9 @@ func (c *Console) jsonWidget(color string, depth int, key string, in interface{}
 		} else {
 			for i := range je {
 				D.S(je[i])
-				out = append(out, c.jsonWidget(color, depth+1, je[i].key, je[i].value)...)
+				out = append(out,
+					c.jsonWidget(color, depth+1, je[i].key, je[i].value)...,
+				)
 			}
 		}
 	case JSONElement:
@@ -576,7 +597,8 @@ func (c *Console) jsonWidget(color string, depth int, key string, in interface{}
 	return
 }
 
-func (c *Console) jsonElement(key, color string, depth int, w l.Widget) l.Widget {
+func (c *Console) jsonElement(key, color string, depth int, w l.Widget,
+) l.Widget {
 	return func(gtx l.Context) l.Dimensions {
 		return c.Theme.Flex().
 			Rigid(

@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"reflect"
 	"testing"
-	
+
 	"github.com/davecgh/go-spew/spew"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // TestInvVectStringer tests the stringized output for inventory vector types.

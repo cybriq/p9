@@ -3,9 +3,9 @@ package router
 import (
 	"testing"
 
-	"github.com/p9c/p9/pkg/gel/gio/io/clipboard"
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/io/clipboard"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 func TestClipboardDuplicateEvent(t *testing.T) {
@@ -129,7 +129,8 @@ func assertClipboardReadOp(t *testing.T, router *Router, expected int) {
 	}
 }
 
-func assertClipboardReadOpDuplicated(t *testing.T, router *Router, expected int) {
+func assertClipboardReadOpDuplicated(t *testing.T, router *Router, expected int,
+) {
 	t.Helper()
 	if len(router.cqueue.receivers) != expected {
 		t.Error("receivers removed")

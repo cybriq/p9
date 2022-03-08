@@ -6,10 +6,10 @@ import (
 	"reflect"
 	"testing"
 	"time"
-	
+
 	"github.com/davecgh/go-spew/spew"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // TestBlock tests the Block API.
@@ -209,21 +209,37 @@ func TestBlockWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in version.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, BaseEncoding, 0, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in prev block hash.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 4, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, BaseEncoding, 4, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in merkle root.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 36, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, BaseEncoding, 36, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in timestamp.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 68, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, BaseEncoding, 68, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in difficulty bits.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 72, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, BaseEncoding, 72, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in header nonce.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 76, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, BaseEncoding, 76, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in transaction count.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 80, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, BaseEncoding, 80, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in transactions.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 81, io.ErrShortWrite, io.EOF},
+		{&blockOne, blockOneBytes, pver, BaseEncoding, 81, io.ErrShortWrite,
+			io.EOF,
+		},
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {

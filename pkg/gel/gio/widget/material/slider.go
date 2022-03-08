@@ -6,14 +6,14 @@ import (
 	"image"
 	"image/color"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/f32color"
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
-	"github.com/p9c/p9/pkg/gel/gio/widget"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/f32color"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/widget"
 )
 
 // Slider is for selecting a value in a range.
@@ -44,7 +44,9 @@ func (s SliderStyle) Layout(gtx layout.Context) layout.Dimensions {
 	minLength := thumbRadius + 3*thumbRadius + thumbRadius
 	// Try to expand to finger size, but only if the constraints
 	// allow for it.
-	touchSizePx := min(gtx.Px(s.FingerSize), axis.Convert(gtx.Constraints.Max).Y)
+	touchSizePx := min(gtx.Px(s.FingerSize),
+		axis.Convert(gtx.Constraints.Max).Y,
+	)
 	sizeMain := max(axis.Convert(gtx.Constraints.Min).X, minLength)
 	sizeCross := max(2*thumbRadius, touchSizePx)
 	size := axis.Convert(image.Pt(sizeMain, sizeCross))
@@ -52,9 +54,16 @@ func (s SliderStyle) Layout(gtx layout.Context) layout.Dimensions {
 	st := op.Save(gtx.Ops)
 	o := axis.Convert(image.Pt(thumbRadius, 0))
 	op.Offset(layout.FPt(o)).Add(gtx.Ops)
-	gtx.Constraints.Min = axis.Convert(image.Pt(sizeMain-2*thumbRadius, sizeCross))
+	gtx.Constraints.Min = axis.Convert(image.Pt(sizeMain-2*thumbRadius,
+		sizeCross,
+	),
+	)
 	s.Float.Layout(gtx, thumbRadius, s.Min, s.Max)
-	gtx.Constraints.Min = gtx.Constraints.Min.Add(axis.Convert(image.Pt(0, sizeCross)))
+	gtx.Constraints.Min = gtx.Constraints.Min.Add(axis.Convert(image.Pt(0,
+		sizeCross,
+	),
+	),
+	)
 	thumbPos := thumbRadius + int(s.Float.Pos())
 	st.Load()
 
@@ -77,7 +86,10 @@ func (s SliderStyle) Layout(gtx layout.Context) layout.Dimensions {
 	st = op.Save(gtx.Ops)
 	track = image.Rectangle{
 		Min: axis.Convert(image.Pt(thumbPos, axis.Convert(track.Min).Y)),
-		Max: axis.Convert(image.Pt(sizeMain-thumbRadius, axis.Convert(track.Max).Y)),
+		Max: axis.Convert(image.Pt(sizeMain-thumbRadius,
+			axis.Convert(track.Max).Y,
+		),
+		),
 	}
 	clip.Rect(track).Add(gtx.Ops)
 	paint.Fill(gtx.Ops, f32color.MulAlpha(color, 96))
@@ -89,7 +101,8 @@ func (s SliderStyle) Layout(gtx layout.Context) layout.Dimensions {
 		clip.Circle{
 			Center: f32.Point{X: float32(pt.X), Y: float32(pt.Y)},
 			Radius: float32(thumbRadius),
-		}.Op(gtx.Ops))
+		}.Op(gtx.Ops),
+	)
 
 	return layout.Dimensions{Size: size}
 }

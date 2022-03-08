@@ -1,9 +1,9 @@
 package podconfig
 
 import (
-	
-	// This ensures the database drivers get registered
-	// _ "github.com/p9c/p9/pkg/database/ffldb"
+
+// This ensures the database drivers get registered
+// _ "github.com/cybriq/p9/pkg/database/ffldb"
 )
 
 //
@@ -93,7 +93,7 @@ type serviceOptions struct {
 var (
 	// defaultHomeDir is the default home directory location (
 	// this should be centralised)
-	
+
 	// KnownDbTypes stores the currently supported database drivers
 	// KnownDbTypes = database.SupportedDrivers()
 	// runServiceCommand is only set to a real function on Windows.

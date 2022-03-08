@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/p9c/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/log"
 	"go.uber.org/atomic"
 )
 
@@ -64,7 +64,10 @@ func (c C) Q() {
 		defer mx.Unlock()
 		if !testChanIsClosed(c) {
 			close(c)
-			return "closing chan from " + loc + log.Caller("\n"+strings.Repeat(" ", 48)+"from", 1)
+			return "closing chan from " + loc + log.Caller("\n"+strings.Repeat(" ",
+				48,
+			)+"from", 1,
+			)
 		} else {
 			return "from" + log.Caller("", 1) + "\n" + strings.Repeat(" ", 48) +
 				"channel " + loc + " was already closed"
@@ -81,7 +84,12 @@ func (c C) Signal() {
 
 // Wait should be placed with a `<-` in a select case in addition to the channel variable name
 func (c C) Wait() <-chan struct{} {
-	l(func() (o string) { return "waiting on " + getLocForChan(c) + log.Caller("at", 1) }())
+	l(func() (o string) {
+		return "waiting on " + getLocForChan(c) + log.Caller("at",
+			1,
+		)
+	}(),
+	)
 	return c
 }
 

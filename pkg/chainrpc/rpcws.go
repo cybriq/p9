@@ -15,23 +15,23 @@ import (
 	"sync"
 	"time"
 
-	amount2 "github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	amount2 "github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/btcsuite/websocket"
 	"golang.org/x/crypto/ripemd160"
 
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // Notification types
@@ -444,7 +444,9 @@ out:
 			auth := "Basic " + base64.StdEncoding.EncodeToString([]byte(login))
 			authSha := sha256.Sum256([]byte(auth))
 			cmp := subtle.ConstantTimeCompare(authSha[:], c.Server.AuthSHA[:])
-			limitcmp := subtle.ConstantTimeCompare(authSha[:], c.Server.LimitAuthSHA[:])
+			limitcmp := subtle.ConstantTimeCompare(authSha[:],
+				c.Server.LimitAuthSHA[:],
+			)
 			if cmp != 1 && limitcmp != 1 {
 				W.Ln("authentication failure from", c.Addr)
 				break out
@@ -921,7 +923,7 @@ func (*WSNtfnMgr) AddAddrRequests(
 // the outpoints in ops and create and send a notification when spent to the websocket client wsc.
 func (m *WSNtfnMgr) AddSpentRequests(
 	opMap map[wire.
-OutPoint]map[qu.C]*WSClient, wsc *WSClient, ops []*wire.OutPoint,
+		OutPoint]map[qu.C]*WSClient, wsc *WSClient, ops []*wire.OutPoint,
 ) {
 	for _, op := range ops {
 		// Track the request in the client as well so it can be quickly be removed on disconnect.
@@ -1176,10 +1178,14 @@ func (*WSNtfnMgr) NotifyFilteredBlockDisconnected(
 	var w bytes.Buffer
 	e := block.WireBlock().Header.Serialize(&w)
 	if e != nil {
-		E.Ln("failed to serialize header for filtered block disconnected notification:", e)
+		E.Ln("failed to serialize header for filtered block disconnected notification:",
+			e,
+		)
 		return
 	}
-	ntfn := btcjson.NewFilteredBlockDisconnectedNtfn(block.Height(), hex.EncodeToString(w.Bytes()))
+	ntfn := btcjson.NewFilteredBlockDisconnectedNtfn(block.Height(),
+		hex.EncodeToString(w.Bytes()),
+	)
 	marshalledJSON, e := btcjson.MarshalCmd(nil, ntfn)
 	if e != nil {
 		E.Ln("failed to marshal filtered block disconnected notification:", e)
@@ -1269,7 +1275,7 @@ func (m *WSNtfnMgr) NotifyForTx(
 // notification if any inputs spend a watched output. If block is non-nil, any matching spent requests are removed.
 func (m *WSNtfnMgr) NotifyForTxIns(
 	ops map[wire.
-OutPoint]map[qu.C]*WSClient, tx *util.Tx, block *block.Block,
+		OutPoint]map[qu.C]*WSClient, tx *util.Tx, block *block.Block,
 ) {
 	// Nothing to do if nobody is watching outpoints.
 	if len(ops) == 0 {
@@ -1283,7 +1289,9 @@ OutPoint]map[qu.C]*WSClient, tx *util.Tx, block *block.Block,
 			if txHex == "" {
 				txHex = TxHexString(tx.MsgTx())
 			}
-			marshalledJSON, e := NewRedeemingTxNotification(txHex, tx.Index(), block)
+			marshalledJSON, e := NewRedeemingTxNotification(txHex, tx.Index(),
+				block,
+			)
 			if e != nil {
 				E.Ln(
 					"failed to marshal redeemingtx notification:", e,
@@ -1417,7 +1425,7 @@ func (*WSNtfnMgr) RemoveAddrRequest(
 // be notified when a watched outpoint is spent. If wsc is the last client, the outpoint key is removed from the map.
 func (*WSNtfnMgr) RemoveSpentRequest(
 	ops map[wire.
-OutPoint]map[qu.C]*WSClient, wsc *WSClient, op *wire.OutPoint,
+		OutPoint]map[qu.C]*WSClient, wsc *WSClient, op *wire.OutPoint,
 ) {
 	// Remove the request tracking from the client.
 	delete(wsc.SpentRequests, *op)
@@ -1891,7 +1899,9 @@ fetchRange:
 			// A select statement is used to stop rescans if the client requesting the rescan has disconnected.
 			select {
 			case <-wsc.Quit.Wait():
-				D.F("stopped rescan at height %v for disconnected client", blk.Height())
+				D.F("stopped rescan at height %v for disconnected client",
+					blk.Height(),
+				)
 				return nil, nil
 			default:
 				RescanBlock(wsc, &lookups, blk)
@@ -2352,7 +2362,9 @@ func RescanBlock(wsc *WSClient, lookups *RescanKeys, blk *block.Block) {
 							found = true
 						}
 					default:
-						W.F("skipping rescanned pubkey of unknown serialized length", len(sa))
+						W.F("skipping rescanned pubkey of unknown serialized length",
+							len(sa),
+						)
 						continue
 					}
 					// If the transaction output pays to the pubkey of a rescanned P2PKH address, include it as well.

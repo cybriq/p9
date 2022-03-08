@@ -2,12 +2,12 @@ package gel
 
 import (
 	"image/color"
-	
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 )
 
 // Border lays out a widget and draws a border inside it.
@@ -53,15 +53,15 @@ func (b *Border) Embed(w l.Widget) *Border {
 func (b *Border) Fn(gtx l.Context) l.Dimensions {
 	dims := b.w(gtx)
 	sz := l.FPt(dims.Size)
-	
+
 	rr := float32(gtx.Px(b.cornerRadius))
 	width := float32(gtx.Px(b.width))
 	sz.X -= width
 	sz.Y -= width
-	
+
 	r := f32.Rectangle{Max: sz}
 	r = r.Add(f32.Point{X: width * 0.5, Y: width * 0.5})
-	
+
 	paint.FillShape(gtx.Ops,
 		b.color,
 		clip.Stroke{
@@ -69,6 +69,6 @@ func (b *Border) Fn(gtx l.Context) l.Dimensions {
 			Style: clip.StrokeStyle{Width: width},
 		}.Op(),
 	)
-	
+
 	return dims
 }

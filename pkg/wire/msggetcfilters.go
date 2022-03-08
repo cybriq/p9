@@ -2,8 +2,8 @@ package wire
 
 import (
 	"io"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // MaxGetCFiltersReqRange the maximum number of filters that may be requested in a getcfheaders message.
@@ -19,7 +19,9 @@ type MsgGetCFilters struct {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation.
-func (msg *MsgGetCFilters) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding) (e error) {
+func (msg *MsgGetCFilters) BtcDecode(r io.Reader, pver uint32,
+	_ MessageEncoding,
+) (e error) {
 	if e = readElement(r, &msg.FilterType); E.Chk(e) {
 		return
 	}
@@ -31,7 +33,9 @@ func (msg *MsgGetCFilters) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgGetCFilters) BtcEncode(w io.Writer, pver uint32, _ MessageEncoding) (e error) {
+func (msg *MsgGetCFilters) BtcEncode(w io.Writer, pver uint32,
+	_ MessageEncoding,
+) (e error) {
 	if e = writeElement(w, msg.FilterType); E.Chk(e) {
 		return
 	}

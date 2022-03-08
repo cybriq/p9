@@ -3,14 +3,14 @@ package waddrmgr
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/p9c/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/btcaddr"
 	"sync"
 
-	ec "github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/util/hdkeychain"
-	"github.com/p9c/p9/pkg/util/zero"
-	"github.com/p9c/p9/pkg/walletdb"
+	ec "github.com/cybriq/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/util/hdkeychain"
+	"github.com/cybriq/p9/pkg/util/zero"
+	"github.com/cybriq/p9/pkg/walletdb"
 )
 
 // AddressType represents the various address types waddrmgr is currently able
@@ -128,7 +128,9 @@ func (a *managedAddress) unlock(key EncryptorDecryptor) ([]byte, error) {
 		var e error
 		var privKey []byte
 		if privKey, e = key.Decrypt(a.privKeyEncrypted); E.Chk(e) {
-			str := fmt.Sprintf("failed to decrypt private key for %s", a.address)
+			str := fmt.Sprintf("failed to decrypt private key for %s",
+				a.address,
+			)
 			return nil, managerError(ErrCrypto, str, e)
 		}
 		a.privKeyCT = privKey
@@ -413,7 +415,8 @@ func newManagedAddress(
 // and public keys if the provided extended key is private, otherwise it will
 // only have access to the public key.
 func newManagedAddressFromExtKey(
-	s *ScopedKeyManager, derivationPath DerivationPath, key *hdkeychain.ExtendedKey,
+	s *ScopedKeyManager, derivationPath DerivationPath,
+	key *hdkeychain.ExtendedKey,
 	addrType AddressType,
 ) (managedAddr *managedAddress, e error) {
 	// Create a new managed address based on the public or private key depending on
@@ -462,7 +465,9 @@ var _ ManagedScriptAddress = (*scriptAddress)(nil)
 // invalid or the encrypted script is not available. The returned clear text
 // script will always be a copy that may be safely used by the caller without
 // worrying about it being zeroed during an address lock.
-func (a *scriptAddress) unlock(key EncryptorDecryptor) (scriptCopy []byte, e error) {
+func (a *scriptAddress) unlock(key EncryptorDecryptor) (scriptCopy []byte,
+	e error,
+) {
 	// Protect concurrent access to clear text script.
 	a.scriptMutex.Lock()
 	defer a.scriptMutex.Unlock()

@@ -2,8 +2,8 @@ package chainclient
 
 import (
 	"container/list"
-	
-	"github.com/p9c/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/qu"
 )
 
 // ConcurrentQueue is a concurrent-safe FIFO queue with unbounded capacity. Clients interact with the queue by pushing

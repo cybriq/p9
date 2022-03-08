@@ -3,9 +3,9 @@ package txscript
 import (
 	"crypto/rand"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/ecc"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/ecc"
 )
 
 // genRandomSig returns a random message, a signature of the message under the public key and the public key. This

@@ -1,13 +1,13 @@
 package gel
 
 import (
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 )
 
 type Inset struct {
 	*Window
-	in    l.Inset
-	w     l.Widget
+	in l.Inset
+	w  l.Widget
 }
 
 // Inset creates a padded empty space around a widget

@@ -2,10 +2,10 @@ package wtxmgr
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/amt"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/walletdb"
+	"github.com/cybriq/p9/pkg/amt"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/walletdb"
 )
 
 // CreditRecord contains metadata regarding a transaction credit for a known transaction. Further details may be looked
@@ -35,7 +35,9 @@ type TxDetails struct {
 
 // minedTxDetails fetches the TxDetails for the mined transaction with hash txHash and the passed tx record key and
 // value.
-func (s *Store) minedTxDetails(ns walletdb.ReadBucket, txHash *chainhash.Hash, recKey, recVal []byte) (
+func (s *Store) minedTxDetails(ns walletdb.ReadBucket, txHash *chainhash.Hash,
+	recKey, recVal []byte,
+) (
 	*TxDetails,
 	error,
 ) {
@@ -85,7 +87,9 @@ func (s *Store) minedTxDetails(ns walletdb.ReadBucket, txHash *chainhash.Hash, r
 
 // unminedTxDetails fetches the TxDetails for the unmined transaction with the hash txHash and the passed unmined record
 // value.
-func (s *Store) unminedTxDetails(ns walletdb.ReadBucket, txHash *chainhash.Hash, v []byte) (*TxDetails, error) {
+func (s *Store) unminedTxDetails(ns walletdb.ReadBucket, txHash *chainhash.Hash,
+	v []byte,
+) (*TxDetails, error) {
 	details := TxDetails{
 		Block: BlockMeta{Block: Block{Height: -1}},
 	}
@@ -152,7 +156,8 @@ func (s *Store) unminedTxDetails(ns walletdb.ReadBucket, txHash *chainhash.Hash,
 // recent transaction with a matching hash is returned.
 //
 // Not finding a transaction with this hash is not an error. In this case, a nil TxDetails is returned.
-func (s *Store) TxDetails(ns walletdb.ReadBucket, txHash *chainhash.Hash) (*TxDetails, error) {
+func (s *Store) TxDetails(ns walletdb.ReadBucket, txHash *chainhash.Hash,
+) (*TxDetails, error) {
 	// First, check whether there exists an unmined transaction with this hash. Use it if found.
 	v := existsRawUnmined(ns, txHash[:])
 	if v != nil {
@@ -203,7 +208,9 @@ func (s *Store) rangeUnminedTransactions(
 		func(k, v []byte) (e error) {
 			// D.Ln("k", k, "v", v)
 			if len(k) < 32 {
-				str := fmt.Sprintf("%s: short key (expected %d bytes, read %d)", bucketUnmined, 32, len(k))
+				str := fmt.Sprintf("%s: short key (expected %d bytes, read %d)",
+					bucketUnmined, 32, len(k),
+				)
 				return storeError(ErrData, str, nil)
 			}
 			var txHash chainhash.Hash
@@ -364,7 +371,9 @@ func (s *Store) RangeTransactions(
 
 // PreviousPkScripts returns a slice of previous output scripts for each credit output this transaction record debits
 // from.
-func (s *Store) PreviousPkScripts(ns walletdb.ReadBucket, rec *TxRecord, block *Block) ([][]byte, error) {
+func (s *Store) PreviousPkScripts(ns walletdb.ReadBucket, rec *TxRecord,
+	block *Block,
+) ([][]byte, error) {
 	var pkScripts [][]byte
 	if block == nil {
 		for _, input := range rec.MsgTx.TxIn {

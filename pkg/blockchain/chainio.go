@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/p9c/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/block"
 	"math/big"
 	"sync"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -109,7 +109,8 @@ func dbPutVersion(dbTx database.Tx, key []byte, version uint32) (e error) {
 // that.
 //
 // This is useful during upgrades to automatically handle loading and adding version keys as necessary.
-func dbFetchOrCreateVersion(dbTx database.Tx, key []byte, defaultVersion uint32) (uint32, error) {
+func dbFetchOrCreateVersion(dbTx database.Tx, key []byte, defaultVersion uint32,
+) (uint32, error) {
 	version := dbFetchVersion(dbTx, key)
 	if version == 0 {
 		version = defaultVersion
@@ -203,7 +204,9 @@ type SpentTxOut struct {
 // main chain.
 //
 // This function is safe for concurrent access.
-func (b *BlockChain) FetchSpendJournal(targetBlock *block.Block) ([]SpentTxOut, error) {
+func (b *BlockChain) FetchSpendJournal(targetBlock *block.Block) ([]SpentTxOut,
+	error,
+) {
 	b.ChainLock.RLock()
 	defer b.ChainLock.RUnlock()
 	var spendEntries []SpentTxOut
@@ -313,7 +316,8 @@ func decodeSpentTxOut(serialized []byte, stxo *SpentTxOut) (int, error) {
 //
 // Since the serialization format is not self describing as noted in the format comments this function also requires the
 // transactions that spend the txouts.
-func deserializeSpendJournalEntry(serialized []byte, txns []*wire.MsgTx) ([]SpentTxOut, error) {
+func deserializeSpendJournalEntry(serialized []byte, txns []*wire.MsgTx,
+) ([]SpentTxOut, error) {
 	// Calculate the total number of stxos.
 	var numStxos int
 	for _, tx := range txns {
@@ -386,7 +390,8 @@ func serializeSpendJournalEntry(stxos []SpentTxOut) []byte {
 // containing transaction.
 //
 // It is up to the caller to handle this properly by looking the information up in the utxo set.
-func dbFetchSpendJournalEntry(dbTx database.Tx, block *block.Block) ([]SpentTxOut, error) {
+func dbFetchSpendJournalEntry(dbTx database.Tx, block *block.Block,
+) ([]SpentTxOut, error) {
 	// Exclude the coinbase transaction since it can't spend anything.
 	spendBucket := dbTx.Metadata().Bucket(spendJournalBucketName)
 	serialized := spendBucket.Get(block.Hash()[:])
@@ -411,7 +416,9 @@ func dbFetchSpendJournalEntry(dbTx database.Tx, block *block.Block) ([]SpentTxOu
 // dbPutSpendJournalEntry uses an existing database transaction to update the spend journal entry for the given block
 // hash using the provided slice of spent txouts. The spent txouts slice must contain an entry for every txout the
 // transactions in the block spend in the order they are spent.
-func dbPutSpendJournalEntry(dbTx database.Tx, blockHash *chainhash.Hash, stxos []SpentTxOut) (e error) {
+func dbPutSpendJournalEntry(dbTx database.Tx, blockHash *chainhash.Hash,
+	stxos []SpentTxOut,
+) (e error) {
 	spendBucket := dbTx.Metadata().Bucket(spendJournalBucketName)
 	serialized := serializeSpendJournalEntry(stxos)
 	return spendBucket.Put(blockHash[:], serialized)
@@ -419,7 +426,8 @@ func dbPutSpendJournalEntry(dbTx database.Tx, blockHash *chainhash.Hash, stxos [
 
 // dbRemoveSpendJournalEntry uses an existing database transaction to remove the spend journal entry for the passed
 // block hash.
-func dbRemoveSpendJournalEntry(dbTx database.Tx, blockHash *chainhash.Hash) (e error) {
+func dbRemoveSpendJournalEntry(dbTx database.Tx, blockHash *chainhash.Hash,
+) (e error) {
 	spendBucket := dbTx.Metadata().Bucket(spendJournalBucketName)
 	return spendBucket.Delete(blockHash[:])
 }
@@ -595,7 +603,9 @@ func deserializeUtxoEntry(serialized []byte) (entry *UtxoEntry, e error) {
 // dbFetchUtxoEntryByHash attempts to find and fetch a utxo for the given hash. It uses a cursor and seek to try and do
 // this as efficiently as possible. When there are no entries for the provided hash, nil will be returned for the both
 // the entry and the error.
-func dbFetchUtxoEntryByHash(dbTx database.Tx, hash *chainhash.Hash) (*UtxoEntry, error) {
+func dbFetchUtxoEntryByHash(dbTx database.Tx, hash *chainhash.Hash) (*UtxoEntry,
+	error,
+) {
 	// Attempt to find an entry by seeking for the hash along with a zero index. Due to the fact the keys are serialized
 	// as <hash><index>, where the index uses an MSB encoding, if there are any entries for the hash at all, one will be
 	// found.
@@ -620,7 +630,9 @@ func dbFetchUtxoEntryByHash(dbTx database.Tx, hash *chainhash.Hash) (*UtxoEntry,
 
 // dbFetchUtxoEntry uses an existing database transaction to fetch the specified transaction output from the utxo set.
 // When there is no entry for the provided output, nil will be returned for both the entry and the error.
-func dbFetchUtxoEntry(dbTx database.Tx, outpoint wire.OutPoint) (*UtxoEntry, error) {
+func dbFetchUtxoEntry(dbTx database.Tx, outpoint wire.OutPoint) (*UtxoEntry,
+	error,
+) {
 	// Fetch the unspent transaction output information for the passed transaction output. Return now when there is no
 	// entry.
 	key := outpointKey(outpoint)
@@ -709,7 +721,8 @@ func dbPutUtxoView(dbTx database.Tx, view *UtxoViewpoint) (e error) {
 
 // dbPutBlockIndex uses an existing database transaction to update or add the block index entries for the hash to height
 // and height to hash mappings for the provided values.
-func dbPutBlockIndex(dbTx database.Tx, hash *chainhash.Hash, height int32) (e error) {
+func dbPutBlockIndex(dbTx database.Tx, hash *chainhash.Hash, height int32,
+) (e error) {
 	// Serialize the height for use in the index entries.
 	var serializedHeight [4]byte
 	byteOrder.PutUint32(serializedHeight[:], uint32(height))
@@ -726,7 +739,8 @@ func dbPutBlockIndex(dbTx database.Tx, hash *chainhash.Hash, height int32) (e er
 
 // dbRemoveBlockIndex uses an existing database transaction remove block index entries from the hash to height and
 // height to hash mappings for the provided values.
-func dbRemoveBlockIndex(dbTx database.Tx, hash *chainhash.Hash, height int32) (e error) {
+func dbRemoveBlockIndex(dbTx database.Tx, hash *chainhash.Hash, height int32,
+) (e error) {
 	// Remove the block hash to height mapping.
 	meta := dbTx.Metadata()
 	hashIndex := meta.Bucket(hashIndexBucketName)
@@ -742,7 +756,8 @@ func dbRemoveBlockIndex(dbTx database.Tx, hash *chainhash.Hash, height int32) (e
 
 // dbFetchHeightByHash uses an existing database transaction to retrieve the height for the provided hash from the
 // index.
-func dbFetchHeightByHash(dbTx database.Tx, hash *chainhash.Hash) (int32, error) {
+func dbFetchHeightByHash(dbTx database.Tx, hash *chainhash.Hash) (int32, error,
+) {
 	meta := dbTx.Metadata()
 	hashIndex := meta.Bucket(hashIndexBucketName)
 	serializedHeight := hashIndex.Get(hash[:])
@@ -757,7 +772,9 @@ func dbFetchHeightByHash(dbTx database.Tx, hash *chainhash.Hash) (int32, error) 
 
 // dbFetchHashByHeight uses an existing database transaction to retrieve the hash for the provided height from the
 // index.
-func dbFetchHashByHeight(dbTx database.Tx, height int32) (*chainhash.Hash, error) {
+func dbFetchHashByHeight(dbTx database.Tx, height int32) (*chainhash.Hash,
+	error,
+) {
 	var serializedHeight [4]byte
 	byteOrder.PutUint32(serializedHeight[:], uint32(height))
 	meta := dbTx.Metadata()
@@ -850,7 +867,8 @@ func deserializeBestChainState(serializedData []byte) (bestChainState, error) {
 }
 
 // dbPutBestState uses an existing database transaction to update the best chain state with the given parameters.
-func dbPutBestState(dbTx database.Tx, snapshot *BestState, workSum *big.Int) (e error) {
+func dbPutBestState(dbTx database.Tx, snapshot *BestState, workSum *big.Int,
+) (e error) {
 	// Serialize the current best chain state.
 	serializedData := serializeBestChainState(
 		bestChainState{
@@ -1117,7 +1135,9 @@ func (b *BlockChain) initChainState() (e error) {
 }
 
 // deserializeBlockRow parses a value in the block index bucket into a block header and block status bitfield.
-func deserializeBlockRow(blockRow []byte) (*wire.BlockHeader, blockStatus, error) {
+func deserializeBlockRow(blockRow []byte) (*wire.BlockHeader, blockStatus,
+	error,
+) {
 	buffer := bytes.NewReader(blockRow)
 	var header wire.BlockHeader
 	e := header.Deserialize(buffer)
@@ -1132,7 +1152,8 @@ func deserializeBlockRow(blockRow []byte) (*wire.BlockHeader, blockStatus, error
 }
 
 // dbFetchHeaderByHash uses an existing database transaction to retrieve the block header for the provided hash.
-func dbFetchHeaderByHash(dbTx database.Tx, hash *chainhash.Hash) (*wire.BlockHeader, error) {
+func dbFetchHeaderByHash(dbTx database.Tx, hash *chainhash.Hash,
+) (*wire.BlockHeader, error) {
 	headerBytes, e := dbTx.FetchBlockHeader(hash)
 	if e != nil {
 		return nil, e
@@ -1158,7 +1179,8 @@ height int32) (*wire.BlockHeader, error) {
 
 // dbFetchBlockByNode uses an existing database transaction to retrieve the raw block for the provided node, deserialize
 // it, and return a util.Block with the height set.
-func dbFetchBlockByNode(dbTx database.Tx, node *BlockNode) (*block.Block, error) {
+func dbFetchBlockByNode(dbTx database.Tx, node *BlockNode) (*block.Block, error,
+) {
 	// Load the raw block bytes from the database.
 	blockBytes, e := dbTx.FetchBlock(&node.hash)
 	if e != nil {
@@ -1238,11 +1260,15 @@ func (b *BlockChain) BlockByHeight(blockHeight int32) (*block.Block, error) {
 // BlockByHash returns the block from the main chain with the given hash with the appropriate chain height set.
 //
 // This function is safe for concurrent access.
-func (b *BlockChain) BlockByHash(hash *chainhash.Hash) (block *block.Block, e error) {
+func (b *BlockChain) BlockByHash(hash *chainhash.Hash) (block *block.Block,
+	e error,
+) {
 	// Lookup the block hash in block index and ensure it is in the best chain.
 	node := b.Index.LookupNode(hash)
 	if node == nil || !b.BestChain.Contains(node) {
-		str := fmt.Sprintf("blockByHash: block %s is not in the main chain", hash)
+		str := fmt.Sprintf("blockByHash: block %s is not in the main chain",
+			hash,
+		)
 		return nil, errNotInMainChain(str)
 	}
 	// Load the block from the database and return it.

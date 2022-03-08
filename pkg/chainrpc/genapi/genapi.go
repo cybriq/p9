@@ -1,9 +1,10 @@
+//go:build generate
 // +build generate
 
 package main
 
 import (
-	"github.com/p9c/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/log"
 	"os"
 	"sort"
 	"text/template"
@@ -320,9 +321,9 @@ import (
 	"net/rpc"
 	"time"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // API stores the channel, parameters and result values from calls via

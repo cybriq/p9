@@ -7,14 +7,14 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/p9c/p9/pod/state"
-	"github.com/p9c/p9/pkg/opts/binary"
-	"github.com/p9c/p9/pkg/opts/duration"
-	"github.com/p9c/p9/pkg/opts/float"
-	"github.com/p9c/p9/pkg/opts/integer"
-	"github.com/p9c/p9/pkg/opts/list"
-	"github.com/p9c/p9/pkg/opts/opt"
-	"github.com/p9c/p9/pkg/opts/text"
+	"github.com/cybriq/p9/pkg/opts/binary"
+	"github.com/cybriq/p9/pkg/opts/duration"
+	"github.com/cybriq/p9/pkg/opts/float"
+	"github.com/cybriq/p9/pkg/opts/integer"
+	"github.com/cybriq/p9/pkg/opts/list"
+	"github.com/cybriq/p9/pkg/opts/opt"
+	"github.com/cybriq/p9/pkg/opts/text"
+	"github.com/cybriq/p9/pod/state"
 )
 
 func HelpFunction(ifc interface{}) error {
@@ -22,12 +22,16 @@ func HelpFunction(ifc interface{}) error {
 	c := ps.Config
 	var o string
 	o += fmt.Sprintf("Parallelcoin Pod All-in-One Suite\n\n")
-	o += fmt.Sprintf("Usage:\n\t%s [options] [commands] [command parameters]\n\n", os.Args[0])
+	o += fmt.Sprintf("Usage:\n\t%s [options] [commands] [command parameters]\n\n",
+		os.Args[0],
+	)
 	o += fmt.Sprintf("Commands:\n")
 	for i := range c.Commands {
 		oo := fmt.Sprintf("\t%s", c.Commands[i].Name)
 		nrunes := utf8.RuneCountInString(oo)
-		o += oo + fmt.Sprintf(strings.Repeat(" ", 9-nrunes)+"%s\n", c.Commands[i].Title)
+		o += oo + fmt.Sprintf(strings.Repeat(" ", 9-nrunes)+"%s\n",
+			c.Commands[i].Title,
+		)
 	}
 	o += fmt.Sprintf(
 		"\nOptions:\n\tset values on options concatenated against the option keyword or separated with '='\n",
@@ -56,7 +60,8 @@ func HelpFunction(ifc interface{}) error {
 		case *duration.Opt:
 			def = fmt.Sprint(ii.Def)
 		}
-		descs[meta.Group] += oo + fmt.Sprintf(strings.Repeat(" ", 32-nrunes)+"%s, default: %s\n", meta.Description, def)
+		descs[meta.Group] += oo + fmt.Sprintf(strings.Repeat(" ", 32-nrunes)+"%s, default: %s\n", meta.Description, def,
+		)
 		return true
 	},
 	)
@@ -75,7 +80,8 @@ func HelpFunction(ifc interface{}) error {
 	// for i := range cats {
 	// }
 	o += fmt.Sprintf("\nadd the name of the command or option after 'help' or append it after "+
-		"'help' in the commandline to get more detail - eg: %s help upnp\n\n", os.Args[0],
+		"'help' in the commandline to get more detail - eg: %s help upnp\n\n",
+		os.Args[0],
 	)
 	fmt.Fprintf(os.Stderr, o)
 	return nil

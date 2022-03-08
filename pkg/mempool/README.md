@@ -1,7 +1,7 @@
 # mempool
 
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/p9c/p9/mempool)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/cybriq/p9/mempool)
 
 Package mempool provides a policy-enforced pool of unmined bitcoin transactions.
 
@@ -97,7 +97,7 @@ be an exhaustive list.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/p9c/p9/mempool
+$ go get -u github.com/cybriq/p9/mempool
 ```
 
 ## License

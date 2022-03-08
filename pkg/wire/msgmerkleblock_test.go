@@ -7,10 +7,10 @@ import (
 	"reflect"
 	"testing"
 	"time"
-	
+
 	"github.com/davecgh/go-spew/spew"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // TestMerkleBlock tests the MsgMerkleBlock API.

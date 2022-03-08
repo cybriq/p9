@@ -3,7 +3,7 @@
 package wm
 
 import (
-	"github.com/p9c/p9/pkg/gel/gio/internal/egl"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/egl"
 )
 
 type glContext struct {
@@ -22,7 +22,8 @@ func init() {
 			}
 			return &glContext{win: w, Context: ctx}, nil
 		},
-	})
+	},
+	)
 }
 
 func (c *glContext) Release() {

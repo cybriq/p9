@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build (linux && !android && !nox11) || freebsd || openbsd
 // +build linux,!android,!nox11 freebsd openbsd
 
 package wm
@@ -7,7 +8,7 @@ package wm
 import (
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/internal/egl"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/egl"
 )
 
 type x11Context struct {

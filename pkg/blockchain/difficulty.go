@@ -2,13 +2,13 @@ package blockchain
 
 import (
 	"encoding/hex"
-	bits2 "github.com/p9c/p9/pkg/bits"
-	"github.com/p9c/p9/pkg/fork"
+	bits2 "github.com/cybriq/p9/pkg/bits"
+	"github.com/cybriq/p9/pkg/fork"
 	"math/big"
 	"strings"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 var (
@@ -30,7 +30,9 @@ var (
 
 // CalcNextRequiredDifficulty calculates the required difficulty for the block after the end of the current best chain
 // based on the difficulty retarget rules. This function is safe for concurrent access.
-func (b *BlockChain) CalcNextRequiredDifficulty(algo string) (difficulty uint32, e error) {
+func (b *BlockChain) CalcNextRequiredDifficulty(algo string) (difficulty uint32,
+	e error,
+) {
 	b.ChainLock.Lock()
 	difficulty, e = b.CalcNextRequiredDifficultyFromNode(
 		b.BestChain.
@@ -45,7 +47,8 @@ func (b *BlockChain) CalcNextRequiredDifficulty(algo string) (difficulty uint32,
 // and a duration.
 //
 // It is mainly used to verify that claimed proof of work by a block is sane as compared to a known good checkpoint.
-func (b *BlockChain) calcEasiestDifficulty(bits uint32, duration time.Duration) uint32 {
+func (b *BlockChain) calcEasiestDifficulty(bits uint32, duration time.Duration,
+) uint32 {
 	// Convert types used in the calculations below.
 	durationVal := int64(duration / time.Second)
 	adjustmentFactor := big.NewInt(b.params.RetargetAdjustmentFactor)
@@ -69,7 +72,9 @@ func (b *BlockChain) calcEasiestDifficulty(bits uint32, duration time.Duration) 
 //
 // This function differs from the exported CalcNextRequiredDifficulty in that the exported version uses the current best
 // chain as the previous block node while this function accepts any block node.
-func (b *BlockChain) CalcNextRequiredDifficultyFromNode(lastNode *BlockNode, algoname string, l bool,) (
+func (b *BlockChain) CalcNextRequiredDifficultyFromNode(lastNode *BlockNode,
+	algoname string, l bool,
+) (
 	newTargetBits uint32,
 	e error,
 ) {

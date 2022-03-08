@@ -10,12 +10,12 @@ import (
 	uberatomic "go.uber.org/atomic"
 	"golang.org/x/exp/shiny/materialdesign/icons"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/text"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
 
-	"github.com/p9c/p9/pkg/gel"
-	"github.com/p9c/p9/cmd/gui/cfg"
-	"github.com/p9c/p9/pkg/p9icons"
+	"github.com/cybriq/p9/cmd/gui/cfg"
+	"github.com/cybriq/p9/pkg/gel"
+	"github.com/cybriq/p9/pkg/p9icons"
 )
 
 func (wg *WalletGUI) GetAppWidget() (a *gel.App) {
@@ -185,7 +185,7 @@ func (wg *WalletGUI) GetAppWidget() (a *gel.App) {
 	)
 	a.ButtonBar(
 		[]l.Widget{
-			
+
 			// gel.EmptyMaxWidth(),
 			// wg.PageTopBarButton(
 			// 	"goroutines", 0, &icons.ActionBugReport, func(name string) {
@@ -262,7 +262,8 @@ func (wg *WalletGUI) GetAppWidget() (a *gel.App) {
 	return
 }
 
-func (wg *WalletGUI) Page(title string, widget gel.Widgets) func(gtx l.Context) l.Dimensions {
+func (wg *WalletGUI) Page(title string, widget gel.Widgets,
+) func(gtx l.Context) l.Dimensions {
 	return func(gtx l.Context) l.Dimensions {
 		return wg.VFlex().
 			// SpaceEvenly().
@@ -290,7 +291,8 @@ func (wg *WalletGUI) Page(title string, widget gel.Widgets) func(gtx l.Context) 
 	}
 }
 
-func (wg *WalletGUI) SideBarButton(title, page string, index int) func(gtx l.Context) l.Dimensions {
+func (wg *WalletGUI) SideBarButton(title, page string, index int,
+) func(gtx l.Context) l.Dimensions {
 	return func(gtx l.Context) l.Dimensions {
 		var scale float32
 		scale = gel.Scales["H6"]
@@ -352,7 +354,7 @@ func (wg *WalletGUI) PageTopBarButton(
 		background := "Transparent"
 		// background := app.TitleBarBackgroundGet()
 		color := app.MenuColorGet()
-		
+
 		if app.ActivePageGet() == name {
 			color = "PanelText"
 			// background = "scrim"
@@ -503,7 +505,9 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 					SetClick(
 						func() {
 							go func() {
-								D.Ln("clicked node run control button", wg.node.Running())
+								D.Ln("clicked node run control button",
+									wg.node.Running(),
+								)
 								// wg.toggleNode()
 								wg.unlockPassword.Wipe()
 								wg.unlockPassword.Focus()
@@ -528,7 +532,8 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 			Rigid(
 				wg.Inset(
 					0.33,
-					wg.Body1(fmt.Sprintf("%d", wg.State.bestBlockHeight.Load())).
+					wg.Body1(fmt.Sprintf("%d", wg.State.bestBlockHeight.Load()),
+					).
 						Font("go regular").TextScale(gel.Scales["Caption"]).
 						Color("DocText").
 						Fn,
@@ -554,7 +559,8 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 								wg.cx.Config.Discovery.Flip()
 								_ = wg.cx.Config.WriteToFile(wg.cx.Config.ConfigFile.V())
 								I.Ln("discover enabled:",
-									wg.cx.Config.Discovery.True())
+									wg.cx.Config.Discovery.True(),
+								)
 							}()
 						},
 					).
@@ -563,7 +569,10 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 			Rigid(
 				wg.Inset(
 					0.33,
-					wg.Caption(fmt.Sprintf("%d LAN %d", len(wg.otherNodes), wg.peerCount.Load())).
+					wg.Caption(fmt.Sprintf("%d LAN %d", len(wg.otherNodes),
+						wg.peerCount.Load(),
+					),
+					).
 						Font("go regular").
 						Color("DocText").
 						Fn,
@@ -588,7 +597,8 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 							if wg.ChainClient != nil && !wg.ChainClient.Disconnected() {
 								wg.cx.Config.Controller.Flip()
 								I.Ln("controller running:",
-									wg.cx.Config.Controller.True())
+									wg.cx.Config.Controller.True(),
+								)
 								var e error
 								if e = wg.ChainClient.SetGenerate(
 									wg.cx.Config.Controller.True(),
@@ -656,7 +666,7 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 					if !wg.wallet.Running() {
 						return l.Dimensions{}
 					}
-					
+
 					return wg.Flex().
 						Rigid(
 							wg.ButtonLayout(wg.statusBarButtons[2]).
@@ -677,15 +687,17 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 											}
 											args := []string{
 												os.Args[0],
-												 "DD"+
-												wg.cx.Config.DataDir.V(),
+												"DD" +
+													wg.cx.Config.DataDir.V(),
 												"pipelog",
-												"walletpass"+
-												wg.cx.Config.WalletPass.V(),
+												"walletpass" +
+													wg.cx.Config.WalletPass.V(),
 												"wallet",
 												"drophistory",
 											}
-											runner := exec.Command(args[0], args[1:]...)
+											runner := exec.Command(args[0],
+												args[1:]...,
+											)
 											runner.Stderr = os.Stderr
 											runner.Stdout = os.Stderr
 											if e = wg.writeWalletCookie(); E.Chk(e) {
@@ -708,7 +720,9 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 
 func (wg *WalletGUI) writeWalletCookie() (e error) {
 	// for security with apps launching the wallet, the public password can be set with a file that is deleted after
-	walletPassPath := filepath.Join(wg.cx.Config.DataDir.V(), wg.cx.ActiveNet.Name, "wp.txt")
+	walletPassPath := filepath.Join(wg.cx.Config.DataDir.V(),
+		wg.cx.ActiveNet.Name, "wp.txt",
+	)
 	D.Ln("runner", walletPassPath)
 	b := wg.cx.Config.WalletPass.Bytes()
 	if e = ioutil.WriteFile(walletPassPath, b, 0700); E.Chk(e) {

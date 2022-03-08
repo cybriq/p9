@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/p9c/p9/pkg/log"
-	"github.com/p9c/p9/pkg/pipe"
+	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/pipe"
 
 	"os"
 	"time"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 )
 
 func main() {
@@ -17,7 +17,9 @@ func main() {
 	quit := qu.T()
 	// splitted := strings.Split(command, " ")
 	splitted := os.Args[1:]
-	w := pipe.LogConsume(quit, pipe.SimpleLog(splitted[len(splitted)-1]), pipe.FilterNone, splitted...)
+	w := pipe.LogConsume(quit, pipe.SimpleLog(splitted[len(splitted)-1]),
+		pipe.FilterNone, splitted...,
+	)
 	D.Ln("\n\n>>> >>> >>> >>> >>> >>> >>> >>> >>> starting")
 	pipe.Start(w)
 	D.Ln("\n\n>>> >>> >>> >>> >>> >>> >>> >>> >>> started")

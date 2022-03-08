@@ -20,7 +20,9 @@ import (
 
 var raceEnabled = false
 
-var headless = flag.Bool("headless", true, "run end-to-end tests in headless mode")
+var headless = flag.Bool("headless", true,
+	"run end-to-end tests in headless mode",
+)
 
 const appid = "localhost.gogio.endtoend"
 
@@ -69,7 +71,7 @@ func TestEndToEnd(t *testing.T) {
 	t.Parallel()
 
 	const (
-		testdataWithGoImportPkgPath = "github.com/p9c/p9/pkg/gel/gio/cmd/gogio/testdata"
+		testdataWithGoImportPkgPath = "github.com/cybriq/p9/pkg/gel/gio/cmd/gogio/testdata"
 		testdataWithRelativePkgPath = "testdata/testdata.go"
 	)
 	// Keep this list local, to not reuse TestDriver objects.
@@ -78,7 +80,9 @@ func TestEndToEnd(t *testing.T) {
 		driver  TestDriver
 		pkgPath string
 	}{
-		{"X11 using go import path", &X11TestDriver{}, testdataWithGoImportPkgPath},
+		{"X11 using go import path", &X11TestDriver{},
+			testdataWithGoImportPkgPath,
+		},
 		{"X11", &X11TestDriver{}, testdataWithRelativePkgPath},
 		{"Wayland", &WaylandTestDriver{}, testdataWithRelativePkgPath},
 		{"JS", &JSTestDriver{}, testdataWithRelativePkgPath},
@@ -91,7 +95,8 @@ func TestEndToEnd(t *testing.T) {
 			subtest := subtest // copy the changing loop variable
 			t.Parallel()
 			runEndToEndTest(t, subtest.driver, subtest.pkgPath)
-		})
+		},
+		)
 	}
 }
 
@@ -114,7 +119,8 @@ func runEndToEndTest(t *testing.T, driver TestDriver, pkgPath string) {
 		img := driver.Screenshot()
 		size = img.Bounds().Size() // override the default size
 		return checkImageCorners(img, beef, white, black, gray)
-	})
+	},
+	)
 
 	// TODO(mvdan): implement this properly in the Wayland driver; swaymsg
 	// almost works to automate clicks, but the button presses end up in the
@@ -130,7 +136,8 @@ func runEndToEndTest(t *testing.T, driver TestDriver, pkgPath string) {
 	withRetries(t, 4*time.Second, func() error {
 		img := driver.Screenshot()
 		return checkImageCorners(img, red, white, black, red)
-	})
+	},
+	)
 }
 
 // withRetries keeps retrying fn until it succeeds, or until the timeout is hit.
@@ -187,7 +194,9 @@ func (m colorMismatch) String() string {
 	)
 }
 
-func checkImageCorners(img image.Image, topLeft, topRight, botLeft, botRight color.Color) error {
+func checkImageCorners(img image.Image,
+	topLeft, topRight, botLeft, botRight color.Color,
+) error {
 	// The colors are split in four rectangular sections. Check the corners
 	// of each of the sections. We check the corners left to right, top to
 	// bottom, like when reading left-to-right text.
@@ -205,7 +214,8 @@ func checkImageCorners(img image.Image, topLeft, topRight, botLeft, botRight col
 				y:       y,
 				wantRGB: [3]uint32{r, g, b},
 				gotRGB:  [3]uint32{r_, g_, b_},
-			})
+			},
+			)
 		}
 	}
 

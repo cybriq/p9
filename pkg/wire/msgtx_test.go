@@ -6,10 +6,10 @@ import (
 	"io"
 	"reflect"
 	"testing"
-	
+
 	"github.com/davecgh/go-spew/spew"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // TestTx tests the MsgTx API.
@@ -401,29 +401,53 @@ func TestTxWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in version.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{multiTx, multiTxEncoded, pver, BaseEncoding, 0, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in number of transaction inputs.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 4, io.ErrShortWrite, io.EOF},
+		{multiTx, multiTxEncoded, pver, BaseEncoding, 4, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in transaction input previous block hash.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 5, io.ErrShortWrite, io.EOF},
+		{multiTx, multiTxEncoded, pver, BaseEncoding, 5, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in transaction input previous block output index.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 37, io.ErrShortWrite, io.EOF},
+		{multiTx, multiTxEncoded, pver, BaseEncoding, 37, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in transaction input signature script length.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 41, io.ErrShortWrite, io.EOF},
+		{multiTx, multiTxEncoded, pver, BaseEncoding, 41, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in transaction input signature script.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 42, io.ErrShortWrite, io.EOF},
+		{multiTx, multiTxEncoded, pver, BaseEncoding, 42, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in transaction input sequence.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 49, io.ErrShortWrite, io.EOF},
+		{multiTx, multiTxEncoded, pver, BaseEncoding, 49, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in number of transaction outputs.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 53, io.ErrShortWrite, io.EOF},
+		{multiTx, multiTxEncoded, pver, BaseEncoding, 53, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in transaction output value.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 54, io.ErrShortWrite, io.EOF},
+		{multiTx, multiTxEncoded, pver, BaseEncoding, 54, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in transaction output pk script length.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 62, io.ErrShortWrite, io.EOF},
+		{multiTx, multiTxEncoded, pver, BaseEncoding, 62, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in transaction output pk script.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 63, io.ErrShortWrite, io.EOF},
+		{multiTx, multiTxEncoded, pver, BaseEncoding, 63, io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in transaction output lock time.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 206, io.ErrShortWrite, io.EOF},
+		{multiTx, multiTxEncoded, pver, BaseEncoding, 206, io.ErrShortWrite,
+			io.EOF,
+		},
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
@@ -646,7 +670,8 @@ func TestTxOverflowErrors(t *testing.T) {
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Previous output hash
+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x00,                   // Previous output hash
 				0xff, 0xff, 0xff, 0xff, // Prevous output index
 				0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 				0xff, // Varint for length of signature script
@@ -660,12 +685,14 @@ func TestTxOverflowErrors(t *testing.T) {
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Previous output hash
+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x00,                   // Previous output hash
 				0xff, 0xff, 0xff, 0xff, // Prevous output index
 				0x00,                   // Varint for length of signature script
 				0xff, 0xff, 0xff, 0xff, // Sequence
-				0x01,                                           // Varint for number of output transactions
-				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Transaction amount
+				0x01, // Varint for number of output transactions
+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				0x00, // Transaction amount
 				0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 				0xff, // Varint for length of public key script
 			}, pver, BaseEncoding, txVer, &MessageError{},

@@ -6,11 +6,11 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"github.com/p9c/p9/pkg/opts/normalize"
+	"github.com/cybriq/p9/pkg/opts/normalize"
 
-	"github.com/p9c/p9/pkg/opts/meta"
-	"github.com/p9c/p9/pkg/opts/opt"
-	"github.com/p9c/p9/pkg/opts/sanitizers"
+	"github.com/cybriq/p9/pkg/opts/meta"
+	"github.com/cybriq/p9/pkg/opts/opt"
+	"github.com/cybriq/p9/pkg/opts/sanitizers"
 )
 
 // Opt stores a string slice configuration value
@@ -49,7 +49,9 @@ func (x *Opt) GetMetadata() *meta.Data {
 // ReadInput adds the value from a string. For this opt this means appending to the list
 func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 	if input == "" {
-		e = fmt.Errorf("string opt %s %v may not be empty", x.Name(), x.Data.Aliases)
+		e = fmt.Errorf("string opt %s %v may not be empty", x.Name(),
+			x.Data.Aliases,
+		)
 		return
 	}
 	if strings.HasPrefix(input, "=") {
@@ -61,7 +63,9 @@ func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 		split := strings.Split(input, ",")
 		for i := range split {
 			var cleaned string
-			if cleaned, e = sanitizers.StringType(x.Data.Type, split[i], x.Data.DefaultPort); E.Chk(e) {
+			if cleaned, e = sanitizers.StringType(x.Data.Type, split[i],
+				x.Data.DefaultPort,
+			); E.Chk(e) {
 				return
 			}
 			if cleaned != "" {
@@ -72,7 +76,9 @@ func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 		e = x.Set(append(slice, split...))
 	} else {
 		var cleaned string
-		if cleaned, e = sanitizers.StringType(x.Data.Type, input, x.Data.DefaultPort); E.Chk(e) {
+		if cleaned, e = sanitizers.StringType(x.Data.Type, input,
+			x.Data.DefaultPort,
+		); E.Chk(e) {
 			return
 		}
 		if cleaned != "" {

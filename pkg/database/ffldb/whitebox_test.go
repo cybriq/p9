@@ -5,19 +5,19 @@ import (
 	"compress/bzip2"
 	"encoding/binary"
 	"fmt"
-	"github.com/p9c/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/block"
 	"hash/crc32"
 	"io"
 	"os"
 	"path/filepath"
 	"testing"
-	
+
 	"github.com/btcsuite/goleveldb/leveldb"
 	ldberrors "github.com/btcsuite/goleveldb/leveldb/errors"
-	
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 var (
@@ -30,7 +30,8 @@ var (
 )
 
 // loadBlocks loads the blocks contained in the tstdata directory and returns a slice of them.
-func loadBlocks(t *testing.T, dataFile string, network wire.BitcoinNet) ([]*block.Block, error) {
+func loadBlocks(t *testing.T, dataFile string, network wire.BitcoinNet,
+) ([]*block.Block, error) {
 	// Open the file that contains the blocks for reading.
 	fi, e := os.Open(dataFile)
 	if e != nil {
@@ -100,7 +101,9 @@ func loadBlocks(t *testing.T, dataFile string, network wire.BitcoinNet) ([]*bloc
 }
 
 // checkDbError ensures the passed error is a database.DBError with an error code that matches the passed  error code.
-func checkDbError(t *testing.T, testName string, gotErr error, wantErrCode database.ErrorCode) bool {
+func checkDbError(t *testing.T, testName string, gotErr error,
+	wantErrCode database.ErrorCode,
+) bool {
 	dbErr, ok := gotErr.(database.DBError)
 	if !ok {
 		t.Errorf(
@@ -144,7 +147,9 @@ func TestConvertErr(t *testing.T) {
 	for i, test := range tests {
 		gotErr := convertErr("test", test.err)
 		if gotErr.ErrorCode != test.wantErrCode {
-			t.Errorf("convertErr #%d unexpected error - got %v, want %v", i, gotErr.ErrorCode, test.wantErrCode)
+			t.Errorf("convertErr #%d unexpected error - got %v, want %v", i,
+				gotErr.ErrorCode, test.wantErrCode,
+			)
 			continue
 		}
 	}

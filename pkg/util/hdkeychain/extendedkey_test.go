@@ -8,8 +8,8 @@ import (
 	"math"
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/chaincfg"
+
+	"github.com/cybriq/p9/pkg/chaincfg"
 )
 
 // // TestBIP0032Vectors tests the vectors provided by [BIP32] to ensure the derivation works as intended.

@@ -3,8 +3,8 @@ package wire
 import (
 	"fmt"
 	"io"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // MsgGetHeaders implements the Message interface and represents a bitcoin
@@ -41,7 +41,9 @@ func (msg *MsgGetHeaders) AddBlockLocatorHash(hash *chainhash.Hash) (e error) {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver.
 // This is part of the Message interface implementation.
-func (msg *MsgGetHeaders) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgGetHeaders) BtcDecode(r io.Reader, pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	if e = readElement(r, &msg.ProtocolVersion); E.Chk(e) {
 		return
 	}
@@ -74,7 +76,9 @@ func (msg *MsgGetHeaders) BtcDecode(r io.Reader, pver uint32, enc MessageEncodin
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This
 // is part of the Message interface implementation.
-func (msg *MsgGetHeaders) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgGetHeaders) BtcEncode(w io.Writer, pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	// Limit to max block locator hashes per message.
 	count := len(msg.BlockLocatorHashes)
 	if count > MaxBlockLocatorsPerMsg {

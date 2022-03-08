@@ -11,12 +11,12 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/io/clipboard"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/io/system"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/io/clipboard"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/io/system"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 )
 
 type window struct {
@@ -74,12 +74,15 @@ func NewWindow(win Callbacks, opts *Options) error {
 	w.redraw = w.funcOf(func(this js.Value, args []js.Value) interface{} {
 		w.chanAnimation <- struct{}{}
 		return nil
-	})
-	w.clipboardCallback = w.funcOf(func(this js.Value, args []js.Value) interface{} {
+	},
+	)
+	w.clipboardCallback = w.funcOf(func(this js.Value, args []js.Value,
+	) interface{} {
 		content := args[0].String()
 		win.Event(clipboard.Event{Text: content})
 		return nil
-	})
+	},
+	)
 	w.addEventListeners()
 	w.addHistory()
 	w.Option(opts)
@@ -148,139 +151,182 @@ func (w *window) cleanup() {
 }
 
 func (w *window) addEventListeners() {
-	w.addEventListener(w.visualViewport, "resize", func(this js.Value, args []js.Value) interface{} {
-		w.resize()
-		w.chanRedraw <- struct{}{}
-		return nil
-	})
-	w.addEventListener(w.window, "contextmenu", func(this js.Value, args []js.Value) interface{} {
-		args[0].Call("preventDefault")
-		return nil
-	})
-	w.addEventListener(w.window, "popstate", func(this js.Value, args []js.Value) interface{} {
-		ev := &system.CommandEvent{Type: system.CommandBack}
-		w.w.Event(ev)
-		if ev.Cancel {
-			return w.browserHistory.Call("forward")
-		}
+	w.addEventListener(w.visualViewport, "resize",
+		func(this js.Value, args []js.Value) interface{} {
+			w.resize()
+			w.chanRedraw <- struct{}{}
+			return nil
+		},
+	)
+	w.addEventListener(w.window, "contextmenu",
+		func(this js.Value, args []js.Value) interface{} {
+			args[0].Call("preventDefault")
+			return nil
+		},
+	)
+	w.addEventListener(w.window, "popstate",
+		func(this js.Value, args []js.Value) interface{} {
+			ev := &system.CommandEvent{Type: system.CommandBack}
+			w.w.Event(ev)
+			if ev.Cancel {
+				return w.browserHistory.Call("forward")
+			}
 
-		return w.browserHistory.Call("back")
-	})
-	w.addEventListener(w.document, "visibilitychange", func(this js.Value, args []js.Value) interface{} {
-		ev := system.StageEvent{}
-		switch w.document.Get("visibilityState").String() {
-		case "hidden", "prerender", "unloaded":
-			ev.Stage = system.StagePaused
-		default:
-			ev.Stage = system.StageRunning
-		}
-		w.w.Event(ev)
-		return nil
-	})
-	w.addEventListener(w.cnv, "mousemove", func(this js.Value, args []js.Value) interface{} {
-		w.pointerEvent(pointer.Move, 0, 0, args[0])
-		return nil
-	})
-	w.addEventListener(w.cnv, "mousedown", func(this js.Value, args []js.Value) interface{} {
-		w.pointerEvent(pointer.Press, 0, 0, args[0])
-		if w.requestFocus {
-			w.focus()
-			w.requestFocus = false
-		}
-		return nil
-	})
-	w.addEventListener(w.cnv, "mouseup", func(this js.Value, args []js.Value) interface{} {
-		w.pointerEvent(pointer.Release, 0, 0, args[0])
-		return nil
-	})
-	w.addEventListener(w.cnv, "wheel", func(this js.Value, args []js.Value) interface{} {
-		e := args[0]
-		dx, dy := e.Get("deltaX").Float(), e.Get("deltaY").Float()
-		mode := e.Get("deltaMode").Int()
-		switch mode {
-		case 0x01: // DOM_DELTA_LINE
-			dx *= 10
-			dy *= 10
-		case 0x02: // DOM_DELTA_PAGE
-			dx *= 120
-			dy *= 120
-		}
-		w.pointerEvent(pointer.Scroll, float32(dx), float32(dy), e)
-		return nil
-	})
-	w.addEventListener(w.cnv, "touchstart", func(this js.Value, args []js.Value) interface{} {
-		w.touchEvent(pointer.Press, args[0])
-		if w.requestFocus {
-			w.focus() // iOS can only focus inside a Touch event.
-			w.requestFocus = false
-		}
-		return nil
-	})
-	w.addEventListener(w.cnv, "touchend", func(this js.Value, args []js.Value) interface{} {
-		w.touchEvent(pointer.Release, args[0])
-		return nil
-	})
-	w.addEventListener(w.cnv, "touchmove", func(this js.Value, args []js.Value) interface{} {
-		w.touchEvent(pointer.Move, args[0])
-		return nil
-	})
-	w.addEventListener(w.cnv, "touchcancel", func(this js.Value, args []js.Value) interface{} {
-		// Cancel all touches even if only one touch was cancelled.
-		for i := range w.touches {
-			w.touches[i] = js.Null()
-		}
-		w.touches = w.touches[:0]
-		w.w.Event(pointer.Event{
-			Type:   pointer.Cancel,
-			Source: pointer.Touch,
-		})
-		return nil
-	})
-	w.addEventListener(w.tarea, "focus", func(this js.Value, args []js.Value) interface{} {
-		w.w.Event(key.FocusEvent{Focus: true})
-		return nil
-	})
-	w.addEventListener(w.tarea, "blur", func(this js.Value, args []js.Value) interface{} {
-		w.w.Event(key.FocusEvent{Focus: false})
-		w.blur()
-		return nil
-	})
-	w.addEventListener(w.tarea, "keydown", func(this js.Value, args []js.Value) interface{} {
-		w.keyEvent(args[0], key.Press)
-		return nil
-	})
-	w.addEventListener(w.tarea, "keyup", func(this js.Value, args []js.Value) interface{} {
-		w.keyEvent(args[0], key.Release)
-		return nil
-	})
-	w.addEventListener(w.tarea, "compositionstart", func(this js.Value, args []js.Value) interface{} {
-		w.composing = true
-		return nil
-	})
-	w.addEventListener(w.tarea, "compositionend", func(this js.Value, args []js.Value) interface{} {
-		w.composing = false
-		w.flushInput()
-		return nil
-	})
-	w.addEventListener(w.tarea, "input", func(this js.Value, args []js.Value) interface{} {
-		if w.composing {
+			return w.browserHistory.Call("back")
+		},
+	)
+	w.addEventListener(w.document, "visibilitychange",
+		func(this js.Value, args []js.Value) interface{} {
+			ev := system.StageEvent{}
+			switch w.document.Get("visibilityState").String() {
+			case "hidden", "prerender", "unloaded":
+				ev.Stage = system.StagePaused
+			default:
+				ev.Stage = system.StageRunning
+			}
+			w.w.Event(ev)
 			return nil
-		}
-		w.flushInput()
-		return nil
-	})
-	w.addEventListener(w.tarea, "paste", func(this js.Value, args []js.Value) interface{} {
-		if w.clipboard.IsUndefined() {
+		},
+	)
+	w.addEventListener(w.cnv, "mousemove",
+		func(this js.Value, args []js.Value) interface{} {
+			w.pointerEvent(pointer.Move, 0, 0, args[0])
 			return nil
-		}
-		// Prevents duplicated-paste, since "paste" is already handled through Clipboard API.
-		args[0].Call("preventDefault")
-		return nil
-	})
+		},
+	)
+	w.addEventListener(w.cnv, "mousedown",
+		func(this js.Value, args []js.Value) interface{} {
+			w.pointerEvent(pointer.Press, 0, 0, args[0])
+			if w.requestFocus {
+				w.focus()
+				w.requestFocus = false
+			}
+			return nil
+		},
+	)
+	w.addEventListener(w.cnv, "mouseup",
+		func(this js.Value, args []js.Value) interface{} {
+			w.pointerEvent(pointer.Release, 0, 0, args[0])
+			return nil
+		},
+	)
+	w.addEventListener(w.cnv, "wheel",
+		func(this js.Value, args []js.Value) interface{} {
+			e := args[0]
+			dx, dy := e.Get("deltaX").Float(), e.Get("deltaY").Float()
+			mode := e.Get("deltaMode").Int()
+			switch mode {
+			case 0x01: // DOM_DELTA_LINE
+				dx *= 10
+				dy *= 10
+			case 0x02: // DOM_DELTA_PAGE
+				dx *= 120
+				dy *= 120
+			}
+			w.pointerEvent(pointer.Scroll, float32(dx), float32(dy), e)
+			return nil
+		},
+	)
+	w.addEventListener(w.cnv, "touchstart",
+		func(this js.Value, args []js.Value) interface{} {
+			w.touchEvent(pointer.Press, args[0])
+			if w.requestFocus {
+				w.focus() // iOS can only focus inside a Touch event.
+				w.requestFocus = false
+			}
+			return nil
+		},
+	)
+	w.addEventListener(w.cnv, "touchend",
+		func(this js.Value, args []js.Value) interface{} {
+			w.touchEvent(pointer.Release, args[0])
+			return nil
+		},
+	)
+	w.addEventListener(w.cnv, "touchmove",
+		func(this js.Value, args []js.Value) interface{} {
+			w.touchEvent(pointer.Move, args[0])
+			return nil
+		},
+	)
+	w.addEventListener(w.cnv, "touchcancel",
+		func(this js.Value, args []js.Value) interface{} {
+			// Cancel all touches even if only one touch was cancelled.
+			for i := range w.touches {
+				w.touches[i] = js.Null()
+			}
+			w.touches = w.touches[:0]
+			w.w.Event(pointer.Event{
+				Type:   pointer.Cancel,
+				Source: pointer.Touch,
+			},
+			)
+			return nil
+		},
+	)
+	w.addEventListener(w.tarea, "focus",
+		func(this js.Value, args []js.Value) interface{} {
+			w.w.Event(key.FocusEvent{Focus: true})
+			return nil
+		},
+	)
+	w.addEventListener(w.tarea, "blur",
+		func(this js.Value, args []js.Value) interface{} {
+			w.w.Event(key.FocusEvent{Focus: false})
+			w.blur()
+			return nil
+		},
+	)
+	w.addEventListener(w.tarea, "keydown",
+		func(this js.Value, args []js.Value) interface{} {
+			w.keyEvent(args[0], key.Press)
+			return nil
+		},
+	)
+	w.addEventListener(w.tarea, "keyup",
+		func(this js.Value, args []js.Value) interface{} {
+			w.keyEvent(args[0], key.Release)
+			return nil
+		},
+	)
+	w.addEventListener(w.tarea, "compositionstart",
+		func(this js.Value, args []js.Value) interface{} {
+			w.composing = true
+			return nil
+		},
+	)
+	w.addEventListener(w.tarea, "compositionend",
+		func(this js.Value, args []js.Value) interface{} {
+			w.composing = false
+			w.flushInput()
+			return nil
+		},
+	)
+	w.addEventListener(w.tarea, "input",
+		func(this js.Value, args []js.Value) interface{} {
+			if w.composing {
+				return nil
+			}
+			w.flushInput()
+			return nil
+		},
+	)
+	w.addEventListener(w.tarea, "paste",
+		func(this js.Value, args []js.Value) interface{} {
+			if w.clipboard.IsUndefined() {
+				return nil
+			}
+			// Prevents duplicated-paste, since "paste" is already handled through Clipboard API.
+			args[0].Call("preventDefault")
+			return nil
+		},
+	)
 }
 
 func (w *window) addHistory() {
-	w.browserHistory.Call("pushState", nil, nil, w.window.Get("location").Get("href"))
+	w.browserHistory.Call("pushState", nil, nil,
+		w.window.Get("location").Get("href"),
+	)
 }
 
 func (w *window) flushInput() {
@@ -367,7 +413,8 @@ func (w *window) touchEvent(typ pointer.Type, e js.Value) {
 			PointerID: pid,
 			Time:      t,
 			Modifiers: mods,
-		})
+		},
+		)
 	}
 }
 
@@ -420,20 +467,26 @@ func (w *window) pointerEvent(typ pointer.Type, dx, dy float32, e js.Value) {
 		Scroll:    scroll,
 		Time:      t,
 		Modifiers: modifiersFor(e),
-	})
+	},
+	)
 }
 
-func (w *window) addEventListener(this js.Value, event string, f func(this js.Value, args []js.Value) interface{}) {
+func (w *window) addEventListener(this js.Value, event string,
+	f func(this js.Value, args []js.Value) interface{},
+) {
 	jsf := w.funcOf(f)
 	this.Call("addEventListener", event, jsf)
 	w.cleanfuncs = append(w.cleanfuncs, func() {
 		this.Call("removeEventListener", event, jsf)
-	})
+	},
+	)
 }
 
 // funcOf is like js.FuncOf but adds the js.Func to a list of
 // functions to be released during cleanup.
-func (w *window) funcOf(f func(this js.Value, args []js.Value) interface{}) js.Func {
+func (w *window) funcOf(f func(this js.Value, args []js.Value,
+) interface{},
+) js.Func {
 	jsf := js.FuncOf(f)
 	w.cleanfuncs = append(w.cleanfuncs, jsf.Release)
 	return jsf
@@ -548,7 +601,8 @@ func (w *window) draw(sync bool) {
 			Metric: metric,
 		},
 		Sync: sync,
-	})
+	},
+	)
 }
 
 func (w *window) config() (int, int, system.Insets, unit.Metric) {

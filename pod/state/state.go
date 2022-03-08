@@ -1,3 +1,4 @@
+//go:build !headless
 // +build !headless
 
 package state
@@ -10,17 +11,17 @@ import (
 
 	"go.uber.org/atomic"
 
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/chainclient"
-	"github.com/p9c/p9/pkg/chainrpc"
-	"github.com/p9c/p9/pkg/ctrl"
-	"github.com/p9c/p9/pkg/opts/opt"
-	"github.com/p9c/p9/pod/config"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chainclient"
+	"github.com/cybriq/p9/pkg/chainrpc"
+	"github.com/cybriq/p9/pkg/ctrl"
+	"github.com/cybriq/p9/pkg/opts/opt"
+	"github.com/cybriq/p9/pod/config"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/cmd/node/active"
-	"github.com/p9c/p9/pkg/util/lang"
+	"github.com/cybriq/p9/cmd/node/active"
+	"github.com/cybriq/p9/pkg/util/lang"
 )
 
 // type _dtype int
@@ -70,8 +71,8 @@ type State struct {
 	Controller *ctrl.State
 	// OtherNodesCounter is the count of nodes connected automatically on the LAN
 	OtherNodesCounter atomic.Int32
-	waitChangers []string
-	waitCounter  int
+	waitChangers      []string
+	waitCounter       int
 	Syncing           *atomic.Bool
 	IsGUI             bool
 }

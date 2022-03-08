@@ -2,16 +2,16 @@ package blockchain
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/block"
 	"math"
 	"runtime"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
-	"github.com/p9c/p9/pkg/hardfork"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/hardfork"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // txValidateItem holds a transaction along with which input to validate.
@@ -188,7 +188,8 @@ func newTxValidator(
 
 // ValidateTransactionScripts validates the scripts for the passed transaction using multiple goroutines.
 func ValidateTransactionScripts(
-	b *BlockChain, tx *util.Tx, utxoView *UtxoViewpoint, flags txscript.ScriptFlags, sigCache *txscript.SigCache,
+	b *BlockChain, tx *util.Tx, utxoView *UtxoViewpoint,
+	flags txscript.ScriptFlags, sigCache *txscript.SigCache,
 	hashCache *txscript.HashCache,
 ) (e error) {
 	// // First determine if segwit is active according to the scriptFlags. If it isn't then we don't need to interact with
@@ -207,7 +208,9 @@ func ValidateTransactionScripts(
 	// 	cachedHashes, _ = hashCache.GetSigHashes(tx.Hash())
 	// }
 	if ContainsBlacklisted(b, tx, hardfork.Blacklist) {
-		return ruleError(ErrBlacklisted, "transaction contains blacklisted address ")
+		return ruleError(ErrBlacklisted,
+			"transaction contains blacklisted address ",
+		)
 	}
 	// Collect all of the transaction inputs and required information for
 	// validation.

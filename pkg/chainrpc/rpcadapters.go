@@ -3,14 +3,14 @@ package chainrpc
 import (
 	"sync/atomic"
 
-	"github.com/p9c/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/block"
 
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/mempool"
-	"github.com/p9c/p9/pkg/netsync"
-	"github.com/p9c/p9/pkg/peer"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/mempool"
+	"github.com/cybriq/p9/pkg/netsync"
+	"github.com/cybriq/p9/pkg/peer"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // Peer provides a peer for use with the RPC Server and implements the RPCServerPeer interface.

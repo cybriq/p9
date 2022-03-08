@@ -3,14 +3,14 @@ package txauthor
 
 import (
 	"errors"
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/chaincfg"
-	
-	"github.com/p9c/p9/pkg/txrules"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/txsizes"
-	h "github.com/p9c/p9/pkg/util/helpers"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/chaincfg"
+
+	"github.com/cybriq/p9/pkg/txrules"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/txsizes"
+	h "github.com/cybriq/p9/pkg/util/helpers"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 type (
@@ -96,7 +96,7 @@ func NewUnsignedTransaction(
 		}
 		// We count the types of inputs, which we'll use to estimate the vsize of the transaction.
 		var nested, p2wpkh, p2pkh int
-		for _, /*pkScript*/ _ = range scripts {
+		for _ /*pkScript*/, _ = range scripts {
 			switch {
 			// // If this is a p2sh output, we assume this is a nested P2WKH.
 			// case txscript.IsPayToScriptHash(pkScript):
@@ -111,7 +111,9 @@ func NewUnsignedTransaction(
 			p2pkh, p2wpkh,
 			nested, outputs, true,
 		)
-		maxRequiredFee := txrules.FeeForSerializeSize(relayFeePerKb, maxSignedSize)
+		maxRequiredFee := txrules.FeeForSerializeSize(relayFeePerKb,
+			maxSignedSize,
+		)
 		remainingAmount := inputAmount - targetAmount
 		if remainingAmount < maxRequiredFee {
 			targetFee = maxRequiredFee
@@ -328,5 +330,7 @@ func AddAllInputScripts(
 // AddAllInputScripts modifies an authored transaction by adding inputs scripts for each input of an authored
 // transaction. Private keys and redeem scripts are looked up using a SecretsSource based on the previous output script.
 func (tx *AuthoredTx) AddAllInputScripts(secrets SecretsSource) (e error) {
-	return AddAllInputScripts(tx.Tx, tx.PrevScripts, tx.PrevInputValues, secrets)
+	return AddAllInputScripts(tx.Tx, tx.PrevScripts, tx.PrevInputValues,
+		secrets,
+	)
 }

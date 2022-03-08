@@ -3,13 +3,13 @@ package connmgr
 import (
 	"errors"
 	"fmt"
-	"github.com/p9c/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/log"
 	"net"
 	"sync"
 	"sync/atomic"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/qu"
 )
 
 // maxFailedAttempts is the maximum number of successive failed connection
@@ -384,7 +384,9 @@ func (cm *ConnManager) Connect(c *ConnReq) {
 	}
 	T.Ln("response received")
 	if len(cm.Cfg.Listeners) > 0 {
-		T.F("%s attempting to connect to '%s'", cm.Cfg.Listeners[0].Addr(), c.Addr)
+		T.F("%s attempting to connect to '%s'", cm.Cfg.Listeners[0].Addr(),
+			c.Addr,
+		)
 	}
 	// Traces(cm.Cfg.Dial)
 	conn, e := cm.Cfg.Dial(c.Addr)

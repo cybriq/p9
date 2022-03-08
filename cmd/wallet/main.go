@@ -6,16 +6,16 @@ import (
 	// _ "net/http/pprof"
 	"sync"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/log"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pod/config"
-	"github.com/p9c/p9/pod/state"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pod/config"
+	"github.com/cybriq/p9/pod/state"
 
-	"github.com/p9c/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/interrupt"
 
-	"github.com/p9c/p9/pkg/chainclient"
+	"github.com/cybriq/p9/pkg/chainclient"
 )
 
 // Main is a work-around main function that is required since deferred functions
@@ -91,7 +91,9 @@ func LoadWallet(
 	// this will return an appropriate error.
 	var w *Wallet
 	T.Ln("opening existing wallet, pass:", cx.Config.WalletPass.V())
-	if w, e = loader.OpenExistingWallet(cx.Config.WalletPass.Bytes(), true, cx.Config, nil); E.Chk(e) {
+	if w, e = loader.OpenExistingWallet(cx.Config.WalletPass.Bytes(), true,
+		cx.Config, nil,
+	); E.Chk(e) {
 		T.Ln("failed to open existing wallet")
 		return
 	}

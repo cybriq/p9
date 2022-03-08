@@ -12,9 +12,9 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/p9c/p9/pkg/gel/gio/gpu/internal/driver"
-	"github.com/p9c/p9/pkg/gel/gio/internal/byteslice"
-	"github.com/p9c/p9/pkg/gel/gio/internal/f32color"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu/internal/driver"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/byteslice"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/f32color"
 )
 
 var dumpImages = flag.Bool("saveimages", false, "save test images")
@@ -70,7 +70,8 @@ func TestInputShader(t *testing.T) {
 			0, .5, .5, 1,
 			-.5, -.5, .5, 1,
 			.5, -.5, .5, 1,
-		}),
+		},
+		),
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -83,7 +84,8 @@ func TestInputShader(t *testing.T) {
 			Size:   4,
 			Offset: 0,
 		},
-	})
+	},
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -125,7 +127,8 @@ func TestFramebuffers(t *testing.T) {
 	}
 }
 
-func setupFBO(t *testing.T, b driver.Device, size image.Point) driver.Framebuffer {
+func setupFBO(t *testing.T, b driver.Device, size image.Point,
+) driver.Framebuffer {
 	fbo := newFBO(t, b, size)
 	b.BindFramebuffer(fbo)
 	// ClearColor accepts linear RGBA colors, while 8-bit colors
@@ -137,7 +140,8 @@ func setupFBO(t *testing.T, b driver.Device, size image.Point) driver.Framebuffe
 	return fbo
 }
 
-func newFBO(t *testing.T, b driver.Device, size image.Point) driver.Framebuffer {
+func newFBO(t *testing.T, b driver.Device, size image.Point,
+) driver.Framebuffer {
 	fboTex, err := b.NewTexture(
 		driver.TextureFormatSRGB,
 		size.X, size.Y,
@@ -149,7 +153,8 @@ func newFBO(t *testing.T, b driver.Device, size image.Point) driver.Framebuffer 
 	}
 	t.Cleanup(func() {
 		fboTex.Release()
-	})
+	},
+	)
 	const depthBits = 16
 	fbo, err := b.NewFramebuffer(fboTex, depthBits)
 	if err != nil {
@@ -157,7 +162,8 @@ func newFBO(t *testing.T, b driver.Device, size image.Point) driver.Framebuffer 
 	}
 	t.Cleanup(func() {
 		fbo.Release()
-	})
+	},
+	)
 	return fbo
 }
 
@@ -180,11 +186,14 @@ func newDriver(t *testing.T) driver.Device {
 		ctx.ReleaseCurrent()
 		runtime.UnlockOSThread()
 		ctx.Release()
-	})
+	},
+	)
 	return b
 }
 
-func screenshot(t *testing.T, d driver.Device, fbo driver.Framebuffer, size image.Point) *image.RGBA {
+func screenshot(t *testing.T, d driver.Device, fbo driver.Framebuffer,
+	size image.Point,
+) *image.RGBA {
 	img, err := driver.DownloadImage(d, fbo, image.Rectangle{Max: size})
 	if err != nil {
 		t.Fatal(err)

@@ -5,21 +5,21 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 	"sync"
 	"sync/atomic"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	am "github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/wire"
-	tm "github.com/p9c/p9/pkg/wtxmgr"
+
+	"github.com/cybriq/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	am "github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/wire"
+	tm "github.com/cybriq/p9/pkg/wtxmgr"
 )
 
 var (
@@ -238,7 +238,8 @@ func (c *BitcoindClient) shouldNotifyBlocks() bool {
 //	map[wire.OutPoint]util.Address
 //	[]chainhash.Hash
 //	[]*chainhash.Hash
-func (c *BitcoindClient) LoadTxFilter(reset bool, filters ...interface{}) (e error) {
+func (c *BitcoindClient) LoadTxFilter(reset bool, filters ...interface{},
+) (e error) {
 	if reset {
 		select {
 		case c.rescanUpdate <- struct{}{}:

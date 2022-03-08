@@ -3,9 +3,9 @@ package rpctest
 import (
 	"reflect"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/rpcclient"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/rpcclient"
 )
 
 // JoinType is an enum representing a particular type of "node join". A node
@@ -71,7 +71,7 @@ retry:
 	for !blocksMatch {
 		var prevHash *chainhash.Hash
 		var prevHeight int32
-		
+
 		for _, node := range nodes {
 			blockHash, blockHeight, e := node.Node.GetBestBlock()
 			if e != nil {

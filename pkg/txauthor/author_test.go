@@ -2,12 +2,12 @@
 package txauthor
 
 import (
-	"github.com/p9c/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/amt"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/txrules"
-	"github.com/p9c/p9/pkg/txsizes"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/txrules"
+	"github.com/cybriq/p9/pkg/txsizes"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 func p2pkhOutputs(amounts ...amt.Amount) []*wire.TxOut {
@@ -23,7 +23,9 @@ func makeInputSource(unspents []*wire.TxOut) InputSource {
 	currentTotal := amt.Amount(0)
 	currentInputs := make([]*wire.TxIn, 0, len(unspents))
 	currentInputValues := make([]amt.Amount, 0, len(unspents))
-	f := func(target amt.Amount) (amt.Amount, []*wire.TxIn, []amt.Amount, [][]byte, error) {
+	f := func(target amt.Amount) (amt.Amount, []*wire.TxIn, []amt.Amount,
+		[][]byte, error,
+	) {
 		for currentTotal < target && len(unspents) != 0 {
 			u := unspents[0]
 			unspents = unspents[1:]
@@ -32,7 +34,9 @@ func makeInputSource(unspents []*wire.TxOut) InputSource {
 			currentInputs = append(currentInputs, nextInput)
 			currentInputValues = append(currentInputValues, amt.Amount(u.Value))
 		}
-		return currentTotal, currentInputs, currentInputValues, make([][]byte, len(currentInputs)), nil
+		return currentTotal, currentInputs, currentInputValues, make([][]byte,
+			len(currentInputs),
+		), nil
 	}
 	return f
 }
@@ -74,7 +78,9 @@ func TestNewUnsignedTransaction(t *testing.T) {
 			Outputs:        p2pkhOutputs(1e6, 1e6, 1e6),
 			RelayFee:       1e4,
 			ChangeAmount: 1e8 - 3e6 - txrules.FeeForSerializeSize(1e4,
-				txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(1e6, 1e6, 1e6), true),
+				txsizes.EstimateVirtualSize(1, 0, 0,
+					p2pkhOutputs(1e6, 1e6, 1e6), true,
+				),
 			),
 			InputCount: 1,
 		},
@@ -83,7 +89,9 @@ func TestNewUnsignedTransaction(t *testing.T) {
 			Outputs:        p2pkhOutputs(1e6, 1e6, 1e6),
 			RelayFee:       2.55e3,
 			ChangeAmount: 1e8 - 3e6 - txrules.FeeForSerializeSize(2.55e3,
-				txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(1e6, 1e6, 1e6), true),
+				txsizes.EstimateVirtualSize(1, 0, 0,
+					p2pkhOutputs(1e6, 1e6, 1e6), true,
+				),
 			),
 			InputCount: 1,
 		},
@@ -180,7 +188,9 @@ func TestNewUnsignedTransaction(t *testing.T) {
 	}
 	for i, test := range tests {
 		inputSource := makeInputSource(test.UnspentOutputs)
-		tx, e := NewUnsignedTransaction(test.Outputs, test.RelayFee, inputSource, changeSource)
+		tx, e := NewUnsignedTransaction(test.Outputs, test.RelayFee,
+			inputSource, changeSource,
+		)
 		switch e := e.(type) {
 		case nil:
 		case InputSourceError:

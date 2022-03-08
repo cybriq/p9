@@ -2,8 +2,8 @@ package rpcclient
 
 import (
 	js "encoding/json"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // AddNodeCommand enumerates the available commands that the AddNode function accepts.
@@ -37,7 +37,8 @@ func (r FutureAddNodeResult) Receive() (e error) {
 
 // AddNodeAsync returns an instance of a type that can be used to get the result of the RPC at some future time by
 // invoking the Receive function on the returned instance. See AddNode for the blocking version and more details.
-func (c *Client) AddNodeAsync(host string, command AddNodeCommand) FutureAddNodeResult {
+func (c *Client) AddNodeAsync(host string, command AddNodeCommand,
+) FutureAddNodeResult {
 	cmd := btcjson.NewAddNodeCmd(host, btcjson.AddNodeSubCmd(command))
 	return c.sendCmd(cmd)
 }
@@ -84,7 +85,9 @@ type FutureGetAddedNodeInfoResult chan *response
 
 // Receive waits for the response promised by the future and returns information about manually added (persistent)
 // peers.
-func (r FutureGetAddedNodeInfoResult) Receive() ([]btcjson.GetAddedNodeInfoResult, error) {
+func (r FutureGetAddedNodeInfoResult) Receive() ([]btcjson.GetAddedNodeInfoResult,
+	error,
+) {
 	res, e := receiveFuture(r)
 	if e != nil {
 		return nil, e
@@ -108,7 +111,9 @@ func (c *Client) GetAddedNodeInfoAsync(peer string) FutureGetAddedNodeInfoResult
 
 // GetAddedNodeInfo returns information about manually added (persistent) peers. See GetAddedNodeInfoNoDNS to retrieve
 // only a list of the added (persistent) peers.
-func (c *Client) GetAddedNodeInfo(peer string) ([]btcjson.GetAddedNodeInfoResult, error) {
+func (c *Client) GetAddedNodeInfo(peer string) ([]btcjson.GetAddedNodeInfoResult,
+	error,
+) {
 	return c.GetAddedNodeInfoAsync(peer).Receive()
 }
 
@@ -205,7 +210,8 @@ func (c *Client) Ping() (e error) {
 type FutureGetPeerInfoResult chan *response
 
 // Receive waits for the response promised by the future and returns data about each connected network peer.
-func (r FutureGetPeerInfoResult) Receive() ([]btcjson.GetPeerInfoResult, error) {
+func (r FutureGetPeerInfoResult) Receive() ([]btcjson.GetPeerInfoResult, error,
+) {
 	res, e := receiveFuture(r)
 	if e != nil {
 		return nil, e
@@ -238,7 +244,8 @@ func (c *Client) GetPeerInfo() ([]btcjson.GetPeerInfoResult, error) {
 type FutureGetNetTotalsResult chan *response
 
 // Receive waits for the response promised by the future and returns network statistics.
-func (r FutureGetNetTotalsResult) Receive() (*btcjson.GetNetTotalsResult, error) {
+func (r FutureGetNetTotalsResult) Receive() (*btcjson.GetNetTotalsResult, error,
+) {
 	res, e := receiveFuture(r)
 	if e != nil {
 		return nil, e

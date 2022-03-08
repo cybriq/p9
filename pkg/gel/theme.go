@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/p9c/p9/pkg/gel/gio/text"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
-	"github.com/p9c/p9/pkg/opts/binary"
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/opts/binary"
+	"github.com/cybriq/p9/pkg/qu"
 )
 
 type Theme struct {
@@ -26,12 +26,15 @@ type Theme struct {
 }
 
 // NewTheme creates a new theme to use for rendering a user interface
-func NewTheme(dark *binary.Opt, fontCollection []text.FontFace, quit qu.C) (th *Theme) {
+func NewTheme(dark *binary.Opt, fontCollection []text.FontFace, quit qu.C,
+) (th *Theme) {
 	textSize := unit.Sp(16)
 	if runtime.GOOS == "linux" {
 		var e error
 		var b []byte
-		runner := exec.Command("gsettings", "get", "org.gnome.desktop.interface", "text-scaling-factor")
+		runner := exec.Command("gsettings", "get",
+			"org.gnome.desktop.interface", "text-scaling-factor",
+		)
 		if b, e = runner.CombinedOutput(); D.Chk(e) {
 		}
 		var factor float64

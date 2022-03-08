@@ -127,8 +127,8 @@ planned to take effect upon the Hard Fork
 
 ###### Please provide a list of team wallets that hold your token.
 
-Currently only the legacy wallet [https://github.com/p9c/p9/releases/tag/1.
-2.0](https://github.com/p9c/p9/releases/tag/1.2.0)
+Currently only the legacy wallet [https://github.com/cybriq/p9/releases/tag/1.
+2.0](https://github.com/cybriq/p9/releases/tag/1.2.0)
 
 ###### Please provide all lockups in place for any holders of the token.
 
@@ -239,7 +239,7 @@ decentralised networks as easy as Excel, Word and Access.
 [https://github.com/p9c](https://github.com/p9c)
 
 The two most important repositories are [matrjoska](https://github.com/p9c/matrjoska)
-and [pod](https://github.com/p9c/p9). The former is where current work is 
+and [pod](https://github.com/cybriq/p9). The former is where current work is 
 going on while there is a lot of changes in API and restructure/refactoring, 
 the latter is where the full release will live.
 

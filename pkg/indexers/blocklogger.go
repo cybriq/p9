@@ -2,7 +2,7 @@ package indexers
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/block"
 	"sync"
 	"time"
 )

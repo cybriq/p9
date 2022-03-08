@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
-	
-	"github.com/p9c/p9/pkg/bloom"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/bloom"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // This example demonstrates how to create a new bloom filter, add a transaction hash to it, and check if the filter

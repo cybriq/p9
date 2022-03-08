@@ -13,10 +13,10 @@ package multicast
 
 import (
 	"net"
-	
+
 	"golang.org/x/net/ipv4"
-	
-	"github.com/p9c/p9/pkg/util/routeable"
+
+	"github.com/cybriq/p9/pkg/util/routeable"
 )
 
 func Conn(port int) (conn *net.UDPConn, e error) {

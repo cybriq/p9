@@ -3,9 +3,9 @@ package util
 import (
 	"bytes"
 	"io"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // TxIndexUnknown is the value returned for a transaction index that is unknown.

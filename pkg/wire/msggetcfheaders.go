@@ -2,8 +2,8 @@ package wire
 
 import (
 	"io"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // MsgGetCFHeaders is a message similar to MsgGetHeaders, but for committed filter headers. It allows to set the
@@ -16,7 +16,9 @@ type MsgGetCFHeaders struct {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation.
-func (msg *MsgGetCFHeaders) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding) (e error) {
+func (msg *MsgGetCFHeaders) BtcDecode(r io.Reader, pver uint32,
+	_ MessageEncoding,
+) (e error) {
 	if e = readElement(r, &msg.FilterType); E.Chk(e) {
 		return
 	}
@@ -28,7 +30,9 @@ func (msg *MsgGetCFHeaders) BtcDecode(r io.Reader, pver uint32, _ MessageEncodin
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgGetCFHeaders) BtcEncode(w io.Writer, pver uint32, _ MessageEncoding) (e error) {
+func (msg *MsgGetCFHeaders) BtcEncode(w io.Writer, pver uint32,
+	_ MessageEncoding,
+) (e error) {
 	if e = writeElement(w, msg.FilterType); E.Chk(e) {
 		return
 	}

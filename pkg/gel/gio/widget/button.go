@@ -6,12 +6,12 @@ import (
 	"image"
 	"time"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/gesture"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/gesture"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 // Clickable represents a clickable area.
@@ -49,7 +49,8 @@ func (b *Clickable) Click() {
 	b.clicks = append(b.clicks, Click{
 		Modifiers: 0,
 		NumClicks: 1,
-	})
+	},
+	)
 }
 
 // Clicked reports whether there are pending clicks as would be
@@ -121,7 +122,8 @@ func (b *Clickable) update(gtx layout.Context) {
 			b.clicks = append(b.clicks, Click{
 				Modifiers: e.Modifiers,
 				NumClicks: e.NumClicks,
-			})
+			},
+			)
 			if l := len(b.history); l > 0 {
 				b.history[l-1].End = gtx.Now
 			}
@@ -136,7 +138,8 @@ func (b *Clickable) update(gtx layout.Context) {
 			b.history = append(b.history, Press{
 				Position: e.Position,
 				Start:    gtx.Now,
-			})
+			},
+			)
 		}
 	}
 }

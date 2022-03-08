@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/p9c/p9/pkg/gel/gio/internal/byteslice"
-	"github.com/p9c/p9/pkg/gel/gio/internal/gl"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/byteslice"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/gl"
 )
 
 // FBO implements an intermediate sRGB FBO
@@ -62,7 +62,9 @@ func New(ctx gl.Context) (*FBO, error) {
 
 func (s *FBO) Blit() {
 	if !s.blitted {
-		prog, err := gl.CreateProgram(s.c, blitVSrc, blitFSrc, []string{"pos", "uv"})
+		prog, err := gl.CreateProgram(s.c, blitVSrc, blitFSrc,
+			[]string{"pos", "uv"},
+		)
 		if err != nil {
 			panic(err)
 		}
@@ -76,7 +78,8 @@ func (s *FBO) Blit() {
 			+1, +1, 1, 1,
 			-1, -1, 0, 0,
 			+1, -1, 1, 0,
-		})
+		},
+		)
 		s.c.BufferData(gl.ARRAY_BUFFER, len(coords), gl.STATIC_DRAW)
 		s.c.BufferSubData(gl.ARRAY_BUFFER, 0, coords)
 		s.blitted = true
@@ -112,19 +115,29 @@ func (s *FBO) Refresh(w, h int) error {
 	}
 	s.c.BindTexture(gl.TEXTURE_2D, s.colorTex)
 	if s.gl3 {
-		s.c.TexImage2D(gl.TEXTURE_2D, 0, gl.SRGB8_ALPHA8, w, h, gl.RGBA, gl.UNSIGNED_BYTE)
+		s.c.TexImage2D(gl.TEXTURE_2D, 0, gl.SRGB8_ALPHA8, w, h, gl.RGBA,
+			gl.UNSIGNED_BYTE,
+		)
 	} else /* EXT_sRGB */ {
-		s.c.TexImage2D(gl.TEXTURE_2D, 0, gl.SRGB_ALPHA_EXT, w, h, gl.SRGB_ALPHA_EXT, gl.UNSIGNED_BYTE)
+		s.c.TexImage2D(gl.TEXTURE_2D, 0, gl.SRGB_ALPHA_EXT, w, h,
+			gl.SRGB_ALPHA_EXT, gl.UNSIGNED_BYTE,
+		)
 	}
 	currentRB := gl.Renderbuffer(s.c.GetBinding(gl.RENDERBUFFER_BINDING))
 	s.c.BindRenderbuffer(gl.RENDERBUFFER, s.depthBuffer)
 	s.c.RenderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, w, h)
 	s.c.BindRenderbuffer(gl.RENDERBUFFER, currentRB)
 	s.c.BindFramebuffer(gl.FRAMEBUFFER, s.frameBuffer)
-	s.c.FramebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, s.colorTex, 0)
-	s.c.FramebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, s.depthBuffer)
+	s.c.FramebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+		gl.TEXTURE_2D, s.colorTex, 0,
+	)
+	s.c.FramebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT,
+		gl.RENDERBUFFER, s.depthBuffer,
+	)
 	if st := s.c.CheckFramebufferStatus(gl.FRAMEBUFFER); st != gl.FRAMEBUFFER_COMPLETE {
-		return fmt.Errorf("sRGB framebuffer incomplete (%dx%d), status: %#x error: %x", s.width, s.height, st, s.c.GetError())
+		return fmt.Errorf("sRGB framebuffer incomplete (%dx%d), status: %#x error: %x",
+			s.width, s.height, st, s.c.GetError(),
+		)
 	}
 
 	if runtime.GOOS == "js" {
@@ -136,9 +149,13 @@ func (s *FBO) Refresh(w, h int) error {
 		var pixel [4]byte
 		s.c.ReadPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel[:])
 		if pixel[0] == 128 { // Correct sRGB color value is ~188
-			s.c.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, gl.RGBA, gl.UNSIGNED_BYTE)
+			s.c.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, gl.RGBA,
+				gl.UNSIGNED_BYTE,
+			)
 			if st := s.c.CheckFramebufferStatus(gl.FRAMEBUFFER); st != gl.FRAMEBUFFER_COMPLETE {
-				return fmt.Errorf("fallback RGBA framebuffer incomplete (%dx%d), status: %#x error: %x", s.width, s.height, st, s.c.GetError())
+				return fmt.Errorf("fallback RGBA framebuffer incomplete (%dx%d), status: %#x error: %x",
+					s.width, s.height, st, s.c.GetError(),
+				)
 			}
 		}
 	}

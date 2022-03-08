@@ -1,9 +1,9 @@
 package cfg
 
 import (
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/gel"
+	"github.com/cybriq/p9/pkg/gel"
 )
 
 func New(w *gel.Window, killAll qu.C) *Config {

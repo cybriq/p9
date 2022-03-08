@@ -5,7 +5,7 @@ package layout
 import (
 	"image"
 
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 // Flex lays out child elements along an axis,
@@ -130,7 +130,9 @@ func (f Flex) Layout(gtx Context, children ...FlexChild) Dimensions {
 			}
 		}
 		macro := op.Record(gtx.Ops)
-		cgtx.Constraints = f.Axis.constraints(flexSize, flexSize, crossMin, crossMax)
+		cgtx.Constraints = f.Axis.constraints(flexSize, flexSize, crossMin,
+			crossMax,
+		)
 		dims := child.widget(cgtx)
 		c := macro.Stop()
 		sz := f.Axis.Convert(dims.Size).X

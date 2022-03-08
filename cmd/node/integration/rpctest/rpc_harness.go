@@ -11,17 +11,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/rpcclient"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/rpcclient"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -137,7 +137,9 @@ func New(
 	// a wrapper callback which executes both the currently registered callback and the mem wallet's callback.
 	if handlers.OnFilteredBlockConnected != nil {
 		obc := handlers.OnFilteredBlockConnected
-		handlers.OnFilteredBlockConnected = func(height int32, header *wire.BlockHeader, filteredTxns []*util.Tx) {
+		handlers.OnFilteredBlockConnected = func(height int32,
+			header *wire.BlockHeader, filteredTxns []*util.Tx,
+		) {
 			wallet.IngestBlock(height, header, filteredTxns)
 			obc(height, header, filteredTxns)
 		}
@@ -147,7 +149,9 @@ func New(
 	}
 	if handlers.OnFilteredBlockDisconnected != nil {
 		obd := handlers.OnFilteredBlockDisconnected
-		handlers.OnFilteredBlockDisconnected = func(height int32, header *wire.BlockHeader) {
+		handlers.OnFilteredBlockDisconnected = func(height int32,
+			header *wire.BlockHeader,
+		) {
 			wallet.UnwindBlock(height, header)
 			obd(height, header)
 		}
@@ -172,7 +176,8 @@ func New(
 // client and connecting to the started node, and finally: optionally generating and submitting a testchain with a
 // configurable number of mature coinbase outputs coinbase outputs. NOTE: This method and TearDown should always be
 // called from the same goroutine as they are not concurrent safe.
-func (h *Harness) SetUp(createTestChain bool, numMatureOutputs uint32) (e error) {
+func (h *Harness) SetUp(createTestChain bool, numMatureOutputs uint32,
+) (e error) {
 	// Start the pod node itself. This spawns a new process which will be managed
 	if e = h.node.start(); E.Chk(e) {
 		return e

@@ -3,8 +3,8 @@ package wallet_test
 import (
 	"runtime"
 	"testing"
-	
-	"github.com/p9c/p9/cmd/wallet"
+
+	"github.com/cybriq/p9/cmd/wallet"
 )
 
 // Harness holds the BranchRecoveryState being tested, the recovery window being used, provides access to the test

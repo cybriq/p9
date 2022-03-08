@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	
-	"github.com/p9c/p9/pkg/walletdb"
-	_ "github.com/p9c/p9/pkg/walletdb/bdb"
+
+	"github.com/cybriq/p9/pkg/walletdb"
+	_ "github.com/cybriq/p9/pkg/walletdb/bdb"
 )
 
 // This example demonstrates creating a new database.
@@ -15,8 +15,8 @@ func ExampleCreate() {
 	// This example assumes the bdb (bolt db) driver is imported.
 	//
 	// import (
-	// 	"github.com/p9c/p9/cmd/wallet/db"
-	// 	_ "github.com/p9c/p9/cmd/wallet/db/bdb"
+	// 	"github.com/cybriq/p9/cmd/wallet/db"
+	// 	_ "github.com/cybriq/p9/cmd/wallet/db/bdb"
 	// )
 	//
 	// Create a database and schedule it to be closed and removed on exit. Typically you wouldn't want to remove the
@@ -95,8 +95,8 @@ func Example_basicUsage() {
 	// This example assumes the bdb (bolt db) driver is imported.
 	//
 	// import (
-	// 	"github.com/p9c/p9/cmd/wallet/db"
-	// 	_ "github.com/p9c/p9/cmd/wallet/db/bdb"
+	// 	"github.com/cybriq/p9/cmd/wallet/db"
+	// 	_ "github.com/cybriq/p9/cmd/wallet/db/bdb"
 	// )
 	//
 	// Create a database and schedule it to be closed and removed on exit. Typically you wouldn't want to remove the

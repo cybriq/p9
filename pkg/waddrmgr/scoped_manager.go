@@ -2,15 +2,15 @@ package waddrmgr
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 	"sync"
 
-	ec "github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/util/hdkeychain"
-	"github.com/p9c/p9/pkg/util/zero"
-	"github.com/p9c/p9/pkg/walletdb"
+	ec "github.com/cybriq/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/util/hdkeychain"
+	"github.com/cybriq/p9/pkg/util/zero"
+	"github.com/cybriq/p9/pkg/walletdb"
 )
 
 // DerivationPath represents a derivation path from a particular key manager's
@@ -259,7 +259,9 @@ func (s *ScopedKeyManager) deriveKey(
 	}
 	if addressKey, e = branchKey.Child(index); E.Chk(e) {
 		branchKey.Zero() // Zero branch key after it's used.
-		str := fmt.Sprintf("failed to derive child extended key -- branch %d, child %d", branch, index)
+		str := fmt.Sprintf("failed to derive child extended key -- branch %d, child %d",
+			branch, index,
+		)
 		return nil, managerError(ErrKeyChain, str, e)
 	}
 	branchKey.Zero() // Zero branch key after it's used.
@@ -296,12 +298,16 @@ func (s *ScopedKeyManager) loadAccountInfo(
 	// Use the crypto public key to decrypt the account public extended key.
 	var serializedKeyPub []byte
 	if serializedKeyPub, e = s.rootManager.cryptoKeyPub.Decrypt(row.pubKeyEncrypted); E.Chk(e) {
-		str := fmt.Sprintf("failed to decrypt public key for account %d", account)
+		str := fmt.Sprintf("failed to decrypt public key for account %d",
+			account,
+		)
 		return nil, managerError(ErrCrypto, str, e)
 	}
 	var acctKeyPub *hdkeychain.ExtendedKey
 	if acctKeyPub, e = hdkeychain.NewKeyFromString(string(serializedKeyPub)); E.Chk(e) {
-		str := fmt.Sprintf("failed to create extended public key for account %d", account)
+		str := fmt.Sprintf("failed to create extended public key for account %d",
+			account,
+		)
 		return nil, managerError(ErrKeyChain, str, e)
 	}
 	// Create the new account info with the known information. The rest of the
@@ -317,12 +323,16 @@ func (s *ScopedKeyManager) loadAccountInfo(
 		// Use the crypto private key to decrypt the account private extended keys.
 		var decrypted []byte
 		if decrypted, e = s.rootManager.cryptoKeyPriv.Decrypt(acctInfo.acctKeyEncrypted); E.Chk(e) {
-			str := fmt.Sprintf("failed to decrypt private key for account %d", account)
+			str := fmt.Sprintf("failed to decrypt private key for account %d",
+				account,
+			)
 			return nil, managerError(ErrCrypto, str, e)
 		}
 		var acctKeyPriv *hdkeychain.ExtendedKey
 		if acctKeyPriv, e = hdkeychain.NewKeyFromString(string(decrypted)); E.Chk(e) {
-			str := fmt.Sprintf("failed to create extended private key for account %d", account)
+			str := fmt.Sprintf("failed to create extended private key for account %d",
+				account,
+			)
 			return nil, managerError(ErrKeyChain, str, e)
 		}
 		acctInfo.acctKeyPriv = acctKeyPriv
@@ -333,7 +343,9 @@ func (s *ScopedKeyManager) loadAccountInfo(
 		index--
 	}
 	var lastExtKey *hdkeychain.ExtendedKey
-	if lastExtKey, e = s.deriveKey(acctInfo, branch, index, !s.rootManager.isLocked()); E.Chk(e) {
+	if lastExtKey, e = s.deriveKey(acctInfo, branch, index,
+		!s.rootManager.isLocked(),
+	); E.Chk(e) {
 		return nil, e
 	}
 	var lastExtAddr ManagedAddress
@@ -346,7 +358,9 @@ func (s *ScopedKeyManager) loadAccountInfo(
 		index--
 	}
 	var lastIntKey *hdkeychain.ExtendedKey
-	if lastIntKey, e = s.deriveKey(acctInfo, branch, index, !s.rootManager.isLocked()); E.Chk(e) {
+	if lastIntKey, e = s.deriveKey(acctInfo, branch, index,
+		!s.rootManager.isLocked(),
+	); E.Chk(e) {
 		return nil, e
 	}
 	var lastIntAddr ManagedAddress
@@ -453,7 +467,9 @@ func (s *ScopedKeyManager) chainAddressRowToManaged(
 	isLocked := s.rootManager.isLocked()
 	var addressKey *hdkeychain.ExtendedKey
 	var e error
-	if addressKey, e = s.deriveKeyFromPath(ns, row.account, row.branch, row.index, !isLocked); E.Chk(e) {
+	if addressKey, e = s.deriveKeyFromPath(ns, row.account, row.branch,
+		row.index, !isLocked,
+	); E.Chk(e) {
 		return nil, e
 	}
 	return s.keyToManaged(addressKey, row.account, row.branch, row.index)
@@ -461,7 +477,9 @@ func (s *ScopedKeyManager) chainAddressRowToManaged(
 
 // importedAddressRowToManaged returns a new managed address based on imported
 // address data loaded from the database.
-func (s *ScopedKeyManager) importedAddressRowToManaged(row *dbImportedAddressRow) (ManagedAddress, error) {
+func (s *ScopedKeyManager) importedAddressRowToManaged(row *dbImportedAddressRow) (ManagedAddress,
+	error,
+) {
 	// Use the crypto public key to decrypt the imported public key.
 	var pubBytes []byte
 	var e error
@@ -494,7 +512,9 @@ func (s *ScopedKeyManager) importedAddressRowToManaged(row *dbImportedAddressRow
 
 // scriptAddressRowToManaged returns a new managed address based on script
 // address data loaded from the database.
-func (s *ScopedKeyManager) scriptAddressRowToManaged(row *dbScriptAddressRow) (ManagedAddress, error) {
+func (s *ScopedKeyManager) scriptAddressRowToManaged(row *dbScriptAddressRow) (ManagedAddress,
+	error,
+) {
 	// Use the crypto public key to decrypt the imported script hash.
 	var scriptHash []byte
 	var e error
@@ -560,7 +580,9 @@ func (s *ScopedKeyManager) loadAndCacheAddress(
 // address manager.
 //
 // This function MUST be called with the manager lock held for reads.
-func (s *ScopedKeyManager) existsAddress(ns walletdb.ReadBucket, addressID []byte) bool {
+func (s *ScopedKeyManager) existsAddress(ns walletdb.ReadBucket,
+	addressID []byte,
+) bool {
 	// Chk the in-memory map first since it's faster than a db access.
 	if _, ok := s.addrs[addrKey(addressID)]; ok {
 		return true
@@ -705,7 +727,9 @@ func (s *ScopedKeyManager) nextAddresses(
 		// whether the generated key is private. Also, zero the next key after creating
 		// the managed address from it.
 		var addr *managedAddress
-		if addr, e = newManagedAddressFromExtKey(s, derivationPath, nextKey, addrType); E.Chk(e) {
+		if addr, e = newManagedAddressFromExtKey(s, derivationPath, nextKey,
+			addrType,
+		); E.Chk(e) {
 			return nil, e
 		}
 		if internal {
@@ -736,11 +760,14 @@ func (s *ScopedKeyManager) nextAddresses(
 		case *scriptAddress:
 			var encryptedHash []byte
 			if encryptedHash, e = s.rootManager.cryptoKeyPub.Encrypt(a.AddrHash()); E.Chk(e) {
-				str := fmt.Sprintf("failed to encrypt script hash %x", a.AddrHash())
+				str := fmt.Sprintf("failed to encrypt script hash %x",
+					a.AddrHash(),
+				)
 				return nil, managerError(ErrCrypto, str, e)
 			}
 			if e = putScriptAddress(
-				ns, &s.scope, a.AddrHash(), ImportedAddrAccount, ssNone, encryptedHash,
+				ns, &s.scope, a.AddrHash(), ImportedAddrAccount, ssNone,
+				encryptedHash,
 				a.scriptEncrypted,
 			); E.Chk(e) {
 				return nil, maybeConvertDbError(e)
@@ -867,7 +894,9 @@ func (s *ScopedKeyManager) extendAddresses(
 		// whether the generated key is private. Also, zero the next key after creating
 		// the managed address from it.
 		var managedAddr *managedAddress
-		if managedAddr, e = newManagedAddressFromExtKey(s, derivationPath, nextKey, addrType); E.Chk(e) {
+		if managedAddr, e = newManagedAddressFromExtKey(s, derivationPath,
+			nextKey, addrType,
+		); E.Chk(e) {
 			return e
 		}
 		if internal {
@@ -1031,7 +1060,9 @@ func (s *ScopedKeyManager) LastExternalAddress(
 	if acctInfo.nextExternalIndex > 0 {
 		return acctInfo.lastExternalAddr, nil
 	}
-	return nil, managerError(ErrAddressNotFound, "no previous external address", nil)
+	return nil, managerError(ErrAddressNotFound, "no previous external address",
+		nil,
+	)
 }
 
 // LastInternalAddress returns the most recently requested chained internal
@@ -1063,14 +1094,18 @@ func (s *ScopedKeyManager) LastInternalAddress(
 	if acctInfo.nextInternalIndex > 0 {
 		return acctInfo.lastInternalAddr, nil
 	}
-	return nil, managerError(ErrAddressNotFound, "no previous internal address", nil)
+	return nil, managerError(ErrAddressNotFound, "no previous internal address",
+		nil,
+	)
 }
 
 // NewRawAccount creates a new account for the scoped manager. This method
 // differs from the NewAccount method in that this method takes the acount
 // number *directly*, rather than taking a string name for the account, then
 // mapping that to the next highest account number.
-func (s *ScopedKeyManager) NewRawAccount(ns walletdb.ReadWriteBucket, number uint32) (e error) {
+func (s *ScopedKeyManager) NewRawAccount(ns walletdb.ReadWriteBucket,
+	number uint32,
+) (e error) {
 	if s.rootManager.WatchOnly() {
 		return managerError(ErrWatchingOnly, errWatchingOnly, nil)
 	}
@@ -1091,7 +1126,8 @@ func (s *ScopedKeyManager) NewRawAccount(ns walletdb.ReadWriteBucket, number uin
 // ErrDuplicateAccount will be returned. Since creating a new account requires
 // access to the cointype keys (from which extended account keys are derived),
 // it requires the manager to be unlocked.
-func (s *ScopedKeyManager) NewAccount(ns walletdb.ReadWriteBucket, name string) (account uint32, e error) {
+func (s *ScopedKeyManager) NewAccount(ns walletdb.ReadWriteBucket, name string,
+) (account uint32, e error) {
 	if s.rootManager.WatchOnly() {
 		return 0, managerError(ErrWatchingOnly, errWatchingOnly, nil)
 	}
@@ -1175,7 +1211,9 @@ func (s *ScopedKeyManager) newAccount(
 		return managerError(ErrCrypto, str, e)
 	}
 	// We have the encrypted account extended keys, so save them to the database
-	if e = putAccountInfo(ns, &s.scope, account, acctPubEnc, acctPrivEnc, 0, 0, name); E.Chk(e) {
+	if e = putAccountInfo(ns, &s.scope, account, acctPubEnc, acctPrivEnc, 0, 0,
+		name,
+	); E.Chk(e) {
 		return e
 	}
 	// Save last account metadata
@@ -1282,14 +1320,18 @@ func (s *ScopedKeyManager) ImportPrivateKey(
 	pubKeyHash := btcaddr.Hash160(serializedPubKey)
 	alreadyExists := s.existsAddress(ns, pubKeyHash)
 	if alreadyExists {
-		str := fmt.Sprintf("address for public key %x already exists", serializedPubKey)
+		str := fmt.Sprintf("address for public key %x already exists",
+			serializedPubKey,
+		)
 		return nil, managerError(ErrDuplicateAddress, str, nil)
 	}
 	// Encrypt public key.
 	var encryptedPubKey []byte
 	var e error
 	if encryptedPubKey, e = s.rootManager.cryptoKeyPub.Encrypt(serializedPubKey); E.Chk(e) {
-		str := fmt.Sprintf("failed to encrypt public key for %x", serializedPubKey)
+		str := fmt.Sprintf("failed to encrypt public key for %x",
+			serializedPubKey,
+		)
 		return nil, managerError(ErrCrypto, str, e)
 	}
 	// Encrypt the private key when not a watching-only address manager.
@@ -1298,7 +1340,9 @@ func (s *ScopedKeyManager) ImportPrivateKey(
 		privKeyBytes := wif.PrivKey.Serialize()
 		if encryptedPrivKey, e = s.rootManager.cryptoKeyPriv.Encrypt(privKeyBytes); E.Chk(e) {
 			zero.Bytes(privKeyBytes)
-			str := fmt.Sprintf("failed to encrypt private key for %x", serializedPubKey)
+			str := fmt.Sprintf("failed to encrypt private key for %x",
+				serializedPubKey,
+			)
 			return nil, managerError(ErrCrypto, str, e)
 		}
 	}
@@ -1437,7 +1481,9 @@ func (s *ScopedKeyManager) ImportScript(
 	// cleared on lock and the script the caller passed should not be cleared out
 	// from under the caller.
 	var scriptAddr *scriptAddress
-	if scriptAddr, e = newScriptAddress(s, ImportedAddrAccount, scriptHash, encryptedScript); E.Chk(e) {
+	if scriptAddr, e = newScriptAddress(s, ImportedAddrAccount, scriptHash,
+		encryptedScript,
+	); E.Chk(e) {
 		return nil, e
 	}
 	if !s.rootManager.WatchOnly() {
@@ -1453,12 +1499,14 @@ func (s *ScopedKeyManager) ImportScript(
 // account name
 //
 // This function MUST be called with the manager lock held for reads.
-func (s *ScopedKeyManager) lookupAccount(ns walletdb.ReadBucket, name string) (uint32, error) {
+func (s *ScopedKeyManager) lookupAccount(ns walletdb.ReadBucket, name string,
+) (uint32, error) {
 	return fetchAccountByName(ns, &s.scope, name)
 }
 
 // LookupAccount loads account number stored in the manager for the given account name
-func (s *ScopedKeyManager) LookupAccount(ns walletdb.ReadBucket, name string) (uint32, error) {
+func (s *ScopedKeyManager) LookupAccount(ns walletdb.ReadBucket, name string,
+) (uint32, error) {
 	s.mtx.RLock()
 	defer s.mtx.RUnlock()
 	return s.lookupAccount(ns, name)
@@ -1497,7 +1545,8 @@ func (s *ScopedKeyManager) ChainParams() *chaincfg.Params {
 
 // AccountName returns the account name for the given account number stored in
 // the manager.
-func (s *ScopedKeyManager) AccountName(ns walletdb.ReadBucket, account uint32) (string, error) {
+func (s *ScopedKeyManager) AccountName(ns walletdb.ReadBucket, account uint32,
+) (string, error) {
 	return fetchAccountName(ns, &s.scope, account)
 }
 

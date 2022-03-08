@@ -3,18 +3,18 @@ package wallet
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chainclient"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chainclient"
 	"sort"
 
-	ec "github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/txauthor"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/walletdb"
-	"github.com/p9c/p9/pkg/wire"
-	"github.com/p9c/p9/pkg/wtxmgr"
+	ec "github.com/cybriq/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/txauthor"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/walletdb"
+	"github.com/cybriq/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/wtxmgr"
 )
 
 // byAmount defines the methods needed to satisify sort.Interface to txsort credits by their output amount.
@@ -58,7 +58,9 @@ type secretSource struct {
 }
 
 // GetKey gets the private key for an address if it is available
-func (s secretSource) GetKey(addr btcaddr.Address) (privKey *ec.PrivateKey, cmpr bool, e error) {
+func (s secretSource) GetKey(addr btcaddr.Address) (privKey *ec.PrivateKey,
+	cmpr bool, e error,
+) {
 	var ma waddrmgr.ManagedAddress
 	ma, e = s.Address(s.addrmgrNs, addr)
 	if e != nil {
@@ -137,7 +139,9 @@ func (w *Wallet) txToOutputs(
 				}
 				return txscript.PayToAddrScript(changeAddr)
 			}
-			if tx, e = txauthor.NewUnsignedTransaction(outputs, feeSatPerKb, inputSource, changeSource); E.Chk(e) {
+			if tx, e = txauthor.NewUnsignedTransaction(outputs, feeSatPerKb,
+				inputSource, changeSource,
+			); E.Chk(e) {
 				return
 			}
 			// Randomize change position, if change exists, before signing. This doesn't
@@ -222,7 +226,9 @@ func (w *Wallet) findEligibleOutputs(
 // validateMsgTx verifies transaction input scripts for tx. All previous output
 // scripts from outputs redeemed by the transaction, in the same order they are
 // spent, must be passed in the prevScripts slice.
-func validateMsgTx(tx *wire.MsgTx, prevScripts [][]byte, inputValues []amt.Amount) (e error) {
+func validateMsgTx(tx *wire.MsgTx, prevScripts [][]byte,
+	inputValues []amt.Amount,
+) (e error) {
 	hashCache := txscript.NewTxSigHashes(tx)
 	for i, prevScript := range prevScripts {
 		var vm *txscript.Engine

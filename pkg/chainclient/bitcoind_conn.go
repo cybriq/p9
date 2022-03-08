@@ -7,15 +7,15 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
+
+	"github.com/cybriq/p9/pkg/qu"
+
 	"github.com/tstranex/gozmq"
-	
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/rpcclient"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/rpcclient"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // BitcoindConn represents a persistent client connection to a bitcoind node that listens for events read from a ZMQ
@@ -153,7 +153,8 @@ func (c *BitcoindConn) blockEventHandler(conn *gozmq.Conn) {
 		}
 	}()
 	I.Ln(
-		"started listening for bitcoind block notifications via ZMQ on", c.zmqBlockHost,
+		"started listening for bitcoind block notifications via ZMQ on",
+		c.zmqBlockHost,
 	)
 	for {
 		// Before attempting to read from the ZMQ socket, we'll make sure to check if we've been requested to shut down.

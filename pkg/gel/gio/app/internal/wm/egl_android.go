@@ -10,7 +10,7 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/internal/egl"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/egl"
 )
 
 type context struct {

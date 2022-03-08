@@ -2,8 +2,8 @@ package chaincfg
 
 import (
 	"strings"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // String returns the hostname of the DNS seed in human-readable form.

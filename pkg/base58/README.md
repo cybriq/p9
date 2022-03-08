@@ -11,21 +11,21 @@ comprehensive suite of tests is provided to ensure proper functionality.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/p9c/p9/btcutil/base58
+$ go get -u github.com/cybriq/p9/btcutil/base58
 ```
 
 ## Examples
 
-- [Decode Example](http://godoc.org/github.com/p9c/p9/base58#example-Decode)  
+- [Decode Example](http://godoc.org/github.com/cybriq/p9/base58#example-Decode)  
   Demonstrates how to decode modified base58 encoded data.
 
-- [Encode Example](http://godoc.org/github.com/p9c/p9/base58#example-Encode)  
+- [Encode Example](http://godoc.org/github.com/cybriq/p9/base58#example-Encode)  
   Demonstrates how to encode data using the modified base58 encoding scheme.
 
-- [CheckDecode Example](http://godoc.org/github.com/p9c/p9/base58#example-CheckDecode)  
+- [CheckDecode Example](http://godoc.org/github.com/cybriq/p9/base58#example-CheckDecode)  
   Demonstrates how to decode Base58Check encoded data.
 
-- [CheckEncode Example](http://godoc.org/github.com/p9c/p9/base58#example-CheckEncode)  
+- [CheckEncode Example](http://godoc.org/github.com/cybriq/p9/base58#example-CheckEncode)  
   Demonstrates how to encode data using the Base58Check encoding scheme.
 
 ## License

@@ -7,8 +7,8 @@ import (
 	"runtime/debug"
 	"testing"
 
-	"github.com/p9c/p9/cmd/node/integration/rpctest"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/cmd/node/integration/rpctest"
+	"github.com/cybriq/p9/pkg/chaincfg"
 )
 
 func testGetBestBlock(r *rpctest.Harness, t *testing.T) {
@@ -79,7 +79,7 @@ func testGetBlockHash(r *rpctest.Harness, t *testing.T) {
 	}
 	// Block hashes should match newly created block.
 	if !bytes.Equal(generatedBlockHashes[0][:], blockHash[:]) {
-		
+
 		t.Fatalf(
 			"Block hashes do not match. Returned hash %v, wanted "+
 				"hash %v", blockHash, generatedBlockHashes[0][:],

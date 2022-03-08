@@ -8,10 +8,10 @@ import (
 	"reflect"
 	"testing"
 	"time"
-	
+
 	"github.com/davecgh/go-spew/spew"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // makeHeader is a convenience function to make a message header in the form of a byte slice.  It is used to force errors when reading messages.
@@ -62,7 +62,9 @@ func TestMessage(t *testing.T) {
 	msgMerkleBlock := NewMsgMerkleBlock(bh)
 	msgReject := NewMsgReject("block", RejectDuplicate, "duplicate block")
 	msgGetCFilters := NewMsgGetCFilters(GCSFilterRegular, 0, &chainhash.Hash{})
-	msgGetCFHeaders := NewMsgGetCFHeaders(GCSFilterRegular, 0, &chainhash.Hash{})
+	msgGetCFHeaders := NewMsgGetCFHeaders(GCSFilterRegular, 0,
+		&chainhash.Hash{},
+	)
 	msgGetCFCheckpt := NewMsgGetCFCheckpt(GCSFilterRegular, &chainhash.Hash{})
 	msgCFilter := NewMsgCFilter(
 		GCSFilterRegular, &chainhash.Hash{},
@@ -375,7 +377,9 @@ func TestWriteMessageWireErrors(t *testing.T) {
 	exceedOverallPayloadErrMsg := &fakeMessage{payload: exceedOverallPayload}
 	// Fake message that has payload which exceeds max allowed per message.
 	exceedPayload := make([]byte, 1)
-	exceedPayloadErrMsg := &fakeMessage{payload: exceedPayload, forceLenErr: true}
+	exceedPayloadErrMsg := &fakeMessage{payload: exceedPayload,
+		forceLenErr: true,
+	}
 	// Fake message that is used to force errors in the header and payload writes.
 	bogusPayload := []byte{0x01, 0x02, 0x03, 0x04}
 	bogusMsg := &fakeMessage{command: "bogus", payload: bogusPayload}

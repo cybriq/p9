@@ -1,7 +1,7 @@
 # chaincfg
 
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/p9c/p9/chaincfg)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/cybriq/p9/chaincfg)
 
 Package chaincfg defines chain configuration parameters for the three standard
 Parallelcoin networks and provides the ability for callers to define their own
@@ -24,10 +24,10 @@ import (
 	"fmt"
 	"log"
 	
-	"github.com/p9c/p9/pkg/chain/config/netparams"
+	"github.com/cybriq/p9/pkg/chain/config/netparams"
 	
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/chaincfg"
 )
 
 var testnet = flag.Bool("testnet", false,
@@ -57,7 +57,7 @@ func main() {
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/p9c/p9/chaincfg
+$ go get -u github.com/cybriq/p9/chaincfg
 ```
 
 ## License

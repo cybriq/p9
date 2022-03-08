@@ -3,9 +3,9 @@ package database_test
 import (
 	"fmt"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/database"
-	_ "github.com/p9c/p9/pkg/database/ffldb"
+
+	"github.com/cybriq/p9/pkg/database"
+	_ "github.com/cybriq/p9/pkg/database/ffldb"
 )
 
 var (
@@ -16,7 +16,9 @@ var (
 )
 
 // checkDbError ensures the passed error is a database.DBError with an error code that matches the passed  error code.
-func checkDbError(t *testing.T, testName string, gotErr error, wantErrCode database.ErrorCode) bool {
+func checkDbError(t *testing.T, testName string, gotErr error,
+	wantErrCode database.ErrorCode,
+) bool {
 	dbErr, ok := gotErr.(database.DBError)
 	if !ok {
 		t.Errorf("%s: unexpected error type - got %T, want %T",

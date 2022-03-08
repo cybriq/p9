@@ -4,11 +4,11 @@ import (
 	"crypto/rand"
 	"fmt"
 	"math"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/gcs"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/gcs"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -251,7 +251,9 @@ func WithRandomKey() *GCS {
 
 // BuildBasicFilter builds a basic GCS filter from a block. A basic GCS filter will contain all the previous output
 // scripts spent by inputs within a block, as well as the data pushes within all the outputs created within a block.
-func BuildBasicFilter(block *wire.Block, prevOutScripts [][]byte) (*gcs.Filter, error) {
+func BuildBasicFilter(block *wire.Block, prevOutScripts [][]byte) (*gcs.Filter,
+	error,
+) {
 	blockHash := block.BlockHash()
 	b := WithKeyHash(&blockHash)
 	// If the filter had an issue with the specified key, then we force it to bubble up here by calling the Key()
@@ -296,7 +298,8 @@ func GetFilterHash(filter *gcs.Filter) (chainhash.Hash, error) {
 }
 
 // MakeHeaderForFilter makes a filter chain header for a filter, given the filter and the previous filter chain header.
-func MakeHeaderForFilter(filter *gcs.Filter, prevHeader chainhash.Hash) (chainhash.Hash, error) {
+func MakeHeaderForFilter(filter *gcs.Filter, prevHeader chainhash.Hash,
+) (chainhash.Hash, error) {
 	filterTip := make([]byte, 2*chainhash.HashSize)
 	filterHash, e := GetFilterHash(filter)
 	if e != nil {

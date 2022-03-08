@@ -2,13 +2,13 @@ package connmgr
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chaincfg"
 	mrand "math/rand"
 	"net"
 	"strconv"
 	"time"
-	
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (

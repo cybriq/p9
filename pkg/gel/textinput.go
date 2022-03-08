@@ -3,13 +3,13 @@ package gel
 import (
 	"image/color"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/text"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 
-	"github.com/p9c/p9/pkg/gel/f32color"
+	"github.com/cybriq/p9/pkg/gel/f32color"
 )
 
 // TextInput is a simple text input widget
@@ -121,9 +121,11 @@ func (ti *TextInput) Fn(gtx l.Context) l.Dimensions {
 	dims = ti.editor.Layout(gtx, ti.shaper, ti.font, ti.textSize)
 	disabled := gtx.Queue == nil
 	if ti.editor.Len() > 0 {
-		paint.ColorOp{Color: blendDisabledColor(disabled, ti.selectionColor)}.Add(gtx.Ops)
+		paint.ColorOp{Color: blendDisabledColor(disabled, ti.selectionColor),
+		}.Add(gtx.Ops)
 		ti.editor.PaintSelection(gtx)
-		paint.ColorOp{Color: blendDisabledColor(disabled, ti.color)}.Add(gtx.Ops)
+		paint.ColorOp{Color: blendDisabledColor(disabled, ti.color),
+		}.Add(gtx.Ops)
 		ti.editor.PaintText(gtx)
 	} else {
 		call.Add(gtx.Ops)

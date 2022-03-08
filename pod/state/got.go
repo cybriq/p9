@@ -14,21 +14,21 @@ import (
 	"time"
 
 	"github.com/btcsuite/go-socks/socks"
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 	"go.uber.org/atomic"
 
-	"github.com/p9c/p9/pkg/log"
-	"github.com/p9c/p9/cmd/node/active"
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/apputil"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/chainrpc"
-	"github.com/p9c/p9/pkg/connmgr"
-	"github.com/p9c/p9/pkg/fork"
-	"github.com/p9c/p9/pkg/pipe"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/util/routeable"
-	"github.com/p9c/p9/pod/config"
+	"github.com/cybriq/p9/cmd/node/active"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/apputil"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chainrpc"
+	"github.com/cybriq/p9/pkg/connmgr"
+	"github.com/cybriq/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/pipe"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/util/routeable"
+	"github.com/cybriq/p9/pod/config"
 )
 
 // GetNew returns a fresh new context
@@ -86,19 +86,20 @@ func GetNew(
 	}
 	I.Ln("set to write logs in the network specific directory")
 	if e = s.Config.LogDir.Set(
-		filepath.Join(s.Config.DataDir.V(), s.ActiveNet.Name)); E.Chk(e) {
+		filepath.Join(s.Config.DataDir.V(), s.ActiveNet.Name),
+	); E.Chk(e) {
 	}
 	I.Ln("enable log file writing")
 	if e = log.SetLogWriteToFile(s.Config.LogDir.V(),
-		s.Config.RunningCommand.Name); E.Chk(e) {
+		s.Config.RunningCommand.Name,
+	); E.Chk(e) {
 	}
 	// set up TLS stuff if it hasn't been set up yet. We assume if the configured values correspond to files the files
 	// are valid TLS cert/pairs, and that the key will be absent if onetimetlskey was set
 	if (s.Config.ClientTLS.True() || s.Config.ServerTLS.True()) &&
-		(
-			(!apputil.FileExists(s.Config.RPCKey.V()) && s.Config.OneTimeTLSKey.False()) ||
-				!apputil.FileExists(s.Config.RPCCert.V()) ||
-				!apputil.FileExists(s.Config.CAFile.V())) {
+		((!apputil.FileExists(s.Config.RPCKey.V()) && s.Config.OneTimeTLSKey.False()) ||
+			!apputil.FileExists(s.Config.RPCCert.V()) ||
+			!apputil.FileExists(s.Config.CAFile.V())) {
 		D.Ln("generating TLS certificates")
 		I.Ln(s.Config.RPCKey.V(), s.Config.RPCCert.V(), s.Config.RPCKey.V())
 		// Create directories for cert and key files if they do not yet exist.
@@ -191,7 +192,8 @@ func GetNew(
 	switch {
 	case s.Config.RelayNonStd.True() && s.Config.RejectNonStd.True():
 		e = fmt.Errorf("rejectnonstd and relaynonstd cannot be used together" +
-			" -- choose only one")
+			" -- choose only one",
+		)
 		E.Ln(e)
 		return
 	}
@@ -241,7 +243,9 @@ func GetNew(
 		_, allAddresses := routeable.GetAddressesAndInterfaces()
 		p2pAddresses := []string{}
 		for addr := range allAddresses {
-			p2pAddresses = append(p2pAddresses, net.JoinHostPort(addr, s.ActiveNet.DefaultPort))
+			p2pAddresses = append(p2pAddresses,
+				net.JoinHostPort(addr, s.ActiveNet.DefaultPort),
+			)
 		}
 		if e = s.Config.P2PConnect.Set(p2pAddresses); E.Chk(e) {
 			return

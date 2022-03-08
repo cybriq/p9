@@ -22,31 +22,31 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/btcsuite/websocket"
 	uberatomic "go.uber.org/atomic"
 
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/bits"
-	"github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/fork"
-	"github.com/p9c/p9/pod/config"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/bits"
+	"github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/fork"
+	"github.com/cybriq/p9/pod/config"
 
-	"github.com/p9c/p9/cmd/node/active"
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/indexers"
-	"github.com/p9c/p9/pkg/mempool"
-	"github.com/p9c/p9/pkg/mining"
-	p "github.com/p9c/p9/pkg/peer"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/cmd/node/active"
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/indexers"
+	"github.com/cybriq/p9/pkg/mempool"
+	"github.com/cybriq/p9/pkg/mining"
+	p "github.com/cybriq/p9/pkg/peer"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -1055,7 +1055,9 @@ func (state *GBTWorkState) UpdateBlockTemplate(
 			template.ValidPayAddress = true
 			// Update the merkle root.
 			block := block.NewBlock(template.Block)
-			merkles := blockchain.BuildMerkleTreeStore(block.Transactions(), false)
+			merkles := blockchain.BuildMerkleTreeStore(block.Transactions(),
+				false,
+			)
 			template.Block.Header.MerkleRoot = *merkles.GetRoot()
 		}
 		// Set locals for convenience.
@@ -1781,7 +1783,9 @@ func CreateVinListPrevOut(
 		}
 		// Ignore the error here since an error means the script couldn't parse and there is no additional information
 		// about it anyways.
-		_, addrs, _, _ := txscript.ExtractPkScriptAddrs(originTxOut.PkScript, chainParams)
+		_, addrs, _, _ := txscript.ExtractPkScriptAddrs(originTxOut.PkScript,
+			chainParams,
+		)
 		// Encode the addresses while checking if the address passes the filter when needed.
 		encodedAddrs := make([]string, len(addrs))
 		for j, addr := range addrs {
@@ -1827,7 +1831,9 @@ func CreateVoutList(
 		disbuf, _ := txscript.DisasmString(v.PkScript)
 		// Ignore the error here since an error means the script couldn't parse and there is no additional information
 		// about it anyways.
-		scriptClass, addrs, reqSigs, _ := txscript.ExtractPkScriptAddrs(v.PkScript, chainParams)
+		scriptClass, addrs, reqSigs, _ := txscript.ExtractPkScriptAddrs(v.PkScript,
+			chainParams,
+		)
 		// Encode the addresses while checking if the address passes the filter when needed.
 		passesFilter := len(filterAddrMap) == 0
 		encodedAddrs := make([]string, len(addrs))
@@ -1899,7 +1905,8 @@ func FetchInputTxos(s *Server, tx *wire.MsgTx) (
 			txOuts := originTx.MsgTx().TxOut
 			if origin.Index >= uint32(len(txOuts)) {
 				errStr := fmt.Sprintf(
-					"unable to find output %v referenced from transaction %s:%d", origin, tx.TxHash(), txInIndex,
+					"unable to find output %v referenced from transaction %s:%d",
+					origin, tx.TxHash(), txInIndex,
 				)
 				return nil, InternalRPCError(errStr, "")
 			}

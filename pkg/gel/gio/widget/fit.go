@@ -5,10 +5,10 @@ package widget
 import (
 	"image"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
 )
 
 // Fit scales a widget to fit and clip to the constraints.
@@ -35,7 +35,9 @@ const (
 // scale adds clip and scale operations to fit dims to the constraints.
 // It positions the widget to the appropriate position.
 // It returns dimensions modified accordingly.
-func (fit Fit) scale(gtx layout.Context, pos layout.Direction, dims layout.Dimensions) layout.Dimensions {
+func (fit Fit) scale(gtx layout.Context, pos layout.Direction,
+	dims layout.Dimensions,
+) layout.Dimensions {
 	widgetSize := dims.Size
 
 	if fit == Unscaled || dims.Size.X == 0 || dims.Size.Y == 0 {

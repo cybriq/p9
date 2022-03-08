@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/p9c/p9/pkg/apputil"
+	"github.com/cybriq/p9/pkg/apputil"
 )
 
 func main() {
@@ -46,7 +46,7 @@ func getIcons() (iconNames []string) {
 func getSourceCode(packagename string, iconNames []string) []byte {
 	o := `// Package icons bundles the entire set of several icon sets into one package as maps to allow iteration
 
-`+`//go:generate go run ./icongen/.
+` + `//go:generate go run ./icongen/.
 
 package ` + packagename + `
 

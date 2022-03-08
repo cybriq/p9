@@ -1,7 +1,7 @@
 package gel
 
 import (
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 	"golang.org/x/exp/shiny/text"
 )
 

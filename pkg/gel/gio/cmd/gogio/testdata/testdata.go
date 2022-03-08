@@ -9,13 +9,13 @@ import (
 	"image/color"
 	"log"
 
-	"github.com/p9c/p9/pkg/gel/gio/app"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/io/system"
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/app"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/io/system"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
 )
 
 func main() {
@@ -73,19 +73,29 @@ func loop(w *app.Window) error {
 				layout.Flexed(1, func(gtx C) D {
 					return layout.Flex{Axis: layout.Horizontal}.Layout(gtx,
 						// r1c1
-						layout.Flexed(1, func(gtx C) D { return topLeft.Layout(gtx) }),
+						layout.Flexed(1,
+							func(gtx C) D { return topLeft.Layout(gtx) },
+						),
 						// r1c2
-						layout.Flexed(1, func(gtx C) D { return topRight.Layout(gtx) }),
+						layout.Flexed(1,
+							func(gtx C) D { return topRight.Layout(gtx) },
+						),
 					)
-				}),
+				},
+				),
 				layout.Flexed(1, func(gtx C) D {
 					return layout.Flex{Axis: layout.Horizontal}.Layout(gtx,
 						// r2c1
-						layout.Flexed(1, func(gtx C) D { return botLeft.Layout(gtx) }),
+						layout.Flexed(1,
+							func(gtx C) D { return botLeft.Layout(gtx) },
+						),
 						// r2c2
-						layout.Flexed(1, func(gtx C) D { return botRight.Layout(gtx) }),
+						layout.Flexed(1,
+							func(gtx C) D { return botRight.Layout(gtx) },
+						),
 					)
-				}),
+				},
+				),
 			)
 
 			e.Frame(gtx.Ops)
@@ -125,7 +135,8 @@ func (w *quarterWidget) Layout(gtx layout.Context) layout.Dimensions {
 
 	pointer.Rect(image.Rectangle{
 		Max: image.Pt(gtx.Constraints.Max.X, gtx.Constraints.Max.Y),
-	}).Add(gtx.Ops)
+	},
+	).Add(gtx.Ops)
 	pointer.InputOp{
 		Tag:   w,
 		Types: pointer.Press,

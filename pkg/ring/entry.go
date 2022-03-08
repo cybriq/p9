@@ -2,8 +2,8 @@ package ring
 
 import (
 	"context"
-	"github.com/p9c/p9/pkg/log"
-	
+	"github.com/cybriq/p9/pkg/log"
+
 	"github.com/marusama/semaphore"
 )
 

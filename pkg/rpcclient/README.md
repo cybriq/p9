@@ -1,7 +1,7 @@
 # rpcclient
 
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/p9c/p9/rpcclient)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/cybriq/p9/rpcclient)
 
 rpcclient implements a Websocket-enabled Bitcoin JSON-RPC client package written
 in [Go](http://golang.org/). It provides a robust and easy to use client for
@@ -16,19 +16,19 @@ implement and the API is not stable yet.
 
 ## Documentation
 
-- [API Reference](http://godoc.org/github.com/p9c/p9/rpcclient)
+- [API Reference](http://godoc.org/github.com/cybriq/p9/rpcclient)
 
-- [pod Websockets Example](https://github.com/p9c/p9/tree/master/rpcclient/examples/podwebsockets)
+- [pod Websockets Example](https://github.com/cybriq/p9/tree/master/rpcclient/examples/podwebsockets)
   Connects to a pod RPC server using TLS-secured websockets, registers for block
   connected and block disconnected notifications, and gets the current block
   count
 
-- [btcwallet Websockets Example](https://github.com/p9c/p9/tree/master/rpcclient/examples/btcwalletwebsockets)
+- [btcwallet Websockets Example](https://github.com/cybriq/p9/tree/master/rpcclient/examples/btcwalletwebsockets)
   Connects to a btcwallet RPC server using TLS-secured websockets, registers for
   notifications about changes to account balances, and gets a list of unspent
   transaction outputs (utxos) the wallet can sign
 
-- [Bitcoin Core HTTP POST Example](https://github.com/p9c/p9/tree/master/rpcclient/examples/bitcoincorehttp)
+- [Bitcoin Core HTTP POST Example](https://github.com/cybriq/p9/tree/master/rpcclient/examples/bitcoincorehttp)
   Connects to a bitcoin core RPC server using HTTP POST mode with TLS disabled
   and gets the current block count
 
@@ -57,7 +57,7 @@ implement and the API is not stable yet.
 ## Installation
 
 ```bash
-$ go get -u github.com/p9c/p9/rpcclient
+$ go get -u github.com/cybriq/p9/rpcclient
 ```
 
 ## License

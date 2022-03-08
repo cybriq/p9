@@ -8,12 +8,12 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/qu"
 )
 
 func init() {
-	
+
 	// Override the max retry duration when running tests.
 	maxRetryDuration = 2 * time.Millisecond
 }
@@ -158,12 +158,16 @@ func TestConnectMode(t *testing.T) {
 	wantID := cr.ID()
 	gotID := gotConnReq.ID()
 	if gotID != wantID {
-		t.Fatalf("connect mode: %v - want ID %v, got ID %v", cr.Addr, wantID, gotID)
+		t.Fatalf("connect mode: %v - want ID %v, got ID %v", cr.Addr, wantID,
+			gotID,
+		)
 	}
 	gotState := cr.State()
 	wantState := ConnEstablished
 	if gotState != wantState {
-		t.Fatalf("connect mode: %v - want state %v, got state %v", cr.Addr, wantState, gotState)
+		t.Fatalf("connect mode: %v - want state %v, got state %v", cr.Addr,
+			wantState, gotState,
+		)
 	}
 	select {
 	case c := <-connected:
@@ -247,7 +251,9 @@ func TestRetryPermanent(t *testing.T) {
 	gotState := cr.State()
 	wantState := ConnEstablished
 	if gotState != wantState {
-		t.Fatalf("retry: %v - want state %v, got state %v", cr.Addr, wantState, gotState)
+		t.Fatalf("retry: %v - want state %v, got state %v", cr.Addr, wantState,
+			gotState,
+		)
 	}
 	cmgr.Disconnect(cr.ID())
 	gotConnReq = <-disconnected
@@ -259,7 +265,9 @@ func TestRetryPermanent(t *testing.T) {
 	gotState = cr.State()
 	wantState = ConnPending
 	if gotState != wantState {
-		t.Fatalf("retry: %v - want state %v, got state %v", cr.Addr, wantState, gotState)
+		t.Fatalf("retry: %v - want state %v, got state %v", cr.Addr, wantState,
+			gotState,
+		)
 	}
 	gotConnReq = <-connected
 	wantID = cr.ID()
@@ -270,7 +278,9 @@ func TestRetryPermanent(t *testing.T) {
 	gotState = cr.State()
 	wantState = ConnEstablished
 	if gotState != wantState {
-		t.Fatalf("retry: %v - want state %v, got state %v", cr.Addr, wantState, gotState)
+		t.Fatalf("retry: %v - want state %v, got state %v", cr.Addr, wantState,
+			gotState,
+		)
 	}
 	cmgr.Remove(cr.ID())
 	gotConnReq = <-disconnected
@@ -282,7 +292,9 @@ func TestRetryPermanent(t *testing.T) {
 	gotState = cr.State()
 	wantState = ConnDisconnected
 	if gotState != wantState {
-		t.Fatalf("retry: %v - want state %v, got state %v", cr.Addr, wantState, gotState)
+		t.Fatalf("retry: %v - want state %v, got state %v", cr.Addr, wantState,
+			gotState,
+		)
 	}
 	cmgr.Stop()
 }

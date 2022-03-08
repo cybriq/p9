@@ -5,7 +5,7 @@ package layout
 import (
 	"image"
 
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 // Stack lays out child elements on top of each other,

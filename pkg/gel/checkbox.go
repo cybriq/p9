@@ -1,7 +1,7 @@
 package gel
 
 import (
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 )
 
 // CheckBox creates a checkbox with a text label

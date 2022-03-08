@@ -5,10 +5,10 @@ import (
 	"os"
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/walletdb"
-	"github.com/p9c/p9/pkg/walletdb/bdb"
-	_ "github.com/p9c/p9/pkg/walletdb/bdb"
+
+	"github.com/cybriq/p9/pkg/walletdb"
+	"github.com/cybriq/p9/pkg/walletdb/bdb"
+	_ "github.com/cybriq/p9/pkg/walletdb/bdb"
 )
 
 // dbType is the database type name for this driver.

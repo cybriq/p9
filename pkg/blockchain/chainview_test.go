@@ -5,8 +5,8 @@ import (
 	"math/rand"
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // testNoncePrng provides a deterministic prng for the nonce in generated fake nodes. The ensures that the node have
@@ -178,7 +178,8 @@ testLoop:
 			continue
 		}
 		if test.side.Genesis() != test.genesis {
-			t.Errorf("%s: unexpected side view genesis -- got %v, want %v", test.name, test.view.Genesis(),
+			t.Errorf("%s: unexpected side view genesis -- got %v, want %v",
+				test.name, test.view.Genesis(),
 				test.genesis,
 			)
 			continue

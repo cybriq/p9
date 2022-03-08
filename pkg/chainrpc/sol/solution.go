@@ -2,10 +2,10 @@ package sol
 
 import (
 	"bytes"
-	
+
 	"github.com/niubaoshu/gotiny"
-	
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // Magic is the marker for packets containing a solution

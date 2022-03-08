@@ -5,7 +5,7 @@ import (
 	"os/signal"
 	"runtime/trace"
 	
-	"github.com/p9c/p9/pkg/util/cl"
+	"github.com/cybriq/p9/pkg/util/cl"
 )
 
 // shutdownRequestChannel is used to initiate shutdown from one of the subsystems using the same code paths as when an interrupt signal is received.

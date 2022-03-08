@@ -10,8 +10,8 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/gpu/internal/driver"
-	"github.com/p9c/p9/pkg/gel/gio/internal/gl"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu/internal/driver"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/gl"
 )
 
 // Backend implements driver.Device.
@@ -195,7 +195,8 @@ func (b *Backend) IsTimeContinuous() bool {
 	return b.funcs.GetInteger(gl.GPU_DISJOINT_EXT) == gl.FALSE
 }
 
-func (b *Backend) NewFramebuffer(tex driver.Texture, depthBits int) (driver.Framebuffer, error) {
+func (b *Backend) NewFramebuffer(tex driver.Texture, depthBits int,
+) (driver.Framebuffer, error) {
 	glErr(b.funcs)
 	gltex := tex.(*gpuTexture)
 	fb := b.funcs.CreateFramebuffer()
@@ -205,7 +206,9 @@ func (b *Backend) NewFramebuffer(tex driver.Texture, depthBits int) (driver.Fram
 		fbo.Release()
 		return nil, err
 	}
-	b.funcs.FramebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, gltex.obj, 0)
+	b.funcs.FramebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+		gl.TEXTURE_2D, gltex.obj, 0,
+	)
 	if depthBits > 0 {
 		size := gl.Enum(gl.DEPTH_COMPONENT16)
 		switch {
@@ -216,8 +219,12 @@ func (b *Backend) NewFramebuffer(tex driver.Texture, depthBits int) (driver.Fram
 		}
 		depthBuf := b.funcs.CreateRenderbuffer()
 		b.funcs.BindRenderbuffer(gl.RENDERBUFFER, depthBuf)
-		b.funcs.RenderbufferStorage(gl.RENDERBUFFER, size, gltex.width, gltex.height)
-		b.funcs.FramebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuf)
+		b.funcs.RenderbufferStorage(gl.RENDERBUFFER, size, gltex.width,
+			gltex.height,
+		)
+		b.funcs.FramebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT,
+			gl.RENDERBUFFER, depthBuf,
+		)
 		fbo.depthBuf = depthBuf
 		fbo.hasDepth = true
 		if err := glErr(b.funcs); err != nil {
@@ -227,14 +234,20 @@ func (b *Backend) NewFramebuffer(tex driver.Texture, depthBits int) (driver.Fram
 	}
 	if st := b.funcs.CheckFramebufferStatus(gl.FRAMEBUFFER); st != gl.FRAMEBUFFER_COMPLETE {
 		fbo.Release()
-		return nil, fmt.Errorf("incomplete framebuffer, status = 0x%x, err = %d", st, b.funcs.GetError())
+		return nil, fmt.Errorf("incomplete framebuffer, status = 0x%x, err = %d",
+			st, b.funcs.GetError(),
+		)
 	}
 	return fbo, nil
 }
 
-func (b *Backend) NewTexture(format driver.TextureFormat, width, height int, minFilter, magFilter driver.TextureFilter, binding driver.BufferBinding) (driver.Texture, error) {
+func (b *Backend) NewTexture(format driver.TextureFormat, width, height int,
+	minFilter, magFilter driver.TextureFilter, binding driver.BufferBinding,
+) (driver.Texture, error) {
 	glErr(b.funcs)
-	tex := &gpuTexture{backend: b, obj: b.funcs.CreateTexture(), width: width, height: height}
+	tex := &gpuTexture{backend: b, obj: b.funcs.CreateTexture(), width: width,
+		height: height,
+	}
 	switch format {
 	case driver.TextureFormatFloat:
 		tex.triple = b.floatTriple
@@ -246,15 +259,23 @@ func (b *Backend) NewTexture(format driver.TextureFormat, width, height int, min
 		return nil, errors.New("unsupported texture format")
 	}
 	b.BindTexture(0, tex)
-	b.funcs.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, toTexFilter(magFilter))
-	b.funcs.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, toTexFilter(minFilter))
+	b.funcs.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER,
+		toTexFilter(magFilter),
+	)
+	b.funcs.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
+		toTexFilter(minFilter),
+	)
 	b.funcs.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
 	b.funcs.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
 	if b.gles && b.glver[0] >= 3 {
 		// Immutable textures are required for BindImageTexture, and can't hurt otherwise.
-		b.funcs.TexStorage2D(gl.TEXTURE_2D, 1, tex.triple.internalFormat, width, height)
+		b.funcs.TexStorage2D(gl.TEXTURE_2D, 1, tex.triple.internalFormat, width,
+			height,
+		)
 	} else {
-		b.funcs.TexImage2D(gl.TEXTURE_2D, 0, tex.triple.internalFormat, width, height, tex.triple.format, tex.triple.typ)
+		b.funcs.TexImage2D(gl.TEXTURE_2D, 0, tex.triple.internalFormat, width,
+			height, tex.triple.format, tex.triple.typ,
+		)
 	}
 	if err := glErr(b.funcs); err != nil {
 		tex.Release()
@@ -263,7 +284,9 @@ func (b *Backend) NewTexture(format driver.TextureFormat, width, height int, min
 	return tex, nil
 }
 
-func (b *Backend) NewBuffer(typ driver.BufferBinding, size int) (driver.Buffer, error) {
+func (b *Backend) NewBuffer(typ driver.BufferBinding, size int) (driver.Buffer,
+	error,
+) {
 	glErr(b.funcs)
 	buf := &gpuBuffer{backend: b, typ: typ, size: size}
 	if typ&driver.BufferBindingUniforms != 0 {
@@ -289,10 +312,13 @@ func (b *Backend) NewBuffer(typ driver.BufferBinding, size int) (driver.Buffer, 
 	return buf, nil
 }
 
-func (b *Backend) NewImmutableBuffer(typ driver.BufferBinding, data []byte) (driver.Buffer, error) {
+func (b *Backend) NewImmutableBuffer(typ driver.BufferBinding, data []byte,
+) (driver.Buffer, error) {
 	glErr(b.funcs)
 	obj := b.funcs.CreateBuffer()
-	buf := &gpuBuffer{backend: b, obj: obj, typ: typ, size: len(data), hasBuffer: true}
+	buf := &gpuBuffer{backend: b, obj: obj, typ: typ, size: len(data),
+		hasBuffer: true,
+	}
 	firstBinding := firstBufferType(typ)
 	b.funcs.BindBuffer(firstBinding, buf.obj)
 	b.funcs.BufferData(firstBinding, len(data), gl.STATIC_DRAW)
@@ -323,14 +349,18 @@ func (b *Backend) DispatchCompute(x, y, z int) {
 	if p := b.state.prog; p != nil {
 		for binding, buf := range p.storage {
 			if buf != nil {
-				b.funcs.BindBufferBase(gl.SHADER_STORAGE_BUFFER, binding, buf.obj)
+				b.funcs.BindBufferBase(gl.SHADER_STORAGE_BUFFER, binding,
+					buf.obj,
+				)
 			}
 		}
 	}
 	b.funcs.DispatchCompute(x, y, z)
 }
 
-func (b *Backend) BindImageTexture(unit int, tex driver.Texture, access driver.AccessBits, f driver.TextureFormat) {
+func (b *Backend) BindImageTexture(unit int, tex driver.Texture,
+	access driver.AccessBits, f driver.TextureFormat,
+) {
 	t := tex.(*gpuTexture)
 	var acc gl.Enum
 	switch access {
@@ -478,13 +508,19 @@ func (b *Backend) DepthFunc(f driver.DepthFunc) {
 	b.funcs.DepthFunc(glfunc)
 }
 
-func (b *Backend) NewInputLayout(vs driver.ShaderSources, layout []driver.InputDesc) (driver.InputLayout, error) {
+func (b *Backend) NewInputLayout(vs driver.ShaderSources,
+	layout []driver.InputDesc,
+) (driver.InputLayout, error) {
 	if len(vs.Inputs) != len(layout) {
-		return nil, fmt.Errorf("NewInputLayout: got %d inputs, expected %d", len(layout), len(vs.Inputs))
+		return nil, fmt.Errorf("NewInputLayout: got %d inputs, expected %d",
+			len(layout), len(vs.Inputs),
+		)
 	}
 	for i, inp := range vs.Inputs {
 		if exp, got := inp.Size, layout[i].Size; exp != got {
-			return nil, fmt.Errorf("NewInputLayout: data size mismatch for %q: got %d expected %d", inp.Name, got, exp)
+			return nil, fmt.Errorf("NewInputLayout: data size mismatch for %q: got %d expected %d",
+				inp.Name, got, exp,
+			)
 		}
 	}
 	return &gpuInputLayout{
@@ -493,7 +529,9 @@ func (b *Backend) NewInputLayout(vs driver.ShaderSources, layout []driver.InputD
 	}, nil
 }
 
-func (b *Backend) NewComputeProgram(src driver.ShaderSources) (driver.Program, error) {
+func (b *Backend) NewComputeProgram(src driver.ShaderSources) (driver.Program,
+	error,
+) {
 	p, err := gl.CreateComputeProgram(b.funcs, src.GLSL310ES)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %v", src.Name, err)
@@ -505,7 +543,9 @@ func (b *Backend) NewComputeProgram(src driver.ShaderSources) (driver.Program, e
 	return gpuProg, nil
 }
 
-func (b *Backend) NewProgram(vertShader, fragShader driver.ShaderSources) (driver.Program, error) {
+func (b *Backend) NewProgram(vertShader, fragShader driver.ShaderSources) (driver.Program,
+	error,
+) {
 	attr := make([]string, len(vertShader.Inputs))
 	for _, inp := range vertShader.Inputs {
 		attr[inp.Location] = inp.Name
@@ -560,22 +600,32 @@ func (b *Backend) NewProgram(vertShader, fragShader driver.ShaderSources) (drive
 		for _, block := range fragShader.Uniforms.Blocks {
 			blockIdx := b.funcs.GetUniformBlockIndex(p, block.Name)
 			if blockIdx != gl.INVALID_INDEX {
-				b.funcs.UniformBlockBinding(p, blockIdx, uint(block.Binding+off))
+				b.funcs.UniformBlockBinding(p, blockIdx,
+					uint(block.Binding+off),
+				)
 			}
 		}
 	} else {
-		gpuProg.vertUniforms.setup(b.funcs, p, vertShader.Uniforms.Size, vertShader.Uniforms.Locations)
-		gpuProg.fragUniforms.setup(b.funcs, p, fragShader.Uniforms.Size, fragShader.Uniforms.Locations)
+		gpuProg.vertUniforms.setup(b.funcs, p, vertShader.Uniforms.Size,
+			vertShader.Uniforms.Locations,
+		)
+		gpuProg.fragUniforms.setup(b.funcs, p, fragShader.Uniforms.Size,
+			fragShader.Uniforms.Locations,
+		)
 	}
 	return gpuProg, nil
 }
 
-func lookupUniform(funcs *gl.Functions, p gl.Program, loc driver.UniformLocation) uniformLocation {
+func lookupUniform(funcs *gl.Functions, p gl.Program,
+	loc driver.UniformLocation,
+) uniformLocation {
 	u := funcs.GetUniformLocation(p, loc.Name)
 	if !u.Valid() {
 		panic(fmt.Errorf("uniform %q not found", loc.Name))
 	}
-	return uniformLocation{uniform: u, offset: loc.Offset, typ: loc.Type, size: loc.Size}
+	return uniformLocation{uniform: u, offset: loc.Offset, typ: loc.Type,
+		size: loc.Size,
+	}
 }
 
 func (p *gpuProgram) SetStorageBuffer(binding int, buffer driver.Buffer) {
@@ -618,7 +668,9 @@ func (p *gpuProgram) Release() {
 	p.backend.funcs.DeleteProgram(p.obj)
 }
 
-func (u *uniformsTracker) setup(funcs *gl.Functions, p gl.Program, uniformSize int, uniforms []driver.UniformLocation) {
+func (u *uniformsTracker) setup(funcs *gl.Functions, p gl.Program,
+	uniformSize int, uniforms []driver.UniformLocation,
+) {
 	u.locs = make([]uniformLocation, len(uniforms))
 	for i, uniform := range uniforms {
 		u.locs[i] = lookupUniform(funcs, p, uniform)
@@ -632,7 +684,10 @@ func (u *uniformsTracker) setBuffer(buffer driver.Buffer) {
 		panic("not a uniform buffer")
 	}
 	if buf.size < u.size {
-		panic(fmt.Errorf("uniform buffer too small, got %d need %d", buf.size, u.size))
+		panic(fmt.Errorf("uniform buffer too small, got %d need %d", buf.size,
+			u.size,
+		),
+		)
 	}
 	u.buf = buf
 	// Force update.
@@ -703,9 +758,13 @@ func (b *gpuBuffer) Download(data []byte) error {
 	}
 	firstBinding := firstBufferType(b.typ)
 	b.backend.funcs.BindBuffer(firstBinding, b.obj)
-	bufferMap := b.backend.funcs.MapBufferRange(firstBinding, 0, len(data), gl.MAP_READ_BIT)
+	bufferMap := b.backend.funcs.MapBufferRange(firstBinding, 0, len(data),
+		gl.MAP_READ_BIT,
+	)
 	if bufferMap == nil {
-		return fmt.Errorf("MapBufferRange: error %#x", b.backend.funcs.GetError())
+		return fmt.Errorf("MapBufferRange: error %#x",
+			b.backend.funcs.GetError(),
+		)
 	}
 	copy(data, bufferMap)
 	if !b.backend.funcs.UnmapBuffer(firstBinding) {
@@ -747,7 +806,9 @@ func (b *Backend) setupVertexArrays() {
 		default:
 			panic("unsupported data type")
 		}
-		b.funcs.VertexAttribPointer(gl.Attrib(inp.Location), l.Size, gltyp, false, buf.stride, buf.offset+l.Offset)
+		b.funcs.VertexAttribPointer(gl.Attrib(inp.Location), l.Size, gltyp,
+			false, buf.stride, buf.offset+l.Offset,
+		)
 	}
 }
 
@@ -759,14 +820,17 @@ func (b *Backend) BindIndexBuffer(buf driver.Buffer) {
 	b.funcs.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, gbuf.obj)
 }
 
-func (b *Backend) BlitFramebuffer(dst, src driver.Framebuffer, srect, drect image.Rectangle) {
+func (b *Backend) BlitFramebuffer(dst, src driver.Framebuffer,
+	srect, drect image.Rectangle,
+) {
 	b.funcs.BindFramebuffer(gl.DRAW_FRAMEBUFFER, dst.(*gpuFramebuffer).obj)
 	b.funcs.BindFramebuffer(gl.READ_FRAMEBUFFER, src.(*gpuFramebuffer).obj)
 	b.funcs.BlitFramebuffer(
 		srect.Min.X, srect.Min.Y, srect.Max.X, srect.Max.Y,
 		drect.Min.X, drect.Min.Y, drect.Max.X, drect.Max.Y,
 		gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT|gl.STENCIL_BUFFER_BIT,
-		gl.NEAREST)
+		gl.NEAREST,
+	)
 }
 
 func (f *gpuFramebuffer) ReadPixels(src image.Rectangle, pixels []byte) error {
@@ -775,7 +839,9 @@ func (f *gpuFramebuffer) ReadPixels(src image.Rectangle, pixels []byte) error {
 	if len(pixels) < src.Dx()*src.Dy()*4 {
 		return errors.New("unexpected RGBA size")
 	}
-	f.backend.funcs.ReadPixels(src.Min.X, src.Min.Y, src.Dx(), src.Dy(), gl.RGBA, gl.UNSIGNED_BYTE, pixels)
+	f.backend.funcs.ReadPixels(src.Min.X, src.Min.Y, src.Dx(), src.Dy(),
+		gl.RGBA, gl.UNSIGNED_BYTE, pixels,
+	)
 	return glErr(f.backend.funcs)
 }
 
@@ -822,7 +888,9 @@ func (t *gpuTexture) Upload(offset, size image.Point, pixels []byte) {
 		panic(fmt.Errorf("size %d larger than data %d", min, len(pixels)))
 	}
 	t.backend.BindTexture(0, t)
-	t.backend.funcs.TexSubImage2D(gl.TEXTURE_2D, 0, offset.X, offset.Y, size.X, size.Y, t.triple.format, t.triple.typ, pixels)
+	t.backend.funcs.TexSubImage2D(gl.TEXTURE_2D, 0, offset.X, offset.Y, size.X,
+		size.Y, t.triple.format, t.triple.typ, pixels,
+	)
 }
 
 func (t *gpuTimer) Begin() {
@@ -856,23 +924,39 @@ func (b *Backend) BindInputLayout(l driver.InputLayout) {
 func (l *gpuInputLayout) Release() {}
 
 // floatTripleFor determines the best texture triple for floating point FBOs.
-func floatTripleFor(f *gl.Functions, ver [2]int, exts []string) (textureTriple, error) {
+func floatTripleFor(f *gl.Functions, ver [2]int, exts []string) (textureTriple,
+	error,
+) {
 	var triples []textureTriple
 	if ver[0] >= 3 {
-		triples = append(triples, textureTriple{gl.R16F, gl.Enum(gl.RED), gl.Enum(gl.HALF_FLOAT)})
+		triples = append(triples,
+			textureTriple{gl.R16F, gl.Enum(gl.RED), gl.Enum(gl.HALF_FLOAT)},
+		)
 	}
 	// According to the OES_texture_half_float specification, EXT_color_buffer_half_float is needed to
 	// render to FBOs. However, the Safari WebGL1 implementation does support half-float FBOs but does not
 	// report EXT_color_buffer_half_float support. The triples are verified below, so it doesn't matter if we're
 	// wrong.
-	if hasExtension(exts, "GL_OES_texture_half_float") || hasExtension(exts, "GL_EXT_color_buffer_half_float") {
+	if hasExtension(exts, "GL_OES_texture_half_float") || hasExtension(exts,
+		"GL_EXT_color_buffer_half_float",
+	) {
 		// Try single channel.
-		triples = append(triples, textureTriple{gl.LUMINANCE, gl.Enum(gl.LUMINANCE), gl.Enum(gl.HALF_FLOAT_OES)})
+		triples = append(triples,
+			textureTriple{gl.LUMINANCE, gl.Enum(gl.LUMINANCE),
+				gl.Enum(gl.HALF_FLOAT_OES),
+			},
+		)
 		// Fallback to 4 channels.
-		triples = append(triples, textureTriple{gl.RGBA, gl.Enum(gl.RGBA), gl.Enum(gl.HALF_FLOAT_OES)})
+		triples = append(triples,
+			textureTriple{gl.RGBA, gl.Enum(gl.RGBA), gl.Enum(gl.HALF_FLOAT_OES)},
+		)
 	}
-	if hasExtension(exts, "GL_OES_texture_float") || hasExtension(exts, "GL_EXT_color_buffer_float") {
-		triples = append(triples, textureTriple{gl.RGBA, gl.Enum(gl.RGBA), gl.Enum(gl.FLOAT)})
+	if hasExtension(exts, "GL_OES_texture_float") || hasExtension(exts,
+		"GL_EXT_color_buffer_float",
+	) {
+		triples = append(triples,
+			textureTriple{gl.RGBA, gl.Enum(gl.RGBA), gl.Enum(gl.FLOAT)},
+		)
 	}
 	tex := f.CreateTexture()
 	defer f.DeleteTexture(tex)
@@ -889,23 +973,37 @@ func floatTripleFor(f *gl.Functions, ver [2]int, exts []string) (textureTriple, 
 	var attempts []string
 	for _, tt := range triples {
 		const size = 256
-		f.TexImage2D(gl.TEXTURE_2D, 0, tt.internalFormat, size, size, tt.format, tt.typ)
-		f.FramebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0)
+		f.TexImage2D(gl.TEXTURE_2D, 0, tt.internalFormat, size, size, tt.format,
+			tt.typ,
+		)
+		f.FramebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+			gl.TEXTURE_2D, tex, 0,
+		)
 		st := f.CheckFramebufferStatus(gl.FRAMEBUFFER)
 		if st == gl.FRAMEBUFFER_COMPLETE {
 			return tt, nil
 		}
-		attempts = append(attempts, fmt.Sprintf("(0x%x, 0x%x, 0x%x): 0x%x", tt.internalFormat, tt.format, tt.typ, st))
+		attempts = append(attempts,
+			fmt.Sprintf("(0x%x, 0x%x, 0x%x): 0x%x", tt.internalFormat,
+				tt.format, tt.typ, st,
+			),
+		)
 	}
-	return textureTriple{}, fmt.Errorf("floating point fbos not supported (attempted %s)", attempts)
+	return textureTriple{}, fmt.Errorf("floating point fbos not supported (attempted %s)",
+		attempts,
+	)
 }
 
 func srgbaTripleFor(ver [2]int, exts []string) (textureTriple, error) {
 	switch {
 	case ver[0] >= 3:
-		return textureTriple{gl.SRGB8_ALPHA8, gl.Enum(gl.RGBA), gl.Enum(gl.UNSIGNED_BYTE)}, nil
+		return textureTriple{gl.SRGB8_ALPHA8, gl.Enum(gl.RGBA),
+			gl.Enum(gl.UNSIGNED_BYTE),
+		}, nil
 	case hasExtension(exts, "GL_EXT_sRGB"):
-		return textureTriple{gl.SRGB_ALPHA_EXT, gl.Enum(gl.SRGB_ALPHA_EXT), gl.Enum(gl.UNSIGNED_BYTE)}, nil
+		return textureTriple{gl.SRGB_ALPHA_EXT, gl.Enum(gl.SRGB_ALPHA_EXT),
+			gl.Enum(gl.UNSIGNED_BYTE),
+		}, nil
 	default:
 		return textureTriple{}, errors.New("no sRGB texture formats found")
 	}

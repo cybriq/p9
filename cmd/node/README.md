@@ -1,6 +1,6 @@
 ![](https://gitlab.com/parallelcoin/node/raw/master/assets/logo.png)
 
-# The Parallelcoin Node [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org) [![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/p9c/p9/node)
+# The Parallelcoin Node [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org) [![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/cybriq/p9/node)
 
 Next generation full node for Parallelcoin, forked
 from [btcd](https://github.com/btcsuite/btcd)
@@ -71,7 +71,7 @@ You probably will also want CLI client (can also speak to other bitcoin protocol
 RPC endpoints also):
 
 ```bash
-go get github.com/p9c/p9/cmd/podctl
+go get github.com/cybriq/p9/cmd/podctl
 ```
 
 ## Requirements
@@ -84,7 +84,7 @@ go get github.com/p9c/p9/cmd/podctl
 
 When it is, it will be available here:
 
-https://github.com/p9c/p9/releases
+https://github.com/cybriq/p9/releases
 
 #### Linux/BSD/MacOSX/POSIX - Build from Source
 
@@ -150,13 +150,13 @@ Come and chat at our (discord server](https://discord.gg/nJKts94)
 
 ## Issue Tracker
 
-The [integrated github issue tracker](https://github.com/p9c/p9/issues)
+The [integrated github issue tracker](https://github.com/cybriq/p9/issues)
 is used for this project.
 
 ## Documentation
 
 The documentation is a work-in-progress. It is located in
-the [docs](https://github.com/p9c/p9/tree/master/docs)
+the [docs](https://github.com/cybriq/p9/tree/master/docs)
 folder.
 
 ## License

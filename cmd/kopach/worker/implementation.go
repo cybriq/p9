@@ -8,24 +8,24 @@ import (
 	"sync"
 	"time"
 
-	"github.com/p9c/p9/pkg/bits"
-	"github.com/p9c/p9/pkg/chainrpc/templates"
-	"github.com/p9c/p9/pkg/constant"
-	"github.com/p9c/p9/pkg/fork"
-	"github.com/p9c/p9/pkg/pipe"
+	"github.com/cybriq/p9/pkg/bits"
+	"github.com/cybriq/p9/pkg/chainrpc/templates"
+	"github.com/cybriq/p9/pkg/constant"
+	"github.com/cybriq/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/pipe"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/chainrpc/hashrate"
-	"github.com/p9c/p9/pkg/chainrpc/sol"
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/chainrpc/hashrate"
+	"github.com/cybriq/p9/pkg/chainrpc/sol"
 
 	"go.uber.org/atomic"
 
-	"github.com/p9c/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/interrupt"
 
-	"github.com/p9c/p9/pkg/ring"
-	"github.com/p9c/p9/pkg/transport"
+	"github.com/cybriq/p9/pkg/ring"
+	"github.com/cybriq/p9/pkg/transport"
 )
 
 const CountPerRound = 81
@@ -116,7 +116,9 @@ func (c *Counter) GetAlgoVer(height int32) (ver int32) {
 
 // NewWithConnAndSemaphore is exposed to enable use an actual network connection while retaining the same RPC API to
 // allow a worker to be configured to run on a bare metal system with a different launcher main
-func NewWithConnAndSemaphore(id string, conn *pipe.StdConn, quit qu.C, uuid uint64) *Worker {
+func NewWithConnAndSemaphore(id string, conn *pipe.StdConn, quit qu.C,
+	uuid uint64,
+) *Worker {
 	T.Ln("creating new worker")
 	// msgBlock := wire.WireBlock{Header: wire.BlockHeader{}}
 	w := &Worker{
@@ -204,7 +206,9 @@ out:
 						D.Ln("switching algorithms", w.roller.C.Load())
 						// send out broadcast containing worker nonce and algorithm and count of blocks
 						w.hashCount.Store(w.hashCount.Load() + uint64(w.roller.RoundsPerAlgo.Load()))
-						hashReport := hashrate.Get(w.roller.RoundsPerAlgo.Load(), vers, newHeight, w.id)
+						hashReport := hashrate.Get(w.roller.RoundsPerAlgo.Load(),
+							vers, newHeight, w.id,
+						)
 						e := w.dispatchConn.SendMany(
 							hashrate.Magic,
 							transport.GetShards(hashReport),
@@ -231,8 +235,12 @@ out:
 					hash := blockHeader.BlockHashWithAlgos(newHeight)
 					bigHash := blockchain.HashToBig(&hash)
 					if bigHash.Cmp(bits.CompactToBig(blockHeader.Bits)) <= 0 {
-						D.Ln("found solution", newHeight, w.templatesMessage.Nonce, w.templatesMessage.UUID)
-						srs := sol.Encode(w.templatesMessage.Nonce, w.templatesMessage.UUID, blockHeader)
+						D.Ln("found solution", newHeight,
+							w.templatesMessage.Nonce, w.templatesMessage.UUID,
+						)
+						srs := sol.Encode(w.templatesMessage.Nonce,
+							w.templatesMessage.UUID, blockHeader,
+						)
 						e := w.dispatchConn.SendMany(
 							sol.Magic,
 							transport.GetShards(srs),
@@ -263,7 +271,7 @@ out:
 func New(id string, quit qu.C, uuid uint64) (w *Worker, conn net.Conn) {
 	// log.L.SetLevel("trace", true)
 	sc := pipe.New(os.Stdin, os.Stdout, quit)
-	
+
 	return NewWithConnAndSemaphore(id, sc, quit, uuid), sc
 }
 

@@ -5,9 +5,9 @@ import (
 	"encoding/binary"
 	"fmt"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // Bip16Activation is the timestamp where BIP0016 is valid to use in the blockchain. To be used to determine if BIP0016
@@ -15,7 +15,7 @@ import (
 var Bip16Activation = time.Unix(1333238400, 0)
 
 type // SigHashType represents hash type bits at the end of a signature.
-	SigHashType uint32
+SigHashType uint32
 
 const ( // Hash type bits from the end of a signature.
 	SigHashOld          SigHashType = 0x0
@@ -25,9 +25,9 @@ const ( // Hash type bits from the end of a signature.
 	SigHashAnyOneCanPay SigHashType = 0x80
 	// sigHashMask defines the number of bits of the hash type which is used to identify which outputs are signed.
 	sigHashMask = 0x1f
-	
+
 	// These are the constants specified for maximums in individual scripts.
-	
+
 	MaxOpsPerScript       = 201 // Max number of non-push operations.
 	MaxPubKeysPerMultiSig = 20  // Multisig can't have more sigs than this.
 	MaxScriptElementSize  = 520 // Max bytes pushable to the stack.
@@ -170,7 +170,9 @@ func IsPushOnlyScript(script []byte) bool {
 
 // ParseScriptTemplate is the same as parseScript but allows the passing of the template list for testing purposes. When
 // there are parse errors, it returns the list of parsed opcodes up to the point of failure along with the error.
-func ParseScriptTemplate(script []byte, opcodes *[256]opcode) ([]parsedOpcode, error) {
+func ParseScriptTemplate(script []byte, opcodes *[256]opcode) ([]parsedOpcode,
+	error,
+) {
 	retScript := make([]parsedOpcode, 0, len(script))
 	for i := 0; i < len(script); {
 		instr := script[i]
@@ -540,7 +542,9 @@ func shallowCopyTx(tx *wire.MsgTx) wire.MsgTx {
 
 // CalcSignatureHash will given a script and hash type for the current script engine instance calculate the signature
 // hash to be used for signing and verification.
-func CalcSignatureHash(script []byte, hashType SigHashType, tx *wire.MsgTx, idx int) ([]byte, error) {
+func CalcSignatureHash(script []byte, hashType SigHashType, tx *wire.MsgTx,
+	idx int,
+) ([]byte, error) {
 	parsedScript, e := parseScript(script)
 	if e != nil {
 		return nil, fmt.Errorf("cannot parse output script: %v", e)
@@ -550,7 +554,9 @@ func CalcSignatureHash(script []byte, hashType SigHashType, tx *wire.MsgTx, idx 
 
 // calcSignatureHash will given a script and hash type for the current script engine instance calculate the signature
 // hash to be used for signing and verification.
-func calcSignatureHash(script []parsedOpcode, hashType SigHashType, tx *wire.MsgTx, idx int) []byte {
+func calcSignatureHash(script []parsedOpcode, hashType SigHashType,
+	tx *wire.MsgTx, idx int,
+) []byte {
 	// The SigHashSingle signature type signs only the corresponding input and output (the output with the same index
 	// number as the input). Since transactions can have more inputs than outputs, this means it is improper to use
 	// SigHashSingle on input indices that don't have a corresponding output. A bug in the original Satoshi client

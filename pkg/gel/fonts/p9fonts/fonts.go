@@ -4,37 +4,43 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/p9c/p9/pkg/gel/gio/font/opentype"
-	"github.com/p9c/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/font/opentype"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
 	"golang.org/x/image/font/gofont/gomono"
 	"golang.org/x/image/font/gofont/gomonobold"
 	"golang.org/x/image/font/gofont/gomonobolditalic"
 	"golang.org/x/image/font/gofont/gomonoitalic"
 
-	"github.com/p9c/p9/pkg/gel/fonts/bariolbold"
-	"github.com/p9c/p9/pkg/gel/fonts/bariolbolditalic"
-	"github.com/p9c/p9/pkg/gel/fonts/bariollight"
-	"github.com/p9c/p9/pkg/gel/fonts/bariollightitalic"
-	"github.com/p9c/p9/pkg/gel/fonts/bariolregular"
-	"github.com/p9c/p9/pkg/gel/fonts/bariolregularitalic"
-	"github.com/p9c/p9/pkg/gel/fonts/plan9"
+	"github.com/cybriq/p9/pkg/gel/fonts/bariolbold"
+	"github.com/cybriq/p9/pkg/gel/fonts/bariolbolditalic"
+	"github.com/cybriq/p9/pkg/gel/fonts/bariollight"
+	"github.com/cybriq/p9/pkg/gel/fonts/bariollightitalic"
+	"github.com/cybriq/p9/pkg/gel/fonts/bariolregular"
+	"github.com/cybriq/p9/pkg/gel/fonts/bariolregularitalic"
+	"github.com/cybriq/p9/pkg/gel/fonts/plan9"
 )
 
 var (
 	once       sync.Once
 	collection []text.FontFace
 	Fonts      = map[string]text.Font{
-		"plan9":              {Typeface: "plan9"},
-		"bariol regular":     {Typeface: "bariol regular"},
-		"bariol italic":      {Typeface: "bariol italic", Style: text.Italic},
-		"bariol bold":        {Typeface: "bariol bold", Weight: text.Bold},
-		"bariol bolditalic":  {Typeface: "bariol bolditalic", Style: text.Italic, Weight: text.Bold},
-		"bariol light":       {Typeface: "bariol light", Weight: text.Medium},
-		"bariol lightitalic": {Typeface: "bariol lightitalic", Weight: text.Medium, Style: text.Italic},
-		"go regular":         {Typeface: "go regular"},
-		"go bold":            {Typeface: "go bold", Weight: text.Bold},
-		"go bolditalic":      {Typeface: "go bolditalic", Weight: text.Bold, Style: text.Italic},
-		"go italic":          {Typeface: "go italic", Style: text.Italic},
+		"plan9":          {Typeface: "plan9"},
+		"bariol regular": {Typeface: "bariol regular"},
+		"bariol italic":  {Typeface: "bariol italic", Style: text.Italic},
+		"bariol bold":    {Typeface: "bariol bold", Weight: text.Bold},
+		"bariol bolditalic": {Typeface: "bariol bolditalic",
+			Style: text.Italic, Weight: text.Bold,
+		},
+		"bariol light": {Typeface: "bariol light", Weight: text.Medium},
+		"bariol lightitalic": {Typeface: "bariol lightitalic",
+			Weight: text.Medium, Style: text.Italic,
+		},
+		"go regular": {Typeface: "go regular"},
+		"go bold":    {Typeface: "go bold", Weight: text.Bold},
+		"go bolditalic": {Typeface: "go bolditalic", Weight: text.Bold,
+			Style: text.Italic,
+		},
+		"go italic": {Typeface: "go italic", Style: text.Italic},
 	}
 )
 
@@ -54,7 +60,8 @@ func Collection() []text.FontFace {
 		// Ensure that any outside appends will not reuse the backing store.
 		n := len(collection)
 		collection = collection[:n:n]
-	})
+	},
+	)
 	return collection
 }
 

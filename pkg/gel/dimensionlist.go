@@ -1,8 +1,8 @@
 package gel
 
 import (
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 type DimensionList []l.Dimensions
@@ -15,7 +15,8 @@ func (d DimensionList) GetTotal(axis l.Axis) (total int) {
 }
 
 // PositionToCoordinate converts a list position to absolute coordinate
-func (d DimensionList) PositionToCoordinate(position Position, axis l.Axis) (coordinate int) {
+func (d DimensionList) PositionToCoordinate(position Position, axis l.Axis,
+) (coordinate int) {
 	for i := 0; i < position.First; i++ {
 		coordinate += axisMain(axis, d[i].Size)
 	}
@@ -23,7 +24,8 @@ func (d DimensionList) PositionToCoordinate(position Position, axis l.Axis) (coo
 }
 
 // CoordinateToPosition converts an absolute coordinate to a list position
-func (d DimensionList) CoordinateToPosition(coordinate int, axis l.Axis) (position Position) {
+func (d DimensionList) CoordinateToPosition(coordinate int, axis l.Axis,
+) (position Position) {
 	cursor := 0
 	if coordinate < 0 {
 		coordinate = 0
@@ -56,7 +58,8 @@ func (d DimensionList) CoordinateToPosition(coordinate int, axis l.Axis) (positi
 }
 
 // GetDimensionList returns a dimensionlist based on the given listelement
-func GetDimensionList(gtx l.Context, length int, listElement ListElement) (dims DimensionList) {
+func GetDimensionList(gtx l.Context, length int, listElement ListElement,
+) (dims DimensionList) {
 	// gather the dimensions of the list elements
 	for i := 0; i < length; i++ {
 		child := op.Record(gtx.Ops)
@@ -74,7 +77,8 @@ func GetDimension(gtx l.Context, w l.Widget) (dim l.Dimensions) {
 	return
 }
 
-func (d DimensionList) GetSizes(position Position, axis l.Axis) (total, before int) {
+func (d DimensionList) GetSizes(position Position, axis l.Axis,
+) (total, before int) {
 	for i := range d {
 		inc := axisMain(axis, d[i].Size)
 		total += inc

@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"reflect"
 	"testing"
-	
-	. "github.com/p9c/p9/pkg/chaincfg"
+
+	. "github.com/cybriq/p9/pkg/chaincfg"
 )
 
 // Define some of the required parameters for a user-registered network. This is necessary to test the registration of

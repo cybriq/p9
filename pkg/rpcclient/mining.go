@@ -4,10 +4,10 @@ import (
 	"encoding/hex"
 	js "encoding/json"
 	"errors"
-	"github.com/p9c/p9/pkg/block"
-	
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/block"
+
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // FutureGenerateResult is a future promise to deliver the result of a GenerateAsync RPC invocation (or an applicable
@@ -93,7 +93,8 @@ func (r FutureSetGenerateResult) Receive() (e error) {
 
 // SetGenerateAsync returns an instance of a type that can be used to get the result of the RPC at some future time by
 // invoking the Receive function on the returned instance. See SetGenerate for the blocking version and more details.
-func (c *Client) SetGenerateAsync(enable bool, numCPUs int) FutureSetGenerateResult {
+func (c *Client) SetGenerateAsync(enable bool, numCPUs int,
+) FutureSetGenerateResult {
 	cmd := btcjson.NewSetGenerateCmd(enable, &numCPUs)
 	return c.sendCmd(cmd)
 }
@@ -142,7 +143,9 @@ func (c *Client) GetHashesPerSec() (int64, error) {
 type FutureGetMiningInfoResult chan *response
 
 // Receive waits for the response promised by the future and returns the mining information.
-func (r FutureGetMiningInfoResult) Receive() (*btcjson.GetMiningInfoResult, error) {
+func (r FutureGetMiningInfoResult) Receive() (*btcjson.GetMiningInfoResult,
+	error,
+) {
 	res, e := receiveFuture(r)
 	if e != nil {
 		return nil, e
@@ -328,7 +331,9 @@ func (r FutureSubmitBlockResult) Receive() (e error) {
 
 // SubmitBlockAsync returns an instance of a type that can be used to get the result of the RPC at some future time by
 // invoking the Receive function on the returned instance. See SubmitBlock for the blocking version and more details.
-func (c *Client) SubmitBlockAsync(block *block.Block, options *btcjson.SubmitBlockOptions) FutureSubmitBlockResult {
+func (c *Client) SubmitBlockAsync(block *block.Block,
+	options *btcjson.SubmitBlockOptions,
+) FutureSubmitBlockResult {
 	blockHex := ""
 	if block != nil {
 		blockBytes, e := block.Bytes()
@@ -342,7 +347,9 @@ func (c *Client) SubmitBlockAsync(block *block.Block, options *btcjson.SubmitBlo
 }
 
 // SubmitBlock attempts to submit a new block into the bitcoin network.
-func (c *Client) SubmitBlock(block *block.Block, options *btcjson.SubmitBlockOptions) (e error) {
+func (c *Client) SubmitBlock(block *block.Block,
+	options *btcjson.SubmitBlockOptions,
+) (e error) {
 	return c.SubmitBlockAsync(block, options).Receive()
 }
 

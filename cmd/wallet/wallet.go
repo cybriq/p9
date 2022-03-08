@@ -10,30 +10,30 @@ import (
 	"sync"
 	"time"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/davecgh/go-spew/spew"
 
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pod/config"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pod/config"
 
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pkg/chainclient"
-	"github.com/p9c/p9/pkg/chainhash"
-	ec "github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/rpcclient"
-	"github.com/p9c/p9/pkg/txauthor"
-	"github.com/p9c/p9/pkg/txrules"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/util/hdkeychain"
-	"github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/walletdb"
-	"github.com/p9c/p9/pkg/wire"
-	"github.com/p9c/p9/pkg/wtxmgr"
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/chainclient"
+	"github.com/cybriq/p9/pkg/chainhash"
+	ec "github.com/cybriq/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/rpcclient"
+	"github.com/cybriq/p9/pkg/txauthor"
+	"github.com/cybriq/p9/pkg/txrules"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/util/hdkeychain"
+	"github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/walletdb"
+	"github.com/cybriq/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/wtxmgr"
 )
 
 const (
@@ -1281,7 +1281,8 @@ func (w *Wallet) AccountAddresses(account uint32) (
 		w.db, func(tx walletdb.ReadTx) (e error) {
 			addrmgrNs := tx.ReadBucket(waddrmgrNamespaceKey)
 			return w.Manager.ForEachAccountAddress(
-				addrmgrNs, account, func(maddr waddrmgr.ManagedAddress) (e error) {
+				addrmgrNs, account,
+				func(maddr waddrmgr.ManagedAddress) (e error) {
 					addrs = append(addrs, maddr.Address())
 					return nil
 				},
@@ -1346,7 +1347,9 @@ func (w *Wallet) CalculateAccountBalances(
 					output.PkScript, w.chainParams,
 				)
 				if e == nil && len(addrs) > 0 {
-					_, outputAcct, e = w.Manager.AddrAccount(addrmgrNs, addrs[0])
+					_, outputAcct, e = w.Manager.AddrAccount(addrmgrNs,
+						addrs[0],
+					)
 				}
 				if e != nil || outputAcct != account {
 					continue
@@ -2159,9 +2162,13 @@ func (w *Wallet) Accounts(scope waddrmgr.KeyScope) (*AccountsResult, error) {
 				output := unspent[i]
 				var outputAcct uint32
 				var addrs []btcaddr.Address
-				_, addrs, _, e = txscript.ExtractPkScriptAddrs(output.PkScript, w.chainParams)
+				_, addrs, _, e = txscript.ExtractPkScriptAddrs(output.PkScript,
+					w.chainParams,
+				)
 				if e == nil && len(addrs) > 0 {
-					_, outputAcct, e = w.Manager.AddrAccount(addrmgrNs, addrs[0])
+					_, outputAcct, e = w.Manager.AddrAccount(addrmgrNs,
+						addrs[0],
+					)
 				}
 				if e == nil {
 					amt, ok := m[outputAcct]
@@ -2239,7 +2246,9 @@ func (w *Wallet) AccountBalances(
 					continue
 				}
 				var addrs []btcaddr.Address
-				_, addrs, _, e = txscript.ExtractPkScriptAddrs(output.PkScript, w.chainParams)
+				_, addrs, _, e = txscript.ExtractPkScriptAddrs(output.PkScript,
+					w.chainParams,
+				)
 				if e != nil || len(addrs) == 0 {
 					continue
 				}
@@ -2871,9 +2880,13 @@ func (w *Wallet) TotalReceivedForAccounts(
 						pkScript := detail.MsgTx.TxOut[cred.Index].PkScript
 						var outputAcct uint32
 						var addrs []btcaddr.Address
-						_, addrs, _, e = txscript.ExtractPkScriptAddrs(pkScript, w.chainParams)
+						_, addrs, _, e = txscript.ExtractPkScriptAddrs(pkScript,
+							w.chainParams,
+						)
 						if e == nil && len(addrs) > 0 {
-							_, outputAcct, e = w.Manager.AddrAccount(addrmgrNs, addrs[0])
+							_, outputAcct, e = w.Manager.AddrAccount(addrmgrNs,
+								addrs[0],
+							)
 						}
 						if e == nil {
 							acctIndex := int(outputAcct)
@@ -3038,7 +3051,8 @@ func (w *Wallet) SignTransaction(
 						if !ok {
 							return nil, false, fmt.Errorf(
 								"address %v is not "+
-									"a pubkey address", address.Address().EncodeAddress(),
+									"a pubkey address",
+								address.Address().EncodeAddress(),
 							)
 						}
 						var key *ec.PrivateKey

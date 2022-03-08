@@ -17,11 +17,11 @@ import (
 
 	"golang.org/x/image/colornames"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/gpu/headless"
-	"github.com/p9c/p9/pkg/gel/gio/internal/f32color"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu/headless"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/f32color"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
 )
 
 var (
@@ -52,14 +52,17 @@ func buildSquares(size int) paint.ImageOp {
 	for r := 0; r < 4; r++ {
 		for c := 0; c < 4; c++ {
 			c1, c2 = c2, c1
-			draw.Draw(im, image.Rect(r*sub, c*sub, r*sub+sub, c*sub+sub), c1, image.Point{}, draw.Over)
+			draw.Draw(im, image.Rect(r*sub, c*sub, r*sub+sub, c*sub+sub), c1,
+				image.Point{}, draw.Over,
+			)
 		}
 		c1, c2 = c2, c1
 	}
 	return paint.NewImageOp(im)
 }
 
-func drawImage(t *testing.T, size int, ops *op.Ops, draw func(o *op.Ops)) (im *image.RGBA, err error) {
+func drawImage(t *testing.T, size int, ops *op.Ops, draw func(o *op.Ops),
+) (im *image.RGBA, err error) {
 	sz := image.Point{X: size, Y: size}
 	w := newWindow(t, sz.X, sz.Y)
 	draw(ops)
@@ -181,7 +184,9 @@ func verifyRef(t *testing.T, img *image.RGBA, frame int) (ok bool) {
 			}
 		}
 	default:
-		t.Fatalf("reference image is a %T, expected *image.NRGBA or *image.RGBA", r)
+		t.Fatalf("reference image is a %T, expected *image.NRGBA or *image.RGBA",
+			r,
+		)
 	}
 	bnd := img.Bounds()
 	for x := bnd.Min.X; x < bnd.Max.X; x++ {

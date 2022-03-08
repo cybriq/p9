@@ -2,13 +2,13 @@ package gel
 
 import (
 	"fmt"
-	
+
 	"go.uber.org/atomic"
 	"golang.org/x/exp/shiny/materialdesign/icons"
-	
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/text"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 )
 
 // App defines an application with a header, sidebar/menu, right side button bar, changeable body page widget and
@@ -58,7 +58,9 @@ type App struct {
 
 type WidgetMap map[string]l.Widget
 
-func (w *Window) App(size *atomic.Int32, activePage *atomic.String, Break1 float32, ) *App {
+func (w *Window) App(size *atomic.Int32, activePage *atomic.String,
+	Break1 float32,
+) *App {
 	// mc := w.Clickable()
 	a := &App{
 		Window:              w,
@@ -165,7 +167,10 @@ func (a *App) RenderHeader(gtx l.Context) l.Dimensions {
 			a.Theme.Responsive(
 				a.Size.Load(),
 				Widgets{
-					{Widget: If(len(a.sideBar) > 0, a.MenuButton, a.NoMenuButton)},
+					{Widget: If(len(a.sideBar) > 0, a.MenuButton,
+						a.NoMenuButton,
+					),
+					},
 					{Size: a.Break1, Widget: a.NoMenuButton},
 				},
 			).
@@ -212,9 +217,8 @@ func (a *App) MainFrame(gtx l.Context) l.Dimensions {
 								},
 							},
 							{
-								Size: a.Break1,
-								Widget:
-								a.renderSideBar(),
+								Size:   a.Break1,
+								Widget: a.renderSideBar(),
 							},
 						},
 					).Fn,
@@ -372,7 +376,10 @@ func (a *App) RenderPage(gtx l.Context) l.Dimensions {
 }
 
 func (a *App) DimensionCaption(gtx l.Context) l.Dimensions {
-	return a.Caption(fmt.Sprintf("%dx%d", gtx.Constraints.Max.X, gtx.Constraints.Max.Y)).Fn(gtx)
+	return a.Caption(fmt.Sprintf("%dx%d", gtx.Constraints.Max.X,
+		gtx.Constraints.Max.Y,
+	),
+	).Fn(gtx)
 }
 
 func (a *App) renderSideBar() l.Widget {

@@ -6,16 +6,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/btcaddr"
 
 	"github.com/atotto/clipboard"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/text"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
 
-	"github.com/p9c/p9/pkg/gel"
-	"github.com/p9c/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/gel"
 )
 
 type SendPage struct {
@@ -77,7 +77,9 @@ func (sp *SendPage) SmallList(gtx l.Context) l.Dimensions {
 			).Fn,
 		sp.AddressbookHeader(),
 	}
-	smallWidgets = append(smallWidgets, sp.GetAddressbookHistoryCards("DocBg")...)
+	smallWidgets = append(smallWidgets,
+		sp.GetAddressbookHistoryCards("DocBg")...,
+	)
 	le := func(gtx l.Context, index int) l.Dimensions {
 		return wg.Inset(
 			0.25,
@@ -124,7 +126,9 @@ func (sp *SendPage) MediumList(gtx l.Context) l.Dimensions {
 		return wg.Inset(0.25, sendFormWidget[index]).Fn(gtx)
 	}
 	var historyWidget []l.Widget
-	historyWidget = append(historyWidget, sp.GetAddressbookHistoryCards("DocBg")...)
+	historyWidget = append(historyWidget,
+		sp.GetAddressbookHistoryCards("DocBg")...,
+	)
 	historyLE := func(gtx l.Context, index int) l.Dimensions {
 		return wg.Inset(
 			0.25,
@@ -206,7 +210,9 @@ func (sp *SendPage) SendButton() l.Widget {
 									64,
 								); !E.Chk(e) {
 									if am, e = amt.NewAmount(amount); E.Chk(e) {
-										D.Ln(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", e)
+										D.Ln(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+											e,
+										)
 										// todo: indicate this to the user somehow
 										return
 									}
@@ -219,19 +225,29 @@ func (sp *SendPage) SendButton() l.Widget {
 									wg.inputs["sendAddress"].GetText(),
 									wg.cx.ActiveNet,
 								); E.Chk(e) {
-									D.Ln(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", e)
+									D.Ln(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+										e,
+									)
 									D.Ln("invalid address")
 									// TODO: indicate this to the user somehow
 									return
 								}
-								if e = wg.WalletClient.WalletPassphrase(wg.cx.Config.WalletPass.V(), 5); E.Chk(e) {
-									D.Ln(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", e)
+								if e = wg.WalletClient.WalletPassphrase(wg.cx.Config.WalletPass.V(),
+									5,
+								); E.Chk(e) {
+									D.Ln(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+										e,
+									)
 									return
 								}
 								var txid *chainhash.Hash
-								if txid, e = wg.WalletClient.SendToAddress(addr, am); E.Chk(e) {
+								if txid, e = wg.WalletClient.SendToAddress(addr,
+									am,
+								); E.Chk(e) {
 									// TODO: indicate send failure to user somehow
-									D.Ln(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", e)
+									D.Ln(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+										e,
+									)
 									return
 								}
 								wg.RecentTransactions(10, "recent")
@@ -409,7 +425,9 @@ func (sp *SendPage) GetAddressbookHistoryCards(bg string) (widgets []l.Widget) {
 	req := len(wg.State.sendAddresses)
 	if req > avail {
 		for i := 0; i < req-avail; i++ {
-			wg.sendAddressbookClickables = append(wg.sendAddressbookClickables, wg.WidgetPool.GetClickable())
+			wg.sendAddressbookClickables = append(wg.sendAddressbookClickables,
+				wg.WidgetPool.GetClickable(),
+			)
 		}
 	}
 	for x := range wg.State.sendAddresses {

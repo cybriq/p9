@@ -2,14 +2,14 @@ package wallet
 
 import (
 	"bytes"
-	"github.com/p9c/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/btcaddr"
 	"strings"
-	
-	"github.com/p9c/p9/pkg/chainclient"
-	"github.com/p9c/p9/pkg/txscript"
-	wm "github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/walletdb"
-	tm "github.com/p9c/p9/pkg/wtxmgr"
+
+	"github.com/cybriq/p9/pkg/chainclient"
+	"github.com/cybriq/p9/pkg/txscript"
+	wm "github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/walletdb"
+	tm "github.com/cybriq/p9/pkg/wtxmgr"
 )
 
 func (w *Wallet) handleChainNotifications() {
@@ -42,7 +42,8 @@ func (w *Wallet) handleChainNotifications() {
 		//  check the final hash and, if it doesn't match the original hash returned by the notification, to roll back
 		//  and restart the rescan.
 		I.F(
-			"handleChainNotifications: catching up block hashes to height %d, this might take a while", height,
+			"handleChainNotifications: catching up block hashes to height %d, this might take a while",
+			height,
 		)
 		e = walletdb.Update(
 			w.db, func(tx walletdb.ReadWriteTx) (e error) {
@@ -176,7 +177,8 @@ func (w *Wallet) handleChainNotifications() {
 
 // connectBlock handles a chain server notification by marking a wallet that's currently in-sync with the chain server
 // as being synced up to the passed block.
-func (w *Wallet) connectBlock(dbtx walletdb.ReadWriteTx, b tm.BlockMeta) (e error) {
+func (w *Wallet) connectBlock(dbtx walletdb.ReadWriteTx, b tm.BlockMeta,
+) (e error) {
 	addrmgrNs := dbtx.ReadWriteBucket(waddrmgrNamespaceKey)
 	bs := wm.BlockStamp{
 		Height:    b.Height,
@@ -196,7 +198,8 @@ func (w *Wallet) connectBlock(dbtx walletdb.ReadWriteTx, b tm.BlockMeta) (e erro
 
 // disconnectBlock handles a chain server reorganize by rolling back all block history from the reorged block for a
 // wallet in-sync with the chain server.
-func (w *Wallet) disconnectBlock(dbtx walletdb.ReadWriteTx, b tm.BlockMeta) (e error) {
+func (w *Wallet) disconnectBlock(dbtx walletdb.ReadWriteTx, b tm.BlockMeta,
+) (e error) {
 	addrmgrNs := dbtx.ReadWriteBucket(waddrmgrNamespaceKey)
 	txmgrNs := dbtx.ReadWriteBucket(wtxmgrNamespaceKey)
 	if !w.ChainSynced() {
@@ -238,7 +241,9 @@ func (w *Wallet) disconnectBlock(dbtx walletdb.ReadWriteTx, b tm.BlockMeta) (e e
 	w.NtfnServer.notifyDetachedBlock(&b.Hash)
 	return nil
 }
-func (w *Wallet) addRelevantTx(dbtx walletdb.ReadWriteTx, rec *tm.TxRecord, block *tm.BlockMeta) (e error) {
+func (w *Wallet) addRelevantTx(dbtx walletdb.ReadWriteTx, rec *tm.TxRecord,
+	block *tm.BlockMeta,
+) (e error) {
 	addrmgrNs := dbtx.ReadWriteBucket(waddrmgrNamespaceKey)
 	txmgrNs := dbtx.ReadWriteBucket(wtxmgrNamespaceKey)
 	// At the moment all notified transactions are assumed to actually be relevant. This assumption will not hold true
@@ -301,7 +306,9 @@ func (w *Wallet) addRelevantTx(dbtx walletdb.ReadWriteTx, rec *tm.TxRecord, bloc
 			w.NtfnServer.notifyUnminedTransaction(dbtx, details)
 		}
 	} else {
-		details, e := w.TxStore.UniqueTxDetails(txmgrNs, &rec.Hash, &block.Block)
+		details, e := w.TxStore.UniqueTxDetails(txmgrNs, &rec.Hash,
+			&block.Block,
+		)
 		if e != nil {
 			E.Ln("cannot query transaction details for notification:", e)
 		}

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build (linux && !android && !nowayland) || freebsd
 // +build linux,!android,!nowayland freebsd
 
 package wm
@@ -8,7 +9,7 @@ import (
 	"errors"
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/internal/egl"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/egl"
 )
 
 /*

@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 func TestLayoutLRU(t *testing.T) {

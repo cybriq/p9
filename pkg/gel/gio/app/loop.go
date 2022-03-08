@@ -7,9 +7,9 @@ import (
 	"image/color"
 	"runtime"
 
-	"github.com/p9c/p9/pkg/gel/gio/app/internal/wm"
-	"github.com/p9c/p9/pkg/gel/gio/gpu"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/app/internal/wm"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 type renderLoop struct {
@@ -143,7 +143,8 @@ func (l *renderLoop) Refresh() {
 
 // Draw initiates a draw of a frame. It returns a channel
 // than signals when the frame is no longer being accessed.
-func (l *renderLoop) Draw(viewport image.Point, frameOps *op.Ops) <-chan struct{} {
+func (l *renderLoop) Draw(viewport image.Point, frameOps *op.Ops,
+) <-chan struct{} {
 	if l.err != nil {
 		l.ack <- struct{}{}
 		return l.ack

@@ -3,16 +3,16 @@ package gel
 import (
 	"image"
 	"image/color"
-	
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
-	
-	"github.com/p9c/p9/pkg/gel/f32color"
+
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
+
+	"github.com/cybriq/p9/pkg/gel/f32color"
 )
 
 type Switch struct {
@@ -59,14 +59,15 @@ func (s *Switch) Fn(gtx l.Context) l.Dimensions {
 		trackHeight := gtx.Px(unit.Dp(16))
 		thumbSize := gtx.Px(unit.Dp(20))
 		trackOff := float32(thumbSize-trackHeight) * .5
-		
+
 		// Draw track.
 		stack := op.Save(gtx.Ops)
 		trackCorner := float32(trackHeight) / 2
 		trackRect := f32.Rectangle{Max: f32.Point{
 			X: float32(trackWidth),
 			Y: float32(trackHeight),
-		}}
+		},
+		}
 		col := s.color.disabled
 		if s.swtch.value {
 			col = s.color.enabled
@@ -78,12 +79,13 @@ func (s *Switch) Fn(gtx l.Context) l.Dimensions {
 		op.Offset(f32.Point{Y: trackOff}).Add(gtx.Ops)
 		clip.RRect{
 			Rect: trackRect,
-			NE:   trackCorner, NW: trackCorner, SE: trackCorner, SW: trackCorner,
+			NE:   trackCorner, NW: trackCorner, SE: trackCorner,
+			SW: trackCorner,
 		}.Add(gtx.Ops)
 		paint.ColorOp{Color: trackColor}.Add(gtx.Ops)
 		paint.PaintOp{}.Add(gtx.Ops)
 		stack.Load()
-		
+
 		// Draw thumb ink.
 		stack = op.Save(gtx.Ops)
 		inkSize := gtx.Px(unit.Dp(44))
@@ -104,27 +106,29 @@ func (s *Switch) Fn(gtx l.Context) l.Dimensions {
 			drawInk(gtx, p)
 		}
 		stack.Load()
-		
+
 		// Compute thumb offset and color.
 		stack = op.Save(gtx.Ops)
 		if s.swtch.value {
 			off := trackWidth - thumbSize
 			op.Offset(f32.Point{X: float32(off)}).Add(gtx.Ops)
 		}
-		
+
 		// Draw thumb shadow, a translucent disc slightly larger than the
 		// thumb itself.
 		shadowStack := op.Save(gtx.Ops)
 		shadowSize := float32(2)
 		// Center shadow horizontally and slightly adjust its Y.
 		op.Offset(f32.Point{X: -shadowSize / 2, Y: -.75}).Add(gtx.Ops)
-		drawDisc(gtx.Ops, float32(thumbSize)+shadowSize, color.NRGBA(argb(0x55000000)))
+		drawDisc(gtx.Ops, float32(thumbSize)+shadowSize,
+			color.NRGBA(argb(0x55000000)),
+		)
 		shadowStack.Load()
-		
+
 		// Draw thumb.
 		drawDisc(gtx.Ops, float32(thumbSize), col)
 		stack.Load()
-		
+
 		// Set up click area.
 		stack = op.Save(gtx.Ops)
 		clickSize := gtx.Px(unit.Dp(40))
@@ -138,10 +142,11 @@ func (s *Switch) Fn(gtx l.Context) l.Dimensions {
 		gtx.Constraints.Min = sz
 		s.swtch.Fn(gtx)
 		stack.Load()
-		
+
 		dims := image.Point{X: trackWidth, Y: thumbSize}
 		return l.Dimensions{Size: dims}
-	}).Fn(gtx)
+	},
+	).Fn(gtx)
 }
 
 func drawDisc(ops *op.Ops, sz float32, col color.NRGBA) {

@@ -2,8 +2,8 @@ package wire
 
 import (
 	"io"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // MsgGetCFCheckpt is a request for filter headers at evenly spaced intervals throughout the blockchain history. It
@@ -15,7 +15,9 @@ type MsgGetCFCheckpt struct {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation.
-func (msg *MsgGetCFCheckpt) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding) (e error) {
+func (msg *MsgGetCFCheckpt) BtcDecode(r io.Reader, pver uint32,
+	_ MessageEncoding,
+) (e error) {
 	if e = readElement(r, &msg.FilterType); E.Chk(e) {
 		return
 	}
@@ -24,7 +26,9 @@ func (msg *MsgGetCFCheckpt) BtcDecode(r io.Reader, pver uint32, _ MessageEncodin
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This
 // is part of the Message interface implementation.
-func (msg *MsgGetCFCheckpt) BtcEncode(w io.Writer, pver uint32, _ MessageEncoding) (e error) {
+func (msg *MsgGetCFCheckpt) BtcEncode(w io.Writer, pver uint32,
+	_ MessageEncoding,
+) (e error) {
 	if e = writeElement(w, msg.FilterType); E.Chk(e) {
 		return
 	}
@@ -47,7 +51,8 @@ func (msg *MsgGetCFCheckpt) MaxPayloadLength(pver uint32) uint32 {
 // NewMsgGetCFCheckpt returns a new bitcoin getcfcheckpt message that conforms
 // to the Message interface using the passed parameters and defaults for the
 // remaining fields.
-func NewMsgGetCFCheckpt(filterType FilterType, stopHash *chainhash.Hash) *MsgGetCFCheckpt {
+func NewMsgGetCFCheckpt(filterType FilterType, stopHash *chainhash.Hash,
+) *MsgGetCFCheckpt {
 	return &MsgGetCFCheckpt{
 		FilterType: filterType,
 		StopHash:   *stopHash,

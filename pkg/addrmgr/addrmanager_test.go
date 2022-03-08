@@ -7,9 +7,9 @@ import (
 	"reflect"
 	"testing"
 	"time"
-	
-	"github.com/p9c/p9/pkg/addrmgr"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/addrmgr"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // naTest is used to describe a test to be performed against the NetAddressKey method.
@@ -119,7 +119,9 @@ func TestAddAddressByIP(t *testing.T) {
 	for i, test := range tests {
 		e := amgr.AddAddressByIP(test.addrIP)
 		if test.err != nil && e == nil {
-			t.Errorf("TestGood test %d failed expected an error and got none", i)
+			t.Errorf("TestGood test %d failed expected an error and got none",
+				i,
+			)
 			continue
 		}
 		if test.err == nil && e != nil {
@@ -175,11 +177,15 @@ func TestAddLocalAddress(t *testing.T) {
 	for x, test := range tests {
 		result := amgr.AddLocalAddress(&test.address, test.priority)
 		if result == nil && !test.valid {
-			t.Errorf("TestAddLocalAddress test #%d failed: %s should have been accepted", x, test.address.IP)
+			t.Errorf("TestAddLocalAddress test #%d failed: %s should have been accepted",
+				x, test.address.IP,
+			)
 			continue
 		}
 		if result != nil && test.valid {
-			t.Errorf("TestAddLocalAddress test #%d failed: %s should not have been accepted", x, test.address.IP)
+			t.Errorf("TestAddLocalAddress test #%d failed: %s should not have been accepted",
+				x, test.address.IP,
+			)
 			continue
 		}
 	}
@@ -237,7 +243,9 @@ func TestNeedMoreAddresses(t *testing.T) {
 	n.AddAddresses(addrs, srcAddr)
 	numAddrs := n.NumAddresses()
 	if numAddrs > addrsToAdd {
-		t.Errorf("Number of addresses is too many %d vs %d", numAddrs, addrsToAdd)
+		t.Errorf("Number of addresses is too many %d vs %d", numAddrs,
+			addrsToAdd,
+		)
 	}
 	b = n.NeedMoreAddresses()
 	if b {
@@ -263,11 +271,15 @@ func TestGood(t *testing.T) {
 	}
 	numAddrs := n.NumAddresses()
 	if numAddrs >= addrsToAdd {
-		t.Errorf("Number of addresses is too many: %d vs %d", numAddrs, addrsToAdd)
+		t.Errorf("Number of addresses is too many: %d vs %d", numAddrs,
+			addrsToAdd,
+		)
 	}
 	numCache := len(n.AddressCache())
 	if numCache >= numAddrs/4 {
-		t.Errorf("Number of addresses in cache: got %d, want %d", numCache, numAddrs/4)
+		t.Errorf("Number of addresses in cache: got %d, want %d", numCache,
+			numAddrs/4,
+		)
 	}
 }
 func TestGetAddress(t *testing.T) {
@@ -286,7 +298,9 @@ func TestGetAddress(t *testing.T) {
 		t.Fatalf("Did not get an address where there is one in the pool")
 	}
 	if ka.NetAddress().IP.String() != someIP {
-		t.Errorf("Wrong IP: got %v, want %v", ka.NetAddress().IP.String(), someIP)
+		t.Errorf("Wrong IP: got %v, want %v", ka.NetAddress().IP.String(),
+			someIP,
+		)
 	}
 	// Mark this as a good address and get it
 	n.Good(ka.NetAddress())
@@ -295,7 +309,9 @@ func TestGetAddress(t *testing.T) {
 		t.Fatalf("Did not get an address where there is one in the pool")
 	}
 	if ka.NetAddress().IP.String() != someIP {
-		t.Errorf("Wrong IP: got %v, want %v", ka.NetAddress().IP.String(), someIP)
+		t.Errorf("Wrong IP: got %v, want %v", ka.NetAddress().IP.String(),
+			someIP,
+		)
 	}
 	numAddrs := n.NumAddresses()
 	if numAddrs != 1 {
@@ -399,14 +415,14 @@ func TestGetBestLocalAddress(t *testing.T) {
 				localAddr = wire.NetAddress{IP: net.ParseIP("fd87:d87e:eb43:25::1")}
 				amgr.AddLocalAddress(&localAddr, addrmgr.ManualPrio)
 				// Test against want3
-	
+
 				for x, test := range tests {
-	
+
 		got := amgr.GetBestLocalAddress(&test.remoteAddr)
-	
+
 					if !test.want3.IP.Equal(got.IP) {
-	
-	
+
+
 						t.Errorf("TestGetBestLocalAddress test3 #%d failed for remote address %s: want %s got %s",
 							x, test.remoteAddr.IP, test.want3.IP, got.IP)
 						continue

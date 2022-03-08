@@ -1,3 +1,4 @@
+//go:build !headless
 // +build !headless
 
 package launchers
@@ -5,8 +6,8 @@ package launchers
 import (
 	"fmt"
 
-	"github.com/p9c/p9/cmd/gui"
-	"github.com/p9c/p9/pod/state"
+	"github.com/cybriq/p9/cmd/gui"
+	"github.com/cybriq/p9/pod/state"
 )
 
 // GUIHandle starts up the GUI wallet
@@ -18,7 +19,7 @@ func GUIHandle(ifc interface{}) (e error) {
 	}
 	// // log.AppColorizer = color.Bit24(128, 255, 255, false).Sprint
 	// // log.App = "   gui"
-	D.Ln("starting up parallelcoin pod gui...")/**/
+	D.Ln("starting up parallelcoin pod gui...") /**/
 	// // fork.ForkCalc()
 	// // podconfig.Configure(cx, true)
 	// // D.Ln(os.Args)

@@ -2,10 +2,10 @@ package blockchain_test
 
 import (
 	"os"
-	
-	"github.com/p9c/p9/pkg/database"
-	_ "github.com/p9c/p9/pkg/database/ffldb"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/database"
+	_ "github.com/cybriq/p9/pkg/database/ffldb"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (

@@ -9,10 +9,10 @@ import (
 	"image/draw"
 	"math"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/opconst"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/opconst"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
 )
 
 // ImageOp sets the brush to an image.
@@ -48,7 +48,7 @@ type PaintOp struct {
 }
 
 // NewImageOp creates an ImageOp backed by src. See
-// github.com/p9c/p9/pkg/gel/gio/io/system.FrameEvent for a description of when data
+// github.com/cybriq/p9/pkg/gel/gio/io/system.FrameEvent for a description of when data
 // referenced by operations is safe to re-use.
 //
 // NewImageOp assumes the backing image is immutable, and may cache a
@@ -77,7 +77,8 @@ func NewImageOp(src image.Image) ImageOp {
 	// Copy the image into a GPU friendly format.
 	dst := image.NewRGBA(image.Rectangle{
 		Max: sz,
-	})
+	},
+	)
 	draw.Draw(dst, dst.Bounds(), src, src.Bounds().Min, draw.Src)
 	return ImageOp{
 		src:    dst,

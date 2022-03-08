@@ -7,16 +7,16 @@ import (
 	"image/color"
 	"math"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/f32color"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/text"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
-	"github.com/p9c/p9/pkg/gel/gio/widget"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/f32color"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/widget"
 )
 
 type ButtonStyle struct {
@@ -73,7 +73,8 @@ func ButtonLayout(th *Theme, button *widget.Clickable) ButtonLayoutStyle {
 	}
 }
 
-func IconButton(th *Theme, button *widget.Clickable, icon *widget.Icon) IconButtonStyle {
+func IconButton(th *Theme, button *widget.Clickable, icon *widget.Icon,
+) IconButtonStyle {
 	return IconButtonStyle{
 		Background: th.Palette.ContrastBg,
 		Color:      th.Palette.ContrastFg,
@@ -86,7 +87,8 @@ func IconButton(th *Theme, button *widget.Clickable, icon *widget.Icon) IconButt
 
 // Clickable lays out a rectangular clickable widget without further
 // decoration.
-func Clickable(gtx layout.Context, button *widget.Clickable, w layout.Widget) layout.Dimensions {
+func Clickable(gtx layout.Context, button *widget.Clickable, w layout.Widget,
+) layout.Dimensions {
 	return layout.Stack{}.Layout(gtx,
 		layout.Expanded(button.Layout),
 		layout.Expanded(func(gtx layout.Context) layout.Dimensions {
@@ -95,7 +97,8 @@ func Clickable(gtx layout.Context, button *widget.Clickable, w layout.Widget) la
 				drawInk(gtx, c)
 			}
 			return layout.Dimensions{Size: gtx.Constraints.Min}
-		}),
+		},
+		),
 		layout.Stacked(w),
 	)
 }
@@ -108,12 +111,17 @@ func (b ButtonStyle) Layout(gtx layout.Context) layout.Dimensions {
 	}.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
 		return b.Inset.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
 			paint.ColorOp{Color: b.Color}.Add(gtx.Ops)
-			return widget.Label{Alignment: text.Middle}.Layout(gtx, b.shaper, b.Font, b.TextSize, b.Text)
-		})
-	})
+			return widget.Label{Alignment: text.Middle}.Layout(gtx, b.shaper,
+				b.Font, b.TextSize, b.Text,
+			)
+		},
+		)
+	},
+	)
 }
 
-func (b ButtonLayoutStyle) Layout(gtx layout.Context, w layout.Widget) layout.Dimensions {
+func (b ButtonLayoutStyle) Layout(gtx layout.Context, w layout.Widget,
+) layout.Dimensions {
 	min := gtx.Constraints.Min
 	return layout.Stack{Alignment: layout.Center}.Layout(gtx,
 		layout.Expanded(func(gtx layout.Context) layout.Dimensions {
@@ -121,7 +129,9 @@ func (b ButtonLayoutStyle) Layout(gtx layout.Context, w layout.Widget) layout.Di
 			clip.UniformRRect(f32.Rectangle{Max: f32.Point{
 				X: float32(gtx.Constraints.Min.X),
 				Y: float32(gtx.Constraints.Min.Y),
-			}}, rr).Add(gtx.Ops)
+			},
+			}, rr,
+			).Add(gtx.Ops)
 			background := b.Background
 			switch {
 			case gtx.Queue == nil:
@@ -134,11 +144,13 @@ func (b ButtonLayoutStyle) Layout(gtx layout.Context, w layout.Widget) layout.Di
 				drawInk(gtx, c)
 			}
 			return layout.Dimensions{Size: gtx.Constraints.Min}
-		}),
+		},
+		),
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 			gtx.Constraints.Min = min
 			return layout.Center.Layout(gtx, w)
-		}),
+		},
+		),
 		layout.Expanded(b.Button.Layout),
 	)
 }
@@ -151,7 +163,8 @@ func (b IconButtonStyle) Layout(gtx layout.Context) layout.Dimensions {
 			rr := (sizexf + sizeyf) * .25
 			clip.UniformRRect(f32.Rectangle{
 				Max: f32.Point{X: sizexf, Y: sizeyf},
-			}, rr).Add(gtx.Ops)
+			}, rr,
+			).Add(gtx.Ops)
 			background := b.Background
 			switch {
 			case gtx.Queue == nil:
@@ -164,23 +177,28 @@ func (b IconButtonStyle) Layout(gtx layout.Context) layout.Dimensions {
 				drawInk(gtx, c)
 			}
 			return layout.Dimensions{Size: gtx.Constraints.Min}
-		}),
+		},
+		),
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			return b.Inset.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-				size := gtx.Px(b.Size)
-				if b.Icon != nil {
-					b.Icon.Color = b.Color
-					b.Icon.Layout(gtx, unit.Px(float32(size)))
-				}
-				return layout.Dimensions{
-					Size: image.Point{X: size, Y: size},
-				}
-			})
-		}),
+			return b.Inset.Layout(gtx,
+				func(gtx layout.Context) layout.Dimensions {
+					size := gtx.Px(b.Size)
+					if b.Icon != nil {
+						b.Icon.Color = b.Color
+						b.Icon.Layout(gtx, unit.Px(float32(size)))
+					}
+					return layout.Dimensions{
+						Size: image.Point{X: size, Y: size},
+					}
+				},
+			)
+		},
+		),
 		layout.Expanded(func(gtx layout.Context) layout.Dimensions {
 			pointer.Ellipse(image.Rectangle{Max: gtx.Constraints.Min}).Add(gtx.Ops)
 			return b.Button.Layout(gtx)
-		}),
+		},
+		),
 	)
 }
 
@@ -280,7 +298,9 @@ func drawInk(gtx layout.Context, c widget.Press) {
 	op.Offset(c.Position.Add(f32.Point{
 		X: -rr,
 		Y: -rr,
-	})).Add(gtx.Ops)
+	},
+	),
+	).Add(gtx.Ops)
 	clip.UniformRRect(f32.Rectangle{Max: f32.Pt(size, size)}, rr).Add(gtx.Ops)
 	paint.PaintOp{}.Add(gtx.Ops)
 }

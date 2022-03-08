@@ -1,15 +1,15 @@
 package pathtree
 
 import (
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/text"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
 	uberatomic "go.uber.org/atomic"
 	"golang.org/x/exp/shiny/materialdesign/icons"
 
-	"github.com/p9c/p9/pkg/opts/binary"
-	"github.com/p9c/p9/pkg/opts/meta"
+	"github.com/cybriq/p9/pkg/opts/binary"
+	"github.com/cybriq/p9/pkg/opts/meta"
 
-	"github.com/p9c/p9/pkg/gel"
+	"github.com/cybriq/p9/pkg/gel"
 )
 
 type Widget struct {
@@ -95,7 +95,8 @@ func (w *Widget) Fn(gtx l.Context) l.Dimensions {
 	return w.App.Fn()(gtx)
 }
 
-func (w *Widget) Page(title string, widget gel.Widgets) func(gtx l.Context) l.Dimensions {
+func (w *Widget) Page(title string, widget gel.Widgets,
+) func(gtx l.Context) l.Dimensions {
 	return func(gtx l.Context) l.Dimensions {
 		return w.VFlex().
 			// SpaceEvenly().
@@ -139,7 +140,8 @@ func (wg *Widget) GetButtons() {
 	}
 }
 
-func (w *Widget) SideBarButton(title, page string, index int) func(gtx l.Context) l.Dimensions {
+func (w *Widget) SideBarButton(title, page string, index int,
+) func(gtx l.Context) l.Dimensions {
 	return func(gtx l.Context) l.Dimensions {
 		var scale float32
 		scale = gel.Scales["H6"]

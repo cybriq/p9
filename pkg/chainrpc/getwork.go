@@ -9,18 +9,18 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/p9c/p9/pkg/bits"
-	block2 "github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/bits"
+	block2 "github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/fork"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/conformal/fastsha256"
 
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // Uint256Size is the number of bytes needed to represent an unsigned 256-bit integer.
@@ -66,7 +66,9 @@ func BigToLEUint256(n *big.Int) [Uint256Size]byte {
 }
 
 // HandleGetWork handles the getwork call
-func HandleGetWork(s *Server, cmd interface{}, closeChan qu.C) (interface{}, error) {
+func HandleGetWork(s *Server, cmd interface{}, closeChan qu.C) (interface{},
+	error,
+) {
 	c := cmd.(*btcjson.GetWorkCmd)
 	if len(s.StateCfg.ActiveMiningAddrs) == 0 {
 		return nil, &btcjson.RPCError{
@@ -310,7 +312,9 @@ func HandleGetWorkSubmission(s *Server, hexData string) (interface{}, error) {
 	msgBlock.Header.MerkleRoot = *merkles.GetRoot()
 	// Ensure the submitted block hash is less than the target difficulty.
 	pl := fork.GetMinDiff(s.Cfg.Algo, s.Cfg.Chain.BestSnapshot().Height)
-	e = blockchain.CheckProofOfWork(block, pl, s.Cfg.Chain.BestSnapshot().Height)
+	e = blockchain.CheckProofOfWork(block, pl,
+		s.Cfg.Chain.BestSnapshot().Height,
+	)
 	if e != nil {
 		// Anything other than a rule violation is an unexpected error, so return that error as an internal error.
 		if _, ok := e.(blockchain.RuleError); !ok {
@@ -322,12 +326,16 @@ func HandleGetWorkSubmission(s *Server, hexData string) (interface{}, error) {
 				),
 			}
 		}
-		D.Ln("block submitted via getwork does not meet the required proof of work:", e)
+		D.Ln("block submitted via getwork does not meet the required proof of work:",
+			e,
+		)
 		return false, nil
 	}
 	latestHash := &s.Cfg.Chain.BestSnapshot().Hash
 	if !msgBlock.Header.PrevBlock.IsEqual(latestHash) {
-		D.F("block submitted via getwork with previous block %s is stale", msgBlock.Header.PrevBlock)
+		D.F("block submitted via getwork with previous block %s is stale",
+			msgBlock.Header.PrevBlock,
+		)
 		return false, nil
 	}
 	// Process this block using the same rules as blocks coming from other nodes. This will in turn relay it to the
@@ -340,8 +348,10 @@ func HandleGetWorkSubmission(s *Server, hexData string) (interface{}, error) {
 		// Anything other than a rule violation is an unexpected error, so return that error as an internal error.
 		if _, ok := e.(blockchain.RuleError); !ok {
 			return nil, &btcjson.RPCError{
-				Code:    btcjson.ErrRPCInternal.Code,
-				Message: fmt.Sprintf("Unexpected error while processing block: %v", e),
+				Code: btcjson.ErrRPCInternal.Code,
+				Message: fmt.Sprintf("Unexpected error while processing block: %v",
+					e,
+				),
 			}
 		}
 		I.Ln("block submitted via getwork rejected:", e)

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // TestBtcWalletExtCmds tests all of the btcwallet extended commands marshal and unmarshal into valid results include
@@ -66,10 +66,14 @@ func TestBtcWalletExtCmds(t *testing.T) {
 		{
 			name: "importaddress optional",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("importaddress", "1Address", "acct", false)
+				return btcjson.NewCmd("importaddress", "1Address", "acct",
+					false,
+				)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewImportAddressCmd("1Address", "acct", btcjson.Bool(false))
+				return btcjson.NewImportAddressCmd("1Address", "acct",
+					btcjson.Bool(false),
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"importaddress","netparams":["1Address","acct",false],"id":1}`,
 			unmarshalled: &btcjson.ImportAddressCmd{

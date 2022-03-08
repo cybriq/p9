@@ -2,8 +2,8 @@ package blockchain
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/bits"
-	"github.com/p9c/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/bits"
+	"github.com/cybriq/p9/pkg/fork"
 	"math/big"
 )
 

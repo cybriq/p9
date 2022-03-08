@@ -1,8 +1,9 @@
+//go:build nominers
 // +build nominers
 
 package launchers
 
-import "github.com/p9c/p9/pod/state"
+import "github.com/cybriq/p9/pod/state"
 
 // Kopach runs the kopach miner
 func kopachHandle(ifc interface{}) (e error) {

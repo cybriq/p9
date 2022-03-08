@@ -7,10 +7,10 @@ import (
 
 	"golang.org/x/image/colornames"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
 )
 
 func TestPaintOffset(t *testing.T) {
@@ -22,7 +22,8 @@ func TestPaintOffset(t *testing.T) {
 		r.expect(59, 30, colornames.Red)
 		r.expect(60, 30, transparent)
 		r.expect(10, 70, transparent)
-	})
+	},
+	)
 }
 
 func TestPaintRotate(t *testing.T) {
@@ -35,7 +36,8 @@ func TestPaintRotate(t *testing.T) {
 		r.expect(50, 19, colornames.Red)
 		r.expect(59, 19, transparent)
 		r.expect(21, 21, transparent)
-	})
+	},
+	)
 }
 
 func TestPaintShear(t *testing.T) {
@@ -45,7 +47,8 @@ func TestPaintShear(t *testing.T) {
 		paint.FillShape(o, red, clip.Rect(image.Rect(0, 0, 40, 40)).Op())
 	}, func(r result) {
 		r.expect(10, 30, transparent)
-	})
+	},
+	)
 }
 
 func TestClipPaintOffset(t *testing.T) {
@@ -58,7 +61,8 @@ func TestClipPaintOffset(t *testing.T) {
 		r.expect(19, 19, transparent)
 		r.expect(20, 20, colornames.Red)
 		r.expect(30, 30, transparent)
-	})
+	},
+	)
 }
 
 func TestClipOffset(t *testing.T) {
@@ -72,12 +76,16 @@ func TestClipOffset(t *testing.T) {
 		r.expect(30, 30, colornames.Red)
 		r.expect(49, 49, colornames.Red)
 		r.expect(50, 50, transparent)
-	})
+	},
+	)
 }
 
 func TestClipScale(t *testing.T) {
 	run(t, func(o *op.Ops) {
-		a := f32.Affine2D{}.Scale(f32.Point{}, f32.Pt(2, 2)).Offset(f32.Pt(10, 10))
+		a := f32.Affine2D{}.Scale(f32.Point{}, f32.Pt(2, 2)).Offset(f32.Pt(10,
+			10,
+		),
+		)
 		op.Affine(a).Add(o)
 		clip.RRect{Rect: f32.Rect(10, 10, 20, 20)}.Add(o)
 		paint.FillShape(o, red, clip.Rect(image.Rect(0, 0, 1000, 1000)).Op())
@@ -86,7 +94,8 @@ func TestClipScale(t *testing.T) {
 		r.expect(20+10, 20+10, colornames.Red)
 		r.expect(39+10, 39+10, colornames.Red)
 		r.expect(40+10, 40+10, transparent)
-	})
+	},
+	)
 }
 
 func TestClipRotate(t *testing.T) {
@@ -98,7 +107,8 @@ func TestClipRotate(t *testing.T) {
 		r.expect(39, 39, transparent)
 		r.expect(41, 41, colornames.Red)
 		r.expect(50, 50, transparent)
-	})
+	},
+	)
 }
 
 func TestOffsetTexture(t *testing.T) {
@@ -112,7 +122,8 @@ func TestOffsetTexture(t *testing.T) {
 		r.expect(66, 20, transparent)
 		r.expect(16, 64, colornames.Green)
 		r.expect(64, 16, colornames.Green)
-	})
+	},
+	)
 }
 
 func TestOffsetScaleTexture(t *testing.T) {
@@ -125,21 +136,25 @@ func TestOffsetScaleTexture(t *testing.T) {
 	}, func(r result) {
 		r.expect(114, 64, colornames.Blue)
 		r.expect(116, 64, transparent)
-	})
+	},
+	)
 }
 
 func TestRotateTexture(t *testing.T) {
 	run(t, func(o *op.Ops) {
 		defer op.Save(o).Load()
 		squares.Add(o)
-		a := f32.Affine2D{}.Offset(f32.Pt(30, 30)).Rotate(f32.Pt(40, 40), math.Pi/4)
+		a := f32.Affine2D{}.Offset(f32.Pt(30, 30)).Rotate(f32.Pt(40, 40),
+			math.Pi/4,
+		)
 		op.Affine(a).Add(o)
 		scale(20.0/512, 20.0/512).Add(o)
 		paint.PaintOp{}.Add(o)
 	}, func(r result) {
 		r.expect(40, 40-12, colornames.Blue)
 		r.expect(40+12, 40, colornames.Green)
-	})
+	},
+	)
 }
 
 func TestRotateClipTexture(t *testing.T) {
@@ -158,14 +173,17 @@ func TestRotateClipTexture(t *testing.T) {
 		r.expect(35, 39, colornames.Green)
 		r.expect(34, 39, colornames.Green)
 		r.expect(33, 39, colornames.Green)
-	})
+	},
+	)
 }
 
 func TestComplicatedTransform(t *testing.T) {
 	run(t, func(o *op.Ops) {
 		squares.Add(o)
 
-		clip.RRect{Rect: f32.Rect(0, 0, 100, 100), SE: 50, SW: 50, NW: 50, NE: 50}.Add(o)
+		clip.RRect{Rect: f32.Rect(0, 0, 100, 100), SE: 50, SW: 50, NW: 50,
+			NE: 50,
+		}.Add(o)
 
 		a := f32.Affine2D{}.Shear(f32.Point{}, math.Pi/4, 0)
 		op.Affine(a).Add(o)
@@ -175,7 +193,8 @@ func TestComplicatedTransform(t *testing.T) {
 		paint.PaintOp{}.Add(o)
 	}, func(r result) {
 		r.expect(20, 5, transparent)
-	})
+	},
+	)
 }
 
 func TestTransformOrder(t *testing.T) {
@@ -187,7 +206,9 @@ func TestTransformOrder(t *testing.T) {
 		b := f32.Affine2D{}.Scale(f32.Point{}, f32.Pt(8, 8))
 		op.Affine(b).Add(o)
 
-		c := f32.Affine2D{}.Offset(f32.Pt(-10, -10)).Scale(f32.Point{}, f32.Pt(0.5, 0.5))
+		c := f32.Affine2D{}.Offset(f32.Pt(-10, -10)).Scale(f32.Point{},
+			f32.Pt(0.5, 0.5),
+		)
 		op.Affine(c).Add(o)
 		paint.FillShape(o, red, clip.Rect(image.Rect(0, 0, 20, 20)).Op())
 	}, func(r result) {
@@ -196,5 +217,6 @@ func TestTransformOrder(t *testing.T) {
 		r.expect(64-39, 64, colornames.Red)
 		r.expect(64+39, 64, colornames.Red)
 		r.expect(64+41, 64, transparent)
-	})
+	},
+	)
 }

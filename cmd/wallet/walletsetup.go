@@ -6,22 +6,23 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/constant"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/util/legacy/keystore"
-	"github.com/p9c/p9/pkg/util/prompt"
-	"github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/walletdb"
-	"github.com/p9c/p9/pkg/wire"
-	"github.com/p9c/p9/pod/config"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/constant"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/util/legacy/keystore"
+	"github.com/cybriq/p9/pkg/util/prompt"
+	"github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/walletdb"
+	"github.com/cybriq/p9/pkg/wire"
+	"github.com/cybriq/p9/pod/config"
 	// This initializes the bdb driver
-	_ "github.com/p9c/p9/pkg/walletdb/bdb"
+	_ "github.com/cybriq/p9/pkg/walletdb/bdb"
 )
 
 // CreateSimulationWallet is intended to be called from the rpcclient and used
 // to create a wallet for actors involved in simulations.
-func CreateSimulationWallet(activenet *chaincfg.Params, cfg *config.Config) (e error) {
+func CreateSimulationWallet(activenet *chaincfg.Params, cfg *config.Config,
+) (e error) {
 	// Simulation wallet password is 'password'.
 	privPass := []byte("password")
 	// Public passphrase is the default.
@@ -132,7 +133,8 @@ func CreateWallet(activenet *chaincfg.Params, config *config.Config) (e error) {
 	// public passphrase if the user does not want the additional public data encryption.
 	var pubPass []byte
 	if pubPass, e = prompt.PublicPass(reader, privPass, []byte(""),
-		config.WalletPass.Bytes());E.Chk(e){
+		config.WalletPass.Bytes(),
+	); E.Chk(e) {
 		time.Sleep(time.Second * 5)
 		return e
 	}
@@ -145,7 +147,9 @@ func CreateWallet(activenet *chaincfg.Params, config *config.Config) (e error) {
 		return e
 	}
 	D.Ln("Creating the wallet")
-	w, e := loader.CreateNewWallet(pubPass, privPass, seed, time.Now(), false, config, nil)
+	w, e := loader.CreateNewWallet(pubPass, privPass, seed, time.Now(), false,
+		config, nil,
+	)
 	if e != nil {
 		D.Ln(e)
 		time.Sleep(time.Second * 5)
@@ -190,7 +194,8 @@ func NetworkDir(dataDir string, chainParams *chaincfg.Params) string {
 
 // convertLegacyKeystore converts all of the addresses in the passed legacy key store to the new waddrmgr.Manager
 // format. Both the legacy keystore and the new manager must be unlocked.
-func convertLegacyKeystore(legacyKeyStore *keystore.Store, w *Wallet) (e error) {
+func convertLegacyKeystore(legacyKeyStore *keystore.Store, w *Wallet,
+) (e error) {
 	netParams := legacyKeyStore.Net()
 	blockStamp := waddrmgr.BlockStamp{
 		Height: 0,

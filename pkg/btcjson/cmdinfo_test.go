@@ -3,8 +3,8 @@ package btcjson_test
 import (
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // TestCmdMethod tests the CmdMethod function to ensure it returns the expected methods and errors.

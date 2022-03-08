@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build (linux && !android && !nox11) || freebsd || openbsd
 // +build linux,!android,!nox11 freebsd openbsd
 
 package wm
@@ -35,16 +36,16 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/io/clipboard"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/io/system"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/io/clipboard"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/io/system"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 
 	syscall "golang.org/x/sys/unix"
 
-	"github.com/p9c/p9/pkg/gel/gio/app/internal/xkb"
+	"github.com/cybriq/p9/pkg/gel/gio/app/internal/xkb"
 )
 
 type x11Window struct {
@@ -170,7 +171,8 @@ func (w *x11Window) setOptions() {
 			format:   8,
 			nitems:   C.ulong(len(title)),
 		},
-		w.atoms.wmName)
+		w.atoms.wmName,
+	)
 
 	if o := opts.WindowMode; o != nil {
 		w.SetWindowMode(*o)
@@ -337,7 +339,10 @@ loop:
 				break
 			}
 			if err != nil {
-				panic(fmt.Errorf("x11 loop: read from notify pipe failed: %w", err))
+				panic(fmt.Errorf("x11 loop: read from notify pipe failed: %w",
+					err,
+				),
+				)
 			}
 		}
 
@@ -352,7 +357,8 @@ loop:
 					Metric: w.cfg,
 				},
 				Sync: syn,
-			})
+			},
+			)
 		}
 		w.mu.Lock()
 		readClipboard := w.clipboard.read
@@ -362,7 +368,9 @@ loop:
 		w.mu.Unlock()
 		if readClipboard {
 			C.XDeleteProperty(w.x, w.xw, w.atoms.clipboardContent)
-			C.XConvertSelection(w.x, w.atoms.clipboard, w.atoms.utf8string, w.atoms.clipboardContent, w.xw, C.CurrentTime)
+			C.XConvertSelection(w.x, w.atoms.clipboard, w.atoms.utf8string,
+				w.atoms.clipboardContent, w.xw, C.CurrentTime,
+			)
 		}
 		if writeClipboard != nil {
 			w.clipboard.content = []byte(*writeClipboard)
@@ -433,8 +441,11 @@ func (h *x11EventHandler) handleEvents() bool {
 				}
 			case C.XkbStateNotify:
 				state := (*C.XkbStateNotifyEvent)(unsafe.Pointer(xev))
-				h.w.xkb.UpdateMask(uint32(state.base_mods), uint32(state.latched_mods), uint32(state.locked_mods),
-					uint32(state.base_group), uint32(state.latched_group), uint32(state.locked_group))
+				h.w.xkb.UpdateMask(uint32(state.base_mods),
+					uint32(state.latched_mods), uint32(state.locked_mods),
+					uint32(state.base_group), uint32(state.latched_group),
+					uint32(state.locked_group),
+				)
 			}
 		case C.KeyPress, C.KeyRelease:
 			ks := key.Press
@@ -510,7 +521,8 @@ func (h *x11EventHandler) handleEvents() bool {
 				},
 				Time:      time.Duration(mevt.time) * time.Millisecond,
 				Modifiers: w.xkb.Modifiers(),
-			})
+			},
+			)
 		case C.Expose: // update
 			// redraw only on the last expose event
 			redraw = (*C.XExposeEvent)(unsafe.Pointer(xev)).count == 0
@@ -541,7 +553,9 @@ func (h *x11EventHandler) handleEvents() bool {
 				// Ignore non-utf-8 encoded strings.
 				break
 			}
-			str := C.GoStringN((*C.char)(unsafe.Pointer(text.value)), C.int(text.nitems))
+			str := C.GoStringN((*C.char)(unsafe.Pointer(text.value)),
+				C.int(text.nitems),
+			)
 			w.w.Event(clipboard.Event{Text: str})
 		case C.SelectionRequest:
 			cevt := (*C.XSelectionRequestEvent)(unsafe.Pointer(xev))
@@ -574,7 +588,8 @@ func (h *x11EventHandler) handleEvents() bool {
 					// GTK clients need this.
 					C.long(w.atoms.gtk_text_buffer_contents),
 				}
-				C.XChangeProperty(w.x, cevt.requestor, cevt.property, w.atoms.atom,
+				C.XChangeProperty(w.x, cevt.requestor, cevt.property,
+					w.atoms.atom,
 					32 /* bitwidth of formats */, C.PropModeReplace,
 					(*C.uchar)(unsafe.Pointer(&formats)), C.int(len(formats)),
 				)
@@ -586,7 +601,8 @@ func (h *x11EventHandler) handleEvents() bool {
 				if len(content) > 0 {
 					ptr = (*C.uchar)(unsafe.Pointer(&content[0]))
 				}
-				C.XChangeProperty(w.x, cevt.requestor, cevt.property, cevt.target,
+				C.XChangeProperty(w.x, cevt.requestor, cevt.property,
+					cevt.target,
 					8 /* bitwidth */, C.PropModeReplace,
 					ptr, C.int(len(content)),
 				)
@@ -625,7 +641,8 @@ func newX11Window(gioWin Callbacks, opts *Options) error {
 			err = errors.New("x11: threads init failed")
 		}
 		C.XrmInitialize()
-	})
+	},
+	)
 	if err != nil {
 		return err
 	}
@@ -669,7 +686,8 @@ func newX11Window(gioWin Callbacks, opts *Options) error {
 	win := C.XCreateWindow(dpy, C.XDefaultRootWindow(dpy),
 		0, 0, C.uint(width), C.uint(height),
 		0, C.CopyFromParent, C.InputOutput, nil,
-		C.CWEventMask|C.CWBackPixmap|C.CWOverrideRedirect, &swa)
+		C.CWEventMask|C.CWBackPixmap|C.CWOverrideRedirect, &swa,
+	)
 
 	w := &x11Window{
 		w: gioWin, x: dpy, xw: win,
@@ -743,8 +761,10 @@ func x11DetectUIScale(dpy *C.Display) float32 {
 				t *C.char
 				v C.XrmValue
 			)
-			if C.XrmGetResource(db, (*C.char)(unsafe.Pointer(&[]byte("Xft.dpi\x00")[0])),
-				(*C.char)(unsafe.Pointer(&[]byte("Xft.Dpi\x00")[0])), &t, &v) != C.False {
+			if C.XrmGetResource(db,
+				(*C.char)(unsafe.Pointer(&[]byte("Xft.dpi\x00")[0])),
+				(*C.char)(unsafe.Pointer(&[]byte("Xft.Dpi\x00")[0])), &t, &v,
+			) != C.False {
 				if t != nil && C.GoString(t) == "String" {
 					f, err := strconv.ParseFloat(C.GoString(v.addr), 32)
 					if err == nil {
@@ -770,7 +790,9 @@ func (w *x11Window) updateXkbKeymap() error {
 	if xkbDevID == -1 {
 		return errors.New("x11: xkb_x11_get_core_keyboard_device_id failed")
 	}
-	keymap := C.xkb_x11_keymap_new_from_device(ctx, xcb, xkbDevID, C.XKB_KEYMAP_COMPILE_NO_FLAGS)
+	keymap := C.xkb_x11_keymap_new_from_device(ctx, xcb, xkbDevID,
+		C.XKB_KEYMAP_COMPILE_NO_FLAGS,
+	)
 	if keymap == nil {
 		return errors.New("x11: xkb_x11_keymap_new_from_device failed")
 	}

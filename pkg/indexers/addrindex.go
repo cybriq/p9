@@ -3,19 +3,19 @@ package indexers
 import (
 	"errors"
 	"fmt"
-	"github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 	"sync"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -147,7 +147,9 @@ func keyForLevel(addrKey [addrKeySize]byte, level uint8) [levelKeySize]byte {
 
 // dbPutAddrIndexEntry updates the address index to include the provided entry according to the level-based scheme
 // described in detail above.
-func dbPutAddrIndexEntry(bucket internalBucket, addrKey [addrKeySize]byte, blockID uint32, txLoc wire.TxLoc) (e error) {
+func dbPutAddrIndexEntry(bucket internalBucket, addrKey [addrKeySize]byte,
+	blockID uint32, txLoc wire.TxLoc,
+) (e error) {
 	// Start with level 0 and its initial max number of entries.
 	curLevel := uint8(0)
 	maxLevelBytes := level0MaxEntries * txEntrySize
@@ -212,7 +214,8 @@ func dbPutAddrIndexEntry(bucket internalBucket, addrKey [addrKeySize]byte, block
 // entries skipped since it could have been less in the case where there are less total entries than the requested
 // number of entries to skip.
 func dbFetchAddrIndexEntries(
-	bucket internalBucket, addrKey [addrKeySize]byte, numToSkip, numRequested uint32,
+	bucket internalBucket, addrKey [addrKeySize]byte,
+	numToSkip, numRequested uint32,
 	reverse bool, fetchBlockHash fetchBlockHashFunc,
 ) ([]database.BlockRegion, uint32, error) {
 	// When the reverse flag is not set, all levels need to be fetched because numToSkip and numRequested are counted
@@ -304,7 +307,9 @@ func maxEntriesForLevel(level uint8) int {
 
 // dbRemoveAddrIndexEntries removes the specified number of entries from from the address index for the provided key. An
 // assertion error will be returned if the count exceeds the total number of entries in the index.
-func dbRemoveAddrIndexEntries(bucket internalBucket, addrKey [addrKeySize]byte, count int) (e error) {
+func dbRemoveAddrIndexEntries(bucket internalBucket, addrKey [addrKeySize]byte,
+	count int,
+) (e error) {
 	// Nothing to do if no entries are being deleted.
 	if count <= 0 {
 		return nil
@@ -546,7 +551,9 @@ type writeIndexData map[[addrKeySize]byte][]int
 
 // indexPkScript extracts all standard addresses from the passed public key script and maps each of them to the
 // associated transaction using the passed map.
-func (idx *AddrIndex) indexPkScript(data writeIndexData, pkScript []byte, txIdx int) {
+func (idx *AddrIndex) indexPkScript(data writeIndexData, pkScript []byte,
+	txIdx int,
+) {
 	// Nothing to index if the script is non-standard or otherwise doesn't contain any addresses.
 	var addrs []btcaddr.Address
 	var e error
@@ -729,7 +736,9 @@ func (idx *AddrIndex) indexUnconfirmedAddresses(pkScript []byte, tx *util.Tx) {
 // This transaction MUST have already been validated by the memory pool before calling this function with it and have
 // all of the inputs available in the provided utxo view. Failure to do so could result in some or all addresses not
 // being indexed. This function is safe for concurrent access.
-func (idx *AddrIndex) AddUnconfirmedTx(tx *util.Tx, utxoView *blockchain.UtxoViewpoint) {
+func (idx *AddrIndex) AddUnconfirmedTx(tx *util.Tx,
+	utxoView *blockchain.UtxoViewpoint,
+) {
 	// Index addresses of all referenced previous transaction outputs. The existence checks are elided since this is
 	// only called after the transaction has already been validated and thus all inputs are already known to exist.
 	for _, txIn := range tx.MsgTx().TxIn {

@@ -7,12 +7,12 @@ import (
 
 	icons2 "golang.org/x/exp/shiny/materialdesign/icons"
 
-	"github.com/p9c/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 
-	"github.com/p9c/p9/pkg/gel"
-	"github.com/p9c/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/gel"
 )
 
 func (wg *WalletGUI) balanceCard() func(gtx l.Context) l.Dimensions {
@@ -100,7 +100,6 @@ func (wg *WalletGUI) balanceCard() func(gtx l.Context) l.Dimensions {
 														Font("go regular").
 														Alignment(text.End).
 														Color("DocText").Fn,
-
 												).Fn,
 											).Fn,
 										).Fn,
@@ -123,7 +122,8 @@ func (wg *WalletGUI) balanceCard() func(gtx l.Context) l.Dimensions {
 													wg.H5(
 														"total"+leftPadTo(
 															14, 14, fmt.Sprintf(
-																"%6.8f", wg.State.balance.Load()+wg.
+																"%6.8f",
+																wg.State.balance.Load()+wg.
 																	State.balanceUnconfirmed.Load(),
 															),
 														),
@@ -153,8 +153,7 @@ func (wg *WalletGUI) OverviewPage() l.Widget {
 			wg.Size.Load(), gel.Widgets{
 				{
 					Size: 0,
-					Widget:
-					wg.VFlex().AlignStart().
+					Widget: wg.VFlex().AlignStart().
 						Rigid(
 							// wg.ButtonInset(0.25,
 							wg.VFlex().
@@ -193,7 +192,7 @@ func (wg *WalletGUI) OverviewPage() l.Widget {
 						Rigid(
 							// wg.ButtonInset(0.25,
 							wg.VFlex(). // SpaceSides().AlignStart().
-								Rigid(
+									Rigid(
 									wg.Inset(
 										0.25,
 										wg.balanceCard(),
@@ -252,7 +251,8 @@ func (wg *WalletGUI) recentTxCardStub(txs *btcjson.ListTransactionsResult) l.Wid
 			// 	).Fn,
 			// ).
 			Rigid(
-				wg.Caption(fmt.Sprintf("%-6.8f DUO", txs.Amount)).Font("go regular").Color("DocText").Fn,
+				wg.Caption(fmt.Sprintf("%-6.8f DUO", txs.Amount),
+				).Font("go regular").Color("DocText").Fn,
 			).
 			Rigid(
 				wg.Flex().
@@ -330,7 +330,8 @@ func (wg *WalletGUI) recentTxCardSummary(txs *btcjson.ListTransactionsResult) l.
 			// 	0.25,
 			wg.Flex().AlignStart().SpaceBetween().
 				Rigid(
-					wg.H6(fmt.Sprintf("%-.8f DUO", txs.Amount)).Alignment(text.Start).Color("PanelText").Fn,
+					wg.H6(fmt.Sprintf("%-.8f DUO", txs.Amount),
+					).Alignment(text.Start).Color("PanelText").Fn,
 				).
 				Flexed(
 					1,
@@ -366,7 +367,10 @@ func (wg *WalletGUI) recentTxCardSummary(txs *btcjson.ListTransactionsResult) l.
 								// 	// 	wg.blockPage(*txs.BlockIndex)),
 								// ).
 								Rigid(
-									wg.Caption(fmt.Sprintf("%d ", txs.BlockIndex)).Fn,
+									wg.Caption(fmt.Sprintf("%d ",
+										txs.BlockIndex,
+									),
+									).Fn,
 								).
 								Fn,
 						).
@@ -376,7 +380,10 @@ func (wg *WalletGUI) recentTxCardSummary(txs *btcjson.ListTransactionsResult) l.
 									wg.Icon().Color("PanelText").Scale(1).Src(&icons2.ActionCheckCircle).Fn,
 								).
 								Rigid(
-									wg.Caption(fmt.Sprintf("%d ", txs.Confirmations)).Fn,
+									wg.Caption(fmt.Sprintf("%d ",
+										txs.Confirmations,
+									),
+									).Fn,
 								).
 								Fn,
 						).
@@ -568,7 +575,9 @@ func (wg *WalletGUI) recentTxCardSummaryButtonGenerate(
 		).Fn
 }
 
-func (wg *WalletGUI) recentTxCardDetail(txs *btcjson.ListTransactionsResult, clickable *gel.Clickable) l.Widget {
+func (wg *WalletGUI) recentTxCardDetail(txs *btcjson.ListTransactionsResult,
+	clickable *gel.Clickable,
+) l.Widget {
 	return wg.VFlex().
 		Rigid(
 			wg.Fill(
@@ -649,7 +658,9 @@ func (wg *WalletGUI) recentTxCardDetail(txs *btcjson.ListTransactionsResult, cli
 		).Fn
 }
 
-func (wg *WalletGUI) txDetailEntry(name, detail string, bgColor string, small bool) l.Widget {
+func (wg *WalletGUI) txDetailEntry(name, detail string, bgColor string,
+	small bool,
+) l.Widget {
 	content := wg.Body1
 	if small {
 		content = wg.Caption
@@ -747,20 +758,30 @@ func (wg *WalletGUI) RecentTransactions(n int, listName string) l.Widget {
 			func(gtx l.Context) l.Dimensions {
 				return gel.If(
 					txs.Category == "immature",
-					wg.recentTxCardSummaryButtonGenerate(&txs, ck, "DocBg", false),
+					wg.recentTxCardSummaryButtonGenerate(&txs, ck, "DocBg",
+						false,
+					),
 					gel.If(
 						txs.Category == "send",
 						wg.recentTxCardSummaryButton(&txs, ck, "Danger", false),
 						gel.If(
 							txs.Category == "receive",
-							wg.recentTxCardSummaryButton(&txs, ck, "Success", false),
+							wg.recentTxCardSummaryButton(&txs, ck, "Success",
+								false,
+							),
 							gel.If(
 								txs.Category == "generate",
-								wg.recentTxCardSummaryButtonGenerate(&txs, ck, "DocBg", false),
+								wg.recentTxCardSummaryButtonGenerate(&txs, ck,
+									"DocBg", false,
+								),
 								gel.If(
 									wg.prevOpenTxID.Load() == txs.TxID,
-									wg.recentTxCardSummaryButton(&txs, ck, "Primary", false),
-									wg.recentTxCardSummaryButton(&txs, ck, "DocBg", false),
+									wg.recentTxCardSummaryButton(&txs, ck,
+										"Primary", false,
+									),
+									wg.recentTxCardSummaryButton(&txs, ck,
+										"DocBg", false,
+									),
 								),
 							),
 						),

@@ -3,19 +3,19 @@ package wtxmgr
 import (
 	"bytes"
 	"encoding/hex"
-	"github.com/p9c/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/amt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/walletdb"
-	_ "github.com/p9c/p9/pkg/walletdb/bdb"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/walletdb"
+	_ "github.com/cybriq/p9/pkg/walletdb/bdb"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // Received transaction output for mainnet outpoint
@@ -36,8 +36,10 @@ var (
 	TstSpendingTxBlockHeight   = int32(279143)
 	TstSignedTxBlockHash, _    = chainhash.NewHashFromStr("00000000000000017188b968a371bab95aa43522665353b646e41865abae02a4")
 	TstSignedTxBlockDetails    = &BlockMeta{
-		Block: Block{Hash: *TstSignedTxBlockHash, Height: TstSpendingTxBlockHeight},
-		Time:  time.Unix(1389114091, 0),
+		Block: Block{Hash: *TstSignedTxBlockHash,
+			Height: TstSpendingTxBlockHeight,
+		},
+		Time: time.Unix(1389114091, 0),
 	}
 )
 
@@ -114,7 +116,9 @@ func TestInsertsCreditsDebitsRollbacks(t *testing.T) {
 	TstDoubleSpendSerializedTx := serializeTx(TstDoubleSpendTx)
 	// Create a "signed" (with invalid sigs) tx that spends output 0 of the double spend.
 	spendingTx := wire.NewMsgTx(wire.TxVersion)
-	spendingTxIn := wire.NewTxIn(wire.NewOutPoint(TstDoubleSpendTx.Hash(), 0), []byte{0, 1, 2, 3, 4}, nil)
+	spendingTxIn := wire.NewTxIn(wire.NewOutPoint(TstDoubleSpendTx.Hash(), 0),
+		[]byte{0, 1, 2, 3, 4}, nil,
+	)
 	spendingTx.AddTxIn(spendingTxIn)
 	spendingTxOut1 := wire.NewTxOut(1e7, []byte{5, 6, 7, 8, 9})
 	spendingTxOut2 := wire.NewTxOut(9e7, []byte{10, 11, 12, 13, 14})
@@ -495,7 +499,9 @@ func TestInsertsCreditsDebitsRollbacks(t *testing.T) {
 				t.Fatalf("%s: Confirmed Balance failed: %v", test.name, e)
 			}
 			if bal != test.bal {
-				t.Fatalf("%s: balance mismatch: expected: %d, got: %d", test.name, test.bal, bal)
+				t.Fatalf("%s: balance mismatch: expected: %d, got: %d",
+					test.name, test.bal, bal,
+				)
 			}
 			unc, e := s.Balance(ns, 0, TstRecvCurrentHeight)
 			if e != nil {
@@ -503,16 +509,22 @@ func TestInsertsCreditsDebitsRollbacks(t *testing.T) {
 			}
 			unc -= bal
 			if unc != test.unc {
-				t.Fatalf("%s: unconfirmed balance mismatch: expected %d, got %d", test.name, test.unc, unc)
+				t.Fatalf("%s: unconfirmed balance mismatch: expected %d, got %d",
+					test.name, test.unc, unc,
+				)
 			}
 			// Chk that unspent outputs match expected.
 			unspent, e := s.UnspentOutputs(ns)
 			if e != nil {
-				t.Fatalf("%s: failed to fetch unspent outputs: %v", test.name, e)
+				t.Fatalf("%s: failed to fetch unspent outputs: %v", test.name,
+					e,
+				)
 			}
 			for _, cred := range unspent {
 				if _, ok := test.unspents[cred.OutPoint]; !ok {
-					t.Errorf("%s: unexpected unspent output: %v", test.name, cred.OutPoint)
+					t.Errorf("%s: unexpected unspent output: %v", test.name,
+						cred.OutPoint,
+					)
 				}
 				delete(test.unspents, cred.OutPoint)
 			}
@@ -522,7 +534,9 @@ func TestInsertsCreditsDebitsRollbacks(t *testing.T) {
 			// Chk that unmined txs match expected.
 			unmined, e := s.UnminedTxs(ns)
 			if e != nil {
-				t.Fatalf("%s: cannot load unmined transactions: %v", test.name, e)
+				t.Fatalf("%s: cannot load unmined transactions: %v", test.name,
+					e,
+				)
 			}
 			for _, tx := range unmined {
 				txHash := tx.TxHash()
@@ -619,7 +633,8 @@ func newCoinBase(outputValues ...int64) *wire.MsgTx {
 	}
 	return &tx
 }
-func spendOutput(txHash *chainhash.Hash, index uint32, outputValues ...int64) *wire.MsgTx {
+func spendOutput(txHash *chainhash.Hash, index uint32, outputValues ...int64,
+) *wire.MsgTx {
 	tx := wire.MsgTx{
 		TxIn: []*wire.TxIn{
 			{
@@ -1032,7 +1047,9 @@ func TestCoinbases(t *testing.T) {
 		t.Fatal(e)
 	}
 	if len(unminedTxs) != 0 {
-		t.Fatalf("Should have no unmined transactions after coinbase reorg, found %d", len(unminedTxs))
+		t.Fatalf("Should have no unmined transactions after coinbase reorg, found %d",
+			len(unminedTxs),
+		)
 	}
 }
 
@@ -1202,7 +1219,9 @@ func TestMoveMultipleToSameBlock(t *testing.T) {
 		t.Fatal(e)
 	}
 	if len(unminedTxs) != 0 {
-		t.Fatalf("Should have no unmined transactions mining both, found %d", len(unminedTxs))
+		t.Fatalf("Should have no unmined transactions mining both, found %d",
+			len(unminedTxs),
+		)
 	}
 }
 

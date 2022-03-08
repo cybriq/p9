@@ -6,7 +6,7 @@ import (
 	"image"
 	"testing"
 
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 func TestStack(t *testing.T) {
@@ -20,10 +20,12 @@ func TestStack(t *testing.T) {
 	dims := Stack{Alignment: Center}.Layout(gtx,
 		Expanded(func(gtx Context) Dimensions {
 			return Dimensions{Size: exp}
-		}),
+		},
+		),
 		Stacked(func(gtx Context) Dimensions {
 			return Dimensions{Size: image.Point{X: 50, Y: 50}}
-		}),
+		},
+		),
 	)
 	if got := dims.Size; got != exp {
 		t.Errorf("Stack ignored Expanded size, got %v expected %v", got, exp)

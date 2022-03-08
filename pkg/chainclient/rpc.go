@@ -2,23 +2,23 @@ package chainclient
 
 import (
 	"errors"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/txscript"
 	"sync"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/gcs"
-	"github.com/p9c/p9/pkg/gcs/builder"
-	"github.com/p9c/p9/pkg/rpcclient"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/wire"
-	"github.com/p9c/p9/pkg/wtxmgr"
+
+	"github.com/cybriq/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/gcs"
+	"github.com/cybriq/p9/pkg/gcs/builder"
+	"github.com/cybriq/p9/pkg/rpcclient"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/wtxmgr"
 )
 
 // RPCClient represents a persistent client connection to a bitcoin RPC server for information regarding the current
@@ -211,7 +211,9 @@ func buildFilterBlocksWatchList(req *FilterBlocksRequest) ([][]byte, error) {
 // anything. If the filter returns a positive match, the full block will be fetched and filtered. This method returns a
 // FilterBlocksResponse for the first block containing a matching address. If no matches are found in the range of
 // blocks requested, the returned response will be nil.
-func (c *RPCClient) FilterBlocks(req *FilterBlocksRequest,) (*FilterBlocksResponse, error) {
+func (c *RPCClient) FilterBlocks(req *FilterBlocksRequest) (*FilterBlocksResponse,
+	error,
+) {
 	blockFilterer := NewBlockFilterer(c.chainParams, req)
 	// Construct the watchlist using the addresses and outpoints contained in the filter blocks request.
 	watchList, e := buildFilterBlocksWatchList(req)
@@ -300,7 +302,9 @@ func (c *RPCClient) onClientConnect() {
 	case <-c.quit.Wait():
 	}
 }
-func (c *RPCClient) onBlockConnected(hash *chainhash.Hash, height int32, time time.Time) {
+func (c *RPCClient) onBlockConnected(hash *chainhash.Hash, height int32,
+	time time.Time,
+) {
 	select {
 	case c.enqueueNotification <- BlockConnected{
 		Block: wtxmgr.Block{
@@ -312,7 +316,9 @@ func (c *RPCClient) onBlockConnected(hash *chainhash.Hash, height int32, time ti
 	case <-c.quit.Wait():
 	}
 }
-func (c *RPCClient) onBlockDisconnected(hash *chainhash.Hash, height int32, time time.Time) {
+func (c *RPCClient) onBlockDisconnected(hash *chainhash.Hash, height int32,
+	time time.Time,
+) {
 	select {
 	case c.enqueueNotification <- BlockDisconnected{
 		Block: wtxmgr.Block{
@@ -347,13 +353,17 @@ func (c *RPCClient) onRedeemingTx(tx *util.Tx, block *btcjson.BlockDetails) {
 	// Handled exactly like recvtx notifications.
 	c.onRecvTx(tx, block)
 }
-func (c *RPCClient) onRescanProgress(hash *chainhash.Hash, height int32, blkTime time.Time) {
+func (c *RPCClient) onRescanProgress(hash *chainhash.Hash, height int32,
+	blkTime time.Time,
+) {
 	select {
 	case c.enqueueNotification <- &RescanProgress{hash, height, blkTime}:
 	case <-c.quit.Wait():
 	}
 }
-func (c *RPCClient) onRescanFinished(hash *chainhash.Hash, height int32, blkTime time.Time) {
+func (c *RPCClient) onRescanFinished(hash *chainhash.Hash, height int32,
+	blkTime time.Time,
+) {
 	select {
 	case c.enqueueNotification <- &RescanFinished{hash, height, blkTime}:
 	case <-c.quit.Wait():

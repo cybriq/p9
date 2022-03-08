@@ -4,20 +4,20 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/bits"
-	"github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/bits"
+	"github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/fork"
 	"math"
 	"math/big"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/hardfork"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/hardfork"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -225,7 +225,7 @@ func (b *BlockChain) checkConnectBlock(
 		if b.params.Net == wire.TestNet3 {
 			payees = hardfork.TestnetPayees
 		}
-		
+
 		txo := btx.MsgTx().TxOut
 		for i := range payees {
 			if txo[i].Value != int64(payees[i].Amount) {
@@ -258,7 +258,7 @@ func (b *BlockChain) checkConnectBlock(
 				"hardfork coinbase does not pay correct amount to dev fund multisig address",
 			)
 		}
-		
+
 		corepk := hardfork.CorePubkeyBytes
 		if b.params.Net == wire.TestNet3 {
 			corepk = hardfork.TestnetCorePubkeyBytes
@@ -387,7 +387,8 @@ func (b *BlockChain) CheckConnectBlockTemplate(block *block.Block) (e error) {
 	header := block.WireBlock().Header
 	if tip.hash != header.PrevBlock {
 		str := fmt.Sprintf(
-			"previous block must be the current chain tip %v, instead got %v", tip.hash, header.PrevBlock,
+			"previous block must be the current chain tip %v, instead got %v",
+			tip.hash, header.PrevBlock,
 		)
 		return ruleError(ErrPrevBlockNotBest, str)
 	}
@@ -426,7 +427,9 @@ func (b *BlockChain) CheckConnectBlockTemplate(block *block.Block) (e error) {
 // For more details, see https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki and http://r6.ca/blog/20120206T005236Z.html
 //
 // This function MUST be called with the chain state lock held (for reads).
-func (b *BlockChain) checkBIP0030(node *BlockNode, block *block.Block, view *UtxoViewpoint) (e error) {
+func (b *BlockChain) checkBIP0030(node *BlockNode, block *block.Block,
+	view *UtxoViewpoint,
+) (e error) {
 	// Fetch utxos for all of the transaction ouputs in this block. Typically, there will not be any utxos for any of
 	// the outputs.
 	fetchSet := make(map[wire.OutPoint]struct{})
@@ -608,7 +611,9 @@ func (b *BlockChain) checkBlockHeaderContext(
 			ct := header.Timestamp.Truncate(time.Second)
 			pt := prevNode.Header().Timestamp.Truncate(time.Second)
 			if ct.Sub(pt) < time.Second {
-				return ruleError(ErrTimeTooOld, "timestamp is equal to or less than the chain tip")
+				return ruleError(ErrTimeTooOld,
+					"timestamp is equal to or less than the chain tip",
+				)
 			}
 		} else {
 			// Ensure the timestamp for the block header is after the median time of the last several blocks
@@ -627,7 +632,9 @@ func (b *BlockChain) checkBlockHeaderContext(
 	// Ensure chain matches up to predetermined checkpoints.
 	blockHash := header.BlockHash()
 	if !b.verifyCheckpoint(blockHeight, &blockHash) {
-		str := fmt.Sprintf("block at height %d does not match checkpoint hash", blockHeight)
+		str := fmt.Sprintf("block at height %d does not match checkpoint hash",
+			blockHeight,
+		)
 		E.Ln(str)
 		return ruleError(ErrBadCheckpoint, str)
 	}
@@ -672,7 +679,8 @@ func (b *BlockChain) checkBlockHeaderContext(
 // At the target block generation rate for the main network, this is approximately every 4 years.
 //
 // After the Plan 9 Hardfork the block value is adjusted every block according to the time it is to repeat
-func CalcBlockSubsidy(height int32, chainParams *chaincfg.Params, version int32) (r int64) {
+func CalcBlockSubsidy(height int32, chainParams *chaincfg.Params, version int32,
+) (r int64) {
 	if chainParams.SubsidyReductionInterval == 0 {
 		return int64(baseSubsidy)
 	}
@@ -696,14 +704,19 @@ func CalcBlockSubsidy(height int32, chainParams *chaincfg.Params, version int32)
 			for i := range payees {
 				total += payees[i].Amount
 			}
-			total += amt.Amount(CalcBlockSubsidy(height+1, chainParams, version))
+			total += amt.Amount(CalcBlockSubsidy(height+1, chainParams, version),
+			)
 			total += hardfork.TestnetCoreAmount
 			return int64(total)
 		}
 		// Plan 9 hard fork prescribes a smooth supply curve made using an exponential decay formula adjusted to fit the
 		// previous halving cycle and accounting for the block time difference
-		ttpb := float64(fork.List[1].Algos[fork.GetAlgoName(version, height)].VersionInterval)
-		r = int64(2.7 * ttpb / 300 * (math.Pow(2.7, -float64(height)*300*9/ttpb/375000.0)) * 100000000 / 9)
+		ttpb := float64(fork.List[1].Algos[fork.GetAlgoName(version, height)].VersionInterval,
+		)
+		r = int64(2.7 * ttpb / 300 * (math.Pow(2.7,
+			-float64(height)*300*9/ttpb/375000.0,
+		)) * 100000000 / 9,
+		)
 	}
 	return
 }
@@ -721,12 +734,15 @@ func CheckBlockSanity(
 	prevBlockTimestamp time.Time,
 ) (e error) {
 	F.Ln("CheckBlockSanity powlimit %64x", powLimit)
-	return checkBlockSanity(block, powLimit, timeSource, BFNone, DoNotCheckPow, height, prevBlockTimestamp)
+	return checkBlockSanity(block, powLimit, timeSource, BFNone, DoNotCheckPow,
+		height, prevBlockTimestamp,
+	)
 }
 
 // CheckProofOfWork ensures the block header bits which indicate the target difficulty is in min/max range and that the
 // block hash is less than the target difficulty as claimed.
-func CheckProofOfWork(block *block.Block, powLimit *big.Int, height int32) (e error) {
+func CheckProofOfWork(block *block.Block, powLimit *big.Int, height int32,
+) (e error) {
 	return checkProofOfWork(&block.WireBlock().Header, powLimit, BFNone, height)
 }
 
@@ -741,7 +757,9 @@ func CheckProofOfWork(block *block.Block, powLimit *big.Int, height int32) (e er
 //
 // NOTE: The transaction MUST have already been sanity checked with the CheckTransactionSanity function prior to calling
 // this function.
-func CheckTransactionInputs(tx *util.Tx, txHeight int32, utxoView *UtxoViewpoint, chainParams *chaincfg.Params) (
+func CheckTransactionInputs(tx *util.Tx, txHeight int32,
+	utxoView *UtxoViewpoint, chainParams *chaincfg.Params,
+) (
 	int64,
 	error,
 ) {
@@ -950,7 +968,8 @@ func CheckTransactionSanity(tx *util.Tx) (e error) {
 //
 // This uses the precise, signature operation counting mechanism from the script engine which requires access to the
 // input transaction scripts.
-func CountP2SHSigOps(tx *util.Tx, isCoinBaseTx bool, utxoView *UtxoViewpoint) (int, error) {
+func CountP2SHSigOps(tx *util.Tx, isCoinBaseTx bool, utxoView *UtxoViewpoint,
+) (int, error) {
 	// Coinbase transactions have no interesting inputs.
 	if isCoinBaseTx {
 		return 0, nil
@@ -1087,7 +1106,8 @@ func IsCoinBaseTx(msgTx *wire.MsgTx) bool {
 }
 
 // IsFinalizedTransaction determines whether or not a transaction is finalized.
-func IsFinalizedTransaction(tx *util.Tx, blockHeight int32, blockTime time.Time) bool {
+func IsFinalizedTransaction(tx *util.Tx, blockHeight int32, blockTime time.Time,
+) bool {
 	msgTx := tx.MsgTx()
 	// Lock time of zero means the transaction is finalized.
 	lockTime := msgTx.LockTime
@@ -1166,7 +1186,9 @@ func checkBlockHeaderSanity(
 	// whereas the consensus rules only apply to seconds and it's much nicer to deal
 	// with standard Go time values instead of converting to seconds everywhere.
 	if !header.Timestamp.Equal(time.Unix(header.Timestamp.Unix(), 0)) {
-		str := fmt.Sprintf("block timestamp of %v has a higher precision than one second", header.Timestamp)
+		str := fmt.Sprintf("block timestamp of %v has a higher precision than one second",
+			header.Timestamp,
+		)
 		e = ruleError(ErrInvalidTime, str)
 		E.Ln(e)
 		return
@@ -1216,7 +1238,9 @@ func checkBlockSanity(
 	T.F("checkBlockSanity %08x %064x", block.WireBlock().Header.Bits, powLimit)
 	msgBlock := block.WireBlock()
 	header := &msgBlock.Header
-	e = checkBlockHeaderSanity(header, powLimit, timeSource, flags, height, prevBlockTimestamp)
+	e = checkBlockHeaderSanity(header, powLimit, timeSource, flags, height,
+		prevBlockTimestamp,
+	)
 	if e != nil {
 		D.Ln("block processing error:", block.WireBlock().Header.Version, e)
 		return e
@@ -1281,7 +1305,8 @@ func checkBlockSanity(
 		str := fmt.Sprintf(
 			"block merkle root is invalid - block "+
 				"header indicates %v, but calculated value is %v with version %d",
-			header.MerkleRoot, calculatedMerkleRoot, block.WireBlock().Header.Version,
+			header.MerkleRoot, calculatedMerkleRoot,
+			block.WireBlock().Header.Version,
 		)
 		return ruleError(ErrBadMerkleRoot, str)
 	}

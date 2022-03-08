@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/p9c/p9/pod/podconfig"
+	"github.com/cybriq/p9/pod/podconfig"
 
 	"github.com/btcsuite/winsvc/eventlog"
 	"github.com/btcsuite/winsvc/mgr"

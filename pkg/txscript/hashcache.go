@@ -2,9 +2,9 @@ package txscript
 
 import (
 	"sync"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // TxSigHashes houses the partial set of sighashes introduced within BIP0143. This partial set of sighashes may be

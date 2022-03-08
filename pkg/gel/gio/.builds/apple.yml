@@ -67,6 +67,6 @@ tasks:
      mkdir tmp
      cd tmp
      go mod init example.com
-     go get -d github.com/p9c/p9/pkg/gel/gio/example/kitchen
+     go get -d github.com/cybriq/p9/pkg/gel/gio/example/kitchen
      export PATH=/home/build/appletools/bin:$PATH
-     gogio -target ios -o app.app github.com/p9c/p9/pkg/gel/gio/example/kitchen
+     gogio -target ios -o app.app github.com/cybriq/p9/pkg/gel/gio/example/kitchen

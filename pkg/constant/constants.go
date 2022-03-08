@@ -1,10 +1,10 @@
 package constant
 
 import (
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/appdata"
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/peer"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/appdata"
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/peer"
 	"time"
 )
 
@@ -12,7 +12,7 @@ import (
 const (
 	// defaultConfigFilename        = "conf.json"
 	// defaultDataDirname           = "node"
-	
+
 	DefaultP2PPort               = 11047
 	DefaultRPCListener           = "127.0.0.1"
 	DefaultMaxPeers              = 23

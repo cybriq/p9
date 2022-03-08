@@ -2,9 +2,9 @@ package p2padvt
 
 import (
 	"github.com/niubaoshu/gotiny"
-	
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/util/routeable"
+
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/util/routeable"
 )
 
 var Magic = []byte{'a', 'd', 'v', 1}

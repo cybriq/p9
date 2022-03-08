@@ -3,14 +3,14 @@ package index
 import (
 	"errors"
 	"fmt"
-	"github.com/p9c/p9/pkg/block"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/block"
+
+	"github.com/cybriq/p9/pkg/qu"
+
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -79,7 +79,8 @@ var (
 //
 // dbPutBlockIDIndexEntry uses an existing database transaction to update or add the index entries for the hash to id
 // and id to hash mappings for the provided values.
-func dbPutBlockIDIndexEntry(dbTx database.Tx, hash *chainhash.Hash, id uint32) (e error) {
+func dbPutBlockIDIndexEntry(dbTx database.Tx, hash *chainhash.Hash, id uint32,
+) (e error) {
 	// Serialize the height for use in the index entries.
 	var serializedID [4]byte
 	byteOrder.PutUint32(serializedID[:], id)
@@ -96,7 +97,8 @@ func dbPutBlockIDIndexEntry(dbTx database.Tx, hash *chainhash.Hash, id uint32) (
 
 // dbRemoveBlockIDIndexEntry uses an existing database transaction remove index entries from the hash to id and id to
 // hash mappings for the provided hash.
-func dbRemoveBlockIDIndexEntry(dbTx database.Tx, hash *chainhash.Hash) (e error) {
+func dbRemoveBlockIDIndexEntry(dbTx database.Tx, hash *chainhash.Hash,
+) (e error) {
 	// Remove the block hash to ID mapping.
 	meta := dbTx.Metadata()
 	hashIndex := meta.Bucket(idByHashIndexBucketName)
@@ -114,7 +116,9 @@ func dbRemoveBlockIDIndexEntry(dbTx database.Tx, hash *chainhash.Hash) (e error)
 
 // dbFetchBlockIDByHash uses an existing database transaction to retrieve the block id for the provided hash from the
 // index.
-func dbFetchBlockIDByHash(dbTx database.Tx, hash *chainhash.Hash) (uint32, error) {
+func dbFetchBlockIDByHash(dbTx database.Tx, hash *chainhash.Hash) (uint32,
+	error,
+) {
 	hashIndex := dbTx.Metadata().Bucket(idByHashIndexBucketName)
 	serializedID := hashIndex.Get(hash[:])
 	if serializedID == nil {
@@ -125,7 +129,8 @@ func dbFetchBlockIDByHash(dbTx database.Tx, hash *chainhash.Hash) (uint32, error
 
 // dbFetchBlockHashBySerializedID uses an existing database transaction to retrieve the hash for the provided serialized
 // block id from the index.
-func dbFetchBlockHashBySerializedID(dbTx database.Tx, serializedID []byte) (*chainhash.Hash, error) {
+func dbFetchBlockHashBySerializedID(dbTx database.Tx, serializedID []byte,
+) (*chainhash.Hash, error) {
 	idIndex := dbTx.Metadata().Bucket(hashByIDIndexBucketName)
 	hashBytes := idIndex.Get(serializedID)
 	if hashBytes == nil {
@@ -138,7 +143,8 @@ func dbFetchBlockHashBySerializedID(dbTx database.Tx, serializedID []byte) (*cha
 
 // dbFetchBlockHashByID uses an existing database transaction to retrieve the hash for the provided block id from the
 // index.
-func dbFetchBlockHashByID(dbTx database.Tx, id uint32) (*chainhash.Hash, error) {
+func dbFetchBlockHashByID(dbTx database.Tx, id uint32) (*chainhash.Hash, error,
+) {
 	var serializedID [4]byte
 	byteOrder.PutUint32(serializedID[:], id)
 	return dbFetchBlockHashBySerializedID(dbTx, serializedID[:])
@@ -155,7 +161,9 @@ func putTxIndexEntry(target []byte, blockID uint32, txLoc wire.TxLoc) {
 
 // dbPutTxIndexEntry uses an existing database transaction to update the transaction index given the provided serialized
 // data that is expected to have been serialized putTxIndexEntry.
-func dbPutTxIndexEntry(dbTx database.Tx, txHash *chainhash.Hash, serializedData []byte) (e error) {
+func dbPutTxIndexEntry(dbTx database.Tx, txHash *chainhash.Hash,
+	serializedData []byte,
+) (e error) {
 	txIndex := dbTx.Metadata().Bucket(txIndexKey)
 	return txIndex.Put(txHash[:], serializedData)
 }
@@ -163,7 +171,8 @@ func dbPutTxIndexEntry(dbTx database.Tx, txHash *chainhash.Hash, serializedData 
 // dbFetchTxIndexEntry uses an existing database transaction to fetch the block region for the provided transaction hash
 // from the transaction index. When there is no entry for the provided hash, nil will be returned for the both the
 // region and the error.
-func dbFetchTxIndexEntry(dbTx database.Tx, txHash *chainhash.Hash) (*database.BlockRegion, error) {
+func dbFetchTxIndexEntry(dbTx database.Tx, txHash *chainhash.Hash,
+) (*database.BlockRegion, error) {
 	// Load the record from the database and return now if it doesn't exist.
 	txIndex := dbTx.Metadata().Bucket(txIndexKey)
 	serializedData := txIndex.Get(txHash[:])
@@ -201,7 +210,8 @@ func dbFetchTxIndexEntry(dbTx database.Tx, txHash *chainhash.Hash) (*database.Bl
 
 // dbAddTxIndexEntries uses an existing database transaction to add a transaction index entry for every transaction in
 // the passed block.
-func dbAddTxIndexEntries(dbTx database.Tx, block *block.Block, blockID uint32) (e error) {
+func dbAddTxIndexEntries(dbTx database.Tx, block *block.Block, blockID uint32,
+) (e error) {
 	// The offset and length of the transactions within the serialized block.
 	txLocs, e := block.TxLoc()
 	if e != nil {
@@ -285,7 +295,9 @@ func (idx *TxIndex) Init() (e error) {
 				highestKnown = testBlockID
 				testBlockID += increment
 			}
-			T.F("forward scan (highest known %d, next unknown %d)", highestKnown, nextUnknown)
+			T.F("forward scan (highest known %d, next unknown %d)",
+				highestKnown, nextUnknown,
+			)
 			// No used block IDs due to new database.
 			if nextUnknown == 1 {
 				return nil
@@ -301,7 +313,9 @@ func (idx *TxIndex) Init() (e error) {
 				} else {
 					highestKnown = testBlockID
 				}
-				T.F("binary scan (highest known %d, next unknown %d)", highestKnown, nextUnknown)
+				T.F("binary scan (highest known %d, next unknown %d)",
+					highestKnown, nextUnknown,
+				)
 				if highestKnown+1 == nextUnknown {
 					break
 				}
@@ -344,7 +358,9 @@ func (idx *TxIndex) Create(dbTx database.Tx) (e error) {
 
 // ConnectBlock is invoked by the index manager when a new block has been connected to the main chain. This indexer adds
 // a hash-to-transaction mapping for every transaction in the passed block. This is part of the Indexer interface.
-func (idx *TxIndex) ConnectBlock(dbTx database.Tx, block *block.Block, stxos []blockchain.SpentTxOut) (e error) {
+func (idx *TxIndex) ConnectBlock(dbTx database.Tx, block *block.Block,
+	stxos []blockchain.SpentTxOut,
+) (e error) {
 	// Increment the internal block ID to use for the block being connected and add all of the transactions in the block
 	// to the index.
 	newBlockID := idx.curBlockID + 1
@@ -390,7 +406,9 @@ func (idx *TxIndex) DisconnectBlock(
 // When there is no entry for the provided hash, nil will be returned for the both the entry and the error.
 //
 // This function is safe for concurrent access.
-func (idx *TxIndex) TxBlockRegion(hash *chainhash.Hash) (region *database.BlockRegion, e error) {
+func (idx *TxIndex) TxBlockRegion(hash *chainhash.Hash) (region *database.BlockRegion,
+	e error,
+) {
 	e = idx.db.View(
 		func(dbTx database.Tx) (e error) {
 			region, e = dbFetchTxIndexEntry(dbTx, hash)

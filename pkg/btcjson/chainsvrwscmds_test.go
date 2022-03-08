@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // TestChainSvrWsCmds tests all of the chain server websocket-specific commands marshal and unmarshal into valid results
@@ -31,8 +31,10 @@ func TestChainSvrWsCmds(t *testing.T) {
 			staticCmd: func() interface{} {
 				return btcjson.NewAuthenticateCmd("user", "pass")
 			},
-			marshalled:   `{"jsonrpc":"1.0","method":"authenticate","netparams":["user","pass"],"id":1}`,
-			unmarshalled: &btcjson.AuthenticateCmd{Username: "user", Passphrase: "pass"},
+			marshalled: `{"jsonrpc":"1.0","method":"authenticate","netparams":["user","pass"],"id":1}`,
+			unmarshalled: &btcjson.AuthenticateCmd{Username: "user",
+				Passphrase: "pass",
+			},
 		},
 		{
 			name: "notifyblocks",
@@ -109,7 +111,9 @@ func TestChainSvrWsCmds(t *testing.T) {
 		{
 			name: "stopnotifyreceived",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("stopnotifyreceived", []string{"1Address"})
+				return btcjson.NewCmd("stopnotifyreceived",
+					[]string{"1Address"},
+				)
 			},
 			staticCmd: func() interface{} {
 				return btcjson.NewStopNotifyReceivedCmd([]string{"1Address"})
@@ -122,7 +126,9 @@ func TestChainSvrWsCmds(t *testing.T) {
 		{
 			name: "notifyspent",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("notifyspent", `[{"hash":"123","index":0}]`)
+				return btcjson.NewCmd("notifyspent",
+					`[{"hash":"123","index":0}]`,
+				)
 			},
 			staticCmd: func() interface{} {
 				ops := []btcjson.OutPoint{{Hash: "123", Index: 0}}
@@ -136,7 +142,9 @@ func TestChainSvrWsCmds(t *testing.T) {
 		{
 			name: "stopnotifyspent",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("stopnotifyspent", `[{"hash":"123","index":0}]`)
+				return btcjson.NewCmd("stopnotifyspent",
+					`[{"hash":"123","index":0}]`,
+				)
 			},
 			staticCmd: func() interface{} {
 				ops := []btcjson.OutPoint{{Hash: "123", Index: 0}}
@@ -167,22 +175,26 @@ func TestChainSvrWsCmds(t *testing.T) {
 			unmarshalled: &btcjson.RescanCmd{
 				BeginBlock: "123",
 				Addresses:  []string{"1Address"},
-				OutPoints:  []btcjson.OutPoint{{Hash: "0000000000000000000000000000000000000000000000000000000000000123",
-												   Index: 0,
+				OutPoints: []btcjson.OutPoint{{Hash: "0000000000000000000000000000000000000000000000000000000000000123",
+					Index: 0,
 				},
 				},
-				EndBlock:   nil,
+				EndBlock: nil,
 			},
 		},
 		{
 			name: "rescan optional",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("rescan", "123", `["1Address"]`, `[{"hash":"123","index":0}]`, "456")
+				return btcjson.NewCmd("rescan", "123", `["1Address"]`,
+					`[{"hash":"123","index":0}]`, "456",
+				)
 			},
 			staticCmd: func() interface{} {
 				addrs := []string{"1Address"}
 				ops := []btcjson.OutPoint{{Hash: "123", Index: 0}}
-				return btcjson.NewRescanCmd("123", addrs, ops, btcjson.String("456"))
+				return btcjson.NewRescanCmd("123", addrs, ops,
+					btcjson.String("456"),
+				)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"rescan","netparams":["123",["1Address"],[{"hash":"123","index":0}],"456"],"id":1}`,
 			unmarshalled: &btcjson.RescanCmd{
@@ -213,7 +225,7 @@ func TestChainSvrWsCmds(t *testing.T) {
 				Reload:    false,
 				Addresses: []string{"1Address"},
 				OutPoints: []btcjson.OutPoint{{Hash: "0000000000000000000000000000000000000000000000000000000000000123",
-												  Index: 0,
+					Index: 0,
 				},
 				},
 			},

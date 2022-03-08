@@ -12,7 +12,7 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/plumbing/storer"
 
-	"github.com/p9c/p9/version"
+	"github.com/cybriq/p9/version"
 )
 
 var (
@@ -86,7 +86,9 @@ func main() {
 			if strings.HasPrefix(prs, "v") {
 				var va [3]int
 				var meta string
-				_, _ = fmt.Sscanf(prs, "v%d.%d.%d%s", &va[0], &va[1], &va[2], &meta)
+				_, _ = fmt.Sscanf(prs, "v%d.%d.%d%s", &va[0], &va[1], &va[2],
+					&meta,
+				)
 				vn := va[0]*1000000 + va[1]*1000 + va[2]
 				if maxVersion < vn {
 					maxVersion = vn
@@ -114,7 +116,7 @@ func main() {
 	// I.Ln(PathBase)
 	versionFile := `package version
 
-`+`//go:generate go run ./update/.
+` + `//go:generate go run ./update/.
 
 import (
 	"fmt"

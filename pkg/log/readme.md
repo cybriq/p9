@@ -13,7 +13,7 @@ to add the logger to with the name `log.go`, and then:
 go run ./pkg/logg/deploy/.
 ```
 
-from the root of the github.com/p9c/p9 repository
+from the root of the github.com/cybriq/p9 repository
 and it replicates its template with the altered
 package name to match the folder name - so you need
 to adhere to the rule that package names and the folder

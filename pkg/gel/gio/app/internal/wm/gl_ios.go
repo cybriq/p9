@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build darwin && ios
 // +build darwin,ios
 
 package wm
@@ -21,8 +22,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/p9c/p9/pkg/gel/gio/gpu"
-	"github.com/p9c/p9/pkg/gel/gio/internal/gl"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/gl"
 )
 
 type context struct {
@@ -119,8 +120,12 @@ func (c *context) MakeCurrent() error {
 	c.c.RenderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, w, h)
 	c.c.BindRenderbuffer(gl.RENDERBUFFER, currentRB)
 	c.c.BindFramebuffer(gl.FRAMEBUFFER, c.frameBuffer)
-	c.c.FramebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, c.colorBuffer)
-	c.c.FramebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, c.depthBuffer)
+	c.c.FramebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+		gl.RENDERBUFFER, c.colorBuffer,
+	)
+	c.c.FramebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT,
+		gl.RENDERBUFFER, c.depthBuffer,
+	)
 	if st := c.c.CheckFramebufferStatus(gl.FRAMEBUFFER); st != gl.FRAMEBUFFER_COMPLETE {
 		return fmt.Errorf("framebuffer incomplete, status: %#x\n", st)
 	}

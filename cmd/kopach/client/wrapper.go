@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/rpc"
 
-	"github.com/p9c/p9/pkg/chainrpc/templates"
+	"github.com/cybriq/p9/pkg/chainrpc/templates"
 )
 
 type Client struct {

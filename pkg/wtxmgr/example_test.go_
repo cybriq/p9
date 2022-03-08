@@ -4,11 +4,11 @@ package wtxmgr_test
 import (
 	"fmt"
 
-	"github.com/p9c/p9/pkg/chain/config/netparams"
-	chainhash "github.com/p9c/p9/pkg/chain/hash"
-	wtxmgr "github.com/p9c/p9/pkg/chain/tx/mgr"
-	"github.com/p9c/p9/pkg/chain/wire"
-	"github.com/p9c/p9/pkg/db/walletdb"
+	"github.com/cybriq/p9/pkg/chain/config/netparams"
+	chainhash "github.com/cybriq/p9/pkg/chain/hash"
+	wtxmgr "github.com/cybriq/p9/pkg/chain/tx/mgr"
+	"github.com/cybriq/p9/pkg/chain/wire"
+	"github.com/cybriq/p9/pkg/db/walletdb"
 )
 
 var (

@@ -1,3 +1,6 @@
 #!/bin/bash
-sudo apt install -y gcc pkg-config libwayland-dev libx11-dev libx11-xcb-dev libxkbcommon-x11-dev libgles2-mesa-dev \
-  libegl1-mesa-dev libffi-dev libxcursor-dev xclip
+sudo apt install -y gcc pkg-config libwayland-dev libx11-dev libx11-xcb-dev \
+libxkbcommon-x11-dev libgles2-mesa-dev \
+  libegl1-mesa-dev libffi-dev libxcursor-dev xclip glslang-tools glslang-dev \
+  spirv-tools spirv-headers  spirv-cross \
+  wine wine-development

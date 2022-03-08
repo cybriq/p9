@@ -10,8 +10,8 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 	"io"
 	"io/ioutil"
 	"math/big"
@@ -19,15 +19,15 @@ import (
 	"path/filepath"
 	"sync"
 	"time"
-	
+
 	"golang.org/x/crypto/ripemd160"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	ec "github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/util/legacy/rename"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	ec "github.com/cybriq/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/util/legacy/rename"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // A bunch of constants
@@ -67,7 +67,9 @@ const (
 // We want to use binaryRead and binaryWrite instead of binary.Read and binary.Write because those from the binary
 // package do not return the number of bytes actually written or read. We need to return this value to correctly support
 // the io.ReaderFrom and io.WriterTo interfaces.
-func binaryRead(r io.Reader, order binary.ByteOrder, data interface{}) (n int64, e error) {
+func binaryRead(r io.Reader, order binary.ByteOrder, data interface{}) (n int64,
+	e error,
+) {
 	var read int
 	buf := make([]byte, binary.Size(data))
 	if read, e = io.ReadFull(r, buf); E.Chk(e) {
@@ -77,7 +79,8 @@ func binaryRead(r io.Reader, order binary.ByteOrder, data interface{}) (n int64,
 }
 
 // See comment for binaryRead().
-func binaryWrite(w io.Writer, order binary.ByteOrder, data interface{}) (n int64, e error) {
+func binaryWrite(w io.Writer, order binary.ByteOrder, data interface{},
+) (n int64, e error) {
 	buf := bytes.Buffer{}
 	if e = binary.Write(&buf, order, data); E.Chk(e) {
 		return 0, e
@@ -1228,7 +1231,8 @@ func (s *Store) NewIterateRecentBlocks() *BlockIterator {
 
 // ImportPrivateKey imports a WIF private key into the keystore. The imported address is created using either a
 // compressed or uncompressed serialized public key, depending on the CompressPubKey bool of the WIF.
-func (s *Store) ImportPrivateKey(wif *util.WIF, bs *BlockStamp) (btcaddr.Address, error) {
+func (s *Store) ImportPrivateKey(wif *util.WIF, bs *BlockStamp,
+) (btcaddr.Address, error) {
 	s.mtx.Lock()
 	defer s.mtx.Unlock()
 	if s.flags.watchingOnly {
@@ -1268,7 +1272,9 @@ func (s *Store) ImportPrivateKey(wif *util.WIF, bs *BlockStamp) (btcaddr.Address
 }
 
 // ImportScript creates a new scriptAddress with a user-provided script and adds it to the key store.
-func (s *Store) ImportScript(script []byte, bs *BlockStamp) (btcaddr.Address, error) {
+func (s *Store) ImportScript(script []byte, bs *BlockStamp) (btcaddr.Address,
+	error,
+) {
 	s.mtx.Lock()
 	defer s.mtx.Unlock()
 	if s.flags.watchingOnly {
@@ -1576,7 +1582,8 @@ type recentBlocks struct {
 	lastHeight int32
 }
 
-func (rb *recentBlocks) readFromVersion(v ksVersion, r io.Reader) (int64, error) {
+func (rb *recentBlocks) readFromVersion(v ksVersion, r io.Reader) (int64, error,
+) {
 	if !v.LT(Vers20LastBlocks) {
 		// Use current ksVersion.
 		return rb.ReadFrom(r)
@@ -1874,7 +1881,9 @@ type PubKeyAddress interface {
 
 // newBtcAddress initializes and returns a new address. privkey must be 32 bytes. iv must be 16 bytes, or nil (in which
 // case it is randomly generated).
-func newBtcAddress(wallet *Store, privkey, iv []byte, bs *BlockStamp, compressed bool) (addr *btcAddress, e error) {
+func newBtcAddress(wallet *Store, privkey, iv []byte, bs *BlockStamp,
+	compressed bool,
+) (addr *btcAddress, e error) {
 	if len(privkey) != 32 {
 		return nil, errors.New("private key is not 32 bytes")
 	}
@@ -1894,7 +1903,8 @@ func newBtcAddress(wallet *Store, privkey, iv []byte, bs *BlockStamp, compressed
 // newBtcAddressWithoutPrivkey initializes and returns a new address with an unknown (at the time) private key that must
 // be found later. pubkey must be 33 or 65 bytes, and iv must be 16 bytes or empty (in which case it is randomly
 // generated).
-func newBtcAddressWithoutPrivkey(s *Store, pubkey, iv []byte, bs *BlockStamp) (addr *btcAddress, e error) {
+func newBtcAddressWithoutPrivkey(s *Store, pubkey, iv []byte, bs *BlockStamp,
+) (addr *btcAddress, e error) {
 	var compressed bool
 	switch n := len(pubkey); n {
 	case ec.PubKeyBytesLenCompressed:
@@ -2452,8 +2462,11 @@ type ScriptAddress interface {
 
 // newScriptAddress initializes and returns a new P2SH address. iv must be 16 bytes, or nil (in which case it is
 // randomly generated).
-func newScriptAddress(s *Store, script []byte, bs *BlockStamp) (addr *scriptAddress, e error) {
-	class, addresses, reqSigs, e := txscript.ExtractPkScriptAddrs(script, s.netParams())
+func newScriptAddress(s *Store, script []byte, bs *BlockStamp,
+) (addr *scriptAddress, e error) {
+	class, addresses, reqSigs, e := txscript.ExtractPkScriptAddrs(script,
+		s.netParams(),
+	)
 	if e != nil {
 		return nil, e
 	}
@@ -2702,7 +2715,8 @@ type kdfParameters struct {
 
 // computeKdfParameters returns best guess parameters to the memory-hard key derivation function to make the computation
 // last targetSec seconds, while using no more than maxMem bytes of memory.
-func computeKdfParameters(targetSec float64, maxMem uint64) (params *kdfParameters, e error) {
+func computeKdfParameters(targetSec float64, maxMem uint64,
+) (params *kdfParameters, e error) {
 	params = &kdfParameters{}
 	if _, e = rand.Read(params.salt[:]); E.Chk(e) {
 		return nil, e

@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/p9c/p9/pkg/connmgr"
+	"github.com/cybriq/p9/pkg/connmgr"
 
-	"github.com/p9c/p9/cmd/node/active"
+	"github.com/cybriq/p9/cmd/node/active"
 )
 
 // DefaultConnectTimeout is a reasonable 30 seconds
@@ -27,7 +27,9 @@ var Dial = func(stateCfg *active.Config) func(addr net.Addr) (net.Conn, error) {
 		T.Ln("StateCfg.Dial", addr.Network(), addr.String(),
 			DefaultConnectTimeout,
 		)
-		conn, er := stateCfg.Dial(addr.Network(), addr.String(), DefaultConnectTimeout)
+		conn, er := stateCfg.Dial(addr.Network(), addr.String(),
+			DefaultConnectTimeout,
+		)
 		if er != nil {
 			T.Ln("connection error:", conn, er)
 		}

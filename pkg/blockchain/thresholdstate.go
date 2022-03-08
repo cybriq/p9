@@ -2,8 +2,8 @@ package blockchain
 
 import (
 	"fmt"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // ThresholdState define the various threshold states used when voting on consensus changes.
@@ -73,13 +73,16 @@ type thresholdStateCache struct {
 
 // Lookup returns the threshold state associated with the given hash along with a boolean that indicates whether or not
 // it is valid.
-func (c *thresholdStateCache) Lookup(hash *chainhash.Hash) (ThresholdState, bool) {
+func (c *thresholdStateCache) Lookup(hash *chainhash.Hash) (ThresholdState,
+	bool,
+) {
 	state, ok := c.entries[*hash]
 	return state, ok
 }
 
 // Update updates the cache to contain the provided hash to threshold state mapping.
-func (c *thresholdStateCache) Update(hash *chainhash.Hash, state ThresholdState) {
+func (c *thresholdStateCache) Update(hash *chainhash.Hash, state ThresholdState,
+) {
 	c.entries[*hash] = state
 }
 

@@ -5,10 +5,10 @@ package gel
 import (
 	"image"
 
-	"github.com/p9c/p9/pkg/gel/gio/gesture"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/gesture"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 // Float is for selecting a value in a range.
@@ -39,7 +39,8 @@ func (f *Float) SetHook(fn func(fl float32)) *Float {
 }
 
 // Fn processes events.
-func (f *Float) Fn(gtx l.Context, pointerMargin int, min, max float32) l.Dimensions {
+func (f *Float) Fn(gtx l.Context, pointerMargin int, min, max float32,
+) l.Dimensions {
 	size := gtx.Constraints.Min
 	f.length = float32(size.X)
 	var de *pointer.Event

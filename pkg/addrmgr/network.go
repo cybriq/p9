@@ -3,8 +3,8 @@ package addrmgr
 import (
 	"fmt"
 	"net"
-	
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 var (

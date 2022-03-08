@@ -12,6 +12,6 @@ EOM
 source $HOME/.bashrc
 mkdir -p $GOPATH/src/github.com/p9c
 cd $GOPATH/src/github.com/p9c
-git clone https://github.com/p9c/p9.git
+git clone https://github.com/cybriq/p9.git
 cd pod
 make -B builder

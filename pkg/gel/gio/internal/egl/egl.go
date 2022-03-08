@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build linux || windows || freebsd || openbsd
 // +build linux windows freebsd openbsd
 
 package egl
@@ -10,9 +11,9 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/p9c/p9/pkg/gel/gio/gpu"
-	"github.com/p9c/p9/pkg/gel/gio/internal/gl"
-	"github.com/p9c/p9/pkg/gel/gio/internal/srgb"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/gl"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/srgb"
 )
 
 type Context struct {
@@ -203,7 +204,9 @@ func createContext(disp _EGLDisplay) (*eglContext, error) {
 	}
 	// sRGB framebuffer support on EGL 1.5 or if EGL_KHR_gl_colorspace is supported.
 	exts := strings.Split(eglQueryString(disp, _EGL_EXTENSIONS), " ")
-	srgb := major > 1 || minor >= 5 || hasExtension(exts, "EGL_KHR_gl_colorspace")
+	srgb := major > 1 || minor >= 5 || hasExtension(exts,
+		"EGL_KHR_gl_colorspace",
+	)
 	attribs := []_EGLint{
 		_EGL_RENDERABLE_TYPE, _EGL_OPENGL_ES2_BIT,
 		_EGL_SURFACE_TYPE, _EGL_WINDOW_BIT,
@@ -255,7 +258,9 @@ func createContext(disp _EGLDisplay) (*eglContext, error) {
 		}
 		eglCtx = eglCreateContext(disp, eglCfg, nilEGLContext, ctxAttribs)
 		if eglCtx == nilEGLContext {
-			return nil, fmt.Errorf("eglCreateContext failed: 0x%x", eglGetError())
+			return nil, fmt.Errorf("eglCreateContext failed: 0x%x",
+				eglGetError(),
+			)
 		}
 	}
 	return &eglContext{
@@ -267,10 +272,13 @@ func createContext(disp _EGLDisplay) (*eglContext, error) {
 	}, nil
 }
 
-func createSurface(disp _EGLDisplay, eglCtx *eglContext, win NativeWindowType) (_EGLSurface, error) {
+func createSurface(disp _EGLDisplay, eglCtx *eglContext, win NativeWindowType,
+) (_EGLSurface, error) {
 	var surfAttribs []_EGLint
 	if eglCtx.srgb {
-		surfAttribs = append(surfAttribs, _EGL_GL_COLORSPACE_KHR, _EGL_GL_COLORSPACE_SRGB_KHR)
+		surfAttribs = append(surfAttribs, _EGL_GL_COLORSPACE_KHR,
+			_EGL_GL_COLORSPACE_SRGB_KHR,
+		)
 	}
 	surfAttribs = append(surfAttribs, _EGL_NONE)
 	eglSurf := eglCreateWindowSurface(disp, eglCtx.config, win, surfAttribs)
@@ -281,7 +289,9 @@ func createSurface(disp _EGLDisplay, eglCtx *eglContext, win NativeWindowType) (
 		eglSurf = eglCreateWindowSurface(disp, eglCtx.config, win, surfAttribs)
 	}
 	if eglSurf == nilEGLSurface {
-		return nilEGLSurface, fmt.Errorf("newContext: eglCreateWindowSurface failed 0x%x (sRGB=%v)", eglGetError(), eglCtx.srgb)
+		return nilEGLSurface, fmt.Errorf("newContext: eglCreateWindowSurface failed 0x%x (sRGB=%v)",
+			eglGetError(), eglCtx.srgb,
+		)
 	}
 	return eglSurf, nil
 }

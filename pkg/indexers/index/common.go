@@ -4,10 +4,10 @@ package index
 import (
 	"encoding/binary"
 	"errors"
-	"github.com/p9c/p9/pkg/block"
-	
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/block"
+
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/database"
 )
 
 var (

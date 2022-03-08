@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"sort"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // TestUsageFlagStringer tests the stringized output for the UsageFlag type.

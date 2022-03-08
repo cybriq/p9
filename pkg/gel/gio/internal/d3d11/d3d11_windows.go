@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/internal/f32color"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/f32color"
 
 	"golang.org/x/sys/windows"
 )
@@ -541,9 +541,15 @@ type RASTERIZER_DESC struct {
 }
 
 var (
-	IID_Texture2D    = GUID{0x6f15aaf2, 0xd208, 0x4e89, 0x9a, 0xb4, 0x48, 0x95, 0x35, 0xd3, 0x4f, 0x9c}
-	IID_IDXGIDevice  = GUID{0x54ec77fa, 0x1377, 0x44e6, 0x8c, 0x32, 0x88, 0xfd, 0x5f, 0x44, 0xc8, 0x4c}
-	IID_IDXGIFactory = GUID{0x7b7166ec, 0x21c7, 0x44ae, 0xb2, 0x1a, 0xc9, 0xae, 0x32, 0x1a, 0xe3, 0x69}
+	IID_Texture2D = GUID{0x6f15aaf2, 0xd208, 0x4e89, 0x9a, 0xb4, 0x48, 0x95,
+		0x35, 0xd3, 0x4f, 0x9c,
+	}
+	IID_IDXGIDevice = GUID{0x54ec77fa, 0x1377, 0x44e6, 0x8c, 0x32, 0x88, 0xfd,
+		0x5f, 0x44, 0xc8, 0x4c,
+	}
+	IID_IDXGIFactory = GUID{0x7b7166ec, 0x21c7, 0x44ae, 0xb2, 0x1a, 0xc9, 0xae,
+		0x32, 0x1a, 0xe3, 0x69,
+	}
 )
 
 var (
@@ -639,7 +645,9 @@ const (
 	D3DDDIERR_DEVICEREMOVED   = 1<<31 | 0x876<<16 | 2160
 )
 
-func CreateDevice(driverType uint32, flags uint32) (*Device, *DeviceContext, uint32, error) {
+func CreateDevice(driverType uint32, flags uint32) (*Device, *DeviceContext,
+	uint32, error,
+) {
 	var (
 		dev     *Device
 		ctx     *DeviceContext
@@ -658,12 +666,16 @@ func CreateDevice(driverType uint32, flags uint32) (*Device, *DeviceContext, uin
 		uintptr(unsafe.Pointer(&ctx)),     // ppImmediateContext
 	)
 	if r != 0 {
-		return nil, nil, 0, ErrorCode{Name: "D3D11CreateDevice", Code: uint32(r)}
+		return nil, nil, 0, ErrorCode{Name: "D3D11CreateDevice",
+			Code: uint32(r),
+		}
 	}
 	return dev, ctx, featLvl, nil
 }
 
-func CreateDeviceAndSwapChain(driverType uint32, flags uint32, swapDesc *DXGI_SWAP_CHAIN_DESC) (*Device, *DeviceContext, *IDXGISwapChain, uint32, error) {
+func CreateDeviceAndSwapChain(driverType uint32, flags uint32,
+	swapDesc *DXGI_SWAP_CHAIN_DESC,
+) (*Device, *DeviceContext, *IDXGISwapChain, uint32, error) {
 	var (
 		dev     *Device
 		ctx     *DeviceContext
@@ -685,7 +697,9 @@ func CreateDeviceAndSwapChain(driverType uint32, flags uint32, swapDesc *DXGI_SW
 		uintptr(unsafe.Pointer(&ctx)),     // ppImmediateContext
 	)
 	if r != 0 {
-		return nil, nil, nil, 0, ErrorCode{Name: "D3D11CreateDeviceAndSwapChain", Code: uint32(r)}
+		return nil, nil, nil, 0, ErrorCode{Name: "D3D11CreateDeviceAndSwapChain",
+			Code: uint32(r),
+		}
 	}
 	return dev, ctx, swchain, featLvl, nil
 }
@@ -728,7 +742,9 @@ func (d *Device) CreateBuffer(desc *BUFFER_DESC, data []byte) (*Buffer, error) {
 	return buf, nil
 }
 
-func (d *Device) CreateDepthStencilViewTEX2D(res *Resource, desc *DEPTH_STENCIL_VIEW_DESC_TEX2D) (*DepthStencilView, error) {
+func (d *Device) CreateDepthStencilViewTEX2D(res *Resource,
+	desc *DEPTH_STENCIL_VIEW_DESC_TEX2D,
+) (*DepthStencilView, error) {
 	var view *DepthStencilView
 	r, _, _ := syscall.Syscall6(
 		d.Vtbl.CreateDepthStencilView,
@@ -740,7 +756,9 @@ func (d *Device) CreateDepthStencilViewTEX2D(res *Resource, desc *DEPTH_STENCIL_
 		0, 0,
 	)
 	if r != 0 {
-		return nil, ErrorCode{Name: "DeviceCreateDepthStencilView", Code: uint32(r)}
+		return nil, ErrorCode{Name: "DeviceCreateDepthStencilView",
+			Code: uint32(r),
+		}
 	}
 	return view, nil
 }
@@ -781,7 +799,9 @@ func (d *Device) CreateVertexShader(bytecode []byte) (*VertexShader, error) {
 	return shader, nil
 }
 
-func (d *Device) CreateShaderResourceViewTEX2D(res *Resource, desc *SHADER_RESOURCE_VIEW_DESC_TEX2D) (*ShaderResourceView, error) {
+func (d *Device) CreateShaderResourceViewTEX2D(res *Resource,
+	desc *SHADER_RESOURCE_VIEW_DESC_TEX2D,
+) (*ShaderResourceView, error) {
 	var resView *ShaderResourceView
 	r, _, _ := syscall.Syscall6(
 		d.Vtbl.CreateShaderResourceView,
@@ -793,12 +813,16 @@ func (d *Device) CreateShaderResourceViewTEX2D(res *Resource, desc *SHADER_RESOU
 		0, 0,
 	)
 	if r != 0 {
-		return nil, ErrorCode{Name: "DeviceCreateShaderResourceView", Code: uint32(r)}
+		return nil, ErrorCode{Name: "DeviceCreateShaderResourceView",
+			Code: uint32(r),
+		}
 	}
 	return resView, nil
 }
 
-func (d *Device) CreateRasterizerState(desc *RASTERIZER_DESC) (*RasterizerState, error) {
+func (d *Device) CreateRasterizerState(desc *RASTERIZER_DESC) (*RasterizerState,
+	error,
+) {
 	var state *RasterizerState
 	r, _, _ := syscall.Syscall(
 		d.Vtbl.CreateRasterizerState,
@@ -808,12 +832,15 @@ func (d *Device) CreateRasterizerState(desc *RASTERIZER_DESC) (*RasterizerState,
 		uintptr(unsafe.Pointer(&state)),
 	)
 	if r != 0 {
-		return nil, ErrorCode{Name: "DeviceCreateRasterizerState", Code: uint32(r)}
+		return nil, ErrorCode{Name: "DeviceCreateRasterizerState",
+			Code: uint32(r),
+		}
 	}
 	return state, nil
 }
 
-func (d *Device) CreateInputLayout(descs []INPUT_ELEMENT_DESC, bytecode []byte) (*InputLayout, error) {
+func (d *Device) CreateInputLayout(descs []INPUT_ELEMENT_DESC, bytecode []byte,
+) (*InputLayout, error) {
 	var pdesc *INPUT_ELEMENT_DESC
 	if len(descs) > 0 {
 		pdesc = &descs[0]
@@ -867,7 +894,9 @@ func (d *Device) CreateTexture2D(desc *TEXTURE2D_DESC) (*Texture2D, error) {
 	return tex, nil
 }
 
-func (d *Device) CreateRenderTargetView(res *Resource) (*RenderTargetView, error) {
+func (d *Device) CreateRenderTargetView(res *Resource) (*RenderTargetView,
+	error,
+) {
 	var target *RenderTargetView
 	r, _, _ := syscall.Syscall6(
 		d.Vtbl.CreateRenderTargetView,
@@ -879,7 +908,9 @@ func (d *Device) CreateRenderTargetView(res *Resource) (*RenderTargetView, error
 		0, 0,
 	)
 	if r != 0 {
-		return nil, ErrorCode{Name: "DeviceCreateRenderTargetView", Code: uint32(r)}
+		return nil, ErrorCode{Name: "DeviceCreateRenderTargetView",
+			Code: uint32(r),
+		}
 	}
 	return target, nil
 }
@@ -899,7 +930,9 @@ func (d *Device) CreateBlendState(desc *BLEND_DESC) (*BlendState, error) {
 	return state, nil
 }
 
-func (d *Device) CreateDepthStencilState(desc *DEPTH_STENCIL_DESC) (*DepthStencilState, error) {
+func (d *Device) CreateDepthStencilState(desc *DEPTH_STENCIL_DESC) (*DepthStencilState,
+	error,
+) {
 	var state *DepthStencilState
 	r, _, _ := syscall.Syscall(
 		d.Vtbl.CreateDepthStencilState,
@@ -909,7 +942,9 @@ func (d *Device) CreateDepthStencilState(desc *DEPTH_STENCIL_DESC) (*DepthStenci
 		uintptr(unsafe.Pointer(&state)),
 	)
 	if r != 0 {
-		return nil, ErrorCode{Name: "DeviceCreateDepthStencilState", Code: uint32(r)}
+		return nil, ErrorCode{Name: "DeviceCreateDepthStencilState",
+			Code: uint32(r),
+		}
 	}
 	return state, nil
 }
@@ -946,7 +981,9 @@ func (s *IDXGISwapChain) GetDesc() (DXGI_SWAP_CHAIN_DESC, error) {
 		0,
 	)
 	if r != 0 {
-		return DXGI_SWAP_CHAIN_DESC{}, ErrorCode{Name: "IDXGISwapChainGetDesc", Code: uint32(r)}
+		return DXGI_SWAP_CHAIN_DESC{}, ErrorCode{Name: "IDXGISwapChainGetDesc",
+			Code: uint32(r),
+		}
 	}
 	return desc, nil
 }
@@ -1010,7 +1047,9 @@ func (c *DeviceContext) Unmap(resource *Resource, subResource uint32) {
 	)
 }
 
-func (c *DeviceContext) Map(resource *Resource, subResource, mapType, mapFlags uint32) (MAPPED_SUBRESOURCE, error) {
+func (c *DeviceContext) Map(resource *Resource,
+	subResource, mapType, mapFlags uint32,
+) (MAPPED_SUBRESOURCE, error) {
 	var resMap MAPPED_SUBRESOURCE
 	r, _, _ := syscall.Syscall6(
 		c.Vtbl.Map,
@@ -1028,7 +1067,10 @@ func (c *DeviceContext) Map(resource *Resource, subResource, mapType, mapFlags u
 	return resMap, nil
 }
 
-func (c *DeviceContext) CopySubresourceRegion(dst *Resource, dstSubresource, dstX, dstY, dstZ uint32, src *Resource, srcSubresource uint32, srcBox *BOX) {
+func (c *DeviceContext) CopySubresourceRegion(dst *Resource,
+	dstSubresource, dstX, dstY, dstZ uint32, src *Resource,
+	srcSubresource uint32, srcBox *BOX,
+) {
 	syscall.Syscall9(
 		c.Vtbl.CopySubresourceRegion,
 		9,
@@ -1044,7 +1086,9 @@ func (c *DeviceContext) CopySubresourceRegion(dst *Resource, dstSubresource, dst
 	)
 }
 
-func (c *DeviceContext) ClearDepthStencilView(target *DepthStencilView, flags uint32, depth float32, stencil uint8) {
+func (c *DeviceContext) ClearDepthStencilView(target *DepthStencilView,
+	flags uint32, depth float32, stencil uint8,
+) {
 	syscall.Syscall6(
 		c.Vtbl.ClearDepthStencilView,
 		5,
@@ -1057,7 +1101,9 @@ func (c *DeviceContext) ClearDepthStencilView(target *DepthStencilView, flags ui
 	)
 }
 
-func (c *DeviceContext) ClearRenderTargetView(target *RenderTargetView, color *[4]float32) {
+func (c *DeviceContext) ClearRenderTargetView(target *RenderTargetView,
+	color *[4]float32,
+) {
 	syscall.Syscall(
 		c.Vtbl.ClearRenderTargetView,
 		3,
@@ -1113,7 +1159,9 @@ func (c *DeviceContext) PSSetConstantBuffers(b *Buffer) {
 	)
 }
 
-func (c *DeviceContext) PSSetShaderResources(startSlot uint32, s *ShaderResourceView) {
+func (c *DeviceContext) PSSetShaderResources(startSlot uint32,
+	s *ShaderResourceView,
+) {
 	syscall.Syscall6(
 		c.Vtbl.PSSetShaderResources,
 		4,
@@ -1149,7 +1197,9 @@ func (c *DeviceContext) PSSetShader(s *PixelShader) {
 	)
 }
 
-func (c *DeviceContext) UpdateSubresource(res *Resource, dstBox *BOX, rowPitch, depthPitch uint32, data []byte) {
+func (c *DeviceContext) UpdateSubresource(res *Resource, dstBox *BOX,
+	rowPitch, depthPitch uint32, data []byte,
+) {
 	syscall.Syscall9(
 		c.Vtbl.UpdateSubresource,
 		7,
@@ -1219,7 +1269,9 @@ func (c *DeviceContext) IASetPrimitiveTopology(mode uint32) {
 	)
 }
 
-func (c *DeviceContext) OMGetRenderTargets() (*RenderTargetView, *DepthStencilView) {
+func (c *DeviceContext) OMGetRenderTargets() (*RenderTargetView,
+	*DepthStencilView,
+) {
 	var (
 		target           *RenderTargetView
 		depthStencilView *DepthStencilView
@@ -1236,7 +1288,9 @@ func (c *DeviceContext) OMGetRenderTargets() (*RenderTargetView, *DepthStencilVi
 	return target, depthStencilView
 }
 
-func (c *DeviceContext) OMSetRenderTargets(target *RenderTargetView, depthStencil *DepthStencilView) {
+func (c *DeviceContext) OMSetRenderTargets(target *RenderTargetView,
+	depthStencil *DepthStencilView,
+) {
 	syscall.Syscall6(
 		c.Vtbl.OMSetRenderTargets,
 		4,
@@ -1270,7 +1324,9 @@ func (c *DeviceContext) DrawIndexed(count, start uint32, base int32) {
 	)
 }
 
-func (c *DeviceContext) OMSetBlendState(state *BlendState, factor *f32color.RGBA, sampleMask uint32) {
+func (c *DeviceContext) OMSetBlendState(state *BlendState,
+	factor *f32color.RGBA, sampleMask uint32,
+) {
 	syscall.Syscall6(
 		c.Vtbl.OMSetBlendState,
 		4,
@@ -1282,7 +1338,9 @@ func (c *DeviceContext) OMSetBlendState(state *BlendState, factor *f32color.RGBA
 	)
 }
 
-func (c *DeviceContext) OMSetDepthStencilState(state *DepthStencilState, stencilRef uint32) {
+func (c *DeviceContext) OMSetDepthStencilState(state *DepthStencilState,
+	stencilRef uint32,
+) {
 	syscall.Syscall(
 		c.Vtbl.OMSetDepthStencilState,
 		3,
@@ -1307,7 +1365,9 @@ func (d *IDXGIObject) GetParent(guid *GUID) (*IDXGIObject, error) {
 	return parent, nil
 }
 
-func (d *IDXGIFactory) CreateSwapChain(device *IUnknown, desc *DXGI_SWAP_CHAIN_DESC) (*IDXGISwapChain, error) {
+func (d *IDXGIFactory) CreateSwapChain(device *IUnknown,
+	desc *DXGI_SWAP_CHAIN_DESC,
+) (*IDXGISwapChain, error) {
 	var swchain *IDXGISwapChain
 	r, _, _ := syscall.Syscall6(
 		d.Vtbl.CreateSwapChain,
@@ -1339,7 +1399,9 @@ func (d *IDXGIDevice) GetAdapter() (*IDXGIAdapter, error) {
 	return adapter, nil
 }
 
-func IUnknownQueryInterface(obj unsafe.Pointer, queryInterfaceMethod uintptr, guid *GUID) (*IUnknown, error) {
+func IUnknownQueryInterface(obj unsafe.Pointer, queryInterfaceMethod uintptr,
+	guid *GUID,
+) (*IUnknown, error) {
 	var ref *IUnknown
 	r, _, _ := syscall.Syscall(
 		queryInterfaceMethod,
@@ -1368,8 +1430,11 @@ func (e ErrorCode) Error() string {
 	return fmt.Sprintf("%s: %#x", e.Name, e.Code)
 }
 
-func CreateSwapChain(dev *Device, hwnd windows.Handle) (*IDXGISwapChain, error) {
-	dxgiDev, err := IUnknownQueryInterface(unsafe.Pointer(dev), dev.Vtbl.QueryInterface, &IID_IDXGIDevice)
+func CreateSwapChain(dev *Device, hwnd windows.Handle) (*IDXGISwapChain, error,
+) {
+	dxgiDev, err := IUnknownQueryInterface(unsafe.Pointer(dev),
+		dev.Vtbl.QueryInterface, &IID_IDXGIDevice,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("NewContext: %v", err)
 	}
@@ -1406,7 +1471,8 @@ func CreateSwapChain(dev *Device, hwnd windows.Handle) (*IDXGISwapChain, error) 
 	return swchain, nil
 }
 
-func CreateDepthView(d *Device, width, height, depthBits int) (*DepthStencilView, error) {
+func CreateDepthView(d *Device, width, height, depthBits int,
+) (*DepthStencilView, error) {
 	depthTex, err := d.CreateTexture2D(&TEXTURE2D_DESC{
 		Width:     uint32(width),
 		Height:    uint32(height),
@@ -1418,7 +1484,8 @@ func CreateDepthView(d *Device, width, height, depthBits int) (*DepthStencilView
 			Quality: 0,
 		},
 		BindFlags: BIND_DEPTH_STENCIL,
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}

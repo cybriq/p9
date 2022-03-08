@@ -2,9 +2,9 @@ package hdkeychain_test
 
 import (
 	"fmt"
-	
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/util/hdkeychain"
+
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/util/hdkeychain"
 )
 
 // This example demonstrates how to generate a cryptographically random seed then use it to create a new master node

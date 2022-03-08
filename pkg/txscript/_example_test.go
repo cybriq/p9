@@ -3,13 +3,13 @@ package txscript_test
 import (
 	"encoding/hex"
 	"fmt"
-	
-	"github.com/p9c/p9/pkg/chain/config/netparams"
-	chainhash "github.com/p9c/p9/pkg/chainhash"
-	txscript "github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/wire"
-	ecc "github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/util"
+
+	"github.com/cybriq/p9/pkg/chain/config/netparams"
+	chainhash "github.com/cybriq/p9/pkg/chainhash"
+	txscript "github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/wire"
+	ecc "github.com/cybriq/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/util"
 )
 
 // This example demonstrates creating a script which pays to a bitcoin address. It also prints the created script hex

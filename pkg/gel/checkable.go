@@ -3,11 +3,11 @@ package gel
 import (
 	"image"
 
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/text"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 	"golang.org/x/exp/shiny/materialdesign/icons"
 )
 
@@ -118,7 +118,7 @@ func (c *Checkable) Fn(gtx l.Context, checked bool) l.Dimensions {
 	// D.S(icon)
 	dims :=
 		c.Theme.Flex(). // AlignBaseline().
-			Rigid(
+				Rigid(
 				// c.Theme.ButtonInset(0.25,
 				func(gtx l.Context) l.Dimensions {
 					size := gtx.Px(c.size)

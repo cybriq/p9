@@ -10,7 +10,7 @@ import (
 	"math"
 	"sort"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
 )
 
 type DashOp struct {
@@ -219,9 +219,15 @@ func (qs StrokeQuads) splitAt(contour *uint32, ts ...float64) []StrokeQuads {
 				continue
 			}
 			speed := func(t float64) float64 {
-				return float64(lenPt(quadBezierD1(q.Quad.From, q.Quad.Ctrl, q.Quad.To, float32(t))))
+				return float64(lenPt(quadBezierD1(q.Quad.From, q.Quad.Ctrl,
+					q.Quad.To, float32(t),
+				),
+				),
+				)
 			}
-			invL, dt := invSpeedPolynomialChebyshevApprox(20, gaussLegendre7, speed, 0, 1)
+			invL, dt := invSpeedPolynomialChebyshevApprox(20, gaussLegendre7,
+				speed, 0, 1,
+			)
 
 			var (
 				t0 float64
@@ -238,7 +244,9 @@ func (qs StrokeQuads) splitAt(contour *uint32, ts ...float64) []StrokeQuads {
 				t0 = tj
 
 				var q1 f32.Point
-				_, q1, _, r0, r1, r2 = quadBezierSplit(r0, r1, r2, float32(tsub))
+				_, q1, _, r0, r1, r2 = quadBezierSplit(r0, r1, r2,
+					float32(tsub),
+				)
 
 				oi = append(oi, StrokeQuad{
 					Contour: *contour,
@@ -247,7 +255,8 @@ func (qs StrokeQuads) splitAt(contour *uint32, ts ...float64) []StrokeQuads {
 						Ctrl: q1,
 						To:   r0,
 					},
-				})
+				},
+				)
 				push()
 				(*contour)++
 
@@ -265,7 +274,8 @@ func (qs StrokeQuads) splitAt(contour *uint32, ts ...float64) []StrokeQuads {
 						Ctrl: r1,
 						To:   r2,
 					},
-				})
+				},
+				)
 			}
 			t += dt
 		}
@@ -288,7 +298,9 @@ func f64Eq(a, b float64) bool {
 	return math.Abs(a-b) < epsilon
 }
 
-func invSpeedPolynomialChebyshevApprox(N int, gaussLegendre gaussLegendreFunc, fp func(float64) float64, tmin, tmax float64) (func(float64) float64, float64) {
+func invSpeedPolynomialChebyshevApprox(N int, gaussLegendre gaussLegendreFunc,
+	fp func(float64) float64, tmin, tmax float64,
+) (func(float64) float64, float64) {
 	// The TODOs below are copied verbatim from tdewolff/canvas:
 	//
 	// TODO: find better way to determine N. For Arc 10 seems fine, for some
@@ -307,7 +319,9 @@ func invSpeedPolynomialChebyshevApprox(N int, gaussLegendre gaussLegendreFunc, f
 	return polynomialChebyshevApprox(N, t, 0.0, totalLength, tmin, tmax), totalLength
 }
 
-func polynomialChebyshevApprox(N int, f func(float64) float64, xmin, xmax, ymin, ymax float64) func(float64) float64 {
+func polynomialChebyshevApprox(N int, f func(float64) float64,
+	xmin, xmax, ymin, ymax float64,
+) func(float64) float64 {
 	var (
 		invN = 1.0 / float64(N)
 		fs   = make([]float64, N)

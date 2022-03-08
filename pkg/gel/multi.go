@@ -1,7 +1,7 @@
 package gel
 
 import (
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 	"golang.org/x/exp/shiny/materialdesign/icons"
 )
 
@@ -44,7 +44,9 @@ func (w *Window) Multiline(
 		m.inputLocation = -1
 		m.handle(*m.lines)
 	}
-	m.input = w.Input("", "", borderColorFocused, borderColorUnfocused, backgroundColor, handleChange, nil)
+	m.input = w.Input("", "", borderColorFocused, borderColorUnfocused,
+		backgroundColor, handleChange, nil,
+	)
 	m.clickables = append(m.clickables, (*Clickable)(nil))
 	// m.buttons = append(m.buttons, (*ButtonLayout)(nil))
 	m.removeClickables = append(m.removeClickables, (*Clickable)(nil))
@@ -56,7 +58,8 @@ func (w *Window) Multiline(
 			func() {
 				m.inputLocation = x
 				D.Ln("button clicked", x, m.inputLocation)
-			})
+			},
+		)
 		if len(*m.lines) > len(m.clickables) {
 			m.clickables = append(m.clickables, clickable)
 		} else {
@@ -64,13 +67,16 @@ func (w *Window) Multiline(
 		}
 		// D.Ln("making button")
 		btn := m.ButtonLayout(clickable).CornerRadius(0).Background(
-			backgroundColor).
+			backgroundColor,
+		).
 			Embed(
 				m.Theme.Flex().AlignStart().
 					Flexed(1,
-						m.Fill("Primary", l.Center, m.TextSize.V, 0, m.Inset(0.25,
-							m.Body2((*m.lines)[i]).Color("DocText").Fn,
-						).Fn).Fn,
+						m.Fill("Primary", l.Center, m.TextSize.V, 0,
+							m.Inset(0.25,
+								m.Body2((*m.lines)[i]).Color("DocText").Fn,
+							).Fn,
+						).Fn,
 					).Fn,
 			)
 		if len(*m.lines) > len(m.buttons) {
@@ -122,7 +128,8 @@ func (w *Window) Multiline(
 				// 	m.removeClickables = append(m.removeClickables[:i], m.removeClickables[i+1:]...)
 				// 	m.removeButtons = append(m.removeButtons[:i], m.removeButtons[i+1:]...)
 				// }
-			})
+			},
+			)
 		if len(*m.lines) > len(m.removeButtons) {
 			m.removeButtons = append(m.removeButtons, removeBtn)
 		} else {
@@ -170,7 +177,8 @@ func (m *Multi) PopulateWidgets() *Multi {
 					// 		m.inputLocation = -1
 					// 	}
 					// })
-				})
+				},
+			)
 		}
 		// m.clickables[i]
 		if m.buttons[i] == nil {
@@ -205,7 +213,9 @@ func (m *Multi) PopulateWidgets() *Multi {
 						*m.lines = append((*m.lines)[:x], (*m.lines)[x+1:]...)
 					}
 					m.handle(*m.lines)
-				})).
+				},
+				),
+			).
 				Icon(
 					m.Icon().Scale(1.5).Color("DocText").Src(&icons.ActionDelete),
 				).
@@ -239,7 +249,9 @@ func (m *Multi) Fn(gtx l.Context) l.Dimensions {
 					m.inputLocation = x
 					m.input.editor.SetText((*m.lines)[x])
 					m.input.editor.Focus()
-				})).CornerRadius(0).Background("Transparent").
+				},
+			),
+			).CornerRadius(0).Background("Transparent").
 				Embed(
 					m.Theme.Flex().
 						Rigid(
@@ -269,7 +281,8 @@ func (m *Multi) Fn(gtx l.Context) l.Dimensions {
 					m.inputLocation = x
 					m.input.editor.SetText((*m.lines)[x])
 					m.input.editor.Focus()
-				})
+				},
+			)
 			button := m.Flex().AlignStart().
 				Rigid(
 					m.removeButtons[i].Fn,
@@ -290,7 +303,9 @@ func (m *Multi) Fn(gtx l.Context) l.Dimensions {
 		m.PopulateWidgets()
 		m.input.editor.SetText("")
 		m.input.editor.Focus()
-	}).Background("").Fn)
+	},
+	).Background("").Fn,
+	)
 	// m.UpdateWidgets()
 	// m.PopulateWidgets()
 	// D.Ln(m.inputLocation)
@@ -350,7 +365,9 @@ func (m *Multi) Widgets() (widgets []l.Widget) {
 					m.inputLocation = i
 					m.input.editor.SetText((*m.lines)[i])
 					m.input.editor.Focus()
-				})).CornerRadius(0).Background("").
+				},
+			),
+			).CornerRadius(0).Background("").
 				Embed(
 					func(gtx l.Context) l.Dimensions {
 						return m.Theme.Flex().
@@ -366,7 +383,7 @@ func (m *Multi) Widgets() (widgets []l.Widget) {
 		if i == m.inputLocation {
 			// x := i
 			// D.Ln("rendering editor", x)
-			
+
 			input := func(gtx l.Context) l.Dimensions {
 				return m.Inset(0.25,
 					m.Flex().
@@ -391,7 +408,8 @@ func (m *Multi) Widgets() (widgets []l.Widget) {
 					m.input.editor.SetText((*m.lines)[i])
 					m.input.editor.Focus()
 					D.Ln("setting", i, m.inputLocation)
-				})
+				},
+			)
 			button := func(gtx l.Context) l.Dimensions {
 				return m.Inset(0.25,
 					m.Flex().AlignStart().
@@ -415,7 +433,8 @@ func (m *Multi) Widgets() (widgets []l.Widget) {
 				m.Theme.Flex().AlignStart().
 					Rigid(
 						m.IconButton(
-							m.addClickable).
+							m.addClickable,
+						).
 							Icon(
 								m.Icon().Scale(1.5).Color("Primary").Src(&icons.ContentAdd),
 							).
@@ -428,7 +447,8 @@ func (m *Multi) Widgets() (widgets []l.Widget) {
 								m.UpdateWidgets()
 								m.PopulateWidgets()
 								m.input.editor.Focus()
-							}).
+							},
+							).
 							Background("Transparent").
 							Fn,
 					).

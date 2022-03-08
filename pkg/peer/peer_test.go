@@ -2,20 +2,20 @@ package peer_test
 
 import (
 	"errors"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chaincfg"
 	"io"
 	"net"
 	"strconv"
 	"testing"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
+
+	"github.com/cybriq/p9/pkg/qu"
+
 	"github.com/btcsuite/go-socks/socks"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/peer"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/peer"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // conn mocks a network connection by implementing the net.Conn interface. It is used to test peer connection without
@@ -106,63 +106,90 @@ type peerStats struct {
 // testPeer tests the given peer's flags and stats
 func testPeer(t *testing.T, p *peer.Peer, s peerStats) {
 	if p.UserAgent() != s.wantUserAgent {
-		t.Errorf("testPeer: wrong UserAgent - got %v, want %v", p.UserAgent(), s.wantUserAgent)
+		t.Errorf("testPeer: wrong UserAgent - got %v, want %v", p.UserAgent(),
+			s.wantUserAgent,
+		)
 		return
 	}
 	if p.Services() != s.wantServices {
-		t.Errorf("testPeer: wrong Services - got %v, want %v", p.Services(), s.wantServices)
+		t.Errorf("testPeer: wrong Services - got %v, want %v", p.Services(),
+			s.wantServices,
+		)
 		return
 	}
 	if !p.LastPingTime().Equal(s.wantLastPingTime) {
-		t.Errorf("testPeer: wrong LastPingTime - got %v, want %v", p.LastPingTime(), s.wantLastPingTime)
+		t.Errorf("testPeer: wrong LastPingTime - got %v, want %v",
+			p.LastPingTime(), s.wantLastPingTime,
+		)
 		return
 	}
 	if p.LastPingNonce() != s.wantLastPingNonce {
-		t.Errorf("testPeer: wrong LastPingNonce - got %v, want %v", p.LastPingNonce(), s.wantLastPingNonce)
+		t.Errorf("testPeer: wrong LastPingNonce - got %v, want %v",
+			p.LastPingNonce(), s.wantLastPingNonce,
+		)
 		return
 	}
 	if p.LastPingMicros() != s.wantLastPingMicros {
-		t.Errorf("testPeer: wrong LastPingMicros - got %v, want %v", p.LastPingMicros(), s.wantLastPingMicros)
+		t.Errorf("testPeer: wrong LastPingMicros - got %v, want %v",
+			p.LastPingMicros(), s.wantLastPingMicros,
+		)
 		return
 	}
 	if p.VerAckReceived() != s.wantVerAckReceived {
-		t.Errorf("testPeer: wrong VerAckReceived - got %v, want %v", p.VerAckReceived(), s.wantVerAckReceived)
+		t.Errorf("testPeer: wrong VerAckReceived - got %v, want %v",
+			p.VerAckReceived(), s.wantVerAckReceived,
+		)
 		return
 	}
 	if p.VersionKnown() != s.wantVersionKnown {
-		t.Errorf("testPeer: wrong VersionKnown - got %v, want %v", p.VersionKnown(), s.wantVersionKnown)
+		t.Errorf("testPeer: wrong VersionKnown - got %v, want %v",
+			p.VersionKnown(), s.wantVersionKnown,
+		)
 		return
 	}
 	if p.ProtocolVersion() != s.wantProtocolVersion {
-		t.Errorf("testPeer: wrong ProtocolVersion - got %v, want %v", p.ProtocolVersion(), s.wantProtocolVersion)
+		t.Errorf("testPeer: wrong ProtocolVersion - got %v, want %v",
+			p.ProtocolVersion(), s.wantProtocolVersion,
+		)
 		return
 	}
 	if p.LastBlock() != s.wantLastBlock {
-		t.Errorf("testPeer: wrong LastBlock - got %v, want %v", p.LastBlock(), s.wantLastBlock)
+		t.Errorf("testPeer: wrong LastBlock - got %v, want %v", p.LastBlock(),
+			s.wantLastBlock,
+		)
 		return
 	}
 	// Allow for a deviation of 1s, as the second may tick when the message is in transit and the protocol doesn't support any further precision.
 	if p.TimeOffset() != s.wantTimeOffset && p.TimeOffset() != s.wantTimeOffset-1 {
 		t.Errorf(
-			"testPeer: wrong TimeOffset - got %v, want %v or %v", p.TimeOffset(),
+			"testPeer: wrong TimeOffset - got %v, want %v or %v",
+			p.TimeOffset(),
 			s.wantTimeOffset, s.wantTimeOffset-1,
 		)
 		return
 	}
 	if p.BytesSent() != s.wantBytesSent {
-		t.Errorf("testPeer: wrong BytesSent - got %v, want %v", p.BytesSent(), s.wantBytesSent)
+		t.Errorf("testPeer: wrong BytesSent - got %v, want %v", p.BytesSent(),
+			s.wantBytesSent,
+		)
 		return
 	}
 	if p.BytesReceived() != s.wantBytesReceived {
-		t.Errorf("testPeer: wrong BytesReceived - got %v, want %v", p.BytesReceived(), s.wantBytesReceived)
+		t.Errorf("testPeer: wrong BytesReceived - got %v, want %v",
+			p.BytesReceived(), s.wantBytesReceived,
+		)
 		return
 	}
 	if p.StartingHeight() != s.wantStartingHeight {
-		t.Errorf("testPeer: wrong StartingHeight - got %v, want %v", p.StartingHeight(), s.wantStartingHeight)
+		t.Errorf("testPeer: wrong StartingHeight - got %v, want %v",
+			p.StartingHeight(), s.wantStartingHeight,
+		)
 		return
 	}
 	if p.Connected() != s.wantConnected {
-		t.Errorf("testPeer: wrong Connected - got %v, want %v", p.Connected(), s.wantConnected)
+		t.Errorf("testPeer: wrong Connected - got %v, want %v", p.Connected(),
+			s.wantConnected,
+		)
 		return
 	}
 	if p.IsWitnessEnabled() != s.wantWitnessEnabled {
@@ -182,11 +209,15 @@ func testPeer(t *testing.T, p *peer.Peer, s peerStats) {
 		return
 	}
 	if p.LastSend() != stats.LastSend {
-		t.Errorf("testPeer: wrong LastSend - got %v, want %v", p.LastSend(), stats.LastSend)
+		t.Errorf("testPeer: wrong LastSend - got %v, want %v", p.LastSend(),
+			stats.LastSend,
+		)
 		return
 	}
 	if p.LastRecv() != stats.LastRecv {
-		t.Errorf("testPeer: wrong LastRecv - got %v, want %v", p.LastRecv(), stats.LastRecv)
+		t.Errorf("testPeer: wrong LastRecv - got %v, want %v", p.LastRecv(),
+			stats.LastRecv,
+		)
 		return
 	}
 }
@@ -402,7 +433,8 @@ func TestPeerListeners(t *testing.T) {
 			OnMerkleBlock: func(p *peer.Peer, msg *wire.MsgMerkleBlock) {
 				ok <- msg
 			},
-			OnVersion: func(p *peer.Peer, msg *wire.MsgVersion) *wire.MsgReject {
+			OnVersion: func(p *peer.Peer, msg *wire.MsgVersion,
+			) *wire.MsgReject {
 				ok <- msg
 				return nil
 			},
@@ -863,7 +895,7 @@ func TestDuplicateVersionMsg(t *testing.T) {
 	}
 }
 func init() {
-	
+
 	// Allow self connection when running the tests.
 	peer.TstAllowSelfConns()
 }

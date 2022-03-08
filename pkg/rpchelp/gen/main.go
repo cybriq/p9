@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/rpchelp"
+	"github.com/cybriq/p9/pkg/rpchelp"
 	"os"
 	"strings"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 var outputFile = func() *os.File {

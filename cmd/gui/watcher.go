@@ -3,9 +3,9 @@ package gui
 import (
 	"time"
 
-	"github.com/p9c/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/btcjson"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 )
 
 // Watcher keeps the chain and wallet and rpc clients connected
@@ -62,7 +62,7 @@ func (wg *WalletGUI) Watcher() qu.C {
 		}
 	}
 	go func() {
-		
+
 		watchTick := time.NewTicker(time.Second)
 		var e error
 	totalOut:

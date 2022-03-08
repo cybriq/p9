@@ -3,7 +3,7 @@ package gel
 import (
 	"fmt"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 )
 
 type IntSlider struct {
@@ -56,7 +56,9 @@ func (i *IntSlider) Fn(gtx l.Context) l.Dimensions {
 			i.min.SetClick(func() {
 				i.floater.SetValue(i.minV)
 				i.hook(int(i.minV))
-			})).
+			},
+			),
+		).
 			Inset(0.25).
 			Color("Primary").
 			Background("Transparent").
@@ -71,7 +73,9 @@ func (i *IntSlider) Fn(gtx l.Context) l.Dimensions {
 					i.value = iFl
 					i.floater.SetValue(float32(iFl))
 					i.hook(iFl)
-				})).
+				},
+				),
+				).
 				Min(i.minV).Max(i.maxV).
 				Fn,
 		).Fn,
@@ -80,7 +84,9 @@ func (i *IntSlider) Fn(gtx l.Context) l.Dimensions {
 			i.max.SetClick(func() {
 				i.floater.SetValue(i.maxV)
 				i.hook(int(i.maxV))
-			})).
+			},
+			),
+		).
 			Inset(0.25).
 			Color("Primary").
 			Background("Transparent").

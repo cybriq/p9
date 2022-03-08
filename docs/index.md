@@ -8,14 +8,14 @@
 
 ###### [parallelcoin.info](https://parallelcoin.info)
 
-![](https://raw.githubusercontent.com/p9c/p9/main/docs/GitHub-Mark-32px.png) [github.com/p9c/p9](https://github.com/p9c/p9)
+![](https://raw.githubusercontent.com/p9c/p9/main/docs/GitHub-Mark-32px.png) [github.com/cybriq/p9](https://github.com/cybriq/p9)
 
-wiki: [![](https://raw.githubusercontent.com/p9c/p9/main/docs/wiki.svg)](https://github.com/p9c/p9/wiki) 
+wiki: [![](https://raw.githubusercontent.com/p9c/p9/main/docs/wiki.svg)](https://github.com/cybriq/p9/wiki) 
 social: [![](https://raw.githubusercontent.com/p9c/p9/main/docs/telegram.svg)](https://t.me/ParallelCoinPlan9) 
 [![](https://raw.githubusercontent.com/p9c/p9/main/docs/discord.svg)](https://discord.gg/yB9sYmm3cZ) 
 [![](https://raw.githubusercontent.com/p9c/p9/main/docs/fb.svg)](https://www.facebook.com/parallelcoin)
 [![](https://raw.githubusercontent.com/p9c/p9/main/docs/twitter.svg)](https://twitter.com/parallelcoinduo)
-[![](https://raw.githubusercontent.com/p9c/p9/main/docs/GitHub-Mark-32px.png)](https://github.com/p9c/p9/discussions)
+[![](https://raw.githubusercontent.com/p9c/p9/main/docs/GitHub-Mark-32px.png)](https://github.com/cybriq/p9/discussions)
 
 ## Coming Soon!
 

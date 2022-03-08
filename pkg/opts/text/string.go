@@ -6,9 +6,9 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"github.com/p9c/p9/pkg/opts/meta"
-	"github.com/p9c/p9/pkg/opts/opt"
-	"github.com/p9c/p9/pkg/opts/sanitizers"
+	"github.com/cybriq/p9/pkg/opts/meta"
+	"github.com/cybriq/p9/pkg/opts/opt"
+	"github.com/cybriq/p9/pkg/opts/sanitizers"
 )
 
 // Opt stores a string configuration value
@@ -47,7 +47,9 @@ func (x *Opt) GetMetadata() *meta.Data {
 // ReadInput sets the value from a string
 func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 	if input == "" {
-		e = fmt.Errorf("string opt %s %v may not be empty", x.Name(), x.Data.Aliases)
+		e = fmt.Errorf("string opt %s %v may not be empty", x.Name(),
+			x.Data.Aliases,
+		)
 		return
 	}
 	if strings.HasPrefix(input, "=") {
@@ -64,7 +66,9 @@ func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 			}
 			if input == op {
 				if e == nil {
-					return x, fmt.Errorf("ambiguous short option value '%s' matches multiple options: %s, %s", input, matched, i)
+					return x, fmt.Errorf("ambiguous short option value '%s' matches multiple options: %s, %s",
+						input, matched, i,
+					)
 				}
 				matched = i
 				e = nil
@@ -78,7 +82,9 @@ func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 		input = matched
 	} else {
 		var cleaned string
-		if cleaned, e = sanitizers.StringType(x.Data.Type, input, x.Data.DefaultPort); E.Chk(e) {
+		if cleaned, e = sanitizers.StringType(x.Data.Type, input,
+			x.Data.DefaultPort,
+		); E.Chk(e) {
 			return
 		}
 		if cleaned != "" {
@@ -128,15 +134,15 @@ func (x *Opt) Empty() bool {
 func (x *Opt) Bytes() []byte {
 	byt := x.Value.Load().([]byte)
 	o := make([]byte, len(byt))
-	copy(o,byt)
+	copy(o, byt)
 	return o
 }
 
 // Zero the bytes
-func(x *Opt) Zero() {
+func (x *Opt) Zero() {
 	byt := x.Value.Load().([]byte)
 	for i := range byt {
-		byt[i]=0
+		byt[i] = 0
 	}
 	x.Value.Store(byt)
 }

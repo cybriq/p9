@@ -2,8 +2,8 @@ package addrmgr
 
 import (
 	"time"
-	
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 func TstKnownAddressIsBad(ka *KnownAddress) bool {
@@ -12,9 +12,11 @@ func TstKnownAddressIsBad(ka *KnownAddress) bool {
 func TstKnownAddressChance(ka *KnownAddress) float64 {
 	return ka.chance()
 }
-func TstNewKnownAddress(na *wire.NetAddress, attempts int, lastattempt, lastsuccess time.Time, tried bool, refs int,
+func TstNewKnownAddress(na *wire.NetAddress, attempts int,
+	lastattempt, lastsuccess time.Time, tried bool, refs int,
 ) *KnownAddress {
-	return &KnownAddress{na: na, attempts: attempts, lastattempt: lastattempt, lastsuccess: lastsuccess, tried: tried,
+	return &KnownAddress{na: na, attempts: attempts, lastattempt: lastattempt,
+		lastsuccess: lastsuccess, tried: tried,
 		refs: refs,
 	}
 }

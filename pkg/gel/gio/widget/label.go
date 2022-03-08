@@ -7,12 +7,12 @@ import (
 	"image"
 	"unicode/utf8"
 
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/op/clip"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/text"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op/clip"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 
 	"golang.org/x/image/math/fixed"
 )
@@ -49,7 +49,9 @@ type segmentIterator struct {
 
 const inf = 1e6
 
-func (l *segmentIterator) Next() (text.Layout, image.Point, bool, int, image.Point, bool) {
+func (l *segmentIterator) Next() (text.Layout, image.Point, bool, int,
+	image.Point, bool,
+) {
 	for l.pos.Y < len(l.Lines) {
 		if l.pos.X == 0 {
 			l.line = l.Lines[l.pos.Y]
@@ -61,7 +63,9 @@ func (l *segmentIterator) Next() (text.Layout, image.Point, bool, int, image.Poi
 			l.y += l.prevDesc + l.line.Ascent
 			l.prevDesc = l.line.Descent
 			// Align baseline and line start to the pixel grid.
-			l.off = fixed.Point26_6{X: fixed.I(x.Floor()), Y: fixed.I(l.y.Ceil())}
+			l.off = fixed.Point26_6{X: fixed.I(x.Floor()),
+				Y: fixed.I(l.y.Ceil()),
+			}
 			l.y = l.off.Y
 			l.off.Y += fixed.I(l.Offset.Y)
 			if (l.off.Y + l.line.Bounds.Min.Y).Floor() > l.Clip.Max.Y {
@@ -154,7 +158,9 @@ func (p1 screenPos) Less(p2 screenPos) bool {
 	return p1.Y < p2.Y || (p1.Y == p2.Y && p1.X < p2.X)
 }
 
-func (l Label) Layout(gtx layout.Context, s text.Shaper, font text.Font, size unit.Value, txt string) layout.Dimensions {
+func (l Label) Layout(gtx layout.Context, s text.Shaper, font text.Font,
+	size unit.Value, txt string,
+) layout.Dimensions {
 	cs := gtx.Constraints
 	textSize := fixed.I(gtx.Px(size))
 	lines := s.LayoutString(font, textSize, cs.Max.X, txt)
@@ -233,7 +239,8 @@ func linesDimens(lines []text.Line) layout.Dimensions {
 	}
 }
 
-func align(align text.Alignment, width fixed.Int26_6, maxWidth int) fixed.Int26_6 {
+func align(align text.Alignment, width fixed.Int26_6, maxWidth int,
+) fixed.Int26_6 {
 	mw := fixed.I(maxWidth)
 	switch align {
 	case text.Middle:

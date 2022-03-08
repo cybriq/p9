@@ -3,12 +3,12 @@ package bloom_test
 import (
 	"bytes"
 	"encoding/hex"
-	"github.com/p9c/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/block"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/bloom"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/bloom"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 func TestMerkleBlock3(t *testing.T) {

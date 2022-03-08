@@ -11,27 +11,27 @@ import (
 
 	"github.com/niubaoshu/gotiny"
 
-	"github.com/p9c/p9/pkg/log"
-	"github.com/p9c/p9/pkg/chainrpc/p2padvt"
-	"github.com/p9c/p9/pkg/chainrpc/templates"
-	"github.com/p9c/p9/pkg/constant"
-	"github.com/p9c/p9/pkg/pipe"
-	"github.com/p9c/p9/pod/state"
+	"github.com/cybriq/p9/pkg/chainrpc/p2padvt"
+	"github.com/cybriq/p9/pkg/chainrpc/templates"
+	"github.com/cybriq/p9/pkg/constant"
+	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/pipe"
+	"github.com/cybriq/p9/pod/state"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/VividCortex/ewma"
 	"go.uber.org/atomic"
 
-	"github.com/p9c/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/interrupt"
 
-	"github.com/p9c/p9/cmd/kopach/client"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/chainrpc/hashrate"
-	"github.com/p9c/p9/pkg/chainrpc/job"
-	"github.com/p9c/p9/pkg/chainrpc/pause"
-	rav "github.com/p9c/p9/pkg/ring"
-	"github.com/p9c/p9/pkg/transport"
+	"github.com/cybriq/p9/cmd/kopach/client"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/chainrpc/hashrate"
+	"github.com/cybriq/p9/pkg/chainrpc/job"
+	"github.com/cybriq/p9/pkg/chainrpc/pause"
+	rav "github.com/cybriq/p9/pkg/ring"
+	"github.com/cybriq/p9/pkg/transport"
 )
 
 var maxThreads = float32(runtime.NumCPU())
@@ -89,7 +89,9 @@ func (w *Worker) Start() {
 	w.clients = []*client.Client{}
 	for i := 0; i < w.cx.Config.GenThreads.V(); i++ {
 		D.Ln("starting worker", i)
-		cmd, _ := pipe.Spawn(w.quit, os.Args[0], "worker", w.id, w.cx.ActiveNet.Name, w.cx.Config.LogLevel.V())
+		cmd, _ := pipe.Spawn(w.quit, os.Args[0], "worker", w.id,
+			w.cx.ActiveNet.Name, w.cx.Config.LogLevel.V(),
+		)
 		w.workers = append(w.workers, cmd)
 		w.clients = append(w.clients, client.New(cmd.StdConn))
 	}
@@ -179,7 +181,9 @@ func Run(cx *state.State) (e error) {
 				since := time.Now().Sub(time.Unix(0, w.lastSent.Load()))
 				wasSending := since > time.Second*6 && w.FirstSender.Load() != 0
 				if wasSending {
-					D.Ln("previous current controller has stopped broadcasting", since, w.FirstSender.Load())
+					D.Ln("previous current controller has stopped broadcasting",
+						since, w.FirstSender.Load(),
+					)
 					// when this string is clear other broadcasts will be listened to
 					w.FirstSender.Store(0)
 					// pause the workers
@@ -321,7 +325,9 @@ var handlers = transport.Handlers{
 		np := advt.UUID
 		// np := p.GetControllerListenerPort()
 		// ns := net.JoinHostPort(strings.Split(ni.String(), ":")[0], fmt.Sprint(np))
-		D.Ln("received pause from server at", ni, np, "stopping", len(w.clients), "workers stopping")
+		D.Ln("received pause from server at", ni, np, "stopping",
+			len(w.clients), "workers stopping",
+		)
 		if fs == np {
 			for i := range w.clients {
 				// D.Ln("sending pause to worker", i, fs, np)

@@ -3,14 +3,14 @@ package config
 //go:generate go run ./genopts/.
 
 import (
-	"github.com/p9c/p9/pkg/opts/binary"
-	"github.com/p9c/p9/pkg/opts/cmds"
-	"github.com/p9c/p9/pkg/opts/duration"
-	"github.com/p9c/p9/pkg/opts/float"
-	"github.com/p9c/p9/pkg/opts/integer"
-	"github.com/p9c/p9/pkg/opts/list"
-	"github.com/p9c/p9/pkg/opts/opt"
-	"github.com/p9c/p9/pkg/opts/text"
+	"github.com/cybriq/p9/pkg/opts/binary"
+	"github.com/cybriq/p9/pkg/opts/cmds"
+	"github.com/cybriq/p9/pkg/opts/duration"
+	"github.com/cybriq/p9/pkg/opts/float"
+	"github.com/cybriq/p9/pkg/opts/integer"
+	"github.com/cybriq/p9/pkg/opts/list"
+	"github.com/cybriq/p9/pkg/opts/opt"
+	"github.com/cybriq/p9/pkg/opts/text"
 )
 
 // Config defines the configuration items used by pod along with the various components included in the suite

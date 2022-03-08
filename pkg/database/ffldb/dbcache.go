@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"sync"
 	"time"
-	
+
 	"github.com/btcsuite/goleveldb/leveldb"
 	"github.com/btcsuite/goleveldb/leveldb/iterator"
 	"github.com/btcsuite/goleveldb/leveldb/util"
-	
-	"github.com/p9c/p9/pkg/util/treap"
+
+	"github.com/cybriq/p9/pkg/util/treap"
 )
 
 const (
@@ -592,7 +592,9 @@ func (c *dbCache) Close() (e error) {
 //
 // The cache will be flushed to leveldb when the max size exceeds the provided value or it has been longer than the
 // provided interval since the last flush.
-func newDbCache(ldb *leveldb.DB, store *blockStore, maxSize uint64, flushIntervalSecs uint32) *dbCache {
+func newDbCache(ldb *leveldb.DB, store *blockStore, maxSize uint64,
+	flushIntervalSecs uint32,
+) *dbCache {
 	return &dbCache{
 		ldb:           ldb,
 		store:         store,

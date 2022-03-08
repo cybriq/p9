@@ -6,16 +6,16 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/p9c/p9/pkg/interrupt"
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/cmd/ctl"
-	"github.com/p9c/p9/cmd/node"
-	"github.com/p9c/p9/cmd/wallet"
-	"github.com/p9c/p9/pkg/constant"
-	"github.com/p9c/p9/pod/state"
+	"github.com/cybriq/p9/cmd/ctl"
+	"github.com/cybriq/p9/cmd/node"
+	"github.com/cybriq/p9/cmd/wallet"
+	"github.com/cybriq/p9/pkg/constant"
+	"github.com/cybriq/p9/pod/state"
 
-	"github.com/p9c/p9/pkg/apputil"
+	"github.com/cybriq/p9/pkg/apputil"
 )
 
 // NodeHandle runs the ParallelCoin blockchain node
@@ -72,7 +72,10 @@ func WalletHandle(ifc interface{}) (e error) {
 	if cx, ok = ifc.(*state.State); !ok {
 		return fmt.Errorf("cannot run without a state")
 	}
-	cx.Config.WalletFile.Set(filepath.Join(cx.Config.DataDir.V(), cx.ActiveNet.Name, constant.DbName))
+	cx.Config.WalletFile.Set(filepath.Join(cx.Config.DataDir.V(),
+		cx.ActiveNet.Name, constant.DbName,
+	),
+	)
 	// dbFilename := *cx.Config.DataDir + slash + cx.ActiveNet.
 	// 	Params.Name + slash + wallet.WalletDbName
 	if !apputil.FileExists(cx.Config.WalletFile.V()) && !cx.IsGUI {
@@ -86,15 +89,18 @@ func WalletHandle(ifc interface{}) (e error) {
 		interrupt.RequestRestart()
 	}
 	// for security with apps launching the wallet, the public password can be set with a file that is deleted after
-	walletPassPath := filepath.Join(cx.Config.DataDir.V(), cx.ActiveNet.Name, "wp.txt")
+	walletPassPath := filepath.Join(cx.Config.DataDir.V(), cx.ActiveNet.Name,
+		"wp.txt",
+	)
 	D.Ln("reading password from", walletPassPath)
 	if apputil.FileExists(walletPassPath) {
 		var b []byte
 		if b, e = ioutil.ReadFile(walletPassPath); !E.Chk(e) {
 			cx.Config.WalletPass.SetBytes(b)
-			D.Ln("read password '" + string(b) + "'", cx.Config.WalletPass.V())
+			D.Ln("read password '"+string(b)+"'", cx.Config.WalletPass.V())
 			if e = ioutil.WriteFile(walletPassPath, make([]byte, len(b)),
-				0700); E.Chk(e) {
+				0700,
+			); E.Chk(e) {
 			}
 			if e = os.Remove(walletPassPath); E.Chk(e) {
 			}

@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"io"
 	"sort"
-	
+
 	"github.com/aead/siphash"
 	"github.com/kkdai/bstream"
-	
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // Inspired by https://github.com/rasky/gcs
@@ -75,7 +75,8 @@ type Filter struct {
 // BuildGCSFilter builds a new GCS filter with the collision probability of
 // `1/(2**P)`, key `key`, and including every `[]byte` in `data` as a member of
 // the set.
-func BuildGCSFilter(P uint8, M uint64, key [KeySize]byte, data [][]byte) (*Filter, error) {
+func BuildGCSFilter(P uint8, M uint64, key [KeySize]byte, data [][]byte,
+) (*Filter, error) {
 	// Some initial parameter checks: make sure we have data from which to podbuild the
 	// filter, and make sure our parameters will fit the hash function we're using.
 	if uint64(len(data)) >= (1 << 32) {

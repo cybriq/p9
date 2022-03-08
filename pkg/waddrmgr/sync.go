@@ -2,9 +2,9 @@ package waddrmgr
 
 import (
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/walletdb"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/walletdb"
 )
 
 // BlockStamp defines a block (by height and a unique hash) and is used to mark
@@ -41,7 +41,8 @@ func newSyncState(startBlock, syncedTo *BlockStamp) *syncState {
 // addresses will be used. This effectively allows the manager to be marked as
 // unsynced back to the oldest known point any of the addresses have appeared in
 // the block chain.
-func (m *Manager) SetSyncedTo(ns walletdb.ReadWriteBucket, bs *BlockStamp) (e error) {
+func (m *Manager) SetSyncedTo(ns walletdb.ReadWriteBucket, bs *BlockStamp,
+) (e error) {
 	m.mtx.Lock()
 	defer m.mtx.Unlock()
 	// Use the stored start blockstamp and reset recent hashes and height when the

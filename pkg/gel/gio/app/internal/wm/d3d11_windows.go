@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"unsafe"
 
-	"github.com/p9c/p9/pkg/gel/gio/gpu"
-	"github.com/p9c/p9/pkg/gel/gio/internal/d3d11"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/d3d11"
 )
 
 type d3d11Context struct {
@@ -47,7 +47,8 @@ func init() {
 			}
 			return &d3d11Context{win: w, dev: dev, ctx: ctx, swchain: swchain}, nil
 		},
-	})
+	},
+	)
 }
 
 func (c *d3d11Context) API() gpu.API {
@@ -98,9 +99,13 @@ func (c *d3d11Context) MakeCurrent() error {
 	if err != nil {
 		return err
 	}
-	depthView, err := d3d11.CreateDepthView(c.dev, int(desc.BufferDesc.Width), int(desc.BufferDesc.Height), 24)
+	depthView, err := d3d11.CreateDepthView(c.dev, int(desc.BufferDesc.Width),
+		int(desc.BufferDesc.Height), 24,
+	)
 	if err != nil {
-		d3d11.IUnknownRelease(unsafe.Pointer(renderTarget), renderTarget.Vtbl.Release)
+		d3d11.IUnknownRelease(unsafe.Pointer(renderTarget),
+			renderTarget.Vtbl.Release,
+		)
 		return err
 	}
 	c.renderTarget = renderTarget
@@ -130,11 +135,15 @@ func (c *d3d11Context) Release() {
 
 func (c *d3d11Context) releaseFBO() {
 	if c.depthView != nil {
-		d3d11.IUnknownRelease(unsafe.Pointer(c.depthView), c.depthView.Vtbl.Release)
+		d3d11.IUnknownRelease(unsafe.Pointer(c.depthView),
+			c.depthView.Vtbl.Release,
+		)
 		c.depthView = nil
 	}
 	if c.renderTarget != nil {
-		d3d11.IUnknownRelease(unsafe.Pointer(c.renderTarget), c.renderTarget.Vtbl.Release)
+		d3d11.IUnknownRelease(unsafe.Pointer(c.renderTarget),
+			c.renderTarget.Vtbl.Release,
+		)
 		c.renderTarget = nil
 	}
 }

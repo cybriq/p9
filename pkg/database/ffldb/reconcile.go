@@ -3,8 +3,8 @@ package ffldb
 import (
 	"fmt"
 	"hash/crc32"
-	
-	"github.com/p9c/p9/pkg/database"
+
+	"github.com/cybriq/p9/pkg/database"
 )
 
 // serializeWriteRow serialize the current block file and offset where new will be written into a format suitable for
@@ -87,7 +87,7 @@ func reconcileDB(pdb *db, create bool) (database.DB, error) {
 		pdb.store.handleRollback(curFileNum, curOffset)
 		D.Ln("database sync complete")
 	}
-	
+
 	// When the write cursor position found by scanning the block files on disk is BEFORE the position the metadata
 	// believes to be true, return a corruption error. Since sync is called after each block is written and before the
 	// metadata is updated, this should only happen in the case of missing, deleted, or truncated block files, which

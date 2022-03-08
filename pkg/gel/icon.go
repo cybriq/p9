@@ -4,10 +4,10 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
-	
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op/paint"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op/paint"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 	"golang.org/x/exp/shiny/iconvg"
 )
 
@@ -91,13 +91,17 @@ func (i *Icon) image(sz int) paint.ImageOp {
 	m, _ := iconvg.DecodeMetadata(*i.src)
 	dx, dy := m.ViewBox.AspectRatio()
 	img := image.NewRGBA(image.Rectangle{Max: image.Point{X: sz,
-		Y: int(float32(sz) * dy / dx)}})
+		Y: int(float32(sz) * dy / dx),
+	},
+	},
+	)
 	var ico iconvg.Rasterizer
 	ico.SetDstImage(img, img.Bounds(), draw.Src)
 	m.Palette[0] = color.RGBA(i.Theme.Colors.GetNRGBAFromName(i.color))
 	if e := iconvg.Decode(&ico, *i.src, &iconvg.DecodeOptions{
 		Palette: &m.Palette,
-	}); E.Chk(e) {
+	},
+	); E.Chk(e) {
 	}
 	operation := paint.NewImageOp(img)
 	// create the maps if they don't exist

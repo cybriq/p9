@@ -1,8 +1,8 @@
 package gpu
 
 import (
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/stroke"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/stroke"
 )
 
 type quadSplitter struct {
@@ -22,7 +22,9 @@ func encodeQuadTo(data []byte, meta uint32, from, ctrl, to f32.Point) {
 	encodeVertex(data[vertStride*3:], meta, 1, -1, from, ctrl, to)
 }
 
-func encodeVertex(data []byte, meta uint32, cornerx, cornery int16, from, ctrl, to f32.Point) {
+func encodeVertex(data []byte, meta uint32, cornerx, cornery int16,
+	from, ctrl, to f32.Point,
+) {
 	var corner float32
 	if cornerx == 1 {
 		corner += .5

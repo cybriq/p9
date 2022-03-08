@@ -3,8 +3,8 @@ package btcjson_test
 import (
 	"encoding/json"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // TestPodExtCustomResults ensures any results that have custom marshalling work as intended and unmarshal code of

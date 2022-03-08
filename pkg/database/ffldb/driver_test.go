@@ -2,15 +2,15 @@ package ffldb_test
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/block"
 	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/database/ffldb"
+
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/database/ffldb"
 )
 
 // dbType is the database type name for this driver.

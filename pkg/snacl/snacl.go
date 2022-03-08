@@ -8,16 +8,16 @@ import (
 	"errors"
 	"io"
 	"runtime/debug"
-	
+
 	"github.com/btcsuite/golangcrypto/nacl/secretbox"
 	"github.com/btcsuite/golangcrypto/scrypt"
-	
-	"github.com/p9c/p9/pkg/util/zero"
+
+	"github.com/cybriq/p9/pkg/util/zero"
 )
 
 var (
 	prng = rand.Reader
-	
+
 	// ErrInvalidPassword ...
 	ErrInvalidPassword = errors.New("invalid password")
 	// ErrMalformed ...

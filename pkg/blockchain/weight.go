@@ -1,9 +1,9 @@
 package blockchain
 
 import (
-	"github.com/p9c/p9/pkg/block"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -63,7 +63,9 @@ func GetTransactionWeight(tx *util.Tx) int64 {
 // sig op count scaled according to the WitnessScaleFactor, the sig op count for
 // all p2sh inputs scaled by the WitnessScaleFactor, and finally the unscaled
 // sig op count for any inputs spending witness programs.
-func GetSigOpCost(tx *util.Tx, isCoinBaseTx bool, utxoView *UtxoViewpoint, bip16 bool) (int, error) {
+func GetSigOpCost(tx *util.Tx, isCoinBaseTx bool, utxoView *UtxoViewpoint,
+	bip16 bool,
+) (int, error) {
 	numSigOps := CountSigOps(tx) * WitnessScaleFactor
 	if bip16 {
 		numP2SHSigOps, e := CountP2SHSigOps(tx, isCoinBaseTx, utxoView)

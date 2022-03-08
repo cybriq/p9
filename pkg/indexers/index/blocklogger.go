@@ -2,7 +2,7 @@ package index
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/block"
 	"sync"
 	"time"
 )
@@ -23,7 +23,7 @@ type blockProgressLogger struct {
 //  ({numTxs}, height {lastBlockHeight}, {lastBlockTimeStamp})
 func newBlockProgressLogger(
 	progressMessage string,
-// logger *log.Logger
+	// logger *log.Logger
 ) *blockProgressLogger {
 	return &blockProgressLogger{
 		lastBlockLogTime: time.Now(),

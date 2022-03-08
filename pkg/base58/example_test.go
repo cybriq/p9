@@ -2,8 +2,8 @@ package base58_test
 
 import (
 	"fmt"
-	
-	"github.com/p9c/p9/pkg/base58"
+
+	"github.com/cybriq/p9/pkg/base58"
 )
 
 // This example demonstrates how to decode modified base58 encoded data.

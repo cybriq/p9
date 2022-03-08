@@ -1,6 +1,6 @@
 package gel
 
-import l "github.com/p9c/p9/pkg/gel/gio/layout"
+import l "github.com/cybriq/p9/pkg/gel/gio/layout"
 
 type TextTableHeader []string
 
@@ -53,7 +53,8 @@ func (tt *TextTable) Regenerate(fully bool) {
 						Fn,
 				).Fn,
 				// ).Fn,
-			})
+			},
+			)
 		}
 	}
 	// var startIndex int
@@ -67,7 +68,7 @@ func (tt *TextTable) Regenerate(fully bool) {
 	// startIndex = len(tt.Table.body)
 	// D.Ln("startIndex", startIndex, len(tt.Body))
 	// if startIndex < len(tt.Body) {
-	
+
 	// bd := tt.Body // [startIndex:]
 	diff := len(tt.Body) - len(tt.Table.body)
 	// D.Ln(len(tt.Table.body), len(tt.Body), diff)

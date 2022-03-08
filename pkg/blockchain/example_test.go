@@ -2,17 +2,17 @@ package blockchain_test
 
 import (
 	"fmt"
-	bits2 "github.com/p9c/p9/pkg/bits"
-	"github.com/p9c/p9/pkg/block"
+	bits2 "github.com/cybriq/p9/pkg/bits"
+	"github.com/cybriq/p9/pkg/block"
 	"log"
 	"math/big"
 	"os"
 	"path/filepath"
-	
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/database"
-	_ "github.com/p9c/p9/pkg/database/ffldb"
+
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/database"
+	_ "github.com/cybriq/p9/pkg/database/ffldb"
 )
 
 // This example demonstrates how to create a new chain instance and use ProcessBlock to attempt to add a block to the

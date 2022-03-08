@@ -4,16 +4,16 @@ import (
 	"crypto/rand"
 	"crypto/sha512"
 	"fmt"
-	"github.com/p9c/p9/pkg/log"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/log"
 	"sync"
 	"time"
-	
-	"github.com/p9c/p9/pkg/snacl"
-	"github.com/p9c/p9/pkg/util/hdkeychain"
-	"github.com/p9c/p9/pkg/util/zero"
-	"github.com/p9c/p9/pkg/walletdb"
+
+	"github.com/cybriq/p9/pkg/snacl"
+	"github.com/cybriq/p9/pkg/util/hdkeychain"
+	"github.com/cybriq/p9/pkg/util/zero"
+	"github.com/cybriq/p9/pkg/walletdb"
 )
 
 const (
@@ -186,7 +186,9 @@ func SetSecretKeyGen(keyGen SecretKeyGenerator) SecretKeyGenerator {
 }
 
 // newSecretKey generates a new secret key using the active secretKeyGen.
-func newSecretKey(passphrase *[]byte, config *ScryptOptions) (*snacl.SecretKey, error) {
+func newSecretKey(passphrase *[]byte, config *ScryptOptions) (*snacl.SecretKey,
+	error,
+) {
 	secretKeyGenMtx.RLock()
 	defer secretKeyGenMtx.RUnlock()
 	return secretKeyGen(passphrase, config)
@@ -468,7 +470,9 @@ func (m *Manager) NewScopedKeyManager(
 // its registered scope. If the manger is found, then a nil error is returned
 // along with the active scoped manager. Otherwise, a nil manager and a non-nil
 // error will be returned.
-func (m *Manager) FetchScopedKeyManager(scope KeyScope) (*ScopedKeyManager, error) {
+func (m *Manager) FetchScopedKeyManager(scope KeyScope) (*ScopedKeyManager,
+	error,
+) {
 	m.mtx.RLock()
 	defer m.mtx.RUnlock()
 	sm, ok := m.scopedManagers[scope]
@@ -555,7 +559,8 @@ func (m *Manager) Address(
 }
 
 // MarkUsed updates the used flag for the provided address.
-func (m *Manager) MarkUsed(ns walletdb.ReadWriteBucket, address btcaddr.Address) (e error) {
+func (m *Manager) MarkUsed(ns walletdb.ReadWriteBucket, address btcaddr.Address,
+) (e error) {
 	m.mtx.RLock()
 	defer m.mtx.RUnlock()
 	// Run through all the known scoped managers, and attempt to mark the address as
@@ -624,7 +629,9 @@ func (m *Manager) ForEachActiveAccountAddress(
 
 // ForEachActiveAddress calls the given function with each active address stored
 // in the manager, breaking early on error.
-func (m *Manager) ForEachActiveAddress(ns walletdb.ReadBucket, fn func(addr btcaddr.Address) error) (e error) {
+func (m *Manager) ForEachActiveAddress(ns walletdb.ReadBucket,
+	fn func(addr btcaddr.Address) error,
+) (e error) {
 	m.mtx.RLock()
 	defer m.mtx.RUnlock()
 	for _, scopedMgr := range m.scopedManagers {
@@ -963,13 +970,17 @@ func (m *Manager) Unlock(ns walletdb.ReadBucket, passphrase []byte) (e error) {
 			var decrypted []byte
 			if decrypted, e = m.cryptoKeyPriv.Decrypt(acctInfo.acctKeyEncrypted); E.Chk(e) {
 				m.lock()
-				str := fmt.Sprintf("failed to decrypt account %d private key", account)
+				str := fmt.Sprintf("failed to decrypt account %d private key",
+					account,
+				)
 				return managerError(ErrCrypto, str, e)
 			}
 			if acctKeyPriv, e = hdkeychain.NewKeyFromString(string(decrypted)); E.Chk(e) {
 				zero.Bytes(decrypted)
 				m.lock()
-				str := fmt.Sprintf("failed to regenerate account %d extended key", account)
+				str := fmt.Sprintf("failed to regenerate account %d extended key",
+					account,
+				)
 				return managerError(ErrKeyChain, str, e)
 			}
 			zero.Bytes(decrypted)
@@ -995,7 +1006,9 @@ func (m *Manager) Unlock(ns walletdb.ReadBucket, passphrase []byte) (e error) {
 			if privKeyEncrypted, e = m.cryptoKeyPriv.Encrypt(privKeyBytes); E.Chk(e) {
 				zero.BigInt(privKey.D)
 				m.lock()
-				str := fmt.Sprintf("failed to encrypt private key for address %s", info.managedAddr.Address())
+				str := fmt.Sprintf("failed to encrypt private key for address %s",
+					info.managedAddr.Address(),
+				)
 				return managerError(ErrCrypto, str, e)
 			}
 			zero.BigInt(privKey.D)
@@ -1036,7 +1049,9 @@ func ValidateAccountName(name string) (e error) {
 // requires the manager to be unlocked when it isn't.
 //
 // This function MUST be called with the manager lock held for reads.
-func (m *Manager) selectCryptoKey(keyType CryptoKeyType) (EncryptorDecryptor, error) {
+func (m *Manager) selectCryptoKey(keyType CryptoKeyType) (EncryptorDecryptor,
+	error,
+) {
 	if keyType == CKTPrivate || keyType == CKTScript {
 		// The manager must be unlocked to work with the private keys.
 		if m.locked || m.watchingOnly {
@@ -1100,7 +1115,8 @@ func (m *Manager) Decrypt(keyType CryptoKeyType, in []byte) ([]byte, error) {
 func newManager(
 	chainParams *chaincfg.Params, masterKeyPub *snacl.SecretKey,
 	masterKeyPriv *snacl.SecretKey, cryptoKeyPub EncryptorDecryptor,
-	cryptoKeyPrivEncrypted, cryptoKeyScriptEncrypted []byte, syncInfo *syncState,
+	cryptoKeyPrivEncrypted, cryptoKeyScriptEncrypted []byte,
+	syncInfo *syncState,
 	birthday time.Time, privPassphraseSalt [saltSize]byte,
 	scopedManagers map[KeyScope]*ScopedKeyManager,
 ) *Manager {
@@ -1182,7 +1198,8 @@ func deriveCoinTypeKey(
 // In particular this is the hierarchical deterministic extended key path:
 //
 //   m/purpose'/<coin type>'/<account>'
-func deriveAccountKey(coinTypeKey *hdkeychain.ExtendedKey, account uint32) (*hdkeychain.ExtendedKey, error) {
+func deriveAccountKey(coinTypeKey *hdkeychain.ExtendedKey, account uint32,
+) (*hdkeychain.ExtendedKey, error) {
 	// Enforce maximum account number.
 	var er ManagerError
 	if account > MaxAccountNum {
@@ -1293,7 +1310,7 @@ func loadManager(
 		str := "failed to unmarshal master public key"
 		return nil, managerError(ErrCrypto, str, e)
 	}
-	D.F("deriving pub key passphrase key '%s'" , string(pubPassphrase))
+	D.F("deriving pub key passphrase key '%s'", string(pubPassphrase))
 	if e = masterKeyPub.DeriveKey(&pubPassphrase); E.Chk(e) {
 		str := "invalid passphrase for master public key"
 		return nil, managerError(ErrWrongPassphrase, str, nil)

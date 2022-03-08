@@ -8,18 +8,18 @@ import (
 	"sync/atomic"
 	"time"
 
-	block2 "github.com/p9c/p9/pkg/block"
+	block2 "github.com/cybriq/p9/pkg/block"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/blockchain"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/mempool"
-	peerpkg "github.com/p9c/p9/pkg/peer"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/mempool"
+	peerpkg "github.com/cybriq/p9/pkg/peer"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 type (
@@ -191,7 +191,9 @@ func (sm *SyncManager) Pause() chan<- struct{} {
 
 // ProcessBlock makes use of ProcessBlock on an internal instance of a block
 // chain.
-func (sm *SyncManager) ProcessBlock(block *block2.Block, flags blockchain.BehaviorFlags) (bool, error) {
+func (sm *SyncManager) ProcessBlock(block *block2.Block,
+	flags blockchain.BehaviorFlags,
+) (bool, error) {
 	T.Ln("processing block")
 	// Traces(block)
 	reply := make(chan processBlockResponse, 1)
@@ -205,7 +207,9 @@ func (sm *SyncManager) ProcessBlock(block *block2.Block, flags blockchain.Behavi
 // QueueBlock adds the passed block message and peer to the block handling
 // queue. Responds to the done channel argument after the block message is
 // processed.
-func (sm *SyncManager) QueueBlock(block *block2.Block, peer *peerpkg.Peer, done qu.C) {
+func (sm *SyncManager) QueueBlock(block *block2.Block, peer *peerpkg.Peer,
+	done qu.C,
+) {
 	// Don't accept more blocks if we're shutting down.
 	if atomic.LoadInt32(&sm.shutdown) != 0 {
 		done <- struct{}{}
@@ -216,7 +220,9 @@ func (sm *SyncManager) QueueBlock(block *block2.Block, peer *peerpkg.Peer, done 
 
 // QueueHeaders adds the passed headers message and peer to the block handling
 // queue.
-func (sm *SyncManager) QueueHeaders(headers *wire.MsgHeaders, peer *peerpkg.Peer) {
+func (sm *SyncManager) QueueHeaders(headers *wire.MsgHeaders,
+	peer *peerpkg.Peer,
+) {
 	// No channel handling here because peers do not need to block on headers
 	// messages.
 	if atomic.LoadInt32(&sm.shutdown) != 0 {
@@ -323,7 +329,9 @@ out:
 						var e error
 						var cbHeight int32
 						if cbHeight, e = blockchain.ExtractCoinbaseHeight(coinbaseTx); E.Chk(e) {
-							W.Ln("unable to extract height from coinbase tx:", e)
+							W.Ln("unable to extract height from coinbase tx:",
+								e,
+							)
 						} else {
 							heightUpdate = cbHeight
 						}
@@ -567,7 +575,7 @@ func (sm *SyncManager) handleBlockMsg(workerNumber uint32, bmsg *blockMsg) {
 			pp.PushRejectMsg(wire.CmdBlock, code, reason, blockHash, false)
 			return
 		} else {
-			isOrphan=true
+			isOrphan = true
 		}
 	}
 	// Meta-data about the new block this peer is reporting. We use this below to
@@ -980,7 +988,9 @@ func (sm *SyncManager) handleInvMsg(imsg *invMsg) {
 		// Request the inventory if we don't already have it.
 		haveInv, e := sm.haveInventory(iv)
 		if e != nil {
-			E.Ln("unexpected failure when checking for existing inventory during inv message processing:", e)
+			E.Ln("unexpected failure when checking for existing inventory during inv message processing:",
+				e,
+			)
 			continue
 		}
 		if !haveInv {
@@ -1287,7 +1297,9 @@ func (sm *SyncManager) limitMap(m map[chainhash.Hash]struct{}, limit int) {
 
 // resetHeaderState sets the headers-first mode state to values appropriate for
 // syncing from a new peer.
-func (sm *SyncManager) resetHeaderState(newestHash *chainhash.Hash, newestHeight int32) {
+func (sm *SyncManager) resetHeaderState(newestHash *chainhash.Hash,
+	newestHeight int32,
+) {
 	sm.headersFirstMode = false
 	sm.headerList.Init()
 	sm.startHeader = nil
@@ -1354,7 +1366,9 @@ func (sm *SyncManager) startSync() {
 		}
 		T.C(
 			func() string {
-				return fmt.Sprintf("syncing to block height %d from peer %v", bestPeer.LastBlock(), bestPeer.Addr())
+				return fmt.Sprintf("syncing to block height %d from peer %v",
+					bestPeer.LastBlock(), bestPeer.Addr(),
+				)
 			},
 		)
 		// When the current height is less than a known checkpoint we can use block

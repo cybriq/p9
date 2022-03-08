@@ -1,13 +1,13 @@
 package main
 
 import (
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 
-	"github.com/p9c/p9/pkg/qu"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/cmd/misc/glom/pkg/pathtree"
-	"github.com/p9c/p9/pkg/gel"
-	"github.com/p9c/p9/pkg/interrupt"
+	"github.com/cybriq/p9/cmd/misc/glom/pkg/pathtree"
+	"github.com/cybriq/p9/pkg/gel"
+	"github.com/cybriq/p9/pkg/interrupt"
 )
 
 type State struct {
@@ -30,10 +30,11 @@ func main() {
 		Size(48, 32).
 		Title("glom, the visual code editor").
 		Open().
-		Run(func(gtx l.Context) l.Dimensions { return folderView.Fn(gtx) }, func() {
-			interrupt.Request()
-			quit.Q()
-		}, quit,
+		Run(func(gtx l.Context) l.Dimensions { return folderView.Fn(gtx) },
+			func() {
+				interrupt.Request()
+				quit.Q()
+			}, quit,
 		); E.Chk(e) {
 
 	}

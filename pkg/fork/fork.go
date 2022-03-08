@@ -4,8 +4,8 @@ package fork
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/p9c/p9/pkg/bits"
-	"github.com/p9c/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/bits"
+	"github.com/cybriq/p9/pkg/log"
 	"math/big"
 	"math/rand"
 	"sort"
@@ -69,7 +69,9 @@ func ForkCalc() {
 	done = true
 	T.Ln("running fork data init")
 	for i := range P9AlgosNumeric {
-		List[1].AlgoVers[i] = fmt.Sprintf("Div%d", P9AlgosNumeric[i].VersionInterval)
+		List[1].AlgoVers[i] = fmt.Sprintf("Div%d",
+			P9AlgosNumeric[i].VersionInterval,
+		)
 	}
 	for i, v := range P9AlgoVers {
 		List[1].Algos[v] = P9AlgosNumeric[i]
@@ -107,7 +109,8 @@ func ForkCalc() {
 	}
 	D.Ln(P9Average)
 	P9Average = baseVersionInterval / P9Average
-	D.Ln(P9Average)}
+	D.Ln(P9Average)
+}
 
 var (
 	AlgoSlices []AlgoSpecs
@@ -139,7 +142,7 @@ var (
 	}()
 	// FirstPowLimitBits is
 	FirstPowLimitBits = bits.BigToCompact(&FirstPowLimit)
-	
+
 	p9PowLimit = func() big.Int {
 		mplb, _ := hex.DecodeString(
 			// "0fffff0000000000000000000000000000000000000000000000000000000000",
@@ -175,7 +178,7 @@ var (
 	}
 	// P9AlgoVers is the lookup for after 1st hardfork
 	P9AlgoVers = make(map[int32]string)
-	
+
 	// P9PrimeSequence = []int{2, 5, 11, 7, 11, 13, 17, 19, 23}
 	// 2, .3, .5, 7, .11, 13, .17, 19, 23, 29, .31, 37, .41, 43, 47, 53, .59, 61, .67, 71, 73, 79, .83, 89, 97
 	P9PrimeSequence = []int{2, 4, 8, 16, 32, 64, 128, 256, 512}
@@ -184,19 +187,37 @@ var (
 	// P9Algos is the algorithm specifications after the hard fork
 	P9Algos        = make(map[string]AlgoParams)
 	P9AlgosNumeric = map[int32]AlgoParams{
-		5:  {5, p9PowLimitBits, 0, IntervalBase * P9PrimeSequence[0] / IntervalDivisor},  // 2
-		6:  {6, p9PowLimitBits, 1, IntervalBase * P9PrimeSequence[1] / IntervalDivisor},  // 3
-		7:  {7, p9PowLimitBits, 2, IntervalBase * P9PrimeSequence[2] / IntervalDivisor},  // 5
-		8:  {8, p9PowLimitBits, 3, IntervalBase * P9PrimeSequence[3] / IntervalDivisor},  // 7
-		9:  {9, p9PowLimitBits, 4, IntervalBase * P9PrimeSequence[4] / IntervalDivisor},  // 11
-		10: {10, p9PowLimitBits, 5, IntervalBase * P9PrimeSequence[5] / IntervalDivisor}, // 13
-		11: {11, p9PowLimitBits, 7, IntervalBase * P9PrimeSequence[7] / IntervalDivisor}, // 17
-		12: {12, p9PowLimitBits, 6, IntervalBase * P9PrimeSequence[6] / IntervalDivisor}, // 19
-		13: {13, p9PowLimitBits, 8, IntervalBase * P9PrimeSequence[8] / IntervalDivisor}, // 23
+		5: {5, p9PowLimitBits, 0,
+			IntervalBase * P9PrimeSequence[0] / IntervalDivisor,
+		}, // 2
+		6: {6, p9PowLimitBits, 1,
+			IntervalBase * P9PrimeSequence[1] / IntervalDivisor,
+		}, // 3
+		7: {7, p9PowLimitBits, 2,
+			IntervalBase * P9PrimeSequence[2] / IntervalDivisor,
+		}, // 5
+		8: {8, p9PowLimitBits, 3,
+			IntervalBase * P9PrimeSequence[3] / IntervalDivisor,
+		}, // 7
+		9: {9, p9PowLimitBits, 4,
+			IntervalBase * P9PrimeSequence[4] / IntervalDivisor,
+		}, // 11
+		10: {10, p9PowLimitBits, 5,
+			IntervalBase * P9PrimeSequence[5] / IntervalDivisor,
+		}, // 13
+		11: {11, p9PowLimitBits, 7,
+			IntervalBase * P9PrimeSequence[7] / IntervalDivisor,
+		}, // 17
+		12: {12, p9PowLimitBits, 6,
+			IntervalBase * P9PrimeSequence[6] / IntervalDivisor,
+		}, // 19
+		13: {13, p9PowLimitBits, 8,
+			IntervalBase * P9PrimeSequence[8] / IntervalDivisor,
+		}, // 23
 	}
-	
+
 	P9Average float64
-	
+
 	// SecondPowLimit is
 	SecondPowLimit = func() big.Int {
 		mplb, _ := hex.DecodeString(
@@ -275,13 +296,17 @@ func GetAlgoVerSlice(height int32) (o []int32) {
 
 // AlgoVerIterator returns a next and more function to use in a for loop to
 // iterate over block versions at current height
-func AlgoVerIterator(height int32) (next func(), curr func() int32, more func() bool) {
+func AlgoVerIterator(height int32) (next func(), curr func() int32,
+	more func() bool,
+) {
 	current := GetCurrent(height)
 	var cursor int32
 	length := int32(GetNumAlgos(height))
 	var verNumbers []int32
 	for i := range List[current].AlgoVers {
-		verNumbers = append(verNumbers, List[current].Algos[List[current].AlgoVers[i]].Version)
+		verNumbers = append(verNumbers,
+			List[current].Algos[List[current].AlgoVers[i]].Version,
+		)
 	}
 	curr = func() int32 {
 		return verNumbers[cursor]
@@ -294,7 +319,7 @@ func AlgoVerIterator(height int32) (next func(), curr func() int32, more func() 
 			cursor++
 		}
 	}
-	
+
 	return
 }
 

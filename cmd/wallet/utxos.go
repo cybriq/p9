@@ -1,10 +1,10 @@
 package wallet
 
 import (
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/walletdb"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/walletdb"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // OutputSelectionPolicy describes the rules for selecting an output from the wallet.
@@ -18,7 +18,9 @@ func (p *OutputSelectionPolicy) meetsRequiredConfs(txHeight, curHeight int32) bo
 }
 
 // UnspentOutputs fetches all unspent outputs from the wallet that match rules described in the passed policy.
-func (w *Wallet) UnspentOutputs(policy OutputSelectionPolicy) ([]*TransactionOutput, error) {
+func (w *Wallet) UnspentOutputs(policy OutputSelectionPolicy) ([]*TransactionOutput,
+	error,
+) {
 	var outputResults []*TransactionOutput
 	e := walletdb.View(
 		w.db, func(tx walletdb.ReadTx) (e error) {

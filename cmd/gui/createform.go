@@ -4,13 +4,13 @@ import (
 	"encoding/hex"
 	"strings"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/text"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/text"
 	"github.com/tyler-smith/go-bip39"
 	"golang.org/x/exp/shiny/materialdesign/icons"
 
-	"github.com/p9c/p9/pkg/gel"
-	"github.com/p9c/p9/pkg/p9icons"
+	"github.com/cybriq/p9/pkg/gel"
+	"github.com/cybriq/p9/pkg/p9icons"
 )
 
 func (wg *WalletGUI) centered(w l.Widget) l.Widget {
@@ -235,7 +235,7 @@ func (wg *WalletGUI) cwfSetAutofill() l.Widget {
 
 func (wg *WalletGUI) cwfSeedHeader() l.Widget {
 	return wg.Flex(). //AlignMiddle().
-		Rigid(
+				Rigid(
 			wg.Inset(
 				0.25,
 				wg.H5("seed").

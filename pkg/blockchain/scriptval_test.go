@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"runtime"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/txscript"
+
+	"github.com/cybriq/p9/pkg/txscript"
 )
 
 // TestCheckBlockScripts ensures that validating the all of the scripts in a known-good block doesn't return an error.

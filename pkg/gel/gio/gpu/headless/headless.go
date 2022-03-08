@@ -9,9 +9,9 @@ import (
 	"image/color"
 	"runtime"
 
-	"github.com/p9c/p9/pkg/gel/gio/gpu"
-	"github.com/p9c/p9/pkg/gel/gio/gpu/internal/driver"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu"
+	"github.com/cybriq/p9/pkg/gel/gio/gpu/internal/driver"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 // Window is a headless window.
@@ -74,7 +74,8 @@ func NewWindow(width, height int) (*Window, error) {
 		w.gpu = gp
 		w.dev = dev
 		return err
-	})
+	},
+	)
 	if err != nil {
 		ctx.Release()
 		return nil, err
@@ -98,7 +99,8 @@ func (w *Window) Release() {
 			w.gpu = nil
 		}
 		return nil
-	})
+	},
+	)
 	if w.ctx != nil {
 		w.ctx.Release()
 		w.ctx = nil
@@ -113,7 +115,8 @@ func (w *Window) Frame(frame *op.Ops) error {
 		w.gpu.Clear(color.NRGBA{A: 0xff, R: 0xff, G: 0xff, B: 0xff})
 		w.gpu.Collect(w.size, frame)
 		return w.gpu.Frame()
-	})
+	},
+	)
 }
 
 // Screenshot returns an image with the content of the window.
@@ -121,9 +124,12 @@ func (w *Window) Screenshot() (*image.RGBA, error) {
 	var img *image.RGBA
 	err := contextDo(w.ctx, func() error {
 		var err error
-		img, err = driver.DownloadImage(w.dev, w.fbo, image.Rectangle{Max: w.size})
+		img, err = driver.DownloadImage(w.dev, w.fbo,
+			image.Rectangle{Max: w.size},
+		)
 		return err
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}

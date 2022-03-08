@@ -18,8 +18,8 @@ import (
 
 	"github.com/btcsuite/go-socks/socks"
 
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pod/config"
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pod/config"
 )
 
 // Call uses settings in the context to call the method with the given parameters and returns the raw json bytes
@@ -46,7 +46,9 @@ func Call(
 		// Show the error along with its error code when it's a json. BTCJSONError as it realistically will always be
 		// since the NewCmd function is only supposed to return errors of that type.
 		if jerr, ok := e.(btcjson.GeneralError); ok {
-			errText := fmt.Sprintf("%s command: %v (code: %s)\n", method, e, jerr.ErrorCode)
+			errText := fmt.Sprintf("%s command: %v (code: %s)\n", method, e,
+				jerr.ErrorCode,
+			)
 			e = errors.New(errText)
 			// CommandUsage(method)
 			return
@@ -76,7 +78,8 @@ func Call(
 // connection configuration.
 func newHTTPClient(cfg *config.Config) (*http.Client, func(), error) {
 	var dial func(ctx context.Context, network string,
-		addr string) (net.Conn, error)
+		addr string,
+	) (net.Conn, error)
 	ctx, cancel := context.WithCancel(context.Background())
 	// Configure proxy if needed.
 	if cfg.ProxyAddress.V() != "" {
@@ -283,7 +286,9 @@ func CtlMain(cx *config.Config) {
 		os.Exit(1)
 	}
 	if usageFlags&btcjson.UnusableFlags != 0 {
-		_, _ = fmt.Fprintf(os.Stderr, "The '%s' command can only be used via websockets\n", method)
+		_, _ = fmt.Fprintf(os.Stderr,
+			"The '%s' command can only be used via websockets\n", method,
+		)
 		HelpPrint()
 		os.Exit(1)
 	}
@@ -297,11 +302,15 @@ func CtlMain(cx *config.Config) {
 		if arg == "-" {
 			var param string
 			if param, e = bio.ReadString('\n'); E.Chk(e) && e != io.EOF {
-				_, _ = fmt.Fprintf(os.Stderr, "Failed to read data from stdin: %v\n", e)
+				_, _ = fmt.Fprintf(os.Stderr,
+					"Failed to read data from stdin: %v\n", e,
+				)
 				os.Exit(1)
 			}
 			if e == io.EOF && len(param) == 0 {
-				_, _ = fmt.Fprintln(os.Stderr, "Not enough lines provided on stdin")
+				_, _ = fmt.Fprintln(os.Stderr,
+					"Not enough lines provided on stdin",
+				)
 				os.Exit(1)
 			}
 			param = strings.TrimRight(param, "\r\n")

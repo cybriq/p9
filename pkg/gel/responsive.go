@@ -2,8 +2,8 @@ package gel
 
 import (
 	"sort"
-	
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 )
 
 // WidgetSize is a widget with a specification of the minimum size to select it for viewing.

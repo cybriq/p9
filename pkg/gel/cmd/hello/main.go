@@ -1,10 +1,10 @@
 package main
 
 import (
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/qu"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/gel"
+	"github.com/cybriq/p9/pkg/gel"
 )
 
 type State struct {

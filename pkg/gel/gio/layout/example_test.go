@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"image"
 
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 )
 
 func ExampleInset() {
@@ -25,7 +25,8 @@ func ExampleInset() {
 		dims := layoutWidget(gtx, 50, 50)
 		fmt.Println(dims.Size)
 		return dims
-	})
+	},
+	)
 
 	fmt.Println(dims.Size)
 
@@ -41,12 +42,14 @@ func ExampleDirection() {
 		Constraints: layout.Exact(image.Point{X: 100, Y: 100}),
 	}
 
-	dims := layout.Center.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
-		// Lay out a 50x50 sized widget.
-		dims := layoutWidget(gtx, 50, 50)
-		fmt.Println(dims.Size)
-		return dims
-	})
+	dims := layout.Center.Layout(gtx,
+		func(gtx layout.Context) layout.Dimensions {
+			// Lay out a 50x50 sized widget.
+			dims := layoutWidget(gtx, 50, 50)
+			fmt.Println(dims.Size)
+			return dims
+		},
+	)
 
 	fmt.Println(dims.Size)
 
@@ -67,12 +70,14 @@ func ExampleFlex() {
 		layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 			fmt.Printf("Rigid: %v\n", gtx.Constraints)
 			return layoutWidget(gtx, 10, 10)
-		}),
+		},
+		),
 		// Child with 50% space allowance.
 		layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
 			fmt.Printf("50%%: %v\n", gtx.Constraints)
 			return layoutWidget(gtx, 10, 10)
-		}),
+		},
+		),
 	)
 
 	// Output:
@@ -93,11 +98,13 @@ func ExampleStack() {
 		layout.Expanded(func(gtx layout.Context) layout.Dimensions {
 			fmt.Printf("Expand: %v\n", gtx.Constraints)
 			return layoutWidget(gtx, 10, 10)
-		}),
+		},
+		),
 		// Rigid 50x50 widget.
 		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
 			return layoutWidget(gtx, 50, 50)
-		}),
+		},
+		),
 	)
 
 	// Output:
@@ -115,9 +122,11 @@ func ExampleList() {
 	const listLen = 1e6
 
 	var list layout.List
-	list.Layout(gtx, listLen, func(gtx layout.Context, i int) layout.Dimensions {
-		return layoutWidget(gtx, 20, 20)
-	})
+	list.Layout(gtx, listLen,
+		func(gtx layout.Context, i int) layout.Dimensions {
+			return layoutWidget(gtx, 20, 20)
+		},
+	)
 
 	fmt.Println(list.Position.Count)
 

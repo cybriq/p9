@@ -1,8 +1,8 @@
 package blockchain
 
 import (
-	"github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/txscript"
 )
 
 // In order to reduce the size of stored scripts, a domain specific compression algorithm is used which recognizes

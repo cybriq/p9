@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"reflect"
-	
-	"github.com/p9c/p9/pkg/walletdb"
+
+	"github.com/cybriq/p9/pkg/walletdb"
 )
 
 // errSubTestFail is used to signal that a sub test returned false.
@@ -244,7 +244,8 @@ func testManualTxInterface(
 	//
 	// Otherwise, a read-write transaction is created, the values are written, standard bucket tests for read-write
 	// transactions are performed, and then the transaction is either commited or rolled back depending on the flag.
-	populateValues := func(writable, rollback bool, putValues map[string]string) bool {
+	populateValues := func(writable, rollback bool, putValues map[string]string,
+	) bool {
 		var dbtx walletdb.ReadTx
 		var rootBucket walletdb.ReadBucket
 		var e error
@@ -270,7 +271,9 @@ func testManualTxInterface(
 		}
 		if writable {
 			tc.isWritable = writable
-			if !testReadWriteBucketInterface(tc, rootBucket.(walletdb.ReadWriteBucket)) {
+			if !testReadWriteBucketInterface(tc,
+				rootBucket.(walletdb.ReadWriteBucket),
+			) {
 				_ = dbtx.Rollback()
 				return false
 			}
@@ -582,7 +585,9 @@ func testAdditionalErrors(
 		// Ensure Put returns the expected error when no key is specified.
 		wantErr = walletdb.ErrKeyRequired
 		if e := rootBucket.Put(nil, nil); e != wantErr {
-			return fmt.Errorf("put: unexpected error - got %v, want %v", e, wantErr)
+			return fmt.Errorf("put: unexpected error - got %v, want %v", e,
+				wantErr,
+			)
 		}
 		return nil
 	},

@@ -8,13 +8,15 @@ import (
 
 	"golang.org/x/image/math/fixed"
 
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 // Shaper implements layout and shaping of text.
 type Shaper interface {
 	// Layout a text according to a set of options.
-	Layout(font Font, size fixed.Int26_6, maxWidth int, txt io.Reader) ([]Line, error)
+	Layout(font Font, size fixed.Int26_6, maxWidth int, txt io.Reader) ([]Line,
+		error,
+	)
 	// LayoutString is Layout for strings.
 	LayoutString(font Font, size fixed.Int26_6, maxWidth int, str string) []Line
 	// Shape a line of text and return a clipping operation for its outline.
@@ -90,13 +92,17 @@ func NewCache(collection []FontFace) *Cache {
 }
 
 // Layout implements the Shaper interface.
-func (s *Cache) Layout(font Font, size fixed.Int26_6, maxWidth int, txt io.Reader) ([]Line, error) {
+func (s *Cache) Layout(font Font, size fixed.Int26_6, maxWidth int,
+	txt io.Reader,
+) ([]Line, error) {
 	cache := s.lookup(font)
 	return cache.face.Layout(size, maxWidth, txt)
 }
 
 // LayoutString is a caching implementation of the Shaper interface.
-func (s *Cache) LayoutString(font Font, size fixed.Int26_6, maxWidth int, str string) []Line {
+func (s *Cache) LayoutString(font Font, size fixed.Int26_6, maxWidth int,
+	str string,
+) []Line {
 	cache := s.lookup(font)
 	return cache.layout(size, maxWidth, str)
 }
@@ -108,7 +114,8 @@ func (s *Cache) Shape(font Font, size fixed.Int26_6, layout Layout) op.CallOp {
 	return cache.shape(size, layout)
 }
 
-func (f *faceCache) layout(ppem fixed.Int26_6, maxWidth int, str string) []Line {
+func (f *faceCache) layout(ppem fixed.Int26_6, maxWidth int, str string,
+) []Line {
 	if f == nil {
 		return nil
 	}

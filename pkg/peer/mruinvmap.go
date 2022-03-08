@@ -5,8 +5,8 @@ import (
 	"container/list"
 	"fmt"
 	"sync"
-	
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // mruInventoryMap provides a concurrency safe map that is limited to a maximum number of items with eviction for the

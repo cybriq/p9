@@ -2,8 +2,8 @@ package txscript
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 )
 
 // ScriptClass is an enumeration for the list of standard types of script.
@@ -37,9 +37,9 @@ const (
 		// ScriptVerifyDiscourageUpgradeableWitnessProgram |
 		ScriptVerifyMinimalIf
 	// ScriptVerifyWitnessPubKeyType
-	
+
 	// Classes of script payment known about in the blockchain.
-	
+
 	NonStandardTy ScriptClass = iota // None of the recognized forms.
 	PubKeyTy                         // Pay pubkey.
 	PubKeyHashTy                     // Pay pubkey hash.
@@ -223,7 +223,9 @@ type ScriptInfo struct {
 // pair. It will error if the pair is in someway invalid such that they can not
 // be analysed, i.e. if they do not parse or the pkScript is not a push-only
 // script
-func CalcScriptInfo(sigScript, pkScript []byte, bip16 bool) (si *ScriptInfo, e error) {
+func CalcScriptInfo(sigScript, pkScript []byte, bip16 bool) (si *ScriptInfo,
+	e error,
+) {
 	var sigPops []parsedOpcode
 	if sigPops, e = parseScript(sigScript); E.Chk(e) {
 		return
@@ -471,7 +473,8 @@ func PushedData(script []byte) ([][]byte, error) {
 // signatures associated with the passed PkScript. Note that it only works for
 // 'standard' transaction script types. Any data such as public keys which are
 // invalid are omitted from the results.
-func ExtractPkScriptAddrs(pkScript []byte, chainParams *chaincfg.Params) (ScriptClass, []btcaddr.Address, int, error) {
+func ExtractPkScriptAddrs(pkScript []byte, chainParams *chaincfg.Params,
+) (ScriptClass, []btcaddr.Address, int, error) {
 	var addrs []btcaddr.Address
 	var requiredSigs int
 	// No valid addresses or required signatures if the script doesn't parse.
@@ -578,7 +581,8 @@ type AtomicSwapDataPushes struct {
 // the future. This function is only defined in the txscript package due to API
 // limitations which prevent callers using txscript to parse nonstandard
 // scripts.
-func ExtractAtomicSwapDataPushes(version uint16, pkScript []byte) (*AtomicSwapDataPushes, error) {
+func ExtractAtomicSwapDataPushes(version uint16, pkScript []byte,
+) (*AtomicSwapDataPushes, error) {
 	pops, e := parseScript(pkScript)
 	if e != nil {
 		return nil, e

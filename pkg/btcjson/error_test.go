@@ -2,8 +2,8 @@ package btcjson_test
 
 import (
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // TestErrorCodeStringer tests the stringized output for the ErrorCode type.

@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"runtime"
 	"time"
-	
-	rpc "github.com/p9c/p9/pkg/rpcclient"
-	"github.com/p9c/p9/pkg/util"
+
+	rpc "github.com/cybriq/p9/pkg/rpcclient"
+	"github.com/cybriq/p9/pkg/util"
 )
 
 // nodeConfig contains all the args and data required to launch a pod process and connect the rpc client to it.
@@ -34,7 +34,9 @@ type nodeConfig struct {
 }
 
 // newConfig returns a newConfig with all default values.
-func newConfig(prefix, certFile, keyFile string, extra []string) (*nodeConfig, error) {
+func newConfig(prefix, certFile, keyFile string, extra []string) (*nodeConfig,
+	error,
+) {
 	podPath, e := podExecutablePath()
 	if e != nil {
 		podPath = "pod"

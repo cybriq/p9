@@ -6,19 +6,19 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 
 	uberatomic "go.uber.org/atomic"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 
-	"github.com/p9c/p9/pkg/btcjson"
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/gcm"
-	"github.com/p9c/p9/pkg/transport"
-	"github.com/p9c/p9/pkg/util/atom"
+	"github.com/cybriq/p9/pkg/btcjson"
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/gcm"
+	"github.com/cybriq/p9/pkg/transport"
+	"github.com/cybriq/p9/pkg/util/atom"
 )
 
 const ZeroAddress = "1111111111111111111114oLvT2"
@@ -80,7 +80,8 @@ type State struct {
 	receiveAddresses        []AddressEntry
 }
 
-func GetNewState(params *chaincfg.Params, activePage *uberatomic.String) *State {
+func GetNewState(params *chaincfg.Params, activePage *uberatomic.String,
+) *State {
 	fc := &atom.Bool{
 		Bool: uberatomic.NewBool(false),
 	}
@@ -241,7 +242,9 @@ func (m *Marshalled) Unmarshal(s *State) {
 	if m.ReceivingAddress != "1111111111111111111114oLvT2" {
 		var e error
 		var ra btcaddr.Address
-		if ra, e = btcaddr.Decode(m.ReceivingAddress, s.currentReceivingAddress.ForNet); E.Chk(e) {
+		if ra, e = btcaddr.Decode(m.ReceivingAddress,
+			s.currentReceivingAddress.ForNet,
+		); E.Chk(e) {
 		}
 		s.currentReceivingAddress.Store(ra)
 	}
@@ -260,7 +263,9 @@ func (s *State) SetGoroutines(gr []l.Widget) {
 func (s *State) SetAllTxs(atxs []btcjson.ListTransactionsResult) {
 	s.allTxs.Store(atxs)
 	// generate filtered state
-	filteredTxs := make([]btcjson.ListTransactionsResult, 0, len(s.allTxs.Load()))
+	filteredTxs := make([]btcjson.ListTransactionsResult, 0,
+		len(s.allTxs.Load()),
+	)
 	for i := range atxs {
 		if s.filter.Filter(atxs[i].Category) {
 			filteredTxs = append(filteredTxs, atxs[i])

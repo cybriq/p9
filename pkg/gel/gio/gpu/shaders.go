@@ -2,7 +2,7 @@
 
 package gpu
 
-import "github.com/p9c/p9/pkg/gel/gio/gpu/internal/driver"
+import "github.com/cybriq/p9/pkg/gel/gio/gpu/internal/driver"
 
 var (
 	shader_backdrop_comp = driver.ShaderSources{

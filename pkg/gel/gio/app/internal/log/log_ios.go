@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build darwin && ios
 // +build darwin,ios
 
 package log
@@ -17,7 +18,7 @@ import (
 	"log"
 	"unsafe"
 
-	_ "github.com/p9c/p9/pkg/gel/gio/internal/cocoainit"
+	_ "github.com/cybriq/p9/pkg/gel/gio/internal/cocoainit"
 )
 
 func init() {

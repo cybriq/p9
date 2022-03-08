@@ -7,12 +7,12 @@ import (
 	"image"
 	"math"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/opconst"
-	"github.com/p9c/p9/pkg/gel/gio/internal/ops"
-	"github.com/p9c/p9/pkg/gel/gio/internal/scene"
-	"github.com/p9c/p9/pkg/gel/gio/internal/stroke"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/opconst"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/ops"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/scene"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/stroke"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 // Op represents a clip area. Op intersects the current clip area with

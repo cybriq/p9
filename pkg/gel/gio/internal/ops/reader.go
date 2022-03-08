@@ -5,9 +5,9 @@ package ops
 import (
 	"encoding/binary"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/internal/opconst"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/internal/opconst"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 // Reader parses an ops list.
@@ -162,7 +162,8 @@ func (r *Reader) Decode() (EncodedOp, bool) {
 				ops:   r.ops,
 				retPC: retPC,
 				endPC: opDef.endpc,
-			})
+			},
+			)
 			r.ops = op.ops
 			r.pc = op.pc
 			r.pc.data += opconst.TypeMacro.Size()

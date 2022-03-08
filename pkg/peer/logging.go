@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -23,7 +23,7 @@ func formatLockTime(lockTime uint32) string {
 	if lockTime < txscript.LockTimeThreshold {
 		return fmt.Sprintf("height %d", lockTime)
 	}
-	
+
 	return time.Unix(int64(lockTime), 0).String()
 }
 
@@ -34,7 +34,7 @@ func invSummary(invList []*wire.InvVect) string {
 	if invLen == 0 {
 		return "empty"
 	}
-	
+
 	// One inventory item.
 	if invLen == 1 {
 		iv := invList[0]
@@ -50,22 +50,23 @@ func invSummary(invList []*wire.InvVect) string {
 		case wire.InvTypeTx:
 			return fmt.Sprintf("tx %s", iv.Hash)
 		}
-		
+
 		return fmt.Sprintf("unknown (%d) %s", uint32(iv.Type), iv.Hash)
 	}
-	
+
 	// More than one inv item.
 	return fmt.Sprintf("size %d", invLen)
 }
 
 // locatorSummary returns a block locator as a human-readable string.
-func locatorSummary(locator []*chainhash.Hash, stopHash *chainhash.Hash) string {
+func locatorSummary(locator []*chainhash.Hash, stopHash *chainhash.Hash,
+) string {
 	if len(locator) > 0 {
 		return fmt.Sprintf("locator %s, stop %s", locator[0], stopHash)
 	}
-	
+
 	return fmt.Sprintf("no locator, stop %s", stopHash)
-	
+
 }
 
 // sanitizeString strips any characters which are even remotely dangerous, such as html control characters, from the
@@ -74,7 +75,7 @@ func locatorSummary(locator []*chainhash.Hash, stopHash *chainhash.Hash) string 
 func sanitizeString(str string, maxLength uint) string {
 	const safeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY" +
 		"Z01234567890 .,;_/:?@"
-	
+
 	// Strip any characters not in the safeChars string removed.
 	str = strings.Map(func(r rune) rune {
 		if strings.ContainsRune(safeChars, r) {
@@ -83,7 +84,7 @@ func sanitizeString(str string, maxLength uint) string {
 		return -1
 	}, str,
 	)
-	
+
 	// Limit the string to the max allowed length.
 	if maxLength > 0 && uint(len(str)) > maxLength {
 		str = str[:maxLength]
@@ -100,68 +101,68 @@ func messageSummary(msg wire.Message) string {
 		return fmt.Sprintf("agent %s, pver %d, block %d",
 			msg.UserAgent, msg.ProtocolVersion, msg.LastBlock,
 		)
-	
+
 	case *wire.MsgVerAck:
 		// No summary.
-	
+
 	case *wire.MsgGetAddr:
 		// No summary.
-	
+
 	case *wire.MsgAddr:
 		return fmt.Sprintf("%d addr", len(msg.AddrList))
-	
+
 	case *wire.MsgPing:
 		// No summary - perhaps add Nonce.
-	
+
 	case *wire.MsgPong:
 		// No summary - perhaps add Nonce.
-	
+
 	case *wire.MsgAlert:
 		// No summary.
-	
+
 	case *wire.MsgMemPool:
 		// No summary.
-	
+
 	case *wire.MsgTx:
 		return fmt.Sprintf("hash %s, %d inputs, %d outputs, lock %s",
 			msg.TxHash(), len(msg.TxIn), len(msg.TxOut),
 			formatLockTime(msg.LockTime),
 		)
-	
+
 	case *wire.Block:
 		header := &msg.Header
 		return fmt.Sprintf("hash %s, ver %d, %d tx, %s", msg.BlockHash(),
 			header.Version, len(msg.Transactions), header.Timestamp,
 		)
-	
+
 	case *wire.MsgInv:
 		return invSummary(msg.InvList)
-	
+
 	case *wire.MsgNotFound:
 		return invSummary(msg.InvList)
-	
+
 	case *wire.MsgGetData:
 		return invSummary(msg.InvList)
-	
+
 	case *wire.MsgGetBlocks:
 		return locatorSummary(msg.BlockLocatorHashes, &msg.HashStop)
-	
+
 	case *wire.MsgGetHeaders:
 		return locatorSummary(msg.BlockLocatorHashes, &msg.HashStop)
-	
+
 	case *wire.MsgHeaders:
 		return fmt.Sprintf("num %d", len(msg.Headers))
-	
+
 	case *wire.MsgGetCFHeaders:
 		return fmt.Sprintf("start_height=%d, stop_hash=%v",
 			msg.StartHeight, msg.StopHash,
 		)
-	
+
 	case *wire.MsgCFHeaders:
 		return fmt.Sprintf("stop_hash=%v, num_filter_hashes=%d",
 			msg.StopHash, len(msg.FilterHashes),
 		)
-	
+
 	case *wire.MsgReject:
 		// Ensure the variable length strings don't contain any characters which are even remotely dangerous such as
 		// HTML control characters, etc. Also limit them to sane length for logging.
@@ -175,7 +176,7 @@ func messageSummary(msg wire.Message) string {
 		}
 		return summary
 	}
-	
+
 	// No summary for other messages.
 	return ""
 }

@@ -3,13 +3,13 @@ package gel
 import (
 	"image"
 	"time"
-	
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/gesture"
-	"github.com/p9c/p9/pkg/gel/gio/io/key"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/gesture"
+	"github.com/cybriq/p9/pkg/gel/gio/io/key"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 type clickEvents struct {
@@ -159,7 +159,8 @@ func (c *Clickable) update(gtx l.Context) {
 			c.history = append(c.history, press{
 				Position: ev.Position,
 				Start:    gtx.Now,
-			})
+			},
+			)
 			c.
 				Window.
 				Runner <- func() (e error) {

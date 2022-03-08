@@ -9,9 +9,9 @@ import (
 	"math"
 	"testing"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/layout"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 func TestFit(t *testing.T) {
@@ -35,7 +35,8 @@ func TestFit(t *testing.T) {
 				Dims:   image.Point{50, 200},
 				Scale:  f32.Point{X: 1, Y: 1},
 				Result: image.Point{X: 50, Y: 100},
-			}},
+			},
+		},
 		Contain: {
 			{
 				Dims:   image.Point{50, 25},
@@ -45,7 +46,8 @@ func TestFit(t *testing.T) {
 				Dims:   image.Point{50, 200},
 				Scale:  f32.Point{X: 0.5, Y: 0.5},
 				Result: image.Point{X: 25, Y: 100},
-			}},
+			},
+		},
 		Cover: {
 			{
 				Dims:   image.Point{50, 25},
@@ -55,7 +57,8 @@ func TestFit(t *testing.T) {
 				Dims:   image.Point{50, 200},
 				Scale:  f32.Point{X: 2, Y: 2},
 				Result: image.Point{X: 100, Y: 100},
-			}},
+			},
+		},
 		ScaleDown: {
 			{
 				Dims:   image.Point{50, 25},
@@ -65,7 +68,8 @@ func TestFit(t *testing.T) {
 				Dims:   image.Point{50, 200},
 				Scale:  f32.Point{X: 0.5, Y: 0.5},
 				Result: image.Point{X: 25, Y: 100},
-			}},
+			},
+		},
 		Fill: {
 			{
 				Dims:   image.Point{50, 25},
@@ -75,7 +79,8 @@ func TestFit(t *testing.T) {
 				Dims:   image.Point{50, 200},
 				Scale:  f32.Point{X: 2, Y: 0.5},
 				Result: image.Point{X: 100, Y: 100},
-			}},
+			},
+		},
 	}
 
 	for fit, tests := range fittests {
@@ -89,22 +94,30 @@ func TestFit(t *testing.T) {
 				},
 			}
 
-			result := fit.scale(gtx, layout.NW, layout.Dimensions{Size: test.Dims})
+			result := fit.scale(gtx, layout.NW,
+				layout.Dimensions{Size: test.Dims},
+			)
 
 			if test.Scale.X != 1 || test.Scale.Y != 1 {
 				opsdata := gtx.Ops.Data()
 				scaleX := float32Bytes(test.Scale.X)
 				scaleY := float32Bytes(test.Scale.Y)
 				if !bytes.Contains(opsdata, scaleX) {
-					t.Errorf("did not find scale.X:%v (%x) in ops: %x", test.Scale.X, scaleX, opsdata)
+					t.Errorf("did not find scale.X:%v (%x) in ops: %x",
+						test.Scale.X, scaleX, opsdata,
+					)
 				}
 				if !bytes.Contains(opsdata, scaleY) {
-					t.Errorf("did not find scale.Y:%v (%x) in ops: %x", test.Scale.Y, scaleY, opsdata)
+					t.Errorf("did not find scale.Y:%v (%x) in ops: %x",
+						test.Scale.Y, scaleY, opsdata,
+					)
 				}
 			}
 
 			if result.Size != test.Result {
-				t.Errorf("fit %v, #%v: expected %#v, got %#v", fit, i, test.Result, result.Size)
+				t.Errorf("fit %v, #%v: expected %#v, got %#v", fit, i,
+					test.Result, result.Size,
+				)
 			}
 		}
 	}

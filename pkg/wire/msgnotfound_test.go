@@ -5,10 +5,10 @@ import (
 	"io"
 	"reflect"
 	"testing"
-	
+
 	"github.com/davecgh/go-spew/spew"
-	
-	"github.com/p9c/p9/pkg/chainhash"
+
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // TestNotFound tests the MsgNotFound API.
@@ -102,7 +102,8 @@ func TestNotFoundWire(t *testing.T) {
 		0xf0, 0xfa, 0xcc, 0x7a, 0x48, 0x1b, 0xe7, 0xcf,
 		0x42, 0xbd, 0x7f, 0xe5, 0x4f, 0x2c, 0x2a, 0xf8,
 		0xef, 0x81, 0x9a, 0xdd, 0x93, 0xee, 0x55, 0x98,
-		0x0a, 0xf0, 0x2b, 0x39, 0xc7, 0x3d, 0x8a, 0xd2, // Tx 1 of block 203707 hash
+		0x0a, 0xf0, 0x2b, 0x39, 0xc7, 0x3d, 0x8a,
+		0xd2, // Tx 1 of block 203707 hash
 	}
 	tests := []struct {
 		in   *MsgNotFound    // Message to encode
@@ -274,11 +275,17 @@ func TestNotFoundWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in inventory vector count
-		{baseNotFound, baseNotFoundEncoded, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{baseNotFound, baseNotFoundEncoded, pver, BaseEncoding, 0,
+			io.ErrShortWrite, io.EOF,
+		},
 		// Force error in inventory list.
-		{baseNotFound, baseNotFoundEncoded, pver, BaseEncoding, 1, io.ErrShortWrite, io.EOF},
+		{baseNotFound, baseNotFoundEncoded, pver, BaseEncoding, 1,
+			io.ErrShortWrite, io.EOF,
+		},
 		// Force error with greater than max inventory vectors.
-		{maxNotFound, maxNotFoundEncoded, pver, BaseEncoding, 3, wireErr, wireErr},
+		{maxNotFound, maxNotFoundEncoded, pver, BaseEncoding, 3, wireErr,
+			wireErr,
+		},
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {

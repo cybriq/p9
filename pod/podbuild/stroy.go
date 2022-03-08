@@ -1,3 +1,4 @@
+//go:build !windows
 // +build !windows
 
 package main
@@ -10,10 +11,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	_ "github.com/p9c/p9/pkg/fork"
+	_ "github.com/cybriq/p9/pkg/fork"
 
-	"github.com/p9c/p9/pkg/appdata"
-	"github.com/p9c/p9/pkg/apputil"
+	"github.com/cybriq/p9/pkg/appdata"
+	"github.com/cybriq/p9/pkg/apputil"
 )
 
 var (
@@ -57,7 +58,9 @@ func main() {
 					i, os.Args[1], split[0], split[1:],
 				)
 				var cmd *exec.Cmd
-				scriptPath := filepath.Join(appdata.Dir("stroy", false), "stroy.sh")
+				scriptPath := filepath.Join(appdata.Dir("stroy", false),
+					"stroy.sh",
+				)
 				apputil.EnsureDir(scriptPath)
 				if e = ioutil.WriteFile(
 					scriptPath,

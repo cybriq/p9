@@ -3,14 +3,14 @@ package main
 import (
 	"sort"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
 	"github.com/atotto/clipboard"
-	"github.com/p9c/p9/pkg/interrupt"
-	"github.com/p9c/p9/pkg/qu"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/p9c/p9/pkg/gel/icons"
+	"github.com/cybriq/p9/pkg/gel/icons"
 
-	"github.com/p9c/p9/pkg/gel"
+	"github.com/cybriq/p9/pkg/gel"
 )
 
 type State struct {

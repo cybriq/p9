@@ -8,16 +8,16 @@ import (
 	"image"
 	"time"
 
-	"github.com/p9c/p9/pkg/gel/gio/io/event"
-	"github.com/p9c/p9/pkg/gel/gio/io/pointer"
-	"github.com/p9c/p9/pkg/gel/gio/io/profile"
-	"github.com/p9c/p9/pkg/gel/gio/io/router"
-	"github.com/p9c/p9/pkg/gel/gio/io/system"
-	"github.com/p9c/p9/pkg/gel/gio/op"
-	"github.com/p9c/p9/pkg/gel/gio/unit"
+	"github.com/cybriq/p9/pkg/gel/gio/io/event"
+	"github.com/cybriq/p9/pkg/gel/gio/io/pointer"
+	"github.com/cybriq/p9/pkg/gel/gio/io/profile"
+	"github.com/cybriq/p9/pkg/gel/gio/io/router"
+	"github.com/cybriq/p9/pkg/gel/gio/io/system"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/unit"
 
-	_ "github.com/p9c/p9/pkg/gel/gio/app/internal/log"
-	"github.com/p9c/p9/pkg/gel/gio/app/internal/wm"
+	_ "github.com/cybriq/p9/pkg/gel/gio/app/internal/log"
+	"github.com/cybriq/p9/pkg/gel/gio/app/internal/wm"
 )
 
 // WindowOption configures a wm.
@@ -122,7 +122,9 @@ func (w *Window) update(frame *op.Ops) {
 	<-w.frameAck
 }
 
-func (w *Window) validateAndProcess(frameStart time.Time, size image.Point, sync bool, frame *op.Ops) error {
+func (w *Window) validateAndProcess(frameStart time.Time, size image.Point,
+	sync bool, frame *op.Ops,
+) error {
 	for {
 		if w.loop != nil {
 			if err := w.loop.Flush(); err != nil {
@@ -159,7 +161,9 @@ func (w *Window) validateAndProcess(frameStart time.Time, size image.Point, sync
 	}
 }
 
-func (w *Window) processFrame(frameStart time.Time, size image.Point, frame *op.Ops) {
+func (w *Window) processFrame(frameStart time.Time, size image.Point,
+	frame *op.Ops,
+) {
 	sync := w.loop.Draw(size, frame)
 	w.queue.q.Frame(frame)
 	switch w.queue.q.TextInputState() {
@@ -178,7 +182,9 @@ func (w *Window) processFrame(frameStart time.Time, size image.Point, frame *op.
 		frameDur := time.Since(frameStart)
 		frameDur = frameDur.Truncate(100 * time.Microsecond)
 		q := 100 * time.Microsecond
-		timings := fmt.Sprintf("tot:%7s %s", frameDur.Round(q), w.loop.Summary())
+		timings := fmt.Sprintf("tot:%7s %s", frameDur.Round(q),
+			w.loop.Summary(),
+		)
 		w.queue.q.Queue(profile.Event{Timings: timings})
 	}
 	if t, ok := w.queue.q.WakeupTime(); ok {
@@ -219,7 +225,8 @@ func (w *Window) Option(opts ...Option) {
 			opt(o)
 		}
 		w.driver.Option(o)
-	})
+	},
+	)
 }
 
 // ReadClipboard initiates a read of the clipboard in the form
@@ -228,21 +235,24 @@ func (w *Window) Option(opts ...Option) {
 func (w *Window) ReadClipboard() {
 	go w.driverDo(func() {
 		w.driver.ReadClipboard()
-	})
+	},
+	)
 }
 
 // WriteClipboard writes a string to the clipboard.
 func (w *Window) WriteClipboard(s string) {
 	go w.driverDo(func() {
 		w.driver.WriteClipboard(s)
-	})
+	},
+	)
 }
 
 // SetCursorName changes the current window cursor to name.
 func (w *Window) SetCursorName(name pointer.CursorName) {
 	go w.driverDo(func() {
 		w.driver.SetCursor(name)
-	})
+	},
+	)
 }
 
 // Close the wm. The window's event loop should exit when it receives
@@ -253,7 +263,8 @@ func (w *Window) SetCursorName(name pointer.CursorName) {
 func (w *Window) Close() {
 	go w.driverDo(func() {
 		w.driver.Close()
-	})
+	},
+	)
 }
 
 // driverDo waits for the window to have a valid driver attached and calls f.

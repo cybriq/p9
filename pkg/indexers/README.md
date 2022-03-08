@@ -1,7 +1,7 @@
 # indexers
 
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://godoc.org/github.com/p9c/p9/blockchain/indexers?status.png)](http://godoc.org/github.com/p9c/p9/blockchain/indexers)
+[![GoDoc](https://godoc.org/github.com/cybriq/p9/blockchain/indexers?status.png)](http://godoc.org/github.com/cybriq/p9/blockchain/indexers)
 
 Package indexers implements optional block chain indexes.
 
@@ -21,7 +21,7 @@ via an RPC interface.
 ## Installation
 
 ```bash
-$ go get -u github.com/p9c/p9/blockchain/indexers
+$ go get -u github.com/cybriq/p9/blockchain/indexers
 ```
 
 ## License

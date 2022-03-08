@@ -2,8 +2,8 @@ package checkpoints
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chainhash"
 	"strconv"
 	"strings"
 )

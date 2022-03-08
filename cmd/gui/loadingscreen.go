@@ -3,10 +3,10 @@ package gui
 import (
 	"golang.org/x/exp/shiny/materialdesign/icons"
 
-	l "github.com/p9c/p9/pkg/gel/gio/layout"
+	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 
-	"github.com/p9c/p9/pkg/gel"
-	"github.com/p9c/p9/pkg/p9icons"
+	"github.com/cybriq/p9/pkg/gel"
+	"github.com/cybriq/p9/pkg/p9icons"
 )
 
 func (wg *WalletGUI) getLoadingPage() (a *gel.App) {
@@ -19,9 +19,10 @@ func (wg *WalletGUI) getLoadingPage() (a *gel.App) {
 			"loading": wg.Page(
 				"loading", gel.Widgets{
 					gel.WidgetSize{
-						Widget:
-						func(gtx l.Context) l.Dimensions {
-							return a.Flex().Flexed(1, a.Direction().Center().Embed(a.H1("loading").Fn).Fn).Fn(gtx)
+						Widget: func(gtx l.Context) l.Dimensions {
+							return a.Flex().Flexed(1,
+								a.Direction().Center().Embed(a.H1("loading").Fn).Fn,
+							).Fn(gtx)
 						},
 					},
 				},
@@ -29,9 +30,10 @@ func (wg *WalletGUI) getLoadingPage() (a *gel.App) {
 			"unlocking": wg.Page(
 				"unlocking", gel.Widgets{
 					gel.WidgetSize{
-						Widget:
-						func(gtx l.Context) l.Dimensions {
-							return a.Flex().Flexed(1, a.Direction().Center().Embed(a.H1("unlocking").Fn).Fn).Fn(gtx)
+						Widget: func(gtx l.Context) l.Dimensions {
+							return a.Flex().Flexed(1,
+								a.Direction().Center().Embed(a.H1("unlocking").Fn).Fn,
+							).Fn(gtx)
 						},
 					},
 				},

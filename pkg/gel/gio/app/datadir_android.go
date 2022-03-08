@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build android
 // +build android
 
 package app
@@ -11,7 +12,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/p9c/p9/pkg/gel/gio/app/internal/wm"
+	"github.com/cybriq/p9/pkg/gel/gio/app/internal/wm"
 )
 
 var (
@@ -36,6 +37,7 @@ func dataDir() (string, error) {
 		if _, exists := os.LookupEnv("HOME"); !exists {
 			os.Setenv("HOME", dataPath)
 		}
-	})
+	},
+	)
 	return dataPath, nil
 }

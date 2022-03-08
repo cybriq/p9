@@ -3,11 +3,11 @@ package txscript
 import (
 	"errors"
 	"fmt"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 
-	"github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // RawTxInWitnessSignature returns the serialized ECDSA signature for the input idx of the given transaction, with the
@@ -86,7 +86,8 @@ func RawTxInSignature(
 // based on compress. This format must match the same format used to generate the payment address, or the script
 // validation will fail.
 func SignatureScript(
-	tx *wire.MsgTx, idx int, subscript []byte, hashType SigHashType, privKey *ecc.PrivateKey,
+	tx *wire.MsgTx, idx int, subscript []byte, hashType SigHashType,
+	privKey *ecc.PrivateKey,
 	compress bool,
 ) ([]byte, error) {
 	sig, e := RawTxInSignature(tx, idx, subscript, hashType, privKey)
@@ -104,7 +105,8 @@ func SignatureScript(
 }
 
 func p2pkSignatureScript(
-	tx *wire.MsgTx, idx int, subScript []byte, hashType SigHashType, privKey *ecc.PrivateKey,
+	tx *wire.MsgTx, idx int, subScript []byte, hashType SigHashType,
+	privKey *ecc.PrivateKey,
 ) ([]byte, error) {
 	sig, e := RawTxInSignature(tx, idx, subScript, hashType, privKey)
 	if e != nil {
@@ -214,7 +216,8 @@ func sign(
 // is the best effort merging of the two scripts. Calling this function with addresses, class and nrequired that do not
 // match pkScript is an error and results in undefined behaviour.
 func mergeScripts(
-	chainParams *chaincfg.Params, tx *wire.MsgTx, idx int, pkScript []byte, class ScriptClass,
+	chainParams *chaincfg.Params, tx *wire.MsgTx, idx int, pkScript []byte,
+	class ScriptClass,
 	addresses []btcaddr.Address, nRequired int, sigScript, prevScript []byte,
 ) []byte {
 	// TODO: the scripthash and multisig paths here are overly inefficient in that they will recompute already known data.
@@ -272,7 +275,8 @@ func mergeScripts(
 // this function is internal only we assume that the arguments have come from other functions internally and thus are
 // all consistent with each other, behaviour is undefined if this contract is broken.
 func mergeMultiSig(
-	tx *wire.MsgTx, idx int, addresses []btcaddr.Address, nRequired int, pkScript, sigScript,
+	tx *wire.MsgTx, idx int, addresses []btcaddr.Address, nRequired int,
+	pkScript, sigScript,
 	prevScript []byte,
 ) []byte {
 	// This is an internal only function and we already parsed this script as ok for multisig (this is how we got here),
@@ -394,7 +398,8 @@ func (sc ScriptClosure) GetScript(address btcaddr.Address) ([]byte, error) {
 // then the results in previousScript will be merged in a type-dependent manner with the newly generated signature
 // script.
 func SignTxOutput(
-	chainParams *chaincfg.Params, tx *wire.MsgTx, idx int, pkScript []byte, hashType SigHashType,
+	chainParams *chaincfg.Params, tx *wire.MsgTx, idx int, pkScript []byte,
+	hashType SigHashType,
 	kdb KeyDB, sdb ScriptDB, previousScript []byte,
 ) ([]byte, error) {
 	sigScript, class, addresses, nrequired, e :=

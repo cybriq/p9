@@ -2,18 +2,18 @@ package main
 
 import (
 	"fmt"
-	"github.com/p9c/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/amt"
 	"io/ioutil"
 	"log"
 	"path/filepath"
 	"time"
-	
-	"github.com/p9c/p9/pkg/qu"
-	
+
+	"github.com/cybriq/p9/pkg/qu"
+
 	"github.com/davecgh/go-spew/spew"
-	
-	"github.com/p9c/p9/pkg/appdata"
-	"github.com/p9c/p9/pkg/rpcclient"
+
+	"github.com/cybriq/p9/pkg/appdata"
+	"github.com/cybriq/p9/pkg/rpcclient"
 )
 
 func main() {
@@ -21,7 +21,9 @@ func main() {
 	// if you register for notifications. See the documentation of the rpcclient NotificationHandlers type for more
 	// details about each handler.
 	ntfnHandlers := rpcclient.NotificationHandlers{
-		OnAccountBalance: func(account string, balance amt.Amount, confirmed bool) {
+		OnAccountBalance: func(account string, balance amt.Amount,
+			confirmed bool,
+		) {
 			log.Printf(
 				"New balance for account %s: %v", account,
 				balance,

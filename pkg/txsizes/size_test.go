@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/hex"
 	"testing"
-	
-	. "github.com/p9c/p9/pkg/txsizes"
-	"github.com/p9c/p9/pkg/wire"
+
+	. "github.com/cybriq/p9/pkg/txsizes"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 const (
@@ -43,8 +43,12 @@ func TestEstimateSerializeSize(t *testing.T) {
 		// 0xfd is discriminant for 16-bit compact ints, compact int
 		// total size increases from 1 byte to 3.
 		12: {1, makeInts(p2pkhScriptSize, 0xfc), false, 8727},
-		13: {1, makeInts(p2pkhScriptSize, 0xfd), false, 8727 + P2PKHOutputSize + 2},
-		14: {1, makeInts(p2pkhScriptSize, 0xfc), true, 8727 + P2PKHOutputSize + 2},
+		13: {1, makeInts(p2pkhScriptSize, 0xfd), false,
+			8727 + P2PKHOutputSize + 2,
+		},
+		14: {1, makeInts(p2pkhScriptSize, 0xfc), true,
+			8727 + P2PKHOutputSize + 2,
+		},
 		15: {0xfc, []int{}, false, 37558},
 		16: {0xfd, []int{}, false, 37558 + RedeemP2PKHInputSize + 2},
 	}
@@ -53,9 +57,13 @@ func TestEstimateSerializeSize(t *testing.T) {
 		for _, l := range test.OutputScriptLengths {
 			outputs = append(outputs, &wire.TxOut{PkScript: make([]byte, l)})
 		}
-		actualEstimate := EstimateSerializeSize(test.InputCount, outputs, test.AddChangeOutput)
+		actualEstimate := EstimateSerializeSize(test.InputCount, outputs,
+			test.AddChangeOutput,
+		)
 		if actualEstimate != test.ExpectedSizeEstimate {
-			t.Errorf("Test %d: Got %v: Expected %v", i, actualEstimate, test.ExpectedSizeEstimate)
+			t.Errorf("Test %d: Got %v: Expected %v", i, actualEstimate,
+				test.ExpectedSizeEstimate,
+			)
 		}
 	}
 }

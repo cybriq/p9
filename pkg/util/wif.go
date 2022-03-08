@@ -3,12 +3,12 @@ package util
 import (
 	"bytes"
 	"errors"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
-	
-	"github.com/p9c/p9/pkg/base58"
-	"github.com/p9c/p9/pkg/chainhash"
-	ec "github.com/p9c/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
+
+	"github.com/cybriq/p9/pkg/base58"
+	"github.com/cybriq/p9/pkg/chainhash"
+	ec "github.com/cybriq/p9/pkg/ecc"
 )
 
 // ErrMalformedPrivateKey describes an error where a WIF-encoded private key cannot be decoded due to being improperly
@@ -36,7 +36,9 @@ type WIF struct {
 // NewWIF creates a new WIF structure to export an address and its private key as a string encoded in the Wallet Import
 // Format. The compress argument specifies whether the address intended to be imported or exported was created by
 // serializing the public key compressed rather than uncompressed.
-func NewWIF(privKey *ec.PrivateKey, net *chaincfg.Params, compress bool) (*WIF, error) {
+func NewWIF(privKey *ec.PrivateKey, net *chaincfg.Params, compress bool) (*WIF,
+	error,
+) {
 	if net == nil {
 		return nil, errors.New("no network")
 	}

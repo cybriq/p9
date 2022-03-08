@@ -3,10 +3,10 @@ package bdb
 import (
 	"io"
 	"os"
-	
+
 	bolt "go.etcd.io/bbolt"
-	
-	"github.com/p9c/p9/pkg/walletdb"
+
+	"github.com/cybriq/p9/pkg/walletdb"
 )
 
 // convertErr converts some bolt errors to the equivalent walletdb error.
@@ -59,7 +59,9 @@ func (tx *transaction) ReadWriteBucket(key []byte) walletdb.ReadWriteBucket {
 	}
 	return (*bucket)(boltBucket)
 }
-func (tx *transaction) CreateTopLevelBucket(key []byte) (rwb walletdb.ReadWriteBucket, e error) {
+func (tx *transaction) CreateTopLevelBucket(key []byte) (rwb walletdb.ReadWriteBucket,
+	e error,
+) {
 	var boltBucket *bolt.Bucket
 	if boltBucket, e = tx.boltTx.CreateBucket(key); D.Chk(convertErr(e)) {
 		return
@@ -116,7 +118,9 @@ func (b *bucket) NestedReadBucket(key []byte) walletdb.ReadBucket {
 // ErrIncompatibleValue if the key value is otherwise invalid.
 //
 // This function is part of the walletdb.Bucket interface implementation.
-func (b *bucket) CreateBucket(key []byte) (rwb walletdb.ReadWriteBucket, e error) {
+func (b *bucket) CreateBucket(key []byte) (rwb walletdb.ReadWriteBucket,
+	e error,
+) {
 	var boltBucket *bolt.Bucket
 	if boltBucket, e = (*bolt.Bucket)(b).CreateBucket(key); D.Chk(convertErr(e)) {
 		return
@@ -129,7 +133,9 @@ func (b *bucket) CreateBucket(key []byte) (rwb walletdb.ReadWriteBucket, e error
 // Returns ErrBucketNameRequired if the key is empty or ErrIncompatibleValue if the key value is otherwise invalid.
 //
 // This function is part of the walletdb.Bucket interface implementation.
-func (b *bucket) CreateBucketIfNotExists(key []byte) (rwb walletdb.ReadWriteBucket, e error) {
+func (b *bucket) CreateBucketIfNotExists(key []byte) (rwb walletdb.ReadWriteBucket,
+	e error,
+) {
 	var boltBucket *bolt.Bucket
 	if boltBucket, e = (*bolt.Bucket)(b).CreateBucketIfNotExists(key); D.Chk(convertErr(e)) {
 	} else {

@@ -3,8 +3,8 @@ package btcjson_test
 import (
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // TestHelpers tests the various helper functions which create pointers to primitive types.

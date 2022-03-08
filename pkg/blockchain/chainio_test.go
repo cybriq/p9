@@ -5,9 +5,9 @@ import (
 	"errors"
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/database"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // TestErrNotInMainChain ensures the functions related to errNotInMainChain work as expected.

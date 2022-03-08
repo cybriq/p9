@@ -1,7 +1,7 @@
 # gcs
 
 (http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](https://godoc.org/github.com/p9c/p9/util/gcs?status.png)](http://godoc.org/github.com/p9c/p9/util/gcs)
+[![GoDoc](https://godoc.org/github.com/cybriq/p9/util/gcs?status.png)](http://godoc.org/github.com/cybriq/p9/util/gcs)
 
 Package gcs provides an API for building and using a Golomb-coded set filter
 similar to that
@@ -11,7 +11,7 @@ described [here](http://giovanni.bajo.it/post/47119962313/golomb-coded-sets-smal
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/p9c/p9/util/gcs
+$ go get -u github.com/cybriq/p9/util/gcs
 ```
 
 ## License

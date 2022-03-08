@@ -5,8 +5,8 @@ package clip
 import (
 	"testing"
 
-	"github.com/p9c/p9/pkg/gel/gio/f32"
-	"github.com/p9c/p9/pkg/gel/gio/op"
+	"github.com/cybriq/p9/pkg/gel/gio/f32"
+	"github.com/cybriq/p9/pkg/gel/gio/op"
 )
 
 func TestOpenPathOutlinePanic(t *testing.T) {

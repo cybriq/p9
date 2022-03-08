@@ -9,8 +9,8 @@ import (
 	"net"
 	"sync"
 	"time"
-	
-	"github.com/p9c/p9/pkg/fec"
+
+	"github.com/cybriq/p9/pkg/fec"
 )
 
 // HandleFunc is a map of handlers for working on received, decoded packets
@@ -162,7 +162,8 @@ func (c *Connection) SendShards(shards [][]byte) (e error) {
 	return
 }
 
-func (c *Connection) SendShardsTo(shards [][]byte, addr *net.UDPAddr) (e error) {
+func (c *Connection) SendShardsTo(shards [][]byte, addr *net.UDPAddr,
+) (e error) {
 	var sendConn *net.UDPConn
 	if sendConn, e = net.DialUDP("udp", nil, addr); !E.Chk(e) {
 		if e = send(shards, sendConn); E.Chk(e) {
@@ -173,7 +174,9 @@ func (c *Connection) SendShardsTo(shards [][]byte, addr *net.UDPAddr) (e error) 
 
 // Listen runs a goroutine that collects and attempts to decode the FEC shards
 // once it has enough intact pieces
-func (c *Connection) Listen(handlers HandleFunc, ifc interface{}, lastSent *time.Time, firstSender *string,) (e error) {
+func (c *Connection) Listen(handlers HandleFunc, ifc interface{},
+	lastSent *time.Time, firstSender *string,
+) (e error) {
 	F.Ln("setting read buffer")
 	buffer := make([]byte, c.maxDatagramSize)
 	go func() {

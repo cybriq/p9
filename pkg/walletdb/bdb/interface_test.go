@@ -8,13 +8,13 @@ package bdb_test
 import (
 	"os"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/walletdb/ci"
+
+	"github.com/cybriq/p9/pkg/walletdb/ci"
 )
 
 // TestInterface performs all interfaces tests for this database driver.
 func TestInterface(t *testing.T) {
-	
+
 	dbPath := "interfacetest.db"
 	defer func() {
 		if e := os.RemoveAll(dbPath); E.Chk(e) {

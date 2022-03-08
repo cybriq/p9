@@ -2,11 +2,11 @@ package wallet
 
 import (
 	"errors"
-	"github.com/p9c/p9/pkg/btcaddr"
-	
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/waddrmgr"
-	"github.com/p9c/p9/pkg/walletdb"
+	"github.com/cybriq/p9/pkg/btcaddr"
+
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/waddrmgr"
+	"github.com/cybriq/p9/pkg/walletdb"
 )
 
 // MakeMultiSigScript creates a multi-signature script that can be redeemed with nRequired signatures of the passed keys
@@ -14,7 +14,8 @@ import (
 // otherwise an error is returned for a missing pubkey.
 //
 // This function only works with pubkeys and P2PKH addresses derived from them.
-func (w *Wallet) MakeMultiSigScript(addrs []btcaddr.Address, nRequired int) ([]byte, error) {
+func (w *Wallet) MakeMultiSigScript(addrs []btcaddr.Address, nRequired int,
+) ([]byte, error) {
 	pubKeys := make([]*btcaddr.PubKey, len(addrs))
 	var dbtx walletdb.ReadTx
 	var addrmgrNs walletdb.ReadBucket
@@ -64,7 +65,9 @@ func (w *Wallet) MakeMultiSigScript(addrs []btcaddr.Address, nRequired int) ([]b
 }
 
 // ImportP2SHRedeemScript adds a P2SH redeem script to the wallet.
-func (w *Wallet) ImportP2SHRedeemScript(script []byte) (*btcaddr.ScriptHash, error) {
+func (w *Wallet) ImportP2SHRedeemScript(script []byte) (*btcaddr.ScriptHash,
+	error,
+) {
 	var p2shAddr *btcaddr.ScriptHash
 	e := walletdb.Update(
 		w.db, func(tx walletdb.ReadWriteTx) (e error) {

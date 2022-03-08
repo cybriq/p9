@@ -10,8 +10,8 @@ import (
 	"reflect"
 	"sort"
 
-	"github.com/p9c/p9/pod/config"
-	"github.com/p9c/p9/pod/podcfgs"
+	"github.com/cybriq/p9/pod/config"
+	"github.com/cybriq/p9/pod/podcfgs"
 )
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 	if wd, e = os.Getwd(); E.Chk(e) {
 		// panic(e)
 	}
-	T.Ln("cwd",wd)
+	T.Ln("cwd", wd)
 	if e = ioutil.WriteFile(filepath.Join(wd, "struct.go"), out, 0660); E.Chk(e) {
 		// panic(e)
 	}
@@ -47,17 +47,17 @@ func main() {
 
 var configBase = `package config
 
-`+`//go:generate go run ./genopts/.
+` + `//go:generate go run ./genopts/.
 
 import (
-	"github.com/p9c/p9/pkg/opts/binary"
-	"github.com/p9c/p9/pkg/opts/cmds"
-	"github.com/p9c/p9/pkg/opts/duration"
-	"github.com/p9c/p9/pkg/opts/float"
-	"github.com/p9c/p9/pkg/opts/integer"
-	"github.com/p9c/p9/pkg/opts/list"
-	"github.com/p9c/p9/pkg/opts/opt"
-	"github.com/p9c/p9/pkg/opts/text"
+	"github.com/cybriq/p9/pkg/opts/binary"
+	"github.com/cybriq/p9/pkg/opts/cmds"
+	"github.com/cybriq/p9/pkg/opts/duration"
+	"github.com/cybriq/p9/pkg/opts/float"
+	"github.com/cybriq/p9/pkg/opts/integer"
+	"github.com/cybriq/p9/pkg/opts/list"
+	"github.com/cybriq/p9/pkg/opts/opt"
+	"github.com/cybriq/p9/pkg/opts/text"
 )
 
 // Config defines the configuration items used by pod along with the various components included in the suite

@@ -2,23 +2,23 @@ package mempool
 
 import (
 	"bytes"
-	"github.com/p9c/p9/pkg/amt"
-	"github.com/p9c/p9/pkg/btcaddr"
-	"github.com/p9c/p9/pkg/chaincfg"
-	"github.com/p9c/p9/pkg/constant"
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/constant"
 	"testing"
 	"time"
-	
-	"github.com/p9c/p9/pkg/chainhash"
-	ec "github.com/p9c/p9/pkg/ecc"
-	"github.com/p9c/p9/pkg/txscript"
-	"github.com/p9c/p9/pkg/util"
-	"github.com/p9c/p9/pkg/wire"
+
+	"github.com/cybriq/p9/pkg/chainhash"
+	ec "github.com/cybriq/p9/pkg/ecc"
+	"github.com/cybriq/p9/pkg/txscript"
+	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // TestCalcMinRequiredTxRelayFee tests the calcMinRequiredTxRelayFee API.
 func TestCalcMinRequiredTxRelayFee(t *testing.T) {
-	
+
 	tests := []struct {
 		name     string     // test description.
 		size     int64      // Transaction size in bytes.
@@ -183,12 +183,12 @@ func TestCheckPkScriptStandard(t *testing.T) {
 			false,
 		},
 	}
-	
+
 	for _, test := range tests {
 		script, err := test.script.Script()
-		
+
 		if err != nil {
-			
+
 			t.Fatalf(
 				"TestCheckPkScriptStandard test '%s' "+
 					"failed: %v", test.name, err,
@@ -197,10 +197,10 @@ func TestCheckPkScriptStandard(t *testing.T) {
 		}
 		scriptClass := txscript.GetScriptClass(script)
 		got := checkPkScriptStandard(script, scriptClass)
-		
+
 		if (test.isStandard && got != nil) ||
 			(!test.isStandard && got == nil) {
-			
+
 			t.Fatalf(
 				"TestCheckPkScriptStandard test '%s' failed",
 				test.name,
@@ -212,7 +212,7 @@ func TestCheckPkScriptStandard(t *testing.T) {
 
 // TestDust tests the isDust API.
 func TestDust(t *testing.T) {
-	
+
 	pkScript := []byte{
 		0x76, 0xa9, 0x21, 0x03, 0x2f, 0x7e, 0x43,
 		0x0a, 0xa4, 0xc9, 0xd1, 0x59, 0x43, 0x7e, 0x84, 0xb9,
@@ -274,12 +274,12 @@ func TestDust(t *testing.T) {
 			true,
 		},
 	}
-	
+
 	for _, test := range tests {
 		res := isDust(&test.txOut, test.relayFee)
-		
+
 		if res != test.isDust {
-			
+
 			t.Fatalf(
 				"Dust test '%s' failed: want %v got %v",
 				test.name, test.isDust, res,
@@ -291,10 +291,10 @@ func TestDust(t *testing.T) {
 
 // TestCheckTransactionStandard tests the checkTransactionStandard API.
 func TestCheckTransactionStandard(t *testing.T) {
-	
+
 	// Create some dummy, but otherwise standard, data for transactions.
 	prevOutHash, err := chainhash.NewHashFromStr("01")
-	
+
 	if err != nil {
 		t.Fatalf("NewShaHashFromStr: unexpected error: %v", err)
 	}
@@ -310,12 +310,12 @@ func TestCheckTransactionStandard(t *testing.T) {
 		addrHash[:],
 		&chaincfg.TestNet3Params,
 	)
-	
+
 	if err != nil {
 		t.Fatalf("NewPubKeyHash: unexpected error: %v", err)
 	}
 	dummyPkScript, err := txscript.PayToAddrScript(addr)
-	
+
 	if err != nil {
 		t.Fatalf("PayToAddrScript: unexpected error: %v", err)
 	}
@@ -504,7 +504,7 @@ func TestCheckTransactionStandard(t *testing.T) {
 		},
 	}
 	pastMedianTime := time.Now()
-	
+
 	for _, test := range tests {
 		// Ensure standardness is as expected.
 		err := checkTransactionStandard(

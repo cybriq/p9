@@ -2,9 +2,9 @@
 package txsizes
 
 import (
-	"github.com/p9c/p9/pkg/blockchain"
-	h "github.com/p9c/p9/pkg/util/helpers"
-	"github.com/p9c/p9/pkg/wire"
+	"github.com/cybriq/p9/pkg/blockchain"
+	h "github.com/cybriq/p9/pkg/util/helpers"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // Worst case script and input/output size estimates.
@@ -100,7 +100,9 @@ const (
 // EstimateSerializeSize returns a worst case serialize size estimate for a signed transaction that spends inputCount
 // number of compressed P2PKH outputs and contains each transaction output from txOuts. The estimated size is
 // incremented for an additional P2PKH change output if addChangeOutput is true.
-func EstimateSerializeSize(inputCount int, txOuts []*wire.TxOut, addChangeOutput bool) int {
+func EstimateSerializeSize(inputCount int, txOuts []*wire.TxOut,
+	addChangeOutput bool,
+) int {
 	changeSize := 0
 	outputCount := len(txOuts)
 	if addChangeOutput {

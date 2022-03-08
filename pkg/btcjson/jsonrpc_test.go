@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"reflect"
 	"testing"
-	
-	"github.com/p9c/p9/pkg/btcjson"
+
+	"github.com/cybriq/p9/pkg/btcjson"
 )
 
 // TestIsValidIDType ensures the IsValidIDType function behaves as expected.
@@ -70,7 +70,9 @@ func TestMarshalResponse(t *testing.T) {
 			name:   "result with error",
 			result: nil,
 			jsonErr: func() *btcjson.RPCError {
-				return btcjson.NewRPCError(btcjson.ErrRPCBlockNotFound, "123 not found")
+				return btcjson.NewRPCError(btcjson.ErrRPCBlockNotFound,
+					"123 not found",
+				)
 			}(),
 			expected: []byte(`{"result":null,"error":{"code":-5,"message":"123 not found"},"id":1}`),
 		},
@@ -78,7 +80,9 @@ func TestMarshalResponse(t *testing.T) {
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
 		_, _ = i, test
-		marshalled, e := btcjson.MarshalResponse(testID, test.result, test.jsonErr)
+		marshalled, e := btcjson.MarshalResponse(testID, test.result,
+			test.jsonErr,
+		)
 		if e != nil {
 			t.Errorf("Test #%d (%s) unexpected error: %v", i,
 				test.name, e,
