@@ -10,6 +10,9 @@ block schedule that improves the chain's precision in difficulty adjustment.
 ## Building
 
 Please note that the following instructions have been tested and worked on 
+Pop OS 21 (should be the same for ubuntu 21, also should work on ubuntu 20). 
+The generators may not work but the prereqs have been updated to add things 
+that seem to be missing for ubuntu 21 base.
 
 The ParallelCoin Pod is by default dependent on go 1.16 or later. It likely
 can build on earlier versions but newer is generally better, at least with
