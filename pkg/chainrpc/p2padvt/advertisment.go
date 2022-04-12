@@ -1,7 +1,7 @@
 package p2padvt
 
 import (
-	"github.com/niubaoshu/gotiny"
+	"github.com/cybriq/gotiny"
 
 	"github.com/cybriq/p9/pkg/util"
 	"github.com/cybriq/p9/pkg/util/routeable"

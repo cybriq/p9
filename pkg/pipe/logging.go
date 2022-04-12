@@ -1,9 +1,9 @@
 package pipe
 
 import (
+	"github.com/cybriq/gotiny"
 	"github.com/cybriq/p9/pkg/interrupt"
 	"github.com/cybriq/p9/pkg/qu"
-	"github.com/niubaoshu/gotiny"
 	"go.uber.org/atomic"
 
 	"github.com/cybriq/p9/pkg/log"

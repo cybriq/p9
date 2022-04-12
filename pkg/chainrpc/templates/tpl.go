@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/niubaoshu/gotiny"
+	"github.com/cybriq/gotiny"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/wire"

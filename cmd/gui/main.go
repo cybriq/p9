@@ -3,6 +3,7 @@ package gui
 import (
 	"crypto/rand"
 	"fmt"
+	"github.com/tyler-smith/go-bip39"
 	"net"
 	"os"
 	"runtime"
@@ -10,9 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/niubaoshu/gotiny"
-	"github.com/tyler-smith/go-bip39"
-
+	"github.com/cybriq/gotiny"
 	"github.com/cybriq/p9/pkg/chainrpc/p2padvt"
 	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pkg/opts/meta"

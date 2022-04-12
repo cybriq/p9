@@ -6,7 +6,7 @@ package job
 // 	"github.com/cybriq/p9/pkg/chaincfg"
 // 	"time"
 //
-// 	"github.com/niubaoshu/gotiny"
+// 	"github.com/cybriq/gotiny"
 //
 // 	"github.com/cybriq/p9/pkg/blockchain"
 // 	"github.com/cybriq/p9/pkg/chainhash"

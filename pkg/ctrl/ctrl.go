@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/VividCortex/ewma"
-	"github.com/niubaoshu/gotiny"
+	"github.com/cybriq/gotiny"
 	"go.uber.org/atomic"
 
 	"github.com/cybriq/p9/pkg/qu"

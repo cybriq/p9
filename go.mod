@@ -1,6 +1,6 @@
 module github.com/cybriq/p9
 
-go 1.16
+go 1.18
 
 require (
 	github.com/BurntSushi/xgb v0.0.0-20210121224620-deaf085860bc
@@ -15,15 +15,14 @@ require (
 	github.com/chromedp/cdproto v0.0.0-20210429002609-5ec2b0624aec
 	github.com/chromedp/chromedp v0.7.1
 	github.com/conformal/fastsha256 v0.0.0-20160815193821-637e65642941
+	github.com/cybriq/gotiny v0.0.5
 	github.com/davecgh/go-spew v1.1.1
 	github.com/enceve/crypto v0.0.0-20160707101852-34d48bb93815
 	github.com/gookit/color v1.4.2
-	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/jackpal/gateway v1.0.7
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/kkdai/bstream v1.0.0
 	github.com/marusama/semaphore v0.0.0-20190110074507-6952cef993b2
-	github.com/niubaoshu/gotiny v0.0.3
 	github.com/programmer10110/gostreebog v0.0.0-20170704145444-a3e1d28291b2
 	github.com/tstranex/gozmq v0.0.0-20160831212417-0daa84a596ba
 	github.com/tyler-smith/go-bip39 v1.1.0
@@ -38,8 +37,32 @@ require (
 	golang.org/x/sys v0.0.0-20210503073744-b6777538623b
 	golang.org/x/text v0.3.6
 	golang.org/x/tools v0.1.0
-	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/src-d/go-git.v4 v4.13.1
-	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	lukechampine.com/blake3 v1.1.5
+)
+
+require (
+	github.com/btcsuite/snappy-go v1.0.0 // indirect
+	github.com/chromedp/sysutil v1.0.0 // indirect
+	github.com/emirpasic/gods v1.12.0 // indirect
+	github.com/gobwas/httphead v0.1.0 // indirect
+	github.com/gobwas/pool v0.2.1 // indirect
+	github.com/gobwas/ws v1.1.0-rc.5 // indirect
+	github.com/hpcloud/tail v1.0.0 // indirect
+	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+	github.com/josharian/intern v1.0.0 // indirect
+	github.com/kevinburke/ssh_config v0.0.0-20190725054713-01f96b0aa0cd // indirect
+	github.com/klauspost/cpuid v1.3.1 // indirect
+	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/mitchellh/go-homedir v1.1.0 // indirect
+	github.com/sergi/go-diff v1.0.0 // indirect
+	github.com/src-d/gcfg v1.4.0 // indirect
+	github.com/xanzy/ssh-agent v0.2.1 // indirect
+	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
+	golang.org/x/mod v0.4.2 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	gopkg.in/fsnotify.v1 v1.4.7 // indirect
+	gopkg.in/src-d/go-billy.v4 v4.3.2 // indirect
+	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
+	gopkg.in/warnings.v0 v0.1.2 // indirect
 )

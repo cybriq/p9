@@ -3,7 +3,7 @@ package sol
 import (
 	"bytes"
 
-	"github.com/niubaoshu/gotiny"
+	"github.com/cybriq/gotiny"
 
 	"github.com/cybriq/p9/pkg/wire"
 )

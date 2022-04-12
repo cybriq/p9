@@ -10,7 +10,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/niubaoshu/gotiny"
+	"github.com/cybriq/gotiny"
 
 	"github.com/cybriq/p9/pkg/util/routeable"
 )

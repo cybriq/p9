@@ -9,7 +9,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/niubaoshu/gotiny"
+	"github.com/cybriq/gotiny"
 
 	"github.com/cybriq/p9/pkg/chainrpc/p2padvt"
 	"github.com/cybriq/p9/pkg/chainrpc/templates"
