@@ -179,40 +179,40 @@ var (
 	// P9AlgoVers is the lookup for after 1st hardfork
 	P9AlgoVers = make(map[int32]string)
 
-	// P9PrimeSequence = []int{2, 5, 11, 7, 11, 13, 17, 19, 23}
-	// 2, .3, .5, 7, .11, 13, .17, 19, 23, 29, .31, 37, .41, 43, 47, 53, .59, 61, .67, 71, 73, 79, .83, 89, 97
-	P9PrimeSequence = []int{2, 4, 8, 16, 32, 64, 128, 256, 512}
-	IntervalDivisor = 1
-	IntervalBase    = 9
+	// DoublingSequence is the differential between different block versions and
+	// their relative block timing
+	DoublingSequence = []int{2, 4, 8, 16, 32, 64, 128, 256, 512}
+	IntervalDivisor  = 1
+	IntervalBase     = 9
 	// P9Algos is the algorithm specifications after the hard fork
 	P9Algos        = make(map[string]AlgoParams)
 	P9AlgosNumeric = map[int32]AlgoParams{
 		5: {5, p9PowLimitBits, 0,
-			IntervalBase * P9PrimeSequence[0] / IntervalDivisor,
+			IntervalBase * DoublingSequence[0] / IntervalDivisor,
 		}, // 2
 		6: {6, p9PowLimitBits, 1,
-			IntervalBase * P9PrimeSequence[1] / IntervalDivisor,
+			IntervalBase * DoublingSequence[1] / IntervalDivisor,
 		}, // 3
 		7: {7, p9PowLimitBits, 2,
-			IntervalBase * P9PrimeSequence[2] / IntervalDivisor,
+			IntervalBase * DoublingSequence[2] / IntervalDivisor,
 		}, // 5
 		8: {8, p9PowLimitBits, 3,
-			IntervalBase * P9PrimeSequence[3] / IntervalDivisor,
+			IntervalBase * DoublingSequence[3] / IntervalDivisor,
 		}, // 7
 		9: {9, p9PowLimitBits, 4,
-			IntervalBase * P9PrimeSequence[4] / IntervalDivisor,
+			IntervalBase * DoublingSequence[4] / IntervalDivisor,
 		}, // 11
 		10: {10, p9PowLimitBits, 5,
-			IntervalBase * P9PrimeSequence[5] / IntervalDivisor,
+			IntervalBase * DoublingSequence[5] / IntervalDivisor,
 		}, // 13
 		11: {11, p9PowLimitBits, 7,
-			IntervalBase * P9PrimeSequence[7] / IntervalDivisor,
+			IntervalBase * DoublingSequence[7] / IntervalDivisor,
 		}, // 17
 		12: {12, p9PowLimitBits, 6,
-			IntervalBase * P9PrimeSequence[6] / IntervalDivisor,
+			IntervalBase * DoublingSequence[6] / IntervalDivisor,
 		}, // 19
 		13: {13, p9PowLimitBits, 8,
-			IntervalBase * P9PrimeSequence[8] / IntervalDivisor,
+			IntervalBase * DoublingSequence[8] / IntervalDivisor,
 		}, // 23
 	}
 
