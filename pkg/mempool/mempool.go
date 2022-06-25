@@ -2,7 +2,6 @@ package mempool
 
 import (
 	"container/list"
-	"errors"
 	"fmt"
 	"github.com/cybriq/p9/pkg/amt"
 	"github.com/cybriq/p9/pkg/chaincfg"
@@ -15,7 +14,6 @@ import (
 
 	"github.com/cybriq/p9/pkg/blockchain"
 	"github.com/cybriq/p9/pkg/chainhash"
-	"github.com/cybriq/p9/pkg/hardfork"
 	"github.com/cybriq/p9/pkg/indexers"
 	"github.com/cybriq/p9/pkg/mining"
 	"github.com/cybriq/p9/pkg/txscript"
@@ -619,9 +617,7 @@ func (mp *TxPool) maybeAcceptTransaction(
 	// 		return nil, nil, txRuleError(wire.RejectNonstandard, str)
 	// 	}
 	// }
-	if blockchain.ContainsBlacklisted(b, tx, hardfork.Blacklist) {
-		return nil, nil, errors.New("transaction contains blacklisted address")
-	}
+
 	// Don't accept the transaction if it already exists in the pool. This applies to orphan transactions as well when
 	// the reject duplicate orphans flag is set. This check is intended to be a quick check to weed out duplicates.
 	if mp.isTransactionInPool(txHash) || (rejectDupOrphans &&

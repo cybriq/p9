@@ -5,7 +5,6 @@ import (
 	"github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/database"
-	"github.com/cybriq/p9/pkg/hardfork"
 )
 
 // maybeAcceptBlock potentially accepts a block into the block chain
@@ -62,16 +61,7 @@ func (b *BlockChain) maybeAcceptBlock(workerNumber uint32, block *block.Block,
 			}
 		}
 	}
-	T.Ln("check for blacklisted addresses")
-	txs := block.Transactions()
-	for i := range txs {
-		if ContainsBlacklisted(b, txs[i], hardfork.Blacklist) {
-			return false, ruleError(ErrBlacklisted,
-				"block contains a blacklisted address ",
-			)
-		}
-	}
-	T.Ln("found no blacklisted addresses")
+
 	var e error
 	if pn != nil {
 		// The block must pass all of the validation rules which depend on the position

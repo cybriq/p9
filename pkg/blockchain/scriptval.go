@@ -8,7 +8,6 @@ import (
 
 	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/cybriq/p9/pkg/hardfork"
 	"github.com/cybriq/p9/pkg/txscript"
 	"github.com/cybriq/p9/pkg/util"
 	"github.com/cybriq/p9/pkg/wire"
@@ -207,11 +206,7 @@ func ValidateTransactionScripts(
 	// 	// pre-computing the sighash here instead of during validation, we ensure the sighashes are only computed once.
 	// 	cachedHashes, _ = hashCache.GetSigHashes(tx.Hash())
 	// }
-	if ContainsBlacklisted(b, tx, hardfork.Blacklist) {
-		return ruleError(ErrBlacklisted,
-			"transaction contains blacklisted address ",
-		)
-	}
+
 	// Collect all of the transaction inputs and required information for
 	// validation.
 	txIns := tx.MsgTx().TxIn

@@ -13,12 +13,12 @@ var (
 	// GitRef is the gitref, as in refs/heads/branchname
 	GitRef = "refs/heads/main"
 	// GitCommit is the commit hash of the current HEAD
-	GitCommit = "e1fb3ed4e560e39d971d16c1389fd0dab00c45a8"
+	GitCommit = "0213cb21f4a28d2d0c2763fc7939f041381fe829"
 	// BuildTime stores the time when the current binary was built
-	BuildTime = "2022-06-25T08:48:36+03:00"
+	BuildTime = "2022-06-25T09:01:54+03:00"
 	// Tag lists the Tag on the build, adding a + to the newest Tag if the commit is
 	// not that commit
-	Tag = "v0.0.3"
+	Tag = "v0.0.3+"
 	// PathBase is the path base returned from runtime caller
 	PathBase = "/home/davidvennik/src/github.com/cybriq/p9/"
 	// Major is the major number from the tag
@@ -35,11 +35,11 @@ var (
 func Get() string {
 	return fmt.Sprint(
 		"\nRepository Information\n"+
-			"\tGit repository: "+URL+"\n",
+		"\tGit repository: "+URL+"\n",
 		"\tBranch: "+GitRef+"\n"+
-			"\tCommit: "+GitCommit+"\n"+
-			"\tBuilt: "+BuildTime+"\n"+
-			"\tTag: "+Tag+"\n",
+		"\tCommit: "+GitCommit+"\n"+
+		"\tBuilt: "+BuildTime+"\n"+
+		"\tTag: "+Tag+"\n",
 		"\tMajor:", Major, "\n",
 		"\tMinor:", Minor, "\n",
 		"\tPatch:", Patch, "\n",

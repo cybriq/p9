@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/cybriq/p9/pkg/chainhash"
-	"github.com/cybriq/p9/pkg/hardfork"
 	"github.com/cybriq/p9/pkg/txscript"
 	"github.com/cybriq/p9/pkg/util"
 	"github.com/cybriq/p9/pkg/wire"
@@ -211,80 +210,7 @@ func (b *BlockChain) checkConnectBlock(
 		)
 		return ruleError(ErrBadCoinbaseValue, str)
 	}
-	// if this is the hard fork activation height special disbursement coinbase must match the specifications in
-	// pkg/chain/hardfork/subsidy.go
-	if node.height == fork.List[1].ActivationHeight &&
-		b.params.Net == wire.MainNet ||
-		node.height == fork.List[1].TestnetStart &&
-			b.params.Net == wire.TestNet3 {
-		F.Ln("checking contents of hardfork coinbase tx")
-		btx, e := block.Tx(0)
-		if e != nil {
-		}
-		payees := hardfork.Payees
-		if b.params.Net == wire.TestNet3 {
-			payees = hardfork.TestnetPayees
-		}
 
-		txo := btx.MsgTx().TxOut
-		for i := range payees {
-			if txo[i].Value != int64(payees[i].Amount) {
-				return ruleError(
-					ErrBadCoinbaseValue,
-					"hardfork coinbase does not pay correct amount to payees list",
-				)
-			}
-			// we will save processing not decode these, we know the addresses should appear in a specific section of
-			// the pkscript
-			proposed := txo[i].PkScript[3:23]
-			proper := payees[i].Address.ScriptAddress()
-			for i := range proposed {
-				if proposed[i] != proper[i] {
-					return ruleError(
-						ErrBadCoinbaseValue,
-						"hardfork coinbase does not pay to correct addresses",
-					)
-				}
-			}
-		}
-		remtx := txo[len(payees):]
-		coreamount := hardfork.CoreAmount
-		if b.params.Net == wire.TestNet3 {
-			coreamount = hardfork.TestnetCoreAmount
-		}
-		if remtx[0].Value != int64(coreamount) {
-			return ruleError(
-				ErrBadCoinbaseValue,
-				"hardfork coinbase does not pay correct amount to dev fund multisig address",
-			)
-		}
-
-		corepk := hardfork.CorePubkeyBytes
-		if b.params.Net == wire.TestNet3 {
-			corepk = hardfork.TestnetCorePubkeyBytes
-		}
-		remscript := remtx[0].PkScript[2:]
-		for i := range corepk {
-			if len(remscript) < len(corepk[i]) {
-				return ruleError(
-					ErrBadCoinbaseValue,
-					"hardfork coinbase is missing pubkeys for dev fund multisig address",
-				)
-			}
-			for j := range corepk[i] {
-				if remscript[j] != corepk[i][j] {
-					return ruleError(
-						ErrBadCoinbaseValue,
-						"hardfork coinbase has incorrect pubkey in dev fund multisig address",
-					)
-				}
-			}
-			// before each pubkey is the length, one byte, so we snip that off for the next round
-			remscript = remscript[len(corepk[i])+1:]
-		}
-		// If the miner put a nonstandard reward in the remainder it will mean the total is incorrect and it will be
-		// caught as being over the allowed coinbase value for this specific block. Under, of course, doesn't matter.
-	}
 	// Don't run scripts if this node is before the latest known good checkpoint since the validity is verified via the
 	// checkpoints (all transactions are included in the merkle root hash and any changes will therefore be detected by
 	// the next checkpoint). This is a huge optimization because running the scripts is the most time consuming portion
@@ -686,38 +612,23 @@ func CalcBlockSubsidy(height int32, chainParams *chaincfg.Params, version int32,
 	}
 	// Equivalent to: baseSubsidy / 2^(height/subsidyHalvingInterval)
 	switch fork.GetCurrent(height) {
+
 	case 0:
 		return int64(baseSubsidy) >> uint64(
 			height/chainParams.
 				SubsidyReductionInterval,
 		)
+
 	case 1:
-		var total amt.Amount
-		if (chainParams.Net == wire.MainNet &&
-			height == fork.List[1].ActivationHeight) ||
-			(chainParams.Net == wire.TestNet3 &&
-				height == fork.List[1].TestnetStart) {
-			payees := hardfork.Payees
-			if chainParams.Net == wire.TestNet3 {
-				payees = hardfork.TestnetPayees
-			}
-			for i := range payees {
-				total += payees[i].Amount
-			}
-			total += amt.Amount(CalcBlockSubsidy(height+1, chainParams, version),
-			)
-			total += hardfork.TestnetCoreAmount
-			return int64(total)
-		}
 		// Plan 9 hard fork prescribes a smooth supply curve made using an exponential decay formula adjusted to fit the
 		// previous halving cycle and accounting for the block time difference
-		ttpb := float64(fork.List[1].Algos[fork.GetAlgoName(version, height)].VersionInterval,
-		)
+		ttpb := float64(fork.List[1].Algos[fork.GetAlgoName(version, height)].VersionInterval)
 		r = int64(2.7 * ttpb / 300 * (math.Pow(2.7,
 			-float64(height)*300*9/ttpb/375000.0,
 		)) * 100000000 / 9,
 		)
 	}
+
 	return
 }
 
