@@ -252,16 +252,6 @@ func createCoinbaseTx(
 	params *chaincfg.Params, coinbaseScript []byte, nextBlockHeight int32,
 	addr btcaddr.Address, version int32,
 ) (*util.Tx, error) {
-	// if this is the hard fork activation height coming up, we create the special
-	// disbursement coinbase
-	if nextBlockHeight == fork.List[1].ActivationHeight &&
-		params.Net == wire.MainNet ||
-		nextBlockHeight == fork.List[1].TestnetStart &&
-			params.Net == wire.TestNet3 {
-		return blockchain.CreateHardForkSubsidyTx(params, coinbaseScript,
-			nextBlockHeight, addr, version,
-		)
-	}
 
 	// Create the script to pay to the provided payment address if one was
 	// specified. Otherwise create a script that allows the coinbase to be
