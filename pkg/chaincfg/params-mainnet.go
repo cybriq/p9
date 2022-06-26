@@ -27,7 +27,6 @@ var MainNetParams = Params{
 		{"73.164.170.207", true},
 		{"76.176.77.120", true},
 		{"89.40.12.55", true},
-		{"coins.prohashing.com:6245", true},
 		//
 	},
 	// Chain parameters
