@@ -1,5 +1,4 @@
 #!/bin/bash
-yes|sudo pacman -Syyu
-yes|sudo pacman -S yay
-yes|yay -Syyu
-yes|yay --needed -S bash wget curl git make base-devel xclip
+yay -S base-devel git wget curl wine winetricks spirv-cross
+
+echo "if this script fails, you need to install yay and enable multilib in /etc/pacman.conf"
