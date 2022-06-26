@@ -168,7 +168,7 @@ var (
 		{
 			Number:             1,
 			Name:               "Plan 9 from Crypto Space",
-			ActivationHeight:   2500000,
+			ActivationHeight:   25000000,
 			Algos:              P9Algos,
 			AlgoVers:           P9AlgoVers,
 			TargetTimePerBlock: 36,
