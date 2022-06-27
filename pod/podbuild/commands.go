@@ -52,4 +52,7 @@ var commands = map[string][]string{
 	"generate": {
 		"go generate ./...",
 	},
+	"patch": {
+		"go run ./version/update/. patch",
+	},
 }

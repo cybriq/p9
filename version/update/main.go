@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -27,6 +28,7 @@ var (
 )
 
 func main() {
+
 	I.Ln(version.Get())
 	BuildTime = time.Now().Format(time.RFC3339)
 	var cwd string
@@ -34,8 +36,25 @@ func main() {
 	if cwd, e = os.Getwd(); E.Chk(e) {
 		return
 	}
-	cwd = filepath.Dir(cwd)
-	// I.Ln(cwd)
+	var bumptag bool
+	if len(os.Args) > 1 {
+
+		switch {
+
+		case os.Args[1] == "patch":
+			bumptag = true
+
+		case os.Args[1] == "minor":
+			bumptag = true
+
+		case os.Args[1] == "major":
+			bumptag = true
+		}
+	}
+	if !bumptag {
+		cwd = filepath.Dir(cwd)
+	}
+	I.Ln(cwd)
 	var repo *git.Repository
 	if repo, e = git.PlainOpen(cwd); E.Chk(e) {
 		return
@@ -111,6 +130,21 @@ func main() {
 	if !maxIs {
 		maxString += "+"
 	}
+	if bumptag {
+
+		switch {
+
+		case os.Args[1] == "patch":
+			Patch++
+
+		case os.Args[1] == "minor":
+			Minor++
+
+		case os.Args[1] == "major":
+			Major++
+		}
+	}
+
 	Tag = maxString
 	PathBase = tr.Filesystem.Root() + "/"
 	// I.Ln(PathBase)
@@ -179,6 +213,36 @@ func Get() string {
 	path := filepath.Join(filepath.Join(PathBase, "version"), "version.go")
 	if e = ioutil.WriteFile(path, []byte(versionFileOut), 0666); E.Chk(e) {
 	}
-	// I.Ln("updated version.go written")
+	I.Ln("updated version.go written")
+	if bumptag {
+		bumpTag(Major, Minor, Patch)
+	}
 	return
+}
+
+func bumpTag(major, minor, patch int) {
+
+	getwd, _ := os.Getwd()
+	I.Ln("cwd", getwd)
+	tag := fmt.Sprintf("v%d.%d.%d", major, minor, patch)
+	I.Ln("tag", tag)
+	cmd := exec.Command("git", "tag", tag)
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+
+	cmd = exec.Command("git", "push", "origin", "main")
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+
+	cmd = exec.Command("git", "push", "origin", tag)
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+
+	I.Ln("pushed tag", tag, "and updated repo")
 }
