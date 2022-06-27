@@ -12,8 +12,6 @@ import (
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/plumbing/storer"
-
-	"github.com/cybriq/p9/version"
 )
 
 var (
@@ -29,7 +27,7 @@ var (
 
 func main() {
 
-	I.Ln(version.Get())
+	// D.Ln(version.Get())
 	BuildTime = time.Now().Format(time.RFC3339)
 	var cwd string
 	var e error
@@ -54,7 +52,7 @@ func main() {
 	if !bumptag {
 		cwd = filepath.Dir(cwd)
 	}
-	I.Ln(cwd)
+	D.Ln(cwd)
 	var repo *git.Repository
 	if repo, e = git.PlainOpen(cwd); E.Chk(e) {
 		return
@@ -213,7 +211,7 @@ func Get() string {
 	path := filepath.Join(filepath.Join(PathBase, "version"), "version.go")
 	if e = ioutil.WriteFile(path, []byte(versionFileOut), 0666); E.Chk(e) {
 	}
-	I.Ln("updated version.go written")
+	D.Ln("updated version.go written")
 	if bumptag {
 		bumpTag(Major, Minor, Patch)
 	}

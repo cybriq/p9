@@ -174,11 +174,11 @@ func (c *Config) Initialize(hf func(ifc interface{}) error) (e error) {
 		configExists = true
 	}
 	// read the environment variables into the config
-	I.Ln("reading environment variables...")
+	D.Ln("reading environment variables...")
 	if e = c.loadEnvironment(); D.Chk(e) {
 	}
 	// read in the commandline options over top as they have highest priority
-	I.Ln("decoding option inputs")
+	D.Ln("decoding option inputs")
 	for i := range options {
 		if _, e = options[i].ReadInput(optVals[i]); E.Chk(e) {
 		}
@@ -186,7 +186,7 @@ func (c *Config) Initialize(hf func(ifc interface{}) error) (e error) {
 	if !configExists || c.Save.True() {
 		c.Save.F()
 		// save the configuration file
-		I.Ln("saving configuration file...")
+		D.Ln("saving configuration file...")
 		var j []byte
 		// c.ShowAll=true
 		if j, e = json.MarshalIndent(c, "", "    "); !E.Chk(e) {
@@ -196,9 +196,9 @@ func (c *Config) Initialize(hf func(ifc interface{}) error) (e error) {
 				panic(e)
 			}
 		}
-		I.Ln("configuration file saved")
+		D.Ln("configuration file saved")
 	}
-	I.Ln("configuration initialised")
+	D.Ln("configuration initialised")
 	return
 }
 
@@ -228,11 +228,11 @@ func (c *Config) loadConfig(path string) (e error) {
 	if !apputil.FileExists(path) {
 		return
 	} else if cf, e = ioutil.ReadFile(path); !D.Chk(e) {
-		I.Ln("read in file from", path)
+		D.Ln("read in file from", path)
 		if e = json.Unmarshal(cf, c); D.Chk(e) {
 			panic(e)
 		}
-		I.Ln("unmarshalled", path)
+		D.Ln("unmarshalled", path)
 		c.WalletPass.Set("")
 	}
 	return
@@ -535,7 +535,7 @@ func (c *Config) processCommandlineArgs(args []string) (
 		for i := range commands {
 			cmds = append(cmds, i)
 		}
-		I.S(cmds)
+		T.S(cmds)
 		if len(cmds) > 0 {
 			sort.Ints(cmds)
 			var cms []string

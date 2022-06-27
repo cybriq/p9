@@ -3,43 +3,43 @@ package main
 var commands = map[string][]string{
 	"build": {
 		"go generate ./version/.",
-		"go build -v ./pod/.",
+		"go build  ./pod/.",
 	},
 	"install": {
 		"go generate ./version/.",
-		"go install -v ./pod/.",
+		"go install  ./pod/.",
 	},
 	"release": {
 		"go generate ./version/.",
-		"go install -v -ldflags '-w -s' ./pod/.",
+		"go install  -ldflags '-w -s' ./pod/.",
 	},
 	"gui": {
 		"go generate ./version/.",
-		"go run -v ./pod/. gui",
+		"go run  ./pod/. gui",
 	},
 	"node": {
 		"go generate ./version/.",
-		"go run -v ./pod/. node",
+		"go run  ./pod/. node",
 	},
 	"wallet": {
 		"go generate ./version/.",
-		"go run -v ./pod/.",
+		"go run  ./pod/.",
 	},
 	"kopach": {
 		"go generate ./version/.",
-		"go run -v ./pod/.",
+		"go run  ./pod/.",
 	},
 	"headless": {
 		"go generate ./version/.",
-		"go install -v -tags headless ./pod/.",
+		"go install  -tags headless ./pod/.",
 	},
 	"docker": {
 		"go generate ./version/.",
-		"go install -v -tags headless ./pod/.",
+		"go install  -tags headless ./pod/.",
 	},
 	"appstores": {
 		"go generate ./version/.",
-		"go install -v -tags nominers ./pod/.",
+		"go install  -tags nominers ./pod/.",
 	},
 	"tests": {
 		"go generate ./version/.",
@@ -47,7 +47,7 @@ var commands = map[string][]string{
 	},
 	"builder": {
 		"go generate ./version/.",
-		"go install -v ./pod/podbuild/.",
+		"go install  ./pod/podbuild/.",
 	},
 	"generate": {
 		"go generate ./...",

@@ -84,12 +84,12 @@ func GetNew(
 		D.Ln("starting up pipe logger")
 		pipe.LogServe(s.KillAll, fmt.Sprint(os.Args))
 	}
-	I.Ln("set to write logs in the network specific directory")
+	D.Ln("set to write logs in the network specific directory")
 	if e = s.Config.LogDir.Set(
 		filepath.Join(s.Config.DataDir.V(), s.ActiveNet.Name),
 	); E.Chk(e) {
 	}
-	I.Ln("enable log file writing")
+	D.Ln("enable log file writing")
 	if e = log.SetLogWriteToFile(s.Config.LogDir.V(),
 		s.Config.RunningCommand.Name,
 	); E.Chk(e) {
@@ -236,7 +236,7 @@ func GetNew(
 		_, _ = fmt.Fprintln(os.Stderr, e)
 		os.Exit(0)
 	}
-	I.Ln("autolisten", s.Config.AutoListen.True())
+	D.Ln("autolisten", s.Config.AutoListen.True())
 	// if autolisten is set, set default ports on all p2p listeners discovered to be available
 	if s.Config.AutoListen.True() {
 		I.Ln("autolisten is enabled")

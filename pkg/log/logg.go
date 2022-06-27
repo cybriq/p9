@@ -204,8 +204,8 @@ func SetLogWriteToFile(path, appName string) (e error) {
 		return
 	}
 	mw := io.MultiWriter(os.Stderr, fileWriter)
-	fileWriter.Write([]byte("logging to file '" + path + "'\n"))
-	mw.Write([]byte("logging to file '" + path + "'\n"))
+	// fileWriter.Write([]byte("logging to file '" + path + "'\n"))
+	// mw.Write([]byte("logging to file '" + path + "'\n"))
 	SetLogWriter(mw)
 	return
 }
@@ -413,7 +413,10 @@ func _s(level int32, subsystem string) func(a ...interface{}) {
 						" spew:",
 					),
 					fmt.Sprint(
-						color.Bit24(20, 20, 20, true).Sprint("\n\n"+spew.Sdump(a)),
+						color.Bit24(20,
+							20,
+							20,
+							true).Sprint("\n\n"+spew.Sdump(a)),
 						"\n",
 					),
 				),
@@ -468,7 +471,8 @@ func _chk(level int32, subsystem string) func(e error) bool {
 							color.Bit24(20, 20, 20, true).
 								Sprint(" "+LevelSpecs[level].Name+" "),
 						),
-						LevelSpecs[level].Colorizer(joinStrings(" ", e.Error())),
+						LevelSpecs[level].Colorizer(joinStrings(" ",
+							e.Error())),
 					),
 				)
 				return true
@@ -527,7 +531,10 @@ func getLoc(skip int, level int32, subsystem string) (output string) {
 	_, file, line, _ := runtime.Caller(skip)
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Fprintln(os.Stderr, "getloc panic on subsystem", subsystem, file)
+			fmt.Fprintln(os.Stderr,
+				"getloc panic on subsystem",
+				subsystem,
+				file)
 		}
 	}()
 	split := strings.Split(file, subsystem)

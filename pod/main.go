@@ -10,7 +10,6 @@ import (
 	_ "github.com/cybriq/p9/pkg/gel/gio/app/permission/networkstate" // todo: integrate this into routeable package
 	_ "github.com/cybriq/p9/pkg/gel/gio/app/permission/storage"      // this enables the home folder appdata directory to work on android (and ios)
 
-	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pod/config"
 	"github.com/cybriq/p9/pod/podcfgs"
 	"github.com/cybriq/p9/pod/podhelp"
@@ -30,7 +29,7 @@ func main() {
 func Main() (quit qu.C) {
 	quit = qu.T()
 	go func() {
-		log.SetLogLevel("trace")
+		// log.SetLogLevel("trace")
 		T.Ln(os.Args)
 		T.Ln(version.Get())
 		var cx *state.State
