@@ -224,6 +224,7 @@ func Get() string {
 
 func bumpTag(major, minor, patch int) {
 
+	I.Ln(os.Args)
 	getwd, _ := os.Getwd()
 	I.Ln("cwd", getwd)
 	tag := fmt.Sprintf("v%d.%d.%d", major, minor, patch)
