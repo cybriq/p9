@@ -234,6 +234,24 @@ func bumpTag(major, minor, patch int) {
 	cmd.Stderr = os.Stderr
 	cmd.Run()
 
+	cmd = exec.Command("git", "add", ".")
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+
+	commitMsg := "bumping version"
+	I.Ln(os.Args)
+	if len(os.Args) > 2 {
+		commitMsg = strings.Join(os.Args[2:], " ")
+	}
+
+	cmd = exec.Command("git", "commit", fmt.Sprintf("-m'%s'", commitMsg))
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+
 	cmd = exec.Command("git", "push", "origin", "main")
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
