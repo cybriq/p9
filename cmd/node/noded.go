@@ -142,19 +142,22 @@ func NodeMain(cx *state.State) (e error) {
 	// it
 	if cx.StateCfg.DropAddrIndex {
 		W.Ln("dropping address index")
-		if e = indexers.DropAddrIndex(db, interrupt.ShutdownRequestChan); E.Chk(e) {
+		if e = indexers.DropAddrIndex(db,
+			interrupt.ShutdownRequestChan); E.Chk(e) {
 			return
 		}
 	}
 	if cx.StateCfg.DropTxIndex {
 		W.Ln("dropping transaction index")
-		if e = indexers.DropTxIndex(db, interrupt.ShutdownRequestChan); E.Chk(e) {
+		if e = indexers.DropTxIndex(db,
+			interrupt.ShutdownRequestChan); E.Chk(e) {
 			return
 		}
 	}
 	if cx.StateCfg.DropCfIndex {
 		W.Ln("dropping cfilter index")
-		if e = indexers.DropCfIndex(db, interrupt.ShutdownRequestChan); E.Chk(e) {
+		if e = indexers.DropCfIndex(db,
+			interrupt.ShutdownRequestChan); E.Chk(e) {
 			return
 		}
 	}
@@ -192,21 +195,23 @@ func NodeMain(cx *state.State) (e error) {
 		D.Ln("sending back node")
 		cx.NodeChan <- cx.RPCServer
 	}
-	D.Ln("starting controller")
-	cx.Controller, e = ctrl.New(
-		cx.Syncing,
-		cx.Config,
-		cx.StateCfg,
-		cx.RealNode,
-		cx.RPCServer.Cfg.ConnMgr,
-		mempoolUpdateChan,
-		uint64(cx.Config.UUID.V()),
-		cx.KillAll,
-		cx.RealNode.StartController, cx.RealNode.StopController,
-	)
-	go cx.Controller.Run()
-	cx.Controller.Start()
-	D.Ln("controller started")
+	if cx.Config.Controller.True() {
+		D.Ln("starting controller", cx.Config.Controller.True())
+		cx.Controller, e = ctrl.New(
+			cx.Syncing,
+			cx.Config,
+			cx.StateCfg,
+			cx.RealNode,
+			cx.RPCServer.Cfg.ConnMgr,
+			mempoolUpdateChan,
+			uint64(cx.Config.UUID.V()),
+			cx.KillAll,
+			cx.RealNode.StartController, cx.RealNode.StopController,
+		)
+		go cx.Controller.Run()
+		cx.Controller.Start()
+		D.Ln("controller started")
+	}
 	once := true
 	gracefulShutdown := func() {
 		if !once {
@@ -216,8 +221,10 @@ func NodeMain(cx *state.State) (e error) {
 			once = false
 		}
 		D.Ln("gracefully shutting down the server...")
-		D.Ln("stopping controller")
-		cx.Controller.Shutdown()
+		if cx.Config.Controller.True() {
+			D.Ln("stopping controller")
+			cx.Controller.Shutdown()
+		}
 		D.Ln("stopping server")
 		e := server.Stop()
 		if e != nil {
@@ -276,7 +283,9 @@ func loadBlockDB(cx *state.State) (db database.DB, e error) {
 	}
 	I.F("loading block database from '%s'", dbPath)
 	I.Ln(database.SupportedDrivers())
-	if db, e = database.Open(cx.Config.DbType.V(), dbPath, cx.ActiveNet.Net); E.Chk(e) {
+	if db, e = database.Open(cx.Config.DbType.V(),
+		dbPath,
+		cx.ActiveNet.Net); E.Chk(e) {
 		T.Ln(e) // return the error if it's not because the database doesn't exist
 		if dbErr, ok := e.(database.DBError); !ok || dbErr.ErrorCode !=
 			database.ErrDbDoesNotExist {
