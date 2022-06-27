@@ -146,6 +146,10 @@ func main() {
 	Tag = maxString
 	PathBase = tr.Filesystem.Root() + "/"
 	// I.Ln(PathBase)
+	if bumptag {
+		Tag = fmt.Sprintf("v%d.%d.%d", Major, Minor, Patch)
+	}
+
 	versionFile := `package version
 
 ` + `//go:generate go run ./update/.
