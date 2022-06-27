@@ -54,14 +54,18 @@ func main() {
 				var split []string
 				out := strings.ReplaceAll(list[i], "%datadir", datadir)
 				split = strings.Split(out, " ")
-				// fmt.Printf("executing item %d of list '%v' '%v' '%v'\n",
-				// 	i, os.Args[1], split[0], split[1:],
-				// )
+				fmt.Fprintf(os.Stderr,
+					"executing item %d of list '%v' '%v' '%v'\n",
+					i, os.Args[1], split[0], split[1:],
+				)
 				var cmd *exec.Cmd
 				scriptPath := filepath.Join(appdata.Dir("stroy", false),
 					"stroy.sh",
 				)
 				apputil.EnsureDir(scriptPath)
+				if len(os.Args) > 2 {
+					split = append(split, os.Args[2:]...)
+				}
 				if e = ioutil.WriteFile(
 					scriptPath,
 					[]byte(strings.Join(split, " ")),
