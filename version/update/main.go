@@ -247,7 +247,7 @@ func bumpTag(major, minor, patch int) {
 		commitMsg = strings.Join(os.Args[2:], " ")
 	}
 
-	cmd = exec.Command("git", "commit", fmt.Sprintf("-m'%s'", commitMsg))
+	cmd = exec.Command("git", "commit", fmt.Sprintf("-m%s", commitMsg))
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr
