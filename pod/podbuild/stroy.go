@@ -33,6 +33,7 @@ type command struct {
 var ldFlags []string
 
 func main() {
+	fmt.Fprintln(os.Stderr, os.Args)
 	var e error
 	var ok bool
 	var home string
