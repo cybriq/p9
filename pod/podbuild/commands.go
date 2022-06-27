@@ -9,6 +9,10 @@ var commands = map[string][]string{
 		"go generate ./version/.",
 		"go install -v ./pod/.",
 	},
+	"release": {
+		"go generate ./version/.",
+		"go install -v -ldflags '-w -s' ./pod/.",
+	},
 	"gui": {
 		"go generate ./version/.",
 		"go run -v ./pod/. gui",
