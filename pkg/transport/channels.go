@@ -19,14 +19,15 @@ import (
 )
 
 const (
-	UDPMulticastAddress     = "224.0.0.1"
-	success             int = iota // this is implicit zero of an int but starts the iota
+	success int = iota // this is implicit zero of an int but starts the iota
 	closed
 	other
-	DefaultPort = 11049
+	UDPMulticastIP = "224.0.0.1"
+	DefaultPort    = 11049
 )
 
-var DefaultIP = net.IPv4(224, 0, 0, 1)
+var DefaultIP = net.ParseIP(UDPMulticastIP)
+
 var MulticastAddress = &net.UDPAddr{IP: DefaultIP, Port: DefaultPort}
 
 type (
@@ -247,7 +248,7 @@ func NewBroadcastChannel(
 func NewBroadcaster(port int, maxDatagramSize int) (
 	conn *net.UDPConn, e error,
 ) {
-	address := net.JoinHostPort(UDPMulticastAddress, fmt.Sprint(port))
+	address := net.JoinHostPort(UDPMulticastIP, fmt.Sprint(port))
 	if conn, e = NewSender(address, maxDatagramSize); E.Chk(e) {
 	}
 	return

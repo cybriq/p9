@@ -93,7 +93,7 @@ func GetNew(
 	if e = log.SetLogWriteToFile(
 		s.Config.LogDir.V(),
 		s.Config.RunningCommand.Name,
-	); E.Chk(e) {
+	); D.Chk(e) {
 	}
 	// set up TLS stuff if it hasn't been set up yet. We assume if the configured values correspond to files the files
 	// are valid TLS cert/pairs, and that the key will be absent if onetimetlskey was set
@@ -102,7 +102,7 @@ func GetNew(
 			!apputil.FileExists(s.Config.RPCCert.V()) ||
 			!apputil.FileExists(s.Config.CAFile.V())) {
 		D.Ln("generating TLS certificates")
-		I.Ln(s.Config.RPCKey.V(), s.Config.RPCCert.V(), s.Config.RPCKey.V())
+		D.Ln(s.Config.RPCKey.V(), s.Config.RPCCert.V(), s.Config.RPCKey.V())
 		// Create directories for cert and key files if they do not yet exist.
 		certDir, _ := filepath.Split(s.Config.RPCCert.V())
 		keyDir, _ := filepath.Split(s.Config.RPCKey.V())

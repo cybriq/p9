@@ -249,7 +249,7 @@ func (c *Config) loadConfig(path string) (e error) {
 // WriteToFile writes the current config to a file as json
 func (c *Config) WriteToFile(filename string) (e error) {
 	var j []byte
-	I.S(c.MulticastPass.Bytes())
+	D.S(c.MulticastPass.Bytes())
 	wpp := c.WalletPass.Bytes()
 	wp := make([]byte, len(wpp))
 	copy(wp, wpp)

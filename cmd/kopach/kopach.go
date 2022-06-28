@@ -251,7 +251,7 @@ func Run(cx *state.State) (e error) {
 		D.Ln("finished kopach miner work loop")
 		log.LogChanDisabled.Store(true)
 	}()
-	D.Ln("listening on", constant.UDP4MulticastAddress)
+	D.Ln("listening on", transport.MulticastAddress)
 	<-w.quit
 	I.Ln("kopach shutting down") // , interrupt.GoroutineDump())
 	// <-interrupt.HandlersDone

@@ -202,7 +202,7 @@ func SetLogWriteToFile(path, appName string) (e error) {
 		path, os.O_RDWR|os.O_CREATE|os.O_TRUNC,
 		0600,
 	); e != nil {
-		fmt.Fprintln(os.Stderr, "unable to write log to", path, "error:", e)
+		// fmt.Fprintln(os.Stderr, "unable to write log to", path, "error:", e)
 		return
 	}
 	mw := io.MultiWriter(os.Stderr, fileWriter)
