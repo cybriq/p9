@@ -282,7 +282,7 @@ func loadBlockDB(cx *state.State) (db database.DB, e error) {
 		D.Ln("failed to remove regression db:", e)
 	}
 	I.F("loading block database from '%s'", dbPath)
-	I.Ln(database.SupportedDrivers())
+	D.Ln("Supported database types", database.SupportedDrivers())
 	if db, e = database.Open(cx.Config.DbType.V(),
 		dbPath,
 		cx.ActiveNet.Net); E.Chk(e) {

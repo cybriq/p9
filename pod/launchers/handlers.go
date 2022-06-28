@@ -25,7 +25,6 @@ func NodeHandle(ifc interface{}) (e error) {
 	if cx, ok = ifc.(*state.State); !ok {
 		return fmt.Errorf("cannot run without a state")
 	}
-	I.Ln("running node handler")
 	cx.NodeReady = qu.T()
 	cx.Node.Store(false)
 	// // serviceOptions defines the configuration options for the daemon as a service on Windows.
@@ -59,7 +58,7 @@ func NodeHandle(ifc interface{}) (e error) {
 	}
 	// }
 	cx.WaitWait()
-	I.Ln("node is now fully shut down")
+	D.Ln("node is now fully shut down")
 	cx.WaitGroup.Wait()
 	<-cx.KillAll
 	return nil
