@@ -34,7 +34,8 @@ func Main() (quit qu.C) {
 		T.Ln(version.Get())
 		var cx *state.State
 		var e error
-		if cx, e = state.GetNew(podcfgs.GetDefaultConfig(),
+		if cx, e = state.GetNew(
+			podcfgs.GetDefaultConfig(),
 			podhelp.HelpFunction, quit,
 		); E.Chk(e) {
 			fail()

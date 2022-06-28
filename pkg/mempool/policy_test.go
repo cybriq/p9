@@ -2,12 +2,13 @@ package mempool
 
 import (
 	"bytes"
+	"testing"
+	"time"
+
 	"github.com/cybriq/p9/pkg/amt"
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/constant"
-	"testing"
-	"time"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	ec "github.com/cybriq/p9/pkg/ecc"

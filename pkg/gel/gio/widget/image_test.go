@@ -29,7 +29,8 @@ func TestImageScale(t *testing.T) {
 	expectedSize.X = int(float32(expectedSize.X) * defaultScale)
 	expectedSize.Y = int(float32(expectedSize.Y) * defaultScale)
 	if dims.Size != expectedSize {
-		t.Fatalf("non-scaled image is wrong size, expected %v, got %v",
+		t.Fatalf(
+			"non-scaled image is wrong size, expected %v, got %v",
 			expectedSize, dims.Size,
 		)
 	}
@@ -41,7 +42,8 @@ func TestImageScale(t *testing.T) {
 	expectedSize.X = int(float32(expectedSize.X) * currentScale)
 	expectedSize.Y = int(float32(expectedSize.Y) * currentScale)
 	if dims.Size != expectedSize {
-		t.Fatalf(".5 scale image is wrong size, expected %v, got %v",
+		t.Fatalf(
+			".5 scale image is wrong size, expected %v, got %v",
 			expectedSize, dims.Size,
 		)
 	}
@@ -54,7 +56,8 @@ func TestImageScale(t *testing.T) {
 	expectedSize.X = int(float32(expectedSize.X) * currentScale * gtx.Metric.PxPerDp)
 	expectedSize.Y = int(float32(expectedSize.Y) * currentScale * gtx.Metric.PxPerDp)
 	if dims.Size != expectedSize {
-		t.Fatalf("HiDPI non-scaled image is wrong size, expected %v, got %v",
+		t.Fatalf(
+			"HiDPI non-scaled image is wrong size, expected %v, got %v",
 			expectedSize, dims.Size,
 		)
 	}
@@ -67,7 +70,8 @@ func TestImageScale(t *testing.T) {
 	expectedSize.X = int(float32(expectedSize.X) * currentScale * gtx.Metric.PxPerDp)
 	expectedSize.Y = int(float32(expectedSize.Y) * currentScale * gtx.Metric.PxPerDp)
 	if dims.Size != expectedSize {
-		t.Fatalf("HiDPI .5 scale image is wrong size, expected %v, got %v",
+		t.Fatalf(
+			"HiDPI .5 scale image is wrong size, expected %v, got %v",
 			expectedSize, dims.Size,
 		)
 	}

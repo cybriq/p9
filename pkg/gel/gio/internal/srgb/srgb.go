@@ -62,7 +62,8 @@ func New(ctx gl.Context) (*FBO, error) {
 
 func (s *FBO) Blit() {
 	if !s.blitted {
-		prog, err := gl.CreateProgram(s.c, blitVSrc, blitFSrc,
+		prog, err := gl.CreateProgram(
+			s.c, blitVSrc, blitFSrc,
 			[]string{"pos", "uv"},
 		)
 		if err != nil {
@@ -73,12 +74,13 @@ func (s *FBO) Blit() {
 		s.c.Uniform1i(s.c.GetUniformLocation(prog, "tex"), 0)
 		s.quad = s.c.CreateBuffer()
 		s.c.BindBuffer(gl.ARRAY_BUFFER, s.quad)
-		coords := byteslice.Slice([]float32{
-			-1, +1, 0, 1,
-			+1, +1, 1, 1,
-			-1, -1, 0, 0,
-			+1, -1, 1, 0,
-		},
+		coords := byteslice.Slice(
+			[]float32{
+				-1, +1, 0, 1,
+				+1, +1, 1, 1,
+				-1, -1, 0, 0,
+				+1, -1, 1, 0,
+			},
 		)
 		s.c.BufferData(gl.ARRAY_BUFFER, len(coords), gl.STATIC_DRAW)
 		s.c.BufferSubData(gl.ARRAY_BUFFER, 0, coords)
@@ -115,11 +117,13 @@ func (s *FBO) Refresh(w, h int) error {
 	}
 	s.c.BindTexture(gl.TEXTURE_2D, s.colorTex)
 	if s.gl3 {
-		s.c.TexImage2D(gl.TEXTURE_2D, 0, gl.SRGB8_ALPHA8, w, h, gl.RGBA,
+		s.c.TexImage2D(
+			gl.TEXTURE_2D, 0, gl.SRGB8_ALPHA8, w, h, gl.RGBA,
 			gl.UNSIGNED_BYTE,
 		)
 	} else /* EXT_sRGB */ {
-		s.c.TexImage2D(gl.TEXTURE_2D, 0, gl.SRGB_ALPHA_EXT, w, h,
+		s.c.TexImage2D(
+			gl.TEXTURE_2D, 0, gl.SRGB_ALPHA_EXT, w, h,
 			gl.SRGB_ALPHA_EXT, gl.UNSIGNED_BYTE,
 		)
 	}
@@ -128,14 +132,17 @@ func (s *FBO) Refresh(w, h int) error {
 	s.c.RenderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, w, h)
 	s.c.BindRenderbuffer(gl.RENDERBUFFER, currentRB)
 	s.c.BindFramebuffer(gl.FRAMEBUFFER, s.frameBuffer)
-	s.c.FramebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+	s.c.FramebufferTexture2D(
+		gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
 		gl.TEXTURE_2D, s.colorTex, 0,
 	)
-	s.c.FramebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT,
+	s.c.FramebufferRenderbuffer(
+		gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT,
 		gl.RENDERBUFFER, s.depthBuffer,
 	)
 	if st := s.c.CheckFramebufferStatus(gl.FRAMEBUFFER); st != gl.FRAMEBUFFER_COMPLETE {
-		return fmt.Errorf("sRGB framebuffer incomplete (%dx%d), status: %#x error: %x",
+		return fmt.Errorf(
+			"sRGB framebuffer incomplete (%dx%d), status: %#x error: %x",
 			s.width, s.height, st, s.c.GetError(),
 		)
 	}
@@ -149,11 +156,13 @@ func (s *FBO) Refresh(w, h int) error {
 		var pixel [4]byte
 		s.c.ReadPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel[:])
 		if pixel[0] == 128 { // Correct sRGB color value is ~188
-			s.c.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, gl.RGBA,
+			s.c.TexImage2D(
+				gl.TEXTURE_2D, 0, gl.RGBA, w, h, gl.RGBA,
 				gl.UNSIGNED_BYTE,
 			)
 			if st := s.c.CheckFramebufferStatus(gl.FRAMEBUFFER); st != gl.FRAMEBUFFER_COMPLETE {
-				return fmt.Errorf("fallback RGBA framebuffer incomplete (%dx%d), status: %#x error: %x",
+				return fmt.Errorf(
+					"fallback RGBA framebuffer incomplete (%dx%d), status: %#x error: %x",
 					s.width, s.height, st, s.c.GetError(),
 				)
 			}

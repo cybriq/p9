@@ -20,7 +20,8 @@ func (wg *WalletGUI) getLoadingPage() (a *gel.App) {
 				"loading", gel.Widgets{
 					gel.WidgetSize{
 						Widget: func(gtx l.Context) l.Dimensions {
-							return a.Flex().Flexed(1,
+							return a.Flex().Flexed(
+								1,
 								a.Direction().Center().Embed(a.H1("loading").Fn).Fn,
 							).Fn(gtx)
 						},
@@ -31,7 +32,8 @@ func (wg *WalletGUI) getLoadingPage() (a *gel.App) {
 				"unlocking", gel.Widgets{
 					gel.WidgetSize{
 						Widget: func(gtx l.Context) l.Dimensions {
-							return a.Flex().Flexed(1,
+							return a.Flex().Flexed(
+								1,
 								a.Direction().Center().Embed(a.H1("unlocking").Fn).Fn,
 							).Fn(gtx)
 						},

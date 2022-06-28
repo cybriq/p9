@@ -2,6 +2,7 @@ package txscript
 
 import (
 	"fmt"
+
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chaincfg"
 )
@@ -223,7 +224,8 @@ type ScriptInfo struct {
 // pair. It will error if the pair is in someway invalid such that they can not
 // be analysed, i.e. if they do not parse or the pkScript is not a push-only
 // script
-func CalcScriptInfo(sigScript, pkScript []byte, bip16 bool) (si *ScriptInfo,
+func CalcScriptInfo(sigScript, pkScript []byte, bip16 bool) (
+	si *ScriptInfo,
 	e error,
 ) {
 	var sigPops []parsedOpcode
@@ -473,7 +475,8 @@ func PushedData(script []byte) ([][]byte, error) {
 // signatures associated with the passed PkScript. Note that it only works for
 // 'standard' transaction script types. Any data such as public keys which are
 // invalid are omitted from the results.
-func ExtractPkScriptAddrs(pkScript []byte, chainParams *chaincfg.Params,
+func ExtractPkScriptAddrs(
+	pkScript []byte, chainParams *chaincfg.Params,
 ) (ScriptClass, []btcaddr.Address, int, error) {
 	var addrs []btcaddr.Address
 	var requiredSigs int
@@ -581,7 +584,8 @@ type AtomicSwapDataPushes struct {
 // the future. This function is only defined in the txscript package due to API
 // limitations which prevent callers using txscript to parse nonstandard
 // scripts.
-func ExtractAtomicSwapDataPushes(version uint16, pkScript []byte,
+func ExtractAtomicSwapDataPushes(
+	version uint16, pkScript []byte,
 ) (*AtomicSwapDataPushes, error) {
 	pops, e := parseScript(pkScript)
 	if e != nil {

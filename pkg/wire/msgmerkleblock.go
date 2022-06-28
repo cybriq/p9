@@ -36,7 +36,8 @@ func (msg *MsgMerkleBlock) AddTxHash(hash *chainhash.Hash) (e error) {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation.
-func (msg *MsgMerkleBlock) BtcDecode(r io.Reader, pver uint32,
+func (msg *MsgMerkleBlock) BtcDecode(
+	r io.Reader, pver uint32,
 	enc MessageEncoding,
 ) (e error) {
 	if pver < BIP0037Version {
@@ -84,7 +85,8 @@ func (msg *MsgMerkleBlock) BtcDecode(r io.Reader, pver uint32,
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgMerkleBlock) BtcEncode(w io.Writer, pver uint32,
+func (msg *MsgMerkleBlock) BtcEncode(
+	w io.Writer, pver uint32,
 	enc MessageEncoding,
 ) (e error) {
 	if pver < BIP0037Version {

@@ -143,7 +143,8 @@ func (l *renderLoop) Refresh() {
 
 // Draw initiates a draw of a frame. It returns a channel
 // than signals when the frame is no longer being accessed.
-func (l *renderLoop) Draw(viewport image.Point, frameOps *op.Ops,
+func (l *renderLoop) Draw(
+	viewport image.Point, frameOps *op.Ops,
 ) <-chan struct{} {
 	if l.err != nil {
 		l.ack <- struct{}{}

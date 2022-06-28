@@ -298,7 +298,10 @@ func (wg *WalletGUI) cfwWordsVerify() (w l.Widget) {
 			),
 		).Text("back").Fn
 		if wg.createWords == wg.createMatch {
-			verifyState = wg.Inset(0.25, wg.Body1("match").Color("Success").Fn).Fn
+			verifyState = wg.Inset(
+				0.25,
+				wg.Body1("match").Color("Success").Fn,
+			).Fn
 		}
 		return wg.Flex().
 			Rigid(

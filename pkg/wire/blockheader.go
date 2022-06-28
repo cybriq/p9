@@ -2,10 +2,11 @@ package wire
 
 import (
 	"bytes"
-	"github.com/cybriq/p9/pkg/fork"
-	"github.com/cybriq/p9/pkg/forkhash"
 	"io"
 	"time"
+
+	"github.com/cybriq/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/forkhash"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 )
@@ -65,7 +66,8 @@ func (h *BlockHeader) BlockHashWithAlgos(height int32) (out chainhash.Hash) {
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation. See Deserialize for decoding block headers stored to disk, such as in a database, as opposed to
 // decoding block headers from the wire.
-func (h *BlockHeader) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding,
+func (h *BlockHeader) BtcDecode(
+	r io.Reader, pver uint32, enc MessageEncoding,
 ) (e error) {
 	return readBlockHeader(r, pver, h)
 }
@@ -73,7 +75,8 @@ func (h *BlockHeader) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding,
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation. See Serialize for encoding block headers to be stored to disk, such as in a database, as opposed to
 // encoding block headers for the wire.
-func (h *BlockHeader) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding,
+func (h *BlockHeader) BtcEncode(
+	w io.Writer, pver uint32, enc MessageEncoding,
 ) (e error) {
 	return writeBlockHeader(w, pver, h)
 }

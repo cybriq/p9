@@ -91,7 +91,8 @@ func LoadWallet(
 	// this will return an appropriate error.
 	var w *Wallet
 	T.Ln("opening existing wallet, pass:", cx.Config.WalletPass.V())
-	if w, e = loader.OpenExistingWallet(cx.Config.WalletPass.Bytes(), true,
+	if w, e = loader.OpenExistingWallet(
+		cx.Config.WalletPass.Bytes(), true,
 		cx.Config, nil,
 	); E.Chk(e) {
 		T.Ln("failed to open existing wallet")

@@ -63,7 +63,8 @@ func (m *merkleBlock) traverseAndBuild(height, pos uint32) {
 
 // NewMerkleBlock returns a new *wire.MsgMerkleBlock and an array of the matched transaction index numbers based on the
 // passed block and filter.
-func NewMerkleBlock(block *block.Block, filter *Filter) (*wire.MsgMerkleBlock,
+func NewMerkleBlock(block *block.Block, filter *Filter) (
+	*wire.MsgMerkleBlock,
 	[]uint32,
 ) {
 	numTx := uint32(len(block.Transactions()))

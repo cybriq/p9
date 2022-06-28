@@ -116,7 +116,8 @@ func (c *Counter) GetAlgoVer(height int32) (ver int32) {
 
 // NewWithConnAndSemaphore is exposed to enable use an actual network connection while retaining the same RPC API to
 // allow a worker to be configured to run on a bare metal system with a different launcher main
-func NewWithConnAndSemaphore(id string, conn *pipe.StdConn, quit qu.C,
+func NewWithConnAndSemaphore(
+	id string, conn *pipe.StdConn, quit qu.C,
 	uuid uint64,
 ) *Worker {
 	T.Ln("creating new worker")
@@ -206,7 +207,8 @@ out:
 						D.Ln("switching algorithms", w.roller.C.Load())
 						// send out broadcast containing worker nonce and algorithm and count of blocks
 						w.hashCount.Store(w.hashCount.Load() + uint64(w.roller.RoundsPerAlgo.Load()))
-						hashReport := hashrate.Get(w.roller.RoundsPerAlgo.Load(),
+						hashReport := hashrate.Get(
+							w.roller.RoundsPerAlgo.Load(),
 							vers, newHeight, w.id,
 						)
 						e := w.dispatchConn.SendMany(
@@ -235,10 +237,12 @@ out:
 					hash := blockHeader.BlockHashWithAlgos(newHeight)
 					bigHash := blockchain.HashToBig(&hash)
 					if bigHash.Cmp(bits.CompactToBig(blockHeader.Bits)) <= 0 {
-						D.Ln("found solution", newHeight,
+						D.Ln(
+							"found solution", newHeight,
 							w.templatesMessage.Nonce, w.templatesMessage.UUID,
 						)
-						srs := sol.Encode(w.templatesMessage.Nonce,
+						srs := sol.Encode(
+							w.templatesMessage.Nonce,
 							w.templatesMessage.UUID, blockHeader,
 						)
 						e := w.dispatchConn.SendMany(

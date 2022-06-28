@@ -25,7 +25,8 @@ func TestChainSvrWsNtfns(t *testing.T) {
 		{
 			name: "blockconnected",
 			newNtfn: func() (interface{}, error) {
-				return btcjson.NewCmd("blockconnected", "123", 100000,
+				return btcjson.NewCmd(
+					"blockconnected", "123", 100000,
 					123456789,
 				)
 			},
@@ -42,12 +43,14 @@ func TestChainSvrWsNtfns(t *testing.T) {
 		{
 			name: "blockdisconnected",
 			newNtfn: func() (interface{}, error) {
-				return btcjson.NewCmd("blockdisconnected", "123", 100000,
+				return btcjson.NewCmd(
+					"blockdisconnected", "123", 100000,
 					123456789,
 				)
 			},
 			staticNtfn: func() interface{} {
-				return btcjson.NewBlockDisconnectedNtfn("123", 100000,
+				return btcjson.NewBlockDisconnectedNtfn(
+					"123", 100000,
 					123456789,
 				)
 			},
@@ -61,12 +64,14 @@ func TestChainSvrWsNtfns(t *testing.T) {
 		{
 			name: "filteredblockconnected",
 			newNtfn: func() (interface{}, error) {
-				return btcjson.NewCmd("filteredblockconnected", 100000,
+				return btcjson.NewCmd(
+					"filteredblockconnected", 100000,
 					"header", []string{"tx0", "tx1"},
 				)
 			},
 			staticNtfn: func() interface{} {
-				return btcjson.NewFilteredBlockConnectedNtfn(100000, "header",
+				return btcjson.NewFilteredBlockConnectedNtfn(
+					100000, "header",
 					[]string{"tx0", "tx1"},
 				)
 			},
@@ -80,12 +85,14 @@ func TestChainSvrWsNtfns(t *testing.T) {
 		{
 			name: "filteredblockdisconnected",
 			newNtfn: func() (interface{}, error) {
-				return btcjson.NewCmd("filteredblockdisconnected", 100000,
+				return btcjson.NewCmd(
+					"filteredblockdisconnected", 100000,
 					"header",
 				)
 			},
 			staticNtfn: func() interface{} {
-				return btcjson.NewFilteredBlockDisconnectedNtfn(100000,
+				return btcjson.NewFilteredBlockDisconnectedNtfn(
+					100000,
 					"header",
 				)
 			},
@@ -98,7 +105,8 @@ func TestChainSvrWsNtfns(t *testing.T) {
 		{
 			name: "recvtx",
 			newNtfn: func() (interface{}, error) {
-				return btcjson.NewCmd("recvtx", "001122",
+				return btcjson.NewCmd(
+					"recvtx", "001122",
 					`{"height":100000,"hash":"123","index":0,"time":12345678}`,
 				)
 			},
@@ -125,7 +133,8 @@ func TestChainSvrWsNtfns(t *testing.T) {
 		{
 			name: "redeemingtx",
 			newNtfn: func() (interface{}, error) {
-				return btcjson.NewCmd("redeemingtx", "001122",
+				return btcjson.NewCmd(
+					"redeemingtx", "001122",
 					`{"height":100000,"hash":"123","index":0,"time":12345678}`,
 				)
 			},
@@ -196,7 +205,8 @@ func TestChainSvrWsNtfns(t *testing.T) {
 		{
 			name: "txacceptedverbose",
 			newNtfn: func() (interface{}, error) {
-				return btcjson.NewCmd("txacceptedverbose",
+				return btcjson.NewCmd(
+					"txacceptedverbose",
 					`{"hex":"001122","txid":"123","version":1,"locktime":4294967295,"vin":null,"vout":null,"confirmations":0}`,
 				)
 			},
@@ -244,14 +254,16 @@ func TestChainSvrWsNtfns(t *testing.T) {
 		// Marshal the notification as created by the new static creation function.  The ID is nil for notifications.
 		marshalled, e := btcjson.MarshalCmd(nil, test.staticNtfn())
 		if e != nil {
-			t.Errorf("MarshalCmd #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"MarshalCmd #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		if !bytes.Equal(marshalled, []byte(test.marshalled)) {
-			t.Errorf("Test #%d (%s) unexpected marshalled data - "+
-				"got %s, want %s", i, test.name, marshalled,
+			t.Errorf(
+				"Test #%d (%s) unexpected marshalled data - "+
+					"got %s, want %s", i, test.name, marshalled,
 				test.marshalled,
 			)
 			continue
@@ -259,7 +271,8 @@ func TestChainSvrWsNtfns(t *testing.T) {
 		// Ensure the notification is created without error via the generic new notification creation function.
 		cmd, e := test.newNtfn()
 		if e != nil {
-			t.Errorf("Test #%d (%s) unexpected NewCmd error: %v ",
+			t.Errorf(
+				"Test #%d (%s) unexpected NewCmd error: %v ",
 				i, test.name, e,
 			)
 		}
@@ -267,36 +280,41 @@ func TestChainSvrWsNtfns(t *testing.T) {
 		// notifications.
 		marshalled, e = btcjson.MarshalCmd(nil, cmd)
 		if e != nil {
-			t.Errorf("MarshalCmd #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"MarshalCmd #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		if !bytes.Equal(marshalled, []byte(test.marshalled)) {
-			t.Errorf("Test #%d (%s) unexpected marshalled data - "+
-				"got %s, want %s", i, test.name, marshalled,
+			t.Errorf(
+				"Test #%d (%s) unexpected marshalled data - "+
+					"got %s, want %s", i, test.name, marshalled,
 				test.marshalled,
 			)
 			continue
 		}
 		var request btcjson.Request
 		if e = json.Unmarshal(marshalled, &request); E.Chk(e) {
-			t.Errorf("Test #%d (%s) unexpected error while "+
-				"unmarshalling JSON-RPC request: %v", i,
+			t.Errorf(
+				"Test #%d (%s) unexpected error while "+
+					"unmarshalling JSON-RPC request: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		cmd, e = btcjson.UnmarshalCmd(&request)
 		if e != nil {
-			t.Errorf("UnmarshalCmd #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"UnmarshalCmd #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		if !reflect.DeepEqual(cmd, test.unmarshalled) {
-			t.Errorf("Test #%d (%s) unexpected unmarshalled command "+
-				"- got %s, want %s", i, test.name,
+			t.Errorf(
+				"Test #%d (%s) unexpected unmarshalled command "+
+					"- got %s, want %s", i, test.name,
 				fmt.Sprintf("(%T) %+[1]v", cmd),
 				fmt.Sprintf("(%T) %+[1]v\n", test.unmarshalled),
 			)

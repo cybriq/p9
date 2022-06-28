@@ -62,7 +62,11 @@ func IsValidIDType(id interface{}) bool {
 
 // MarshalResponse marshals the passed id, result, and RPCError to a JSON-RPC response byte slice that is suitable for
 // transmission to a JSON-RPC client.
-func MarshalResponse(id interface{}, result interface{}, rpcErr *RPCError) ([]byte, error) {
+func MarshalResponse(
+	id interface{},
+	result interface{},
+	rpcErr *RPCError,
+) ([]byte, error) {
 	marshalledResult, e := json.Marshal(result)
 	if e != nil {
 		E.Ln(e)
@@ -89,7 +93,11 @@ func NewRPCError(code RPCErrorCode, message string) *RPCError {
 // provided in case the caller wants to construct raw requests for some reason. Typically callers will instead want to
 // create a registered concrete command type with the NewCmd or New<Foo>Cmd functions and call the MarshalCmd function
 // with that command to generate the marshalled JSON-RPC request.
-func NewRequest(id interface{}, method string, params []interface{}) (rq *Request, e error) {
+func NewRequest(
+	id interface{},
+	method string,
+	params []interface{},
+) (rq *Request, e error) {
 	if !IsValidIDType(id) {
 		str := fmt.Sprintf("the id of type '%T' is invalid", id)
 		return nil, makeError(ErrInvalidType, str)
@@ -117,7 +125,11 @@ func NewRequest(id interface{}, method string, params []interface{}) (rq *Reques
 // function is only provided in case the caller wants to construct raw responses for some reason. Typically callers will
 // instead want to create the fully marshalled JSON-RPC response to send over the wire with the MarshalResponse
 // function.
-func NewResponse(id interface{}, marshalledResult []byte, rpcErr *RPCError) (*Response, error) {
+func NewResponse(
+	id interface{},
+	marshalledResult []byte,
+	rpcErr *RPCError,
+) (*Response, error) {
 	if !IsValidIDType(id) {
 		str := fmt.Sprintf("the id of type '%T' is invalid", id)
 		return nil, makeError(ErrInvalidType, str)

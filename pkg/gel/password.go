@@ -138,7 +138,8 @@ func (p *Password) Fn(gtx l.Context) l.Dimensions {
 					p.Flex().
 						Flexed(
 							1,
-							p.Inset(0.25,
+							p.Inset(
+								0.25,
 								p.passInput.Color(p.borderColor).HintColor(p.borderColorUnfocused).Fn,
 							).Fn,
 						).

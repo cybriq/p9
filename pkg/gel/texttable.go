@@ -43,17 +43,19 @@ func (tt *TextTable) Regenerate(fully bool) {
 		tt.Table.header = tt.Table.header[:0]
 		// this only has to be created once
 		for i := range tt.Header {
-			tt.Table.header = append(tt.Table.header, Cell{
-				Widget: // tt.Theme.Fill(tt.HeaderBackground,
-				tt.Inset(tt.CellInset,
-					tt.Body1(tt.Header[i]).
-						Color(tt.HeaderColor).
-						TextScale(tt.HeaderFontScale).
-						Font(tt.HeaderFont).MaxLines(1).
-						Fn,
-				).Fn,
-				// ).Fn,
-			},
+			tt.Table.header = append(
+				tt.Table.header, Cell{
+					Widget: // tt.Theme.Fill(tt.HeaderBackground,
+					tt.Inset(
+						tt.CellInset,
+						tt.Body1(tt.Header[i]).
+							Color(tt.HeaderColor).
+							TextScale(tt.HeaderFontScale).
+							Font(tt.HeaderFont).MaxLines(1).
+							Fn,
+					).Fn,
+					// ).Fn,
+				},
 			)
 		}
 	}
@@ -85,7 +87,8 @@ func (tt *TextTable) Regenerate(fully bool) {
 		var row CellRow
 		for j := range tt.Body[i] {
 			tt.Table.body[i][j] = Cell{
-				Widget: tt.Inset(0.25,
+				Widget: tt.Inset(
+					0.25,
 					tt.Body1(tt.Body[i][j]).
 						Color(tt.CellColor).
 						TextScale(tt.CellFontScale).

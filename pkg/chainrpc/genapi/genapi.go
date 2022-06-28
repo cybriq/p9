@@ -4,10 +4,11 @@
 package main
 
 import (
-	"github.com/cybriq/p9/pkg/log"
 	"os"
 	"sort"
 	"text/template"
+
+	"github.com/cybriq/p9/pkg/log"
 )
 
 const (
@@ -494,7 +495,11 @@ func (r *CAPIClient) {{.Handler}}(cmd ...{{.Cmd}}) (res {{.ResType}}, e error) {
 `
 	log.SetLogLevel("trace")
 	if fd, e := os.Create("rpchandlers.go"); E.Chk(e) {
-		if fd, e := os.OpenFile("rpchandlers.go", os.O_RDWR|os.O_CREATE, 0755); E.Chk(e) {
+		if fd, e := os.OpenFile(
+			"rpchandlers.go",
+			os.O_RDWR|os.O_CREATE,
+			0755,
+		); E.Chk(e) {
 		} else {
 			defer fd.Close()
 			t := template.Must(template.New("noderpc").Parse(NodeRPCHandlerTpl))

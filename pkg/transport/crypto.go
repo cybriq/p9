@@ -10,7 +10,10 @@ import (
 )
 
 // DecryptMessage attempts to decode the received message
-func DecryptMessage(creator string, ciph cipher.AEAD, data []byte) (msg []byte, e error) {
+func DecryptMessage(creator string, ciph cipher.AEAD, data []byte) (
+	msg []byte,
+	e error,
+) {
 	nonceSize := ciph.NonceSize()
 	msg, e = ciph.Open(nil, data[:nonceSize], data[nonceSize:], nil)
 	if e != nil {
@@ -24,12 +27,20 @@ func DecryptMessage(creator string, ciph cipher.AEAD, data []byte) (msg []byte, 
 // EncryptMessage encrypts a message, if the nonce is given it uses that
 // otherwise it generates a new one. If there is no cipher this just returns a
 // message with the given magic prepended.
-func EncryptMessage(creator string, ciph cipher.AEAD, magic []byte, nonce, data []byte) (msg []byte, e error) {
+func EncryptMessage(
+	creator string,
+	ciph cipher.AEAD,
+	magic []byte,
+	nonce, data []byte,
+) (msg []byte, e error) {
 	if ciph != nil {
 		if nonce == nil {
 			nonce, e = GetNonce(ciph)
 		}
-		msg = append(append(magic, nonce...), ciph.Seal(nil, nonce, data, nil)...)
+		msg = append(
+			append(magic, nonce...),
+			ciph.Seal(nil, nonce, data, nil)...,
+		)
 	} else {
 		msg = append(magic, data...)
 	}

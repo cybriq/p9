@@ -1,3 +1,4 @@
+//go:build linux || freebsd || openbsd
 // +build linux freebsd openbsd
 
 package clipboard
@@ -6,7 +7,7 @@ import (
 	"fmt"
 	"os"
 	"time"
-	
+
 	"github.com/BurntSushi/xgb"
 	"github.com/BurntSushi/xgb/xproto"
 )
@@ -31,9 +32,9 @@ func Start() {
 	// first, check if X is running as only X has the Primary buffer
 	env := os.Environ()
 	for i := range env {
-		if env[i]=="XDG_SESSION_TYPE=x11" {
+		if env[i] == "XDG_SESSION_TYPE=x11" {
 			I.Ln("running X11, primary selection buffer enabled")
-			RunningX=true
+			RunningX = true
 			break
 		}
 	}
@@ -85,28 +86,43 @@ func Start() {
 	go eventLoop()
 }
 
-func Set(text string) (e error){
+func Set(text string) (e error) {
 	if !RunningX {
 		return
 	}
 	clipboardText = text
-	ssoc := xproto.SetSelectionOwnerChecked(X, win, clipboardAtom, xproto.TimeCurrentTime)
+	ssoc := xproto.SetSelectionOwnerChecked(
+		X,
+		win,
+		clipboardAtom,
+		xproto.TimeCurrentTime,
+	)
 	if e = ssoc.Check(); E.Chk(e) {
 		fmt.Fprintf(os.Stderr, "Error setting clipboard: %v", e)
 	}
-	ssoc = xproto.SetSelectionOwnerChecked(X, win, primaryAtom, xproto.TimeCurrentTime)
+	ssoc = xproto.SetSelectionOwnerChecked(
+		X,
+		win,
+		primaryAtom,
+		xproto.TimeCurrentTime,
+	)
 	if e = ssoc.Check(); E.Chk(e) {
 		fmt.Fprintf(os.Stderr, "Error setting primary selection: %v", e)
 	}
 	return
 }
 
-func SetPrimary(text string) (e error){
+func SetPrimary(text string) (e error) {
 	if !RunningX {
 		return
 	}
 	clipboardText = text
-	ssoc := xproto.SetSelectionOwnerChecked(X, win, primaryAtom, xproto.TimeCurrentTime)
+	ssoc := xproto.SetSelectionOwnerChecked(
+		X,
+		win,
+		primaryAtom,
+		xproto.TimeCurrentTime,
+	)
 	if e = ssoc.Check(); E.Chk(e) {
 		fmt.Fprintf(os.Stderr, "Error setting primary selection: %v", e)
 	}
@@ -128,19 +144,34 @@ func GetPrimary() string {
 }
 
 func getSelection(selAtom xproto.Atom) string {
-	csc := xproto.ConvertSelectionChecked(X, win, selAtom, textAtom, selAtom, xproto.TimeCurrentTime)
+	csc := xproto.ConvertSelectionChecked(
+		X,
+		win,
+		selAtom,
+		textAtom,
+		selAtom,
+		xproto.TimeCurrentTime,
+	)
 	e := csc.Check()
 	if e != nil {
 		fmt.Fprintln(os.Stderr, e)
 		return ""
 	}
-	
+
 	select {
 	case r := <-selnotify:
 		if !r {
 			return ""
 		}
-		gpc := xproto.GetProperty(X, true, win, selAtom, textAtom, 0, 5*1024*1024)
+		gpc := xproto.GetProperty(
+			X,
+			true,
+			win,
+			selAtom,
+			textAtom,
+			0,
+			5*1024*1024,
+		)
 		gpr, e := gpc.Reply()
 		if e != nil {
 			fmt.Fprintln(os.Stderr, e)
@@ -180,7 +211,7 @@ func eventLoop() {
 				)
 			}
 			t := clipboardText
-			
+
 			switch evt.Target {
 			case textAtom:
 				if debugClipboardRequests {
@@ -202,7 +233,7 @@ func eventLoop() {
 				} else {
 					fmt.Fprintln(os.Stderr, e)
 				}
-			
+
 			case targetsAtom:
 				if debugClipboardRequests {
 					fmt.Fprintln(os.Stderr, "Sending targets")
@@ -211,7 +242,7 @@ func eventLoop() {
 				for i, atom := range targetAtoms {
 					xgb.Put32(buf[i*4:], uint32(atom))
 				}
-				
+
 				_ = xproto.ChangePropertyChecked(
 					X,
 					xproto.PropModeReplace,
@@ -227,7 +258,7 @@ func eventLoop() {
 				} else {
 					fmt.Fprintln(os.Stderr, e)
 				}
-			
+
 			default:
 				if debugClipboardRequests {
 					fmt.Fprintln(os.Stderr, "Skipping")
@@ -235,7 +266,7 @@ func eventLoop() {
 				evt.Property = 0
 				sendSelectionNotify(evt)
 			}
-		
+
 		case xproto.SelectionNotifyEvent:
 			selnotify <- (evt.Property == clipboardAtom) || (evt.Property == primaryAtom)
 		}
@@ -246,12 +277,12 @@ func lookupAtom(at xproto.Atom) string {
 	if s, ok := clipboardAtomCache[at]; ok {
 		return s
 	}
-	
+
 	reply, e := xproto.GetAtomName(X, at).Reply()
 	if e != nil {
 		panic(e)
 	}
-	
+
 	// If we're here, it means we didn't have the ATOM id cached. So cache it.
 	atomName := string(reply.Name)
 	clipboardAtomCache[at] = atomName
@@ -267,7 +298,13 @@ func sendSelectionNotify(ev xproto.SelectionRequestEvent) {
 		Property:  ev.Property,
 	}
 	var e error
-	sec := xproto.SendEventChecked(X, false, ev.Requestor, 0, string(sn.Bytes()))
+	sec := xproto.SendEventChecked(
+		X,
+		false,
+		ev.Requestor,
+		0,
+		string(sn.Bytes()),
+	)
 	if e = sec.Check(); E.Chk(e) {
 		fmt.Fprintln(os.Stderr, e)
 	}

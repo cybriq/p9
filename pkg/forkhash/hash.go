@@ -1,8 +1,9 @@
 package forkhash
 
 import (
-	"github.com/cybriq/p9/pkg/fork"
 	"math/big"
+
+	"github.com/cybriq/p9/pkg/fork"
 
 	skein "github.com/enceve/crypto/skein/skein256"
 	gost "github.com/programmer10110/gostreebog"

@@ -67,7 +67,14 @@ func (d *AndroidTestDriver) Start(path string) {
 	// the top doesn't mess with our screenshots.
 	// TODO(mvdan): is there a way to do this via gio, so that we don't need
 	// to set up a global Android setting via the shell?
-	d.adb("shell", "settings", "put", "global", "policy_control", "immersive.full="+appid)
+	d.adb(
+		"shell",
+		"settings",
+		"put",
+		"global",
+		"policy_control",
+		"immersive.full="+appid,
+	)
 
 	// Make sure the app isn't already running.
 	d.adb("shell", "pm", "clear", appid)
@@ -75,7 +82,8 @@ func (d *AndroidTestDriver) Start(path string) {
 	// Start listening for log messages.
 	{
 		ctx, cancel := context.WithCancel(context.Background())
-		cmd := exec.CommandContext(ctx, d.adbPath,
+		cmd := exec.CommandContext(
+			ctx, d.adbPath,
 			"logcat",
 			"-s",       // suppress other logs
 			"-T1",      // don't show previous log messages

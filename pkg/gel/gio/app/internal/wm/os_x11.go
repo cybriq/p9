@@ -164,7 +164,8 @@ func (w *x11Window) setOptions() {
 	defer C.free(unsafe.Pointer(ctitle))
 	C.XStoreName(w.x, w.xw, ctitle)
 	// set _NET_WM_NAME as well for UTF-8 support in window title.
-	C.XSetTextProperty(w.x, w.xw,
+	C.XSetTextProperty(
+		w.x, w.xw,
 		&C.XTextProperty{
 			value:    (*C.uchar)(unsafe.Pointer(ctitle)),
 			encoding: w.atoms.utf8string,
@@ -210,7 +211,8 @@ func (w *x11Window) SetWindowMode(mode WindowMode) {
 	case Windowed:
 		C.XDeleteProperty(w.x, w.xw, w.atoms.wmStateFullscreen)
 	case Fullscreen:
-		C.XChangeProperty(w.x, w.xw, w.atoms.wmState, C.XA_ATOM,
+		C.XChangeProperty(
+			w.x, w.xw, w.atoms.wmState, C.XA_ATOM,
 			32, C.PropModeReplace,
 			(*C.uchar)(unsafe.Pointer(&w.atoms.wmStateFullscreen)), 1,
 		)
@@ -269,7 +271,10 @@ func (w *x11Window) Close() {
 var x11OneByte = make([]byte, 1)
 
 func (w *x11Window) wakeup() {
-	if _, err := syscall.Write(w.notify.write, x11OneByte); err != nil && err != syscall.EAGAIN {
+	if _, err := syscall.Write(
+		w.notify.write,
+		x11OneByte,
+	); err != nil && err != syscall.EAGAIN {
 		panic(fmt.Errorf("failed to write to pipe: %v", err))
 	}
 }
@@ -317,7 +322,10 @@ loop:
 				// Clear poll events.
 				*xEvents = 0
 				// Wait for X event or gio notification.
-				if _, err := syscall.Poll(pollfds, -1); err != nil && err != syscall.EINTR {
+				if _, err := syscall.Poll(
+					pollfds,
+					-1,
+				); err != nil && err != syscall.EINTR {
 					panic(fmt.Errorf("x11 loop: poll failed: %w", err))
 				}
 				switch {
@@ -339,25 +347,28 @@ loop:
 				break
 			}
 			if err != nil {
-				panic(fmt.Errorf("x11 loop: read from notify pipe failed: %w",
-					err,
-				),
+				panic(
+					fmt.Errorf(
+						"x11 loop: read from notify pipe failed: %w",
+						err,
+					),
 				)
 			}
 		}
 
 		if anim || syn {
-			w.w.Event(FrameEvent{
-				FrameEvent: system.FrameEvent{
-					Now: time.Now(),
-					Size: image.Point{
-						X: w.width,
-						Y: w.height,
+			w.w.Event(
+				FrameEvent{
+					FrameEvent: system.FrameEvent{
+						Now: time.Now(),
+						Size: image.Point{
+							X: w.width,
+							Y: w.height,
+						},
+						Metric: w.cfg,
 					},
-					Metric: w.cfg,
+					Sync: syn,
 				},
-				Sync: syn,
-			},
 			)
 		}
 		w.mu.Lock()
@@ -368,7 +379,8 @@ loop:
 		w.mu.Unlock()
 		if readClipboard {
 			C.XDeleteProperty(w.x, w.xw, w.atoms.clipboardContent)
-			C.XConvertSelection(w.x, w.atoms.clipboard, w.atoms.utf8string,
+			C.XConvertSelection(
+				w.x, w.atoms.clipboard, w.atoms.utf8string,
 				w.atoms.clipboardContent, w.xw, C.CurrentTime,
 			)
 		}
@@ -441,7 +453,8 @@ func (h *x11EventHandler) handleEvents() bool {
 				}
 			case C.XkbStateNotify:
 				state := (*C.XkbStateNotifyEvent)(unsafe.Pointer(xev))
-				h.w.xkb.UpdateMask(uint32(state.base_mods),
+				h.w.xkb.UpdateMask(
+					uint32(state.base_mods),
 					uint32(state.latched_mods), uint32(state.locked_mods),
 					uint32(state.base_group), uint32(state.latched_group),
 					uint32(state.locked_group),
@@ -511,17 +524,18 @@ func (h *x11EventHandler) handleEvents() bool {
 			w.pointerBtns = 0
 		case C.MotionNotify:
 			mevt := (*C.XMotionEvent)(unsafe.Pointer(xev))
-			w.w.Event(pointer.Event{
-				Type:    pointer.Move,
-				Source:  pointer.Mouse,
-				Buttons: w.pointerBtns,
-				Position: f32.Point{
-					X: float32(mevt.x),
-					Y: float32(mevt.y),
+			w.w.Event(
+				pointer.Event{
+					Type:    pointer.Move,
+					Source:  pointer.Mouse,
+					Buttons: w.pointerBtns,
+					Position: f32.Point{
+						X: float32(mevt.x),
+						Y: float32(mevt.y),
+					},
+					Time:      time.Duration(mevt.time) * time.Millisecond,
+					Modifiers: w.xkb.Modifiers(),
 				},
-				Time:      time.Duration(mevt.time) * time.Millisecond,
-				Modifiers: w.xkb.Modifiers(),
-			},
 			)
 		case C.Expose: // update
 			// redraw only on the last expose event
@@ -553,7 +567,8 @@ func (h *x11EventHandler) handleEvents() bool {
 				// Ignore non-utf-8 encoded strings.
 				break
 			}
-			str := C.GoStringN((*C.char)(unsafe.Pointer(text.value)),
+			str := C.GoStringN(
+				(*C.char)(unsafe.Pointer(text.value)),
 				C.int(text.nitems),
 			)
 			w.w.Event(clipboard.Event{Text: str})
@@ -588,7 +603,8 @@ func (h *x11EventHandler) handleEvents() bool {
 					// GTK clients need this.
 					C.long(w.atoms.gtk_text_buffer_contents),
 				}
-				C.XChangeProperty(w.x, cevt.requestor, cevt.property,
+				C.XChangeProperty(
+					w.x, cevt.requestor, cevt.property,
 					w.atoms.atom,
 					32 /* bitwidth of formats */, C.PropModeReplace,
 					(*C.uchar)(unsafe.Pointer(&formats)), C.int(len(formats)),
@@ -601,7 +617,8 @@ func (h *x11EventHandler) handleEvents() bool {
 				if len(content) > 0 {
 					ptr = (*C.uchar)(unsafe.Pointer(&content[0]))
 				}
-				C.XChangeProperty(w.x, cevt.requestor, cevt.property,
+				C.XChangeProperty(
+					w.x, cevt.requestor, cevt.property,
 					cevt.target,
 					8 /* bitwidth */, C.PropModeReplace,
 					ptr, C.int(len(content)),
@@ -632,16 +649,20 @@ func newX11Window(gioWin Callbacks, opts *Options) error {
 	var err error
 
 	pipe := make([]int, 2)
-	if err := syscall.Pipe2(pipe, syscall.O_NONBLOCK|syscall.O_CLOEXEC); err != nil {
+	if err := syscall.Pipe2(
+		pipe,
+		syscall.O_NONBLOCK|syscall.O_CLOEXEC,
+	); err != nil {
 		return fmt.Errorf("NewX11Window: failed to create pipe: %w", err)
 	}
 
-	x11Threads.Do(func() {
-		if C.XInitThreads() == 0 {
-			err = errors.New("x11: threads init failed")
-		}
-		C.XrmInitialize()
-	},
+	x11Threads.Do(
+		func() {
+			if C.XInitThreads() == 0 {
+				err = errors.New("x11: threads init failed")
+			}
+			C.XrmInitialize()
+		},
 	)
 	if err != nil {
 		return err
@@ -652,7 +673,14 @@ func newX11Window(gioWin Callbacks, opts *Options) error {
 	}
 	var major, minor C.int = C.XkbMajorVersion, C.XkbMinorVersion
 	var xkbEventBase C.int
-	if C.XkbQueryExtension(dpy, nil, &xkbEventBase, nil, &major, &minor) != C.True {
+	if C.XkbQueryExtension(
+		dpy,
+		nil,
+		&xkbEventBase,
+		nil,
+		&major,
+		&minor,
+	) != C.True {
 		C.XCloseDisplay(dpy)
 		return errors.New("x11: XkbQueryExtension failed")
 	}
@@ -683,7 +711,8 @@ func newX11Window(gioWin Callbacks, opts *Options) error {
 		width = cfg.Px(o.Width)
 		height = cfg.Px(o.Height)
 	}
-	win := C.XCreateWindow(dpy, C.XDefaultRootWindow(dpy),
+	win := C.XCreateWindow(
+		dpy, C.XDefaultRootWindow(dpy),
 		0, 0, C.uint(width), C.uint(height),
 		0, C.CopyFromParent, C.InputOutput, nil,
 		C.CWEventMask|C.CWBackPixmap|C.CWOverrideRedirect, &swa,
@@ -761,7 +790,8 @@ func x11DetectUIScale(dpy *C.Display) float32 {
 				t *C.char
 				v C.XrmValue
 			)
-			if C.XrmGetResource(db,
+			if C.XrmGetResource(
+				db,
 				(*C.char)(unsafe.Pointer(&[]byte("Xft.dpi\x00")[0])),
 				(*C.char)(unsafe.Pointer(&[]byte("Xft.Dpi\x00")[0])), &t, &v,
 			) != C.False {
@@ -790,7 +820,8 @@ func (w *x11Window) updateXkbKeymap() error {
 	if xkbDevID == -1 {
 		return errors.New("x11: xkb_x11_get_core_keyboard_device_id failed")
 	}
-	keymap := C.xkb_x11_keymap_new_from_device(ctx, xcb, xkbDevID,
+	keymap := C.xkb_x11_keymap_new_from_device(
+		ctx, xcb, xkbDevID,
 		C.XKB_KEYMAP_COMPILE_NO_FLAGS,
 	)
 	if keymap == nil {

@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/cybriq/p9/pkg/amt"
 	"io/ioutil"
 	"log"
 	"path/filepath"
 	"time"
+
+	"github.com/cybriq/p9/pkg/amt"
 
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -21,7 +22,8 @@ func main() {
 	// if you register for notifications. See the documentation of the rpcclient NotificationHandlers type for more
 	// details about each handler.
 	ntfnHandlers := rpcclient.NotificationHandlers{
-		OnAccountBalance: func(account string, balance amt.Amount,
+		OnAccountBalance: func(
+			account string, balance amt.Amount,
 			confirmed bool,
 		) {
 			log.Printf(

@@ -42,12 +42,14 @@ func (im Image) Layout(gtx layout.Context) layout.Dimensions {
 	wf, hf := float32(size.X), float32(size.Y)
 	w, h := gtx.Px(unit.Dp(wf*scale)), gtx.Px(unit.Dp(hf*scale))
 
-	dims := im.Fit.scale(gtx, im.Position,
+	dims := im.Fit.scale(
+		gtx, im.Position,
 		layout.Dimensions{Size: image.Pt(w, h)},
 	)
 
 	pixelScale := scale * gtx.Metric.PxPerDp
-	op.Affine(f32.Affine2D{}.Scale(f32.Point{}, f32.Pt(pixelScale, pixelScale)),
+	op.Affine(
+		f32.Affine2D{}.Scale(f32.Point{}, f32.Pt(pixelScale, pixelScale)),
 	).Add(gtx.Ops)
 
 	im.Src.Add(gtx.Ops)

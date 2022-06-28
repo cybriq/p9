@@ -15,7 +15,8 @@ type MsgGetCFCheckpt struct {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation.
-func (msg *MsgGetCFCheckpt) BtcDecode(r io.Reader, pver uint32,
+func (msg *MsgGetCFCheckpt) BtcDecode(
+	r io.Reader, pver uint32,
 	_ MessageEncoding,
 ) (e error) {
 	if e = readElement(r, &msg.FilterType); E.Chk(e) {
@@ -26,7 +27,8 @@ func (msg *MsgGetCFCheckpt) BtcDecode(r io.Reader, pver uint32,
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This
 // is part of the Message interface implementation.
-func (msg *MsgGetCFCheckpt) BtcEncode(w io.Writer, pver uint32,
+func (msg *MsgGetCFCheckpt) BtcEncode(
+	w io.Writer, pver uint32,
 	_ MessageEncoding,
 ) (e error) {
 	if e = writeElement(w, msg.FilterType); E.Chk(e) {
@@ -51,7 +53,8 @@ func (msg *MsgGetCFCheckpt) MaxPayloadLength(pver uint32) uint32 {
 // NewMsgGetCFCheckpt returns a new bitcoin getcfcheckpt message that conforms
 // to the Message interface using the passed parameters and defaults for the
 // remaining fields.
-func NewMsgGetCFCheckpt(filterType FilterType, stopHash *chainhash.Hash,
+func NewMsgGetCFCheckpt(
+	filterType FilterType, stopHash *chainhash.Hash,
 ) *MsgGetCFCheckpt {
 	return &MsgGetCFCheckpt{
 		FilterType: filterType,

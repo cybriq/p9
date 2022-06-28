@@ -1,11 +1,12 @@
 package blockchain
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/wire"
-	"reflect"
-	"testing"
 )
 
 // // TestHaveBlock tests the HaveBlock API to ensure proper functionality.
@@ -611,10 +612,12 @@ func TestLocateInventory(t *testing.T) {
 			name:     "remote unrelated chain",
 			locator:  unrelatedView.BlockLocator(nil),
 			hashStop: chainhash.Hash{},
-			headers: nodeHeaders(branch0Nodes, 0, 1, 2, 3, 4, 5, 6,
+			headers: nodeHeaders(
+				branch0Nodes, 0, 1, 2, 3, 4, 5, 6,
 				7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
 			),
-			hashes: nodeHashes(branch0Nodes, 0, 1, 2, 3, 4, 5, 6,
+			hashes: nodeHashes(
+				branch0Nodes, 0, 1, 2, 3, 4, 5, 6,
 				7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
 			),
 		},
@@ -635,10 +638,12 @@ func TestLocateInventory(t *testing.T) {
 			name:     "weak locator, single known side block",
 			locator:  locatorHashes(branch1Nodes, 1),
 			hashStop: chainhash.Hash{},
-			headers: nodeHeaders(branch0Nodes, 0, 1, 2, 3, 4, 5, 6,
+			headers: nodeHeaders(
+				branch0Nodes, 0, 1, 2, 3, 4, 5, 6,
 				7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
 			),
-			hashes: nodeHashes(branch0Nodes, 0, 1, 2, 3, 4, 5, 6,
+			hashes: nodeHashes(
+				branch0Nodes, 0, 1, 2, 3, 4, 5, 6,
 				7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
 			),
 		},
@@ -650,10 +655,12 @@ func TestLocateInventory(t *testing.T) {
 			name:     "weak locator, multiple known side blocks",
 			locator:  locatorHashes(branch1Nodes, 1),
 			hashStop: chainhash.Hash{},
-			headers: nodeHeaders(branch0Nodes, 0, 1, 2, 3, 4, 5, 6,
+			headers: nodeHeaders(
+				branch0Nodes, 0, 1, 2, 3, 4, 5, 6,
 				7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
 			),
-			hashes: nodeHashes(branch0Nodes, 0, 1, 2, 3, 4, 5, 6,
+			hashes: nodeHashes(
+				branch0Nodes, 0, 1, 2, 3, 4, 5, 6,
 				7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
 			),
 		},
@@ -675,17 +682,20 @@ func TestLocateInventory(t *testing.T) {
 		if test.maxAllowed != 0 {
 			// Need to use the unexported function to override the max allowed for headers.
 			chain.ChainLock.RLock()
-			headers = chain.locateHeaders(test.locator,
+			headers = chain.locateHeaders(
+				test.locator,
 				&test.hashStop, test.maxAllowed,
 			)
 			chain.ChainLock.RUnlock()
 		} else {
-			headers = chain.LocateHeaders(test.locator,
+			headers = chain.LocateHeaders(
+				test.locator,
 				&test.hashStop,
 			)
 		}
 		if !reflect.DeepEqual(headers, test.headers) {
-			t.Errorf("%s: unxpected headers -- got %v, want %v",
+			t.Errorf(
+				"%s: unxpected headers -- got %v, want %v",
 				test.name, headers, test.headers,
 			)
 			continue
@@ -695,11 +705,13 @@ func TestLocateInventory(t *testing.T) {
 		if test.maxAllowed != 0 {
 			maxAllowed = test.maxAllowed
 		}
-		hashes := chain.LocateBlocks(test.locator, &test.hashStop,
+		hashes := chain.LocateBlocks(
+			test.locator, &test.hashStop,
 			maxAllowed,
 		)
 		if !reflect.DeepEqual(hashes, test.hashes) {
-			t.Errorf("%s: unxpected hashes -- got %v, want %v",
+			t.Errorf(
+				"%s: unxpected hashes -- got %v, want %v",
 				test.name, hashes, test.hashes,
 			)
 			continue
@@ -759,7 +771,8 @@ func TestHeightToHashRange(t *testing.T) {
 			startHeight: 15,
 			endHash:     branch1Nodes[1].hash,
 			maxResults:  10,
-			hashes: append(nodeHashes(branch0Nodes, 14),
+			hashes: append(
+				nodeHashes(branch0Nodes, 14),
 				nodeHashes(branch1Nodes, 0, 1)...,
 			),
 		},
@@ -786,7 +799,8 @@ func TestHeightToHashRange(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		hashes, e := chain.HeightToHashRange(test.startHeight, &test.endHash,
+		hashes, e := chain.HeightToHashRange(
+			test.startHeight, &test.endHash,
 			test.maxResults,
 		)
 		if e != nil {
@@ -796,7 +810,8 @@ func TestHeightToHashRange(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(hashes, test.hashes) {
-			t.Errorf("%s: unxpected hashes -- got %v, want %v",
+			t.Errorf(
+				"%s: unxpected hashes -- got %v, want %v",
 				test.name, hashes, test.hashes,
 			)
 		}
@@ -841,7 +856,8 @@ func TestIntervalBlockHashes(t *testing.T) {
 			name:     "blocks on stale chain",
 			endHash:  branch1Nodes[1].hash,
 			interval: 8,
-			hashes: append(nodeHashes(branch0Nodes, 7),
+			hashes: append(
+				nodeHashes(branch0Nodes, 7),
 				nodeHashes(branch1Nodes, 0)...,
 			),
 		},
@@ -867,7 +883,8 @@ func TestIntervalBlockHashes(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(hashes, test.hashes) {
-			t.Errorf("%s: unxpected hashes -- got %v, want %v",
+			t.Errorf(
+				"%s: unxpected hashes -- got %v, want %v",
 				test.name, hashes, test.hashes,
 			)
 		}

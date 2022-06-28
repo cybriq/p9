@@ -2,9 +2,10 @@ package indexers
 
 import (
 	"fmt"
-	"github.com/cybriq/p9/pkg/block"
 	"sync"
 	"time"
+
+	"github.com/cybriq/p9/pkg/block"
 )
 
 // blockProgressLogger provides periodic logging for other services in order to show users progress of certain "actions"

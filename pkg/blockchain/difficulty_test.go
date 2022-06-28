@@ -1,9 +1,10 @@
 package blockchain
 
 import (
-	"github.com/cybriq/p9/pkg/bits"
 	"math/big"
 	"testing"
+
+	"github.com/cybriq/p9/pkg/bits"
 )
 
 // TestBigToCompact ensures BigToCompact converts big integers to the expected compact representation.
@@ -19,7 +20,8 @@ func TestBigToCompact(t *testing.T) {
 		n := big.NewInt(test.in)
 		r := bits.BigToCompact(n)
 		if r != test.out {
-			t.Errorf("TestBigToCompact test #%d failed: got %d want %d\n",
+			t.Errorf(
+				"TestBigToCompact test #%d failed: got %d want %d\n",
 				x, r, test.out,
 			)
 			return
@@ -39,7 +41,8 @@ func TestCompactToBig(t *testing.T) {
 		n := bits.CompactToBig(test.in)
 		want := big.NewInt(test.out)
 		if n.Cmp(want) != 0 {
-			t.Errorf("TestCompactToBig test #%d failed: got %d want %d\n",
+			t.Errorf(
+				"TestCompactToBig test #%d failed: got %d want %d\n",
 				x, n.Int64(), want.Int64(),
 			)
 			return
@@ -59,7 +62,8 @@ func TestCalcWork(t *testing.T) {
 		bits := test.in
 		r := CalcWork(bits, 0, 2)
 		if r.Int64() != test.out {
-			t.Errorf("TestCalcWork test #%d failed: got %v want %d\n",
+			t.Errorf(
+				"TestCalcWork test #%d failed: got %v want %d\n",
 				x, r.Int64(), test.out,
 			)
 			return

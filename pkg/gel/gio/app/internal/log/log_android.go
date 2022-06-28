@@ -51,7 +51,11 @@ func (w *androidLogWriter) Write(data []byte) (int, error) {
 		copy(buf, msg)
 		// Terminating '\0'.
 		buf[len(msg)] = 0
-		C.__android_log_write(C.ANDROID_LOG_INFO, logTag, (*C.char)(unsafe.Pointer(&buf[0])))
+		C.__android_log_write(
+			C.ANDROID_LOG_INFO,
+			logTag,
+			(*C.char)(unsafe.Pointer(&buf[0])),
+		)
 		n += len(msg)
 		data = data[len(msg):]
 	}
@@ -63,7 +67,11 @@ func logFd(fd uintptr) {
 	if err != nil {
 		panic(err)
 	}
-	if err := syscall.Dup3(int(w.Fd()), int(fd), syscall.O_CLOEXEC); err != nil {
+	if err := syscall.Dup3(
+		int(w.Fd()),
+		int(fd),
+		syscall.O_CLOEXEC,
+	); err != nil {
 		panic(err)
 	}
 	go func() {

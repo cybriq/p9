@@ -1,8 +1,9 @@
 package chaincfg
 
 import (
-	"github.com/cybriq/p9/pkg/fork"
 	"time"
+
+	"github.com/cybriq/p9/pkg/fork"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/wire"

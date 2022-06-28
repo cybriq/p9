@@ -22,7 +22,8 @@ func encodeQuadTo(data []byte, meta uint32, from, ctrl, to f32.Point) {
 	encodeVertex(data[vertStride*3:], meta, 1, -1, from, ctrl, to)
 }
 
-func encodeVertex(data []byte, meta uint32, cornerx, cornery int16,
+func encodeVertex(
+	data []byte, meta uint32, cornerx, cornery int16,
 	from, ctrl, to f32.Point,
 ) {
 	var corner float32

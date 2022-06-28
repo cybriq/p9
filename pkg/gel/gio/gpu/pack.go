@@ -40,9 +40,11 @@ func (p *packer) newPage() {
 	p.pos = image.Point{}
 	p.sizes = append(p.sizes, image.Point{})
 	p.spaces = p.spaces[:0]
-	p.spaces = append(p.spaces, image.Rectangle{
-		Max: image.Point{X: p.maxDim, Y: p.maxDim},
-	})
+	p.spaces = append(
+		p.spaces, image.Rectangle{
+			Max: image.Point{X: p.maxDim, Y: p.maxDim},
+		},
+	)
 }
 
 func (p *packer) tryAdd(s image.Point) (placement, bool) {
@@ -59,16 +61,20 @@ func (p *packer) tryAdd(s image.Point) (placement, bool) {
 			// two smaller spaces.
 			pos := space.Min
 			if bottomSpace > 0 {
-				p.spaces = append(p.spaces, image.Rectangle{
-					Min: image.Point{X: pos.X, Y: pos.Y + s.Y},
-					Max: image.Point{X: space.Max.X, Y: space.Max.Y},
-				})
+				p.spaces = append(
+					p.spaces, image.Rectangle{
+						Min: image.Point{X: pos.X, Y: pos.Y + s.Y},
+						Max: image.Point{X: space.Max.X, Y: space.Max.Y},
+					},
+				)
 			}
 			if rightSpace > 0 {
-				p.spaces = append(p.spaces, image.Rectangle{
-					Min: image.Point{X: pos.X + s.X, Y: pos.Y},
-					Max: image.Point{X: space.Max.X, Y: pos.Y + s.Y},
-				})
+				p.spaces = append(
+					p.spaces, image.Rectangle{
+						Min: image.Point{X: pos.X + s.X, Y: pos.Y},
+						Max: image.Point{X: space.Max.X, Y: pos.Y + s.Y},
+					},
+				)
 			}
 			idx := len(p.sizes) - 1
 			size := &p.sizes[idx]

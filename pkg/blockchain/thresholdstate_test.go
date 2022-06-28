@@ -22,15 +22,17 @@ func TestThresholdStateStringer(t *testing.T) {
 	}
 	// Detect additional threshold states that don't have the stringer added.
 	if len(tests)-1 != int(numThresholdsStates) {
-		t.Errorf("It appears a threshold statewas added without " +
-			"adding an associated stringer test",
+		t.Errorf(
+			"It appears a threshold statewas added without " +
+				"adding an associated stringer test",
 		)
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
 		result := test.in.String()
 		if result != test.want {
-			t.Errorf("String #%d\n got: %s want: %s", i, result,
+			t.Errorf(
+				"String #%d\n got: %s want: %s", i, result,
 				test.want,
 			)
 			continue
@@ -62,7 +64,8 @@ nextTest:
 			// Ensure the hash isn't available in the cache already.
 			_, ok := cache.Lookup(&hash)
 			if ok {
-				t.Errorf("Lookup (%s): has entry for hash %v",
+				t.Errorf(
+					"Lookup (%s): has entry for hash %v",
 					test.name, hash,
 				)
 				continue nextTest
@@ -71,14 +74,16 @@ nextTest:
 			cache.Update(&hash, test.state)
 			state, ok := cache.Lookup(&hash)
 			if !ok {
-				t.Errorf("Lookup (%s): missing entry for hash "+
-					"%v", test.name, hash,
+				t.Errorf(
+					"Lookup (%s): missing entry for hash "+
+						"%v", test.name, hash,
 				)
 				continue nextTest
 			}
 			if state != test.state {
-				t.Errorf("Lookup (%s): state mismatch - got "+
-					"%v, want %v", test.name, state,
+				t.Errorf(
+					"Lookup (%s): state mismatch - got "+
+						"%v, want %v", test.name, state,
 					test.state,
 				)
 				continue nextTest
@@ -87,15 +92,17 @@ nextTest:
 			cache.Update(&hash, test.state)
 			state, ok = cache.Lookup(&hash)
 			if !ok {
-				t.Errorf("Lookup (%s): missing entry after "+
-					"second add for hash %v", test.name,
+				t.Errorf(
+					"Lookup (%s): missing entry after "+
+						"second add for hash %v", test.name,
 					hash,
 				)
 				continue nextTest
 			}
 			if state != test.state {
-				t.Errorf("Lookup (%s): state mismatch after "+
-					"second add - got %v, want %v",
+				t.Errorf(
+					"Lookup (%s): state mismatch after "+
+						"second add - got %v, want %v",
 					test.name, state, test.state,
 				)
 				continue nextTest
@@ -108,15 +115,17 @@ nextTest:
 			cache.Update(&hash, newState)
 			state, ok = cache.Lookup(&hash)
 			if !ok {
-				t.Errorf("Lookup (%s): missing entry after "+
-					"state change for hash %v", test.name,
+				t.Errorf(
+					"Lookup (%s): missing entry after "+
+						"state change for hash %v", test.name,
 					hash,
 				)
 				continue nextTest
 			}
 			if state != newState {
-				t.Errorf("Lookup (%s): state mismatch after "+
-					"state change - got %v, want %v",
+				t.Errorf(
+					"Lookup (%s): state mismatch after "+
+						"state change - got %v, want %v",
 					test.name, state, newState,
 				)
 				continue nextTest

@@ -28,7 +28,8 @@ func (f *Float) Dragging() bool { return f.drag.Dragging() }
 // Layout updates the value according to drag events along the f's main axis.
 //
 // The range of f is set by the minimum constraints main axis value.
-func (f *Float) Layout(gtx layout.Context, pointerMargin int, min, max float32,
+func (f *Float) Layout(
+	gtx layout.Context, pointerMargin int, min, max float32,
 ) layout.Dimensions {
 	size := gtx.Constraints.Min
 	f.length = float32(f.Axis.Convert(size).X)

@@ -39,7 +39,11 @@ func buildJS(bi *buildInfo) error {
 	if err != nil {
 		return err
 	}
-	if err := ioutil.WriteFile(filepath.Join(out, "index.html"), []byte(jsIndex), 0600); err != nil {
+	if err := ioutil.WriteFile(
+		filepath.Join(out, "index.html"),
+		[]byte(jsIndex),
+		0600,
+	); err != nil {
 		return err
 	}
 	goroot, err := runCmd(exec.Command("go", "env", "GOROOT"))
@@ -48,12 +52,17 @@ func buildJS(bi *buildInfo) error {
 	}
 	wasmJS := filepath.Join(goroot, "misc", "wasm", "wasm_exec.js")
 	if _, err := os.Stat(wasmJS); err != nil {
-		return fmt.Errorf("failed to find $GOROOT/misc/wasm/wasm_exec.js driver: %v", err)
+		return fmt.Errorf(
+			"failed to find $GOROOT/misc/wasm/wasm_exec.js driver: %v",
+			err,
+		)
 	}
-	pkgs, err := packages.Load(&packages.Config{
-		Mode: packages.NeedName | packages.NeedFiles | packages.NeedImports | packages.NeedDeps,
-		Env:  append(os.Environ(), "GOOS=js", "GOARCH=wasm"),
-	}, bi.pkgPath)
+	pkgs, err := packages.Load(
+		&packages.Config{
+			Mode: packages.NeedName | packages.NeedFiles | packages.NeedImports | packages.NeedDeps,
+			Env:  append(os.Environ(), "GOOS=js", "GOARCH=wasm"),
+		}, bi.pkgPath,
+	)
 	if err != nil {
 		return err
 	}
@@ -62,14 +71,25 @@ func buildJS(bi *buildInfo) error {
 		return err
 	}
 
-	return mergeJSFiles(filepath.Join(out, "wasm.js"), append([]string{wasmJS}, extraJS...)...)
+	return mergeJSFiles(
+		filepath.Join(out, "wasm.js"),
+		append([]string{wasmJS}, extraJS...)...,
+	)
 }
 
-func findPackagesJS(p *packages.Package, visited map[string]bool) (extraJS []string, err error) {
+func findPackagesJS(
+	p *packages.Package,
+	visited map[string]bool,
+) (extraJS []string, err error) {
 	if len(p.GoFiles) == 0 {
 		return nil, nil
 	}
-	js, err := filepath.Glob(filepath.Join(filepath.Dir(p.GoFiles[0]), "*_js.js"))
+	js, err := filepath.Glob(
+		filepath.Join(
+			filepath.Dir(p.GoFiles[0]),
+			"*_js.js",
+		),
+	)
 	if err != nil {
 		return nil, err
 	}

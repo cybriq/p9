@@ -5,14 +5,15 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/cybriq/p9/pkg/amt"
-	"github.com/cybriq/p9/pkg/block"
 	"io"
 	"math"
 	"math/rand"
 	"sort"
 	"strings"
 	"sync"
+
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/mining"

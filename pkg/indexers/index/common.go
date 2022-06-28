@@ -4,6 +4,7 @@ package index
 import (
 	"encoding/binary"
 	"errors"
+
 	"github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/blockchain"

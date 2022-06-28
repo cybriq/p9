@@ -53,7 +53,8 @@ type segmentIterator struct {
 	y, prevDesc fixed.Int26_6
 }
 
-func (l *segmentIterator) Next() (text.Layout, image.Point, bool, int,
+func (l *segmentIterator) Next() (
+	text.Layout, image.Point, bool, int,
 	image.Point, bool,
 ) {
 	for l.pos.Y < len(l.Lines) {
@@ -67,7 +68,8 @@ func (l *segmentIterator) Next() (text.Layout, image.Point, bool, int,
 			l.y += l.prevDesc + l.line.Ascent
 			l.prevDesc = l.line.Descent
 			// Align baseline and line start to the pixel grid.
-			l.off = fixed.Point26_6{X: fixed.I(x.Floor()),
+			l.off = fixed.Point26_6{
+				X: fixed.I(x.Floor()),
 				Y: fixed.I(l.y.Ceil()),
 			}
 			l.y = l.off.Y
@@ -243,7 +245,8 @@ func linesDimens(lines []text.Line) l.Dimensions {
 	}
 }
 
-func align(align text.Alignment, width fixed.Int26_6, maxWidth int,
+func align(
+	align text.Alignment, width fixed.Int26_6, maxWidth int,
 ) fixed.Int26_6 {
 	mw := fixed.I(maxWidth)
 	switch align {

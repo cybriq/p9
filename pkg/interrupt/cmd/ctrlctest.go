@@ -7,9 +7,10 @@ import (
 )
 
 func main() {
-	interrupt.AddHandler(func() {
-		fmt.Println("IT'S THE END OF THE WORLD!")
-	},
+	interrupt.AddHandler(
+		func() {
+			fmt.Println("IT'S THE END OF THE WORLD!")
+		},
 	)
 	<-interrupt.HandlersDone
 }

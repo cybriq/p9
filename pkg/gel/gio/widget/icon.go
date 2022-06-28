@@ -48,17 +48,21 @@ func (ic *Icon) image(sz int) paint.ImageOp {
 	}
 	m, _ := iconvg.DecodeMetadata(ic.src)
 	dx, dy := m.ViewBox.AspectRatio()
-	img := image.NewRGBA(image.Rectangle{Max: image.Point{X: sz,
-		Y: int(float32(sz) * dy / dx),
-	},
-	},
+	img := image.NewRGBA(
+		image.Rectangle{
+			Max: image.Point{
+				X: sz,
+				Y: int(float32(sz) * dy / dx),
+			},
+		},
 	)
 	var ico iconvg.Rasterizer
 	ico.SetDstImage(img, img.Bounds(), draw.Src)
 	m.Palette[0] = f32color.NRGBAToLinearRGBA(ic.Color)
-	iconvg.Decode(&ico, ic.src, &iconvg.DecodeOptions{
-		Palette: &m.Palette,
-	},
+	iconvg.Decode(
+		&ico, ic.src, &iconvg.DecodeOptions{
+			Palette: &m.Palette,
+		},
 	)
 	ic.op = paint.NewImageOp(img)
 	ic.imgSize = sz

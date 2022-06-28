@@ -79,7 +79,10 @@ func (curve *KoblitzCurve) Params() *elliptic.CurveParams {
 
 // bigAffineToField takes an affine point (x, y) as big integers and converts
 // it to an affine point as field values.
-func (curve *KoblitzCurve) bigAffineToField(x, y *big.Int) (*fieldVal, *fieldVal) {
+func (curve *KoblitzCurve) bigAffineToField(x, y *big.Int) (
+	*fieldVal,
+	*fieldVal,
+) {
 	x3, y3 := new(fieldVal), new(fieldVal)
 	x3.SetByteSlice(x.Bytes())
 	y3.SetByteSlice(y.Bytes())
@@ -89,7 +92,10 @@ func (curve *KoblitzCurve) bigAffineToField(x, y *big.Int) (*fieldVal, *fieldVal
 
 // fieldJacobianToBigAffine takes a Jacobian point (x, y, z) as field values and
 // converts it to an affine point as big integers.
-func (curve *KoblitzCurve) fieldJacobianToBigAffine(x, y, z *fieldVal) (*big.Int, *big.Int) {
+func (curve *KoblitzCurve) fieldJacobianToBigAffine(x, y, z *fieldVal) (
+	*big.Int,
+	*big.Int,
+) {
 	// Inversions are expensive and both point addition and point doubling
 	// are faster when working with points that have a z value of one.  So,
 	// if the point needs to be converted to affine, go ahead and normalize
@@ -762,7 +768,10 @@ func NAF(k []byte) ([]byte, []byte) {
 
 // ScalarMult returns k*(Bx, By) where k is a big endian integer.
 // Part of the elliptic.Curve interface.
-func (curve *KoblitzCurve) ScalarMult(Bx, By *big.Int, k []byte) (*big.Int, *big.Int) {
+func (curve *KoblitzCurve) ScalarMult(Bx, By *big.Int, k []byte) (
+	*big.Int,
+	*big.Int,
+) {
 	// Point Q = ∞ (point at infinity).
 	qx, qy, qz := new(fieldVal), new(fieldVal), new(fieldVal)
 
@@ -839,19 +848,27 @@ func (curve *KoblitzCurve) ScalarMult(Bx, By *big.Int, k []byte) (*big.Int, *big
 			curve.doubleJacobian(qx, qy, qz, qx, qy, qz)
 
 			if k1BytePos&0x80 == 0x80 {
-				curve.addJacobian(qx, qy, qz, p1x, p1y, p1z,
-					qx, qy, qz)
+				curve.addJacobian(
+					qx, qy, qz, p1x, p1y, p1z,
+					qx, qy, qz,
+				)
 			} else if k1ByteNeg&0x80 == 0x80 {
-				curve.addJacobian(qx, qy, qz, p1x, p1yNeg, p1z,
-					qx, qy, qz)
+				curve.addJacobian(
+					qx, qy, qz, p1x, p1yNeg, p1z,
+					qx, qy, qz,
+				)
 			}
 
 			if k2BytePos&0x80 == 0x80 {
-				curve.addJacobian(qx, qy, qz, p2x, p2y, p2z,
-					qx, qy, qz)
+				curve.addJacobian(
+					qx, qy, qz, p2x, p2y, p2z,
+					qx, qy, qz,
+				)
 			} else if k2ByteNeg&0x80 == 0x80 {
-				curve.addJacobian(qx, qy, qz, p2x, p2yNeg, p2z,
-					qx, qy, qz)
+				curve.addJacobian(
+					qx, qy, qz, p2x, p2yNeg, p2z,
+					qx, qy, qz,
+				)
 			}
 			k1BytePos <<= 1
 			k1ByteNeg <<= 1
@@ -932,8 +949,12 @@ func initS256() {
 	secp256k1.BitSize = 256
 	// Curve name taken from https://safecurves.cr.yp.to/.
 	secp256k1.Name = "secp256k1"
-	secp256k1.q = new(big.Int).Div(new(big.Int).Add(secp256k1.P,
-		big.NewInt(1)), big.NewInt(4))
+	secp256k1.q = new(big.Int).Div(
+		new(big.Int).Add(
+			secp256k1.P,
+			big.NewInt(1),
+		), big.NewInt(4),
+	)
 	secp256k1.H = 1
 	secp256k1.halfOrder = new(big.Int).Rsh(secp256k1.N, 1)
 	secp256k1.fieldB = new(fieldVal).SetByteSlice(secp256k1.B.Bytes())

@@ -4,12 +4,13 @@ import (
 	"compress/bzip2"
 	"encoding/binary"
 	"fmt"
-	"github.com/cybriq/p9/pkg/block"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/chainhash"
@@ -102,7 +103,8 @@ func loadBlocks(filename string) (blocks []*block.Block, e error) {
 
 // chainSetup is used to create a new db and chain instance with the genesis block already inserted. In addition to the
 // new chain instance, it returns a teardown function the caller should invoke when done testing to clean up.
-func chainSetup(dbName string, netparams *chaincfg.Params) (chain *BlockChain,
+func chainSetup(dbName string, netparams *chaincfg.Params) (
+	chain *BlockChain,
 	teardown func(), e error,
 ) {
 	if !isSupportedDbType(testDbType) {
@@ -339,7 +341,8 @@ func newFakeChain(params *chaincfg.Params) *BlockChain {
 
 // newFakeNode creates a block node connected to the passed parent with the provided fields populated and fake values
 // for the other fields.
-func newFakeNode(parent *BlockNode, blockVersion int32, bits uint32,
+func newFakeNode(
+	parent *BlockNode, blockVersion int32, bits uint32,
 	timestamp time.Time,
 ) *BlockNode {
 	// Make up a header and create a block node from it.

@@ -11,13 +11,21 @@ type fakeMessage struct {
 }
 
 // BtcDecode doesn't do anything.  It just satisfies the wire.Message interface.
-func (msg *fakeMessage) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e error) {
+func (msg *fakeMessage) BtcDecode(
+	r io.Reader,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	return nil
 }
 
 // BtcEncode writes the payload field of the fake message or forces an error if the forceEncodeErr flag of the fake
 // message is set. It also satisfies the wire.Message interface.
-func (msg *fakeMessage) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) (e error) {
+func (msg *fakeMessage) BtcEncode(
+	w io.Writer,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	if msg.forceEncodeErr {
 		e := &MessageError{
 			Func:        "fakeMessage.BtcEncode",

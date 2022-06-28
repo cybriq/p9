@@ -191,7 +191,8 @@ func (sm *SyncManager) Pause() chan<- struct{} {
 
 // ProcessBlock makes use of ProcessBlock on an internal instance of a block
 // chain.
-func (sm *SyncManager) ProcessBlock(block *block2.Block,
+func (sm *SyncManager) ProcessBlock(
+	block *block2.Block,
 	flags blockchain.BehaviorFlags,
 ) (bool, error) {
 	T.Ln("processing block")
@@ -207,7 +208,8 @@ func (sm *SyncManager) ProcessBlock(block *block2.Block,
 // QueueBlock adds the passed block message and peer to the block handling
 // queue. Responds to the done channel argument after the block message is
 // processed.
-func (sm *SyncManager) QueueBlock(block *block2.Block, peer *peerpkg.Peer,
+func (sm *SyncManager) QueueBlock(
+	block *block2.Block, peer *peerpkg.Peer,
 	done qu.C,
 ) {
 	// Don't accept more blocks if we're shutting down.
@@ -220,7 +222,8 @@ func (sm *SyncManager) QueueBlock(block *block2.Block, peer *peerpkg.Peer,
 
 // QueueHeaders adds the passed headers message and peer to the block handling
 // queue.
-func (sm *SyncManager) QueueHeaders(headers *wire.MsgHeaders,
+func (sm *SyncManager) QueueHeaders(
+	headers *wire.MsgHeaders,
 	peer *peerpkg.Peer,
 ) {
 	// No channel handling here because peers do not need to block on headers
@@ -329,7 +332,8 @@ out:
 						var e error
 						var cbHeight int32
 						if cbHeight, e = blockchain.ExtractCoinbaseHeight(coinbaseTx); E.Chk(e) {
-							W.Ln("unable to extract height from coinbase tx:",
+							W.Ln(
+								"unable to extract height from coinbase tx:",
 								e,
 							)
 						} else {
@@ -988,7 +992,8 @@ func (sm *SyncManager) handleInvMsg(imsg *invMsg) {
 		// Request the inventory if we don't already have it.
 		haveInv, e := sm.haveInventory(iv)
 		if e != nil {
-			E.Ln("unexpected failure when checking for existing inventory during inv message processing:",
+			E.Ln(
+				"unexpected failure when checking for existing inventory during inv message processing:",
 				e,
 			)
 			continue
@@ -1297,7 +1302,8 @@ func (sm *SyncManager) limitMap(m map[chainhash.Hash]struct{}, limit int) {
 
 // resetHeaderState sets the headers-first mode state to values appropriate for
 // syncing from a new peer.
-func (sm *SyncManager) resetHeaderState(newestHash *chainhash.Hash,
+func (sm *SyncManager) resetHeaderState(
+	newestHash *chainhash.Hash,
 	newestHeight int32,
 ) {
 	sm.headersFirstMode = false
@@ -1366,7 +1372,8 @@ func (sm *SyncManager) startSync() {
 		}
 		T.C(
 			func() string {
-				return fmt.Sprintf("syncing to block height %d from peer %v",
+				return fmt.Sprintf(
+					"syncing to block height %d from peer %v",
 					bestPeer.LastBlock(), bestPeer.Addr(),
 				)
 			},

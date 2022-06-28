@@ -3,10 +3,11 @@ package indexers
 import (
 	"errors"
 	"fmt"
+	"sync"
+
 	"github.com/cybriq/p9/pkg/block"
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chaincfg"
-	"sync"
 
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -147,7 +148,8 @@ func keyForLevel(addrKey [addrKeySize]byte, level uint8) [levelKeySize]byte {
 
 // dbPutAddrIndexEntry updates the address index to include the provided entry according to the level-based scheme
 // described in detail above.
-func dbPutAddrIndexEntry(bucket internalBucket, addrKey [addrKeySize]byte,
+func dbPutAddrIndexEntry(
+	bucket internalBucket, addrKey [addrKeySize]byte,
 	blockID uint32, txLoc wire.TxLoc,
 ) (e error) {
 	// Start with level 0 and its initial max number of entries.
@@ -307,7 +309,8 @@ func maxEntriesForLevel(level uint8) int {
 
 // dbRemoveAddrIndexEntries removes the specified number of entries from from the address index for the provided key. An
 // assertion error will be returned if the count exceeds the total number of entries in the index.
-func dbRemoveAddrIndexEntries(bucket internalBucket, addrKey [addrKeySize]byte,
+func dbRemoveAddrIndexEntries(
+	bucket internalBucket, addrKey [addrKeySize]byte,
 	count int,
 ) (e error) {
 	// Nothing to do if no entries are being deleted.
@@ -551,7 +554,8 @@ type writeIndexData map[[addrKeySize]byte][]int
 
 // indexPkScript extracts all standard addresses from the passed public key script and maps each of them to the
 // associated transaction using the passed map.
-func (idx *AddrIndex) indexPkScript(data writeIndexData, pkScript []byte,
+func (idx *AddrIndex) indexPkScript(
+	data writeIndexData, pkScript []byte,
 	txIdx int,
 ) {
 	// Nothing to index if the script is non-standard or otherwise doesn't contain any addresses.
@@ -736,7 +740,8 @@ func (idx *AddrIndex) indexUnconfirmedAddresses(pkScript []byte, tx *util.Tx) {
 // This transaction MUST have already been validated by the memory pool before calling this function with it and have
 // all of the inputs available in the provided utxo view. Failure to do so could result in some or all addresses not
 // being indexed. This function is safe for concurrent access.
-func (idx *AddrIndex) AddUnconfirmedTx(tx *util.Tx,
+func (idx *AddrIndex) AddUnconfirmedTx(
+	tx *util.Tx,
 	utxoView *blockchain.UtxoViewpoint,
 ) {
 	// Index addresses of all referenced previous transaction outputs. The existence checks are elided since this is

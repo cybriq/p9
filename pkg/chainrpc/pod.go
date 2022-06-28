@@ -20,14 +20,17 @@ var DefaultConnectTimeout = time.Second * 30
 var Dial = func(stateCfg *active.Config) func(addr net.Addr) (net.Conn, error) {
 	return func(addr net.Addr) (net.Conn, error) {
 		if strings.Contains(addr.String(), ".onion:") {
-			return stateCfg.Oniondial(addr.Network(), addr.String(),
+			return stateCfg.Oniondial(
+				addr.Network(), addr.String(),
 				DefaultConnectTimeout,
 			)
 		}
-		T.Ln("StateCfg.Dial", addr.Network(), addr.String(),
+		T.Ln(
+			"StateCfg.Dial", addr.Network(), addr.String(),
 			DefaultConnectTimeout,
 		)
-		conn, er := stateCfg.Dial(addr.Network(), addr.String(),
+		conn, er := stateCfg.Dial(
+			addr.Network(), addr.String(),
 			DefaultConnectTimeout,
 		)
 		if er != nil {

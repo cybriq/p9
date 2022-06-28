@@ -69,8 +69,9 @@ func TestScriptNumBytes(t *testing.T) {
 	for _, test := range tests {
 		gotBytes := test.num.Bytes()
 		if !bytes.Equal(gotBytes, test.serialized) {
-			t.Errorf("Hash: did not get expected bytes for %d - "+
-				"got %x, want %x", test.num, gotBytes,
+			t.Errorf(
+				"Hash: did not get expected bytes for %d - "+
+					"got %x, want %x", test.num, gotBytes,
 				test.serialized,
 			)
 			continue
@@ -138,25 +139,127 @@ func TestMakeScriptNum(t *testing.T) {
 		{hexToBytes("ffffffff80"), 0, defaultScriptNumLen, true, errNumTooBig},
 		{hexToBytes("0000000001"), 0, defaultScriptNumLen, true, errNumTooBig},
 		{hexToBytes("0000000081"), 0, defaultScriptNumLen, true, errNumTooBig},
-		{hexToBytes("ffffffffffff00"), 0, defaultScriptNumLen, true, errNumTooBig},
-		{hexToBytes("ffffffffffff80"), 0, defaultScriptNumLen, true, errNumTooBig},
-		{hexToBytes("ffffffffffffff00"), 0, defaultScriptNumLen, true, errNumTooBig},
-		{hexToBytes("ffffffffffffff80"), 0, defaultScriptNumLen, true, errNumTooBig},
-		{hexToBytes("ffffffffffffff7f"), 0, defaultScriptNumLen, true, errNumTooBig},
-		{hexToBytes("ffffffffffffffff"), 0, defaultScriptNumLen, true, errNumTooBig},
+		{
+			hexToBytes("ffffffffffff00"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errNumTooBig,
+		},
+		{
+			hexToBytes("ffffffffffff80"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errNumTooBig,
+		},
+		{
+			hexToBytes("ffffffffffffff00"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errNumTooBig,
+		},
+		{
+			hexToBytes("ffffffffffffff80"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errNumTooBig,
+		},
+		{
+			hexToBytes("ffffffffffffff7f"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errNumTooBig,
+		},
+		{
+			hexToBytes("ffffffffffffffff"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errNumTooBig,
+		},
 		// Non-minimally encoded, but otherwise valid values with minimal encoding flag.  Should error and return 0.
-		{hexToBytes("00"), 0, defaultScriptNumLen, true, errMinimalData},       // 0
-		{hexToBytes("0100"), 0, defaultScriptNumLen, true, errMinimalData},     // 1
-		{hexToBytes("7f00"), 0, defaultScriptNumLen, true, errMinimalData},     // 127
-		{hexToBytes("800000"), 0, defaultScriptNumLen, true, errMinimalData},   // 128
-		{hexToBytes("810000"), 0, defaultScriptNumLen, true, errMinimalData},   // 129
-		{hexToBytes("000100"), 0, defaultScriptNumLen, true, errMinimalData},   // 256
-		{hexToBytes("ff7f00"), 0, defaultScriptNumLen, true, errMinimalData},   // 32767
-		{hexToBytes("00800000"), 0, defaultScriptNumLen, true, errMinimalData}, // 32768
-		{hexToBytes("ffff0000"), 0, defaultScriptNumLen, true, errMinimalData}, // 65535
-		{hexToBytes("00000800"), 0, defaultScriptNumLen, true, errMinimalData}, // 524288
-		{hexToBytes("00007000"), 0, defaultScriptNumLen, true, errMinimalData}, // 7340032
-		{hexToBytes("0009000100"), 0, 5, true, errMinimalData},                 // 16779520
+		{hexToBytes("00"), 0, defaultScriptNumLen, true, errMinimalData}, // 0
+		{
+			hexToBytes("0100"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errMinimalData,
+		}, // 1
+		{
+			hexToBytes("7f00"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errMinimalData,
+		}, // 127
+		{
+			hexToBytes("800000"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errMinimalData,
+		}, // 128
+		{
+			hexToBytes("810000"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errMinimalData,
+		}, // 129
+		{
+			hexToBytes("000100"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errMinimalData,
+		}, // 256
+		{
+			hexToBytes("ff7f00"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errMinimalData,
+		}, // 32767
+		{
+			hexToBytes("00800000"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errMinimalData,
+		}, // 32768
+		{
+			hexToBytes("ffff0000"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errMinimalData,
+		}, // 65535
+		{
+			hexToBytes("00000800"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errMinimalData,
+		}, // 524288
+		{
+			hexToBytes("00007000"),
+			0,
+			defaultScriptNumLen,
+			true,
+			errMinimalData,
+		}, // 7340032
+		{
+			hexToBytes("0009000100"),
+			0,
+			5,
+			true,
+			errMinimalData,
+		}, // 16779520
 		// Non-minimally encoded, but otherwise valid values without minimal encoding flag.  Should not error and return
 		// expected integral number.
 		{hexToBytes("00"), 0, defaultScriptNumLen, false, nil},
@@ -175,7 +278,8 @@ func TestMakeScriptNum(t *testing.T) {
 	for _, test := range tests {
 		// Ensure the error code is of the expected type and the error code matches the value specified in the test
 		// instance.
-		gotNum, e := makeScriptNum(test.serialized, test.minimalEncoding,
+		gotNum, e := makeScriptNum(
+			test.serialized, test.minimalEncoding,
 			test.numLen,
 		)
 		if e = tstCheckScriptError(e, test.err); e != nil {
@@ -183,8 +287,9 @@ func TestMakeScriptNum(t *testing.T) {
 			continue
 		}
 		if gotNum != test.num {
-			t.Errorf("makeScriptNum(%#x): did not get expected "+
-				"number - got %d, want %d", test.serialized,
+			t.Errorf(
+				"makeScriptNum(%#x): did not get expected "+
+					"number - got %d, want %d", test.serialized,
 				gotNum, test.num,
 			)
 			continue
@@ -241,8 +346,9 @@ func TestScriptNumInt32(t *testing.T) {
 	for _, test := range tests {
 		got := test.in.Int32()
 		if got != test.want {
-			t.Errorf("Int32: did not get expected value for %d - "+
-				"got %d, want %d", test.in, got, test.want,
+			t.Errorf(
+				"Int32: did not get expected value for %d - "+
+					"got %d, want %d", test.in, got, test.want,
 			)
 			continue
 		}

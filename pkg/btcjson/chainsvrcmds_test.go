@@ -33,7 +33,8 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewAddNodeCmd("127.0.0.1", btcjson.ANRemove)
 			},
 			marshalled: `{"jsonrpc":"1.0","method":"addnode","netparams":["127.0.0.1","remove"],"id":1}`,
-			unmarshalled: &btcjson.AddNodeCmd{Addr: "127.0.0.1",
+			unmarshalled: &btcjson.AddNodeCmd{
+				Addr:   "127.0.0.1",
 				SubCmd: btcjson.ANRemove,
 			},
 		},
@@ -50,7 +51,8 @@ func TestChainSvrCmds(t *testing.T) {
 					{Txid: "123", Vout: 1},
 				}
 				amounts := map[string]float64{"456": .0123}
-				return btcjson.NewCreateRawTransactionCmd(txInputs, amounts,
+				return btcjson.NewCreateRawTransactionCmd(
+					txInputs, amounts,
 					nil,
 				)
 			},
@@ -73,7 +75,8 @@ func TestChainSvrCmds(t *testing.T) {
 					{Txid: "123", Vout: 1},
 				}
 				amounts := map[string]float64{"456": .0123}
-				return btcjson.NewCreateRawTransactionCmd(txInputs, amounts,
+				return btcjson.NewCreateRawTransactionCmd(
+					txInputs, amounts,
 					btcjson.Int64(12312333333),
 				)
 			},
@@ -123,7 +126,8 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("getaddednodeinfo", true, "127.0.0.1")
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewGetAddedNodeInfoCmd(true,
+				return btcjson.NewGetAddedNodeInfoCmd(
+					true,
 					btcjson.String("127.0.0.1"),
 				)
 			},
@@ -182,7 +186,8 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("getblock", "123", true, true)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewGetBlockCmd("123", btcjson.Bool(true),
+				return btcjson.NewGetBlockCmd(
+					"123", btcjson.Bool(true),
 					btcjson.Bool(true),
 				)
 			},
@@ -529,7 +534,8 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("getnetworkhashps", 200, 123)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewGetNetworkHashPSCmd(btcjson.Int(200),
+				return btcjson.NewGetNetworkHashPSCmd(
+					btcjson.Int(200),
 					btcjson.Int(123),
 				)
 			},
@@ -787,7 +793,8 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("searchrawtransactions", "1Address")
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewSearchRawTransactionsCmd("1Address", nil, nil,
+				return btcjson.NewSearchRawTransactionsCmd(
+					"1Address", nil, nil,
 					nil, nil, nil, nil,
 				)
 			},
@@ -849,7 +856,8 @@ func TestChainSvrCmds(t *testing.T) {
 		{
 			name: "searchrawtransactions",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("searchrawtransactions", "1Address", 0, 5,
+				return btcjson.NewCmd(
+					"searchrawtransactions", "1Address", 0, 5,
 					10,
 				)
 			},
@@ -874,7 +882,8 @@ func TestChainSvrCmds(t *testing.T) {
 		{
 			name: "searchrawtransactions",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("searchrawtransactions", "1Address", 0, 5,
+				return btcjson.NewCmd(
+					"searchrawtransactions", "1Address", 0, 5,
 					10, 1,
 				)
 			},
@@ -899,7 +908,8 @@ func TestChainSvrCmds(t *testing.T) {
 		{
 			name: "searchrawtransactions",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("searchrawtransactions", "1Address", 0, 5,
+				return btcjson.NewCmd(
+					"searchrawtransactions", "1Address", 0, 5,
 					10, 1, true,
 				)
 			},
@@ -924,7 +934,8 @@ func TestChainSvrCmds(t *testing.T) {
 		{
 			name: "searchrawtransactions",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("searchrawtransactions", "1Address", 0, 5,
+				return btcjson.NewCmd(
+					"searchrawtransactions", "1Address", 0, 5,
 					10, 1, true, []string{"1Address"},
 				)
 			},
@@ -970,7 +981,8 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("sendrawtransaction", "1122", false)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewSendRawTransactionCmd("1122",
+				return btcjson.NewSendRawTransactionCmd(
+					"1122",
 					btcjson.Bool(false),
 				)
 			},
@@ -1047,7 +1059,8 @@ func TestChainSvrCmds(t *testing.T) {
 		{
 			name: "submitblock optional",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("submitblock", "112233",
+				return btcjson.NewCmd(
+					"submitblock", "112233",
 					`{"workid":"12345"}`,
 				)
 			},
@@ -1123,7 +1136,8 @@ func TestChainSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("verifychain", 2, 500)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewVerifyChainCmd(btcjson.Int32(2),
+				return btcjson.NewVerifyChainCmd(
+					btcjson.Int32(2),
 					btcjson.Int32(500),
 				)
 			},
@@ -1136,7 +1150,8 @@ func TestChainSvrCmds(t *testing.T) {
 		{
 			name: "verifymessage",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("verifymessage", "1Address", "301234",
+				return btcjson.NewCmd(
+					"verifymessage", "1Address", "301234",
 					"test",
 				)
 			},

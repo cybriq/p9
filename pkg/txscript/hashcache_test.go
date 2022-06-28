@@ -69,7 +69,8 @@ func TestHashCacheAddContainsHashes(t *testing.T) {
 	for _, tx := range txns {
 		txid := tx.TxHash()
 		if ok := cache.ContainsHashes(&txid); !ok {
-			t.Fatalf("txid %v not found in cache but should be: ",
+			t.Fatalf(
+				"txid %v not found in cache but should be: ",
 				txid,
 			)
 		}
@@ -82,7 +83,8 @@ func TestHashCacheAddContainsHashes(t *testing.T) {
 	// ContainsHashes method.
 	randTxid := randTx.TxHash()
 	if ok := cache.ContainsHashes(&randTxid); ok {
-		t.Fatalf("txid %v wasn't inserted into cache but was found",
+		t.Fatalf(
+			"txid %v wasn't inserted into cache but was found",
 			randTxid,
 		)
 	}
@@ -110,7 +112,8 @@ func TestHashCacheAddGet(t *testing.T) {
 	}
 	// Finally, the sighashes retrieved should exactly match the sighash originally inserted into the cache.
 	if *sigHashes != *cacheHashes {
-		t.Fatalf("sighashes don't match: expected %v, got %v",
+		t.Fatalf(
+			"sighashes don't match: expected %v, got %v",
 			spew.Sdump(sigHashes), spew.Sdump(cacheHashes),
 		)
 	}
@@ -143,8 +146,9 @@ func TestHashCachePurge(t *testing.T) {
 	for _, tx := range txns {
 		txid := tx.TxHash()
 		if ok := cache.ContainsHashes(&txid); ok {
-			t.Fatalf("tx %v found in cache but should have "+
-				"been purged: ", txid,
+			t.Fatalf(
+				"tx %v found in cache but should have "+
+					"been purged: ", txid,
 			)
 		}
 	}

@@ -34,15 +34,17 @@ func TestIsValidIDType(t *testing.T) {
 		{"chan int", make(chan int), false},
 		{"complex64", complex64(1), false},
 		{"complex128", complex128(1), false},
-		{"func", func() {
-		}, false,
+		{
+			"func", func() {
+			}, false,
 		},
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
 		if btcjson.IsValidIDType(test.id) != test.isValid {
-			t.Errorf("Test #%d (%s) valid mismatch - got %v, "+
-				"want %v", i, test.name, !test.isValid,
+			t.Errorf(
+				"Test #%d (%s) valid mismatch - got %v, "+
+					"want %v", i, test.name, !test.isValid,
 				test.isValid,
 			)
 			continue
@@ -70,7 +72,8 @@ func TestMarshalResponse(t *testing.T) {
 			name:   "result with error",
 			result: nil,
 			jsonErr: func() *btcjson.RPCError {
-				return btcjson.NewRPCError(btcjson.ErrRPCBlockNotFound,
+				return btcjson.NewRPCError(
+					btcjson.ErrRPCBlockNotFound,
 					"123 not found",
 				)
 			}(),
@@ -80,18 +83,21 @@ func TestMarshalResponse(t *testing.T) {
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
 		_, _ = i, test
-		marshalled, e := btcjson.MarshalResponse(testID, test.result,
+		marshalled, e := btcjson.MarshalResponse(
+			testID, test.result,
 			test.jsonErr,
 		)
 		if e != nil {
-			t.Errorf("Test #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"Test #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		if !reflect.DeepEqual(marshalled, test.expected) {
-			t.Errorf("Test #%d (%s) mismatched result - got %s, "+
-				"want %s", i, test.name, marshalled,
+			t.Errorf(
+				"Test #%d (%s) mismatched result - got %s, "+
+					"want %s", i, test.name, marshalled,
 				test.expected,
 			)
 		}
@@ -111,8 +117,9 @@ func TestMiscErrors(t *testing.T) {
 	wantErr := btcjson.GeneralError{ErrorCode: btcjson.ErrInvalidType}
 	_, e = btcjson.MarshalResponse(make(chan int), nil, nil)
 	if jerr, ok := e.(btcjson.GeneralError); !ok || jerr.ErrorCode != wantErr.ErrorCode {
-		t.Errorf("MarshalResult: did not receive expected error - got "+
-			"%v (%[1]T), want %v (%[2]T)", e, wantErr,
+		t.Errorf(
+			"MarshalResult: did not receive expected error - got "+
+				"%v (%[1]T), want %v (%[2]T)", e, wantErr,
 		)
 		return
 	}
@@ -120,8 +127,9 @@ func TestMiscErrors(t *testing.T) {
 	_, e = btcjson.MarshalResponse(1, make(chan int), nil)
 	if _, ok := e.(*json.UnsupportedTypeError); !ok {
 		wantErr := &json.UnsupportedTypeError{}
-		t.Errorf("MarshalResult: did not receive expected error - got "+
-			"%v (%[1]T), want %T", e, wantErr,
+		t.Errorf(
+			"MarshalResult: did not receive expected error - got "+
+				"%v (%[1]T), want %T", e, wantErr,
 		)
 		return
 	}
@@ -141,7 +149,8 @@ func TestRPCError(t *testing.T) {
 	for i, test := range tests {
 		result := test.in.Error()
 		if result != test.want {
-			t.Errorf("BTCJSONError #%d\n got: %s want: %s", i, result,
+			t.Errorf(
+				"BTCJSONError #%d\n got: %s want: %s", i, result,
 				test.want,
 			)
 			continue

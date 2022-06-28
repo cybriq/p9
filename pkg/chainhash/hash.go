@@ -12,7 +12,10 @@ const HashSize = 32
 const MaxHashStringSize = HashSize * 2
 
 // ErrHashStrSize describes an error that indicates the caller specified a hash string that has too many characters.
-var ErrHashStrSize = fmt.Errorf("max hash string length is %v bytes", MaxHashStringSize)
+var ErrHashStrSize = fmt.Errorf(
+	"max hash string length is %v bytes",
+	MaxHashStringSize,
+)
 
 // Hash is used in several of the bitcoin messages and common structures. It typically represents the double sha256 of
 // data.
@@ -97,7 +100,10 @@ func Decode(dst *Hash, src string) (e error) {
 	}
 	// Hex decode the source bytes to a temporary destination.
 	var reversedHash Hash
-	if _, e = hex.Decode(reversedHash[HashSize-hex.DecodedLen(len(srcBytes)):], srcBytes); E.Chk(e) {
+	if _, e = hex.Decode(
+		reversedHash[HashSize-hex.DecodedLen(len(srcBytes)):],
+		srcBytes,
+	); E.Chk(e) {
 		return e
 	}
 	// Reverse copy from the temporary hash to destination. Because the temporary was zeroed, the written result will be

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build windows
 // +build windows
 
 package windows
@@ -305,7 +306,12 @@ var (
 )
 
 func AdjustWindowRectEx(r *Rect, dwStyle uint32, bMenu int, dwExStyle uint32) {
-	_AdjustWindowRectEx.Call(uintptr(unsafe.Pointer(r)), uintptr(dwStyle), uintptr(bMenu), uintptr(dwExStyle))
+	_AdjustWindowRectEx.Call(
+		uintptr(unsafe.Pointer(r)),
+		uintptr(dwStyle),
+		uintptr(bMenu),
+		uintptr(dwExStyle),
+	)
 	issue34474KeepAlive(r)
 }
 
@@ -323,7 +329,15 @@ func CloseClipboard() error {
 	return nil
 }
 
-func CreateWindowEx(dwExStyle uint32, lpClassName uint16, lpWindowName string, dwStyle uint32, x, y, w, h int32, hWndParent, hMenu, hInstance syscall.Handle, lpParam uintptr) (syscall.Handle, error) {
+func CreateWindowEx(
+	dwExStyle uint32,
+	lpClassName uint16,
+	lpWindowName string,
+	dwStyle uint32,
+	x, y, w, h int32,
+	hWndParent, hMenu, hInstance syscall.Handle,
+	lpParam uintptr,
+) (syscall.Handle, error) {
 	wname := syscall.StringToUTF16Ptr(lpWindowName)
 	hwnd, _, err := _CreateWindowEx.Call(
 		uintptr(dwExStyle),
@@ -335,7 +349,8 @@ func CreateWindowEx(dwExStyle uint32, lpClassName uint16, lpWindowName string, d
 		uintptr(hWndParent),
 		uintptr(hMenu),
 		uintptr(hInstance),
-		uintptr(lpParam))
+		uintptr(lpParam),
+	)
 	issue34474KeepAlive(wname)
 	if hwnd == 0 {
 		return 0, fmt.Errorf("CreateWindowEx failed: %v", err)
@@ -343,7 +358,11 @@ func CreateWindowEx(dwExStyle uint32, lpClassName uint16, lpWindowName string, d
 	return syscall.Handle(hwnd), nil
 }
 
-func DefWindowProc(hwnd syscall.Handle, msg uint32, wparam, lparam uintptr) uintptr {
+func DefWindowProc(
+	hwnd syscall.Handle,
+	msg uint32,
+	wparam, lparam uintptr,
+) uintptr {
 	r, _, _ := _DefWindowProc.Call(uintptr(hwnd), uintptr(msg), wparam, lparam)
 	return r
 }
@@ -401,7 +420,12 @@ func getDeviceCaps(hdc syscall.Handle, index int32) int {
 
 func getDpiForMonitor(hmonitor syscall.Handle, dpiType uint32) int {
 	var dpiX, dpiY uintptr
-	_GetDpiForMonitor.Call(uintptr(hmonitor), uintptr(dpiType), uintptr(unsafe.Pointer(&dpiX)), uintptr(unsafe.Pointer(&dpiY)))
+	_GetDpiForMonitor.Call(
+		uintptr(hmonitor),
+		uintptr(dpiType),
+		uintptr(unsafe.Pointer(&dpiX)),
+		uintptr(unsafe.Pointer(&dpiY)),
+	)
 	return int(dpiX)
 }
 
@@ -427,11 +451,17 @@ func GetKeyState(nVirtKey int32) int16 {
 	return int16(c)
 }
 
-func GetMessage(m *Msg, hwnd syscall.Handle, wMsgFilterMin, wMsgFilterMax uint32) int32 {
-	r, _, _ := _GetMessage.Call(uintptr(unsafe.Pointer(m)),
+func GetMessage(
+	m *Msg,
+	hwnd syscall.Handle,
+	wMsgFilterMin, wMsgFilterMax uint32,
+) int32 {
+	r, _, _ := _GetMessage.Call(
+		uintptr(unsafe.Pointer(m)),
 		uintptr(hwnd),
 		uintptr(wMsgFilterMin),
-		uintptr(wMsgFilterMax))
+		uintptr(wMsgFilterMax),
+	)
 	issue34474KeepAlive(m)
 	return int32(r)
 }
@@ -480,8 +510,14 @@ func SetWindowPlacement(hwnd syscall.Handle, wp *WindowPlacement) {
 	_SetWindowPlacement.Call(uintptr(hwnd), uintptr(unsafe.Pointer(wp)))
 }
 
-func SetWindowPos(hwnd syscall.Handle, hwndInsertAfter uint32, x, y, dx, dy int32, style uintptr) {
-	_SetWindowPos.Call(uintptr(hwnd), uintptr(hwndInsertAfter),
+func SetWindowPos(
+	hwnd syscall.Handle,
+	hwndInsertAfter uint32,
+	x, y, dx, dy int32,
+	style uintptr,
+) {
+	_SetWindowPos.Call(
+		uintptr(hwnd), uintptr(hwndInsertAfter),
 		uintptr(x), uintptr(y),
 		uintptr(dx), uintptr(dy),
 		style,
@@ -533,8 +569,21 @@ func LoadCursor(curID uint16) (syscall.Handle, error) {
 	return syscall.Handle(h), nil
 }
 
-func LoadImage(hInst syscall.Handle, res uint32, typ uint32, cx, cy int, fuload uint32) (syscall.Handle, error) {
-	h, _, err := _LoadImage.Call(uintptr(hInst), uintptr(res), uintptr(typ), uintptr(cx), uintptr(cy), uintptr(fuload))
+func LoadImage(
+	hInst syscall.Handle,
+	res uint32,
+	typ uint32,
+	cx, cy int,
+	fuload uint32,
+) (syscall.Handle, error) {
+	h, _, err := _LoadImage.Call(
+		uintptr(hInst),
+		uintptr(res),
+		uintptr(typ),
+		uintptr(cx),
+		uintptr(cy),
+		uintptr(fuload),
+	)
 	if h == 0 {
 		return 0, fmt.Errorf("LoadImageW failed: %v", err)
 	}
@@ -546,16 +595,37 @@ func MoveWindow(hwnd syscall.Handle, x, y, width, height int32, repaint bool) {
 	if repaint {
 		paint = TRUE
 	}
-	_MoveWindow.Call(uintptr(hwnd), uintptr(x), uintptr(y), uintptr(width), uintptr(height), paint)
+	_MoveWindow.Call(
+		uintptr(hwnd),
+		uintptr(x),
+		uintptr(y),
+		uintptr(width),
+		uintptr(height),
+		paint,
+	)
 }
 
 func monitorFromPoint(pt Point, flags uint32) syscall.Handle {
-	r, _, _ := _MonitorFromPoint.Call(uintptr(pt.X), uintptr(pt.Y), uintptr(flags))
+	r, _, _ := _MonitorFromPoint.Call(
+		uintptr(pt.X),
+		uintptr(pt.Y),
+		uintptr(flags),
+	)
 	return syscall.Handle(r)
 }
 
-func MsgWaitForMultipleObjectsEx(nCount uint32, pHandles uintptr, millis, mask, flags uint32) (uint32, error) {
-	r, _, err := _MsgWaitForMultipleObjectsEx.Call(uintptr(nCount), pHandles, uintptr(millis), uintptr(mask), uintptr(flags))
+func MsgWaitForMultipleObjectsEx(
+	nCount uint32,
+	pHandles uintptr,
+	millis, mask, flags uint32,
+) (uint32, error) {
+	r, _, err := _MsgWaitForMultipleObjectsEx.Call(
+		uintptr(nCount),
+		pHandles,
+		uintptr(millis),
+		uintptr(mask),
+		uintptr(flags),
+	)
 	res := uint32(r)
 	if res == 0xFFFFFFFF {
 		return 0, fmt.Errorf("MsgWaitForMultipleObjectsEx failed: %v", err)
@@ -571,8 +641,18 @@ func OpenClipboard(hwnd syscall.Handle) error {
 	return nil
 }
 
-func PeekMessage(m *Msg, hwnd syscall.Handle, wMsgFilterMin, wMsgFilterMax, wRemoveMsg uint32) bool {
-	r, _, _ := _PeekMessage.Call(uintptr(unsafe.Pointer(m)), uintptr(hwnd), uintptr(wMsgFilterMin), uintptr(wMsgFilterMax), uintptr(wRemoveMsg))
+func PeekMessage(
+	m *Msg,
+	hwnd syscall.Handle,
+	wMsgFilterMin, wMsgFilterMax, wRemoveMsg uint32,
+) bool {
+	r, _, _ := _PeekMessage.Call(
+		uintptr(unsafe.Pointer(m)),
+		uintptr(hwnd),
+		uintptr(wMsgFilterMin),
+		uintptr(wMsgFilterMax),
+		uintptr(wRemoveMsg),
+	)
 	issue34474KeepAlive(m)
 	return r != 0
 }
@@ -581,7 +661,11 @@ func PostQuitMessage(exitCode uintptr) {
 	_PostQuitMessage.Call(exitCode)
 }
 
-func PostMessage(hwnd syscall.Handle, msg uint32, wParam, lParam uintptr) error {
+func PostMessage(
+	hwnd syscall.Handle,
+	msg uint32,
+	wParam, lParam uintptr,
+) error {
 	r, _, err := _PostMessage.Call(uintptr(hwnd), uintptr(msg), wParam, lParam)
 	if r == 0 {
 		return fmt.Errorf("PostMessage failed: %v", err)
@@ -636,8 +720,18 @@ func SetCursor(h syscall.Handle) {
 	_SetCursor.Call(uintptr(h))
 }
 
-func SetTimer(hwnd syscall.Handle, nIDEvent uintptr, uElapse uint32, timerProc uintptr) error {
-	r, _, err := _SetTimer.Call(uintptr(hwnd), uintptr(nIDEvent), uintptr(uElapse), timerProc)
+func SetTimer(
+	hwnd syscall.Handle,
+	nIDEvent uintptr,
+	uElapse uint32,
+	timerProc uintptr,
+) error {
+	r, _, err := _SetTimer.Call(
+		uintptr(hwnd),
+		uintptr(nIDEvent),
+		uintptr(uElapse),
+		timerProc,
+	)
 	if r == 0 {
 		return fmt.Errorf("SetTimer failed: %v", err)
 	}

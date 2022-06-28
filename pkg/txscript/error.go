@@ -13,9 +13,9 @@ const (
 	// this error should never be seen as it would mean there is an error in the
 	// engine logic.
 	ErrInternal ErrorCode = iota
-	
+
 	// Failures related to improper API usage.
-	
+
 	// ErrInvalidFlags is returned when the passed flags to NewEngine contain an
 	// invalid combination.
 	ErrInvalidFlags
@@ -35,9 +35,9 @@ const (
 	// ErrTooMuchNullData is returned from NullDataScript when the length of the
 	// provided data exceeds MaxDataCarrierSize.
 	ErrTooMuchNullData
-	
+
 	// Failures related to final execution state.
-	
+
 	// ErrEarlyReturn is returned when OP_RETURN is executed in the script.
 	ErrEarlyReturn
 	// ErrEmptyStack is returned when the script evaluated without error, but
@@ -55,9 +55,9 @@ const (
 	// once all of them have already been executed. This can happen due to things
 	// such as a second call to Execute or calling Step after all opcodes have
 	// already been executed.
-	
+
 	// Failures related to exceeding maximum allowed limits.
-	
+
 	// ErrScriptTooBig is returned if a script is larger than MaxScriptSize.
 	ErrScriptTooBig
 	// ErrElementTooBig is returned if the size of an element to be pushed to the
@@ -83,9 +83,9 @@ const (
 	// applies to. However, any opcode that expects numeric input may fail with
 	// this code.
 	ErrNumberTooBig
-	
+
 	// Failures related to verification operations.
-	
+
 	// ErrVerify is returned when OP_VERIFY is encountered in a script and
 	// the top item on the data stack does not evaluate to true.
 	ErrVerify
@@ -103,7 +103,7 @@ const (
 	// evaluate to true.
 	ErrCheckMultiSigVerify
 	// Failures related to improper use of opcodes.
-	
+
 	// ErrDisabledOpcode is returned when a disabled opcode is encountered in a
 	// script.
 	ErrDisabledOpcode
@@ -121,9 +121,9 @@ const (
 	// end of script is reached without encountering an OP_ENDIF when an OP_IF or
 	// OP_NOTIF was previously encountered.
 	ErrUnbalancedConditional
-	
+
 	// Failures related to malleability.
-	
+
 	// ErrMinimalData is returned when the ScriptVerifyMinimalData flag is set
 	// and the script contains push operations that do not use the minimal opcode
 	// required.
@@ -211,7 +211,7 @@ const (
 	// a datapush of the witness program.
 	ErrWitnessMalleatedP2SH
 	// Failures related to soft forks.
-	
+
 	// ErrDiscourageUpgradableNOPs is returned when the
 	// ScriptDiscourageUpgradableNops flag is set and a NOP opcode is encountered
 	// in a script.
@@ -230,7 +230,7 @@ const (
 	// currently defined witness program vesions.
 	ErrDiscourageUpgradableWitnessProgram
 	// Failures related to segregated witness.
-	
+
 	// ErrWitnessProgramEmpty is returned if ScriptVerifyWitness is set and the
 	// witness stack itself is empty.
 	ErrWitnessProgramEmpty

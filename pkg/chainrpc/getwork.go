@@ -66,7 +66,8 @@ func BigToLEUint256(n *big.Int) [Uint256Size]byte {
 }
 
 // HandleGetWork handles the getwork call
-func HandleGetWork(s *Server, cmd interface{}, closeChan qu.C) (interface{},
+func HandleGetWork(s *Server, cmd interface{}, closeChan qu.C) (
+	interface{},
 	error,
 ) {
 	c := cmd.(*btcjson.GetWorkCmd)
@@ -312,7 +313,8 @@ func HandleGetWorkSubmission(s *Server, hexData string) (interface{}, error) {
 	msgBlock.Header.MerkleRoot = *merkles.GetRoot()
 	// Ensure the submitted block hash is less than the target difficulty.
 	pl := fork.GetMinDiff(s.Cfg.Algo, s.Cfg.Chain.BestSnapshot().Height)
-	e = blockchain.CheckProofOfWork(block, pl,
+	e = blockchain.CheckProofOfWork(
+		block, pl,
 		s.Cfg.Chain.BestSnapshot().Height,
 	)
 	if e != nil {
@@ -326,14 +328,16 @@ func HandleGetWorkSubmission(s *Server, hexData string) (interface{}, error) {
 				),
 			}
 		}
-		D.Ln("block submitted via getwork does not meet the required proof of work:",
+		D.Ln(
+			"block submitted via getwork does not meet the required proof of work:",
 			e,
 		)
 		return false, nil
 	}
 	latestHash := &s.Cfg.Chain.BestSnapshot().Hash
 	if !msgBlock.Header.PrevBlock.IsEqual(latestHash) {
-		D.F("block submitted via getwork with previous block %s is stale",
+		D.F(
+			"block submitted via getwork with previous block %s is stale",
 			msgBlock.Header.PrevBlock,
 		)
 		return false, nil
@@ -349,7 +353,8 @@ func HandleGetWorkSubmission(s *Server, hexData string) (interface{}, error) {
 		if _, ok := e.(blockchain.RuleError); !ok {
 			return nil, &btcjson.RPCError{
 				Code: btcjson.ErrRPCInternal.Code,
-				Message: fmt.Sprintf("Unexpected error while processing block: %v",
+				Message: fmt.Sprintf(
+					"Unexpected error while processing block: %v",
 					e,
 				),
 			}

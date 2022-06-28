@@ -47,7 +47,8 @@ func (x *Opt) GetMetadata() *meta.Data {
 // ReadInput sets the value from a string
 func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 	if input == "" {
-		e = fmt.Errorf("string opt %s %v may not be empty", x.Name(),
+		e = fmt.Errorf(
+			"string opt %s %v may not be empty", x.Name(),
 			x.Data.Aliases,
 		)
 		return
@@ -66,7 +67,8 @@ func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 			}
 			if input == op {
 				if e == nil {
-					return x, fmt.Errorf("ambiguous short option value '%s' matches multiple options: %s, %s",
+					return x, fmt.Errorf(
+						"ambiguous short option value '%s' matches multiple options: %s, %s",
 						input, matched, i,
 					)
 				}
@@ -82,7 +84,8 @@ func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 		input = matched
 	} else {
 		var cleaned string
-		if cleaned, e = sanitizers.StringType(x.Data.Type, input,
+		if cleaned, e = sanitizers.StringType(
+			x.Data.Type, input,
 			x.Data.DefaultPort,
 		); E.Chk(e) {
 			return

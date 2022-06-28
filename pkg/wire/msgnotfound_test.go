@@ -275,15 +275,18 @@ func TestNotFoundWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in inventory vector count
-		{baseNotFound, baseNotFoundEncoded, pver, BaseEncoding, 0,
+		{
+			baseNotFound, baseNotFoundEncoded, pver, BaseEncoding, 0,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in inventory list.
-		{baseNotFound, baseNotFoundEncoded, pver, BaseEncoding, 1,
+		{
+			baseNotFound, baseNotFoundEncoded, pver, BaseEncoding, 1,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error with greater than max inventory vectors.
-		{maxNotFound, maxNotFoundEncoded, pver, BaseEncoding, 3, wireErr,
+		{
+			maxNotFound, maxNotFoundEncoded, pver, BaseEncoding, 3, wireErr,
 			wireErr,
 		},
 	}

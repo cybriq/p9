@@ -3,14 +3,15 @@ package mining
 import (
 	"container/heap"
 	"fmt"
+	"math/rand"
+	"time"
+
 	"github.com/cybriq/p9/pkg/amt"
 	"github.com/cybriq/p9/pkg/bits"
 	block2 "github.com/cybriq/p9/pkg/block"
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/fork"
-	"math/rand"
-	"time"
 
 	"github.com/cybriq/p9/pkg/blockchain"
 	"github.com/cybriq/p9/pkg/chainhash"
@@ -218,7 +219,8 @@ func newTxPriorityQueue(reserve int, sortByFee bool) *txPriorityQueue {
 // viewA will contain all of its original entries plus all of the entries in
 // viewB. It will replace any entries in viewB which also exist in viewA if the
 // entry in viewA is spent.
-func mergeUtxoView(viewA *blockchain.UtxoViewpoint,
+func mergeUtxoView(
+	viewA *blockchain.UtxoViewpoint,
 	viewB *blockchain.UtxoViewpoint,
 ) {
 	viewAEntries := viewA.Entries()
@@ -234,7 +236,8 @@ func mergeUtxoView(viewA *blockchain.UtxoViewpoint,
 // signature script of the coinbase transaction of a new block. In particular,
 // it starts with the block height that is required by version 2 blocks and adds
 // the extra nonce as well as additional coinbase flags.
-func standardCoinbaseScript(nextBlockHeight int32, extraNonce uint64) ([]byte,
+func standardCoinbaseScript(nextBlockHeight int32, extraNonce uint64) (
+	[]byte,
 	error,
 ) {
 	return txscript.NewScriptBuilder().AddInt64(int64(nextBlockHeight)).
@@ -286,7 +289,8 @@ func createCoinbaseTx(
 	)
 	tx.AddTxOut(
 		&wire.TxOut{
-			Value: blockchain.CalcBlockSubsidy(nextBlockHeight, params,
+			Value: blockchain.CalcBlockSubsidy(
+				nextBlockHeight, params,
 				version,
 			),
 			PkScript: pkScript,
@@ -298,7 +302,8 @@ func createCoinbaseTx(
 // spendTransaction updates the passed view by marking the inputs to the passed
 // transaction as spent. It also adds all outputs in the passed transaction
 // which are not provably unspendable as available unspent transaction outputs.
-func spendTransaction(utxoView *blockchain.UtxoViewpoint, tx *util.Tx,
+func spendTransaction(
+	utxoView *blockchain.UtxoViewpoint, tx *util.Tx,
 	height int32,
 ) (e error) {
 	for _, txIn := range tx.MsgTx().TxIn {
@@ -336,7 +341,8 @@ func MinimumMedianTime(chainState *blockchain.BestState) time.Time {
 // medianAdjustedTime returns the current time adjusted to ensure it is at least
 // one second after the median timestamp of the last several blocks per the
 // chain consensus rules.
-func medianAdjustedTime(chainState *blockchain.BestState,
+func medianAdjustedTime(
+	chainState *blockchain.BestState,
 	timeSource blockchain.MedianTimeSource,
 ) time.Time {
 	// The timestamp for the block must not be before the median timestamp of the
@@ -436,7 +442,8 @@ func NewBlkTmplGenerator(
 //  |  transactions (while block size   |   |
 //  |  <= policy.BlockMinSize)          |   |
 //   -----------------------------------  --
-func (g *BlkTmplGenerator) NewBlockTemplate(payToAddress btcaddr.Address,
+func (g *BlkTmplGenerator) NewBlockTemplate(
+	payToAddress btcaddr.Address,
 	algo string,
 ) (*BlockTemplate, error) {
 	T.Ln("NewBlockTemplate", algo)
@@ -461,7 +468,10 @@ func (g *BlkTmplGenerator) NewBlockTemplate(payToAddress btcaddr.Address,
 	extraNonce := rand.Uint64()
 	var e error
 	var coinbaseScript []byte
-	if coinbaseScript, e = standardCoinbaseScript(nextBlockHeight, extraNonce); E.Chk(e) {
+	if coinbaseScript, e = standardCoinbaseScript(
+		nextBlockHeight,
+		extraNonce,
+	); E.Chk(e) {
 		return nil, e
 	}
 	var coinbaseTx *util.Tx
@@ -502,7 +512,8 @@ func (g *BlkTmplGenerator) NewBlockTemplate(payToAddress btcaddr.Address,
 	txSigOpCosts := make([]int64, 0, len(sourceTxns))
 	txFees = append(txFees, -1) // Updated once known
 	txSigOpCosts = append(txSigOpCosts, coinbaseSigOpCost)
-	T.F("considering %d transactions for inclusion to new block",
+	T.F(
+		"considering %d transactions for inclusion to new block",
 		len(sourceTxns),
 	)
 mempoolLoop:
@@ -664,7 +675,8 @@ mempoolLoop:
 		blockPlusTxWeight := blockWeight + txWeight
 		if blockPlusTxWeight < blockWeight ||
 			blockPlusTxWeight >= g.Policy.BlockMaxWeight {
-			T.F("skipping tx %s because it would exceed the max block weight",
+			T.F(
+				"skipping tx %s because it would exceed the max block weight",
 				tx.Hash(),
 			)
 			logSkippedDeps(tx, deps)
@@ -862,7 +874,8 @@ mempoolLoop:
 	if reqDifficulty, e = g.Chain.CalcNextRequiredDifficulty(algo); E.Chk(e) {
 		return nil, e
 	}
-	T.F("reqDifficulty %d %08x %064x", vers, reqDifficulty,
+	T.F(
+		"reqDifficulty %d %08x %064x", vers, reqDifficulty,
 		bits.CompactToBig(reqDifficulty),
 	)
 	// Create a new block ready to be solved.
@@ -965,7 +978,10 @@ func (g *BlkTmplGenerator) UpdateExtraNonce(
 	blockHeight int32, extraNonce uint64,
 ) (e error) {
 	var coinbaseScript []byte
-	if coinbaseScript, e = standardCoinbaseScript(blockHeight, extraNonce); E.Chk(e) {
+	if coinbaseScript, e = standardCoinbaseScript(
+		blockHeight,
+		extraNonce,
+	); E.Chk(e) {
 		return e
 	}
 	if len(coinbaseScript) > blockchain.MaxCoinbaseScriptLen {

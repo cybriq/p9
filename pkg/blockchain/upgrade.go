@@ -130,7 +130,8 @@ func migrateBlockIndex(db database.DB) (e error) {
 // readBlockTree reads the old block index bucket and constructs a mapping of each block to its parent block and all
 // child blocks. This mapping represents the full tree of blocks. This function does not populate the height or
 // mainChain fields of the returned blockChainContext values.
-func readBlockTree(v1BlockIdxBucket database.Bucket) (blocksMap map[chainhash.Hash]*blockChainContext,
+func readBlockTree(v1BlockIdxBucket database.Bucket) (
+	blocksMap map[chainhash.Hash]*blockChainContext,
 	e error,
 ) {
 	blocksMap = make(map[chainhash.Hash]*blockChainContext)
@@ -195,7 +196,8 @@ func determineBlockHeights(blocksMap map[chainhash.Hash]*blockChainContext) (e e
 
 // determineMainChainBlocks traverses the block graph down from the tip to determine which block hashes that are part of
 // the main chain. This function modifies the mainChain field on the blocksMap entries.
-func determineMainChainBlocks(blocksMap map[chainhash.Hash]*blockChainContext,
+func determineMainChainBlocks(
+	blocksMap map[chainhash.Hash]*blockChainContext,
 	tip *chainhash.Hash,
 ) {
 	for nextHash := tip; *nextHash != zeroHash; nextHash = blocksMap[*nextHash].parent {

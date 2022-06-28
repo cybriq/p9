@@ -209,7 +209,8 @@ func newCompute(ctx driver.Device) (*compute, error) {
 	}
 	g.output.blitProg = blitProg
 
-	materialProg, err := ctx.NewProgram(shader_material_vert,
+	materialProg, err := ctx.NewProgram(
+		shader_material_vert,
 		shader_material_frag,
 	)
 	if err != nil {
@@ -217,7 +218,8 @@ func newCompute(ctx driver.Device) (*compute, error) {
 		return nil, err
 	}
 	g.materials.prog = materialProg
-	progLayout, err := ctx.NewInputLayout(shader_material_vert,
+	progLayout, err := ctx.NewInputLayout(
+		shader_material_vert,
 		[]driver.InputDesc{
 			{Type: driver.DataTypeFloat, Size: 2, Offset: 0},
 			{Type: driver.DataTypeFloat, Size: 2, Offset: 4 * 2},
@@ -232,7 +234,8 @@ func newCompute(ctx driver.Device) (*compute, error) {
 	g.drawOps.pathCache = newOpCache()
 	g.drawOps.compute = true
 
-	buf, err := ctx.NewBuffer(driver.BufferBindingShaderStorage,
+	buf, err := ctx.NewBuffer(
+		driver.BufferBindingShaderStorage,
 		int(unsafe.Sizeof(config{})),
 	)
 	if err != nil {
@@ -322,7 +325,8 @@ func (g *compute) Frame() error {
 		ft = ft.Round(q)
 		et, tat, pct, bbt = et.Round(q), tat.Round(q), pct.Round(q), bbt.Round(q)
 		ct, k4t = ct.Round(q), k4t.Round(q)
-		t.profile = fmt.Sprintf("ft:%7s et:%7s tat:%7s pct:%7s bbt:%7s ct:%7s k4t:%7s",
+		t.profile = fmt.Sprintf(
+			"ft:%7s et:%7s tat:%7s pct:%7s bbt:%7s ct:%7s k4t:%7s",
 			ft, et, tat, pct, bbt, ct, k4t,
 		)
 	}
@@ -340,7 +344,8 @@ func (g *compute) Profile() string {
 // format we can't use glBlitFramebuffer, because it does sRGB conversion.
 func (g *compute) blitOutput(viewport image.Point) {
 	if !g.drawOps.clear {
-		g.ctx.BlendFunc(driver.BlendFactorOne,
+		g.ctx.BlendFunc(
+			driver.BlendFactorOne,
 			driver.BlendFactorOneMinusSrcAlpha,
 		)
 		g.ctx.SetBlend(true)
@@ -357,9 +362,11 @@ func (g *compute) encode(viewport image.Point) error {
 	g.enc.reset()
 
 	// Flip Y-axis.
-	flipY := f32.Affine2D{}.Scale(f32.Pt(0, 0), f32.Pt(1, -1)).Offset(f32.Pt(0,
-		float32(viewport.Y),
-	),
+	flipY := f32.Affine2D{}.Scale(f32.Pt(0, 0), f32.Pt(1, -1)).Offset(
+		f32.Pt(
+			0,
+			float32(viewport.Y),
+		),
 	)
 	g.enc.transform(flipY)
 	if g.drawOps.clear {
@@ -413,7 +420,8 @@ restart:
 				quad[i].posY += offsetf.Y
 			}
 			// Draw quad as two triangles.
-			m.quads = append(m.quads, quad[0], quad[1], quad[3], quad[3],
+			m.quads = append(
+				m.quads, quad[0], quad[1], quad[3], quad[3],
 				quad[1], quad[2],
 			)
 			if m.offsets == nil {
@@ -437,20 +445,23 @@ restart:
 			m.tex.Release()
 			m.tex = nil
 		}
-		handle, err := g.ctx.NewTexture(driver.TextureFormatRGBA8, texSize,
+		handle, err := g.ctx.NewTexture(
+			driver.TextureFormatRGBA8, texSize,
 			texSize,
 			driver.FilterNearest, driver.FilterNearest,
 			driver.BufferBindingShaderStorage|driver.BufferBindingFramebuffer,
 		)
 		if err != nil {
-			return fmt.Errorf("compute: failed to create material atlas: %v",
+			return fmt.Errorf(
+				"compute: failed to create material atlas: %v",
 				err,
 			)
 		}
 		m.tex = handle
 		fbo, err := g.ctx.NewFramebuffer(handle, 0)
 		if err != nil {
-			return fmt.Errorf("compute: failed to create material framebuffer: %v",
+			return fmt.Errorf(
+				"compute: failed to create material framebuffer: %v",
 				err,
 			)
 		}
@@ -458,7 +469,8 @@ restart:
 	}
 	// TODO: move to shaders.
 	// Transform to clip space: [-1, -1] - [1, 1].
-	clip := f32.Affine2D{}.Scale(f32.Pt(0, 0),
+	clip := f32.Affine2D{}.Scale(
+		f32.Pt(0, 0),
 		f32.Pt(2/float32(texSize), 2/float32(texSize)),
 	).Offset(f32.Pt(-1, -1))
 	for i, v := range m.quads {
@@ -551,7 +563,8 @@ restart:
 			a.tex = nil
 		}
 		sz := a.packer.maxDim
-		handle, err := g.ctx.NewTexture(driver.TextureFormatSRGB, sz, sz,
+		handle, err := g.ctx.NewTexture(
+			driver.TextureFormatSRGB, sz, sz,
 			driver.FilterLinear, driver.FilterLinear,
 			driver.BufferBindingTexture,
 		)
@@ -568,11 +581,13 @@ restart:
 		size := img.Bounds().Size()
 		driver.UploadImage(a.tex, pos, img)
 		rightPadding := image.Pt(padding, size.Y)
-		a.tex.Upload(image.Pt(pos.X+size.X, pos.Y), rightPadding,
+		a.tex.Upload(
+			image.Pt(pos.X+size.X, pos.Y), rightPadding,
 			g.zeros(rightPadding.X*rightPadding.Y*4),
 		)
 		bottomPadding := image.Pt(size.X, padding)
-		a.tex.Upload(image.Pt(pos.X, pos.Y+size.Y), bottomPadding,
+		a.tex.Upload(
+			image.Pt(pos.X, pos.Y+size.Y), bottomPadding,
 			g.zeros(bottomPadding.X*bottomPadding.Y*4),
 		)
 	}
@@ -589,7 +604,8 @@ func pow2Ceil(v int) int {
 
 // materialQuad constructs a quad that represents the transformed image. It returns the quad
 // and its bounds.
-func (g *compute) materialQuad(M f32.Affine2D, img imageOpData,
+func (g *compute) materialQuad(
+	M f32.Affine2D, img imageOpData,
 	uvPos image.Point,
 ) ([4]materialVertex, image.Rectangle) {
 	imgSize := layout.FPt(img.src.Bounds().Size())
@@ -653,7 +669,8 @@ func min(p1, p2 f32.Point) f32.Point {
 	return p
 }
 
-func (g *compute) encodeOps(trans f32.Affine2D, viewport image.Point,
+func (g *compute) encodeOps(
+	trans f32.Affine2D, viewport image.Point,
 	ops []imageOp,
 ) error {
 	for _, op := range ops {
@@ -666,14 +683,15 @@ func (g *compute) encodeOps(trans f32.Affine2D, viewport image.Point,
 		switch m.material {
 		case materialTexture:
 			t := trans.Mul(m.trans)
-			g.texOps = append(g.texOps, textureOp{
-				sceneIdx: len(g.enc.scene),
-				img:      m.data,
-				key: textureKey{
-					transform: t,
-					handle:    m.data.handle,
+			g.texOps = append(
+				g.texOps, textureOp{
+					sceneIdx: len(g.enc.scene),
+					img:      m.data,
+					key: textureKey{
+						transform: t,
+						handle:    m.data.handle,
+					},
 				},
-			},
 			)
 			// Add fill command, its offset is resolved and filled in renderMaterials.
 			g.enc.fillImage(0)
@@ -698,7 +716,8 @@ func (g *compute) encodeOps(trans f32.Affine2D, viewport image.Point,
 }
 
 // encodeClips encodes a stack of clip paths and return the stack depth.
-func (g *compute) encodeClipStack(clip, bounds f32.Rectangle, p *pathOp,
+func (g *compute) encodeClipStack(
+	clip, bounds f32.Rectangle, p *pathOp,
 	begin bool,
 ) int {
 	nclips := 0
@@ -751,7 +770,8 @@ func (g *compute) render(tileDims image.Point) error {
 	widthInBins := (tileDims.X + 15) / 16
 	heightInBins := (tileDims.Y + 7) / 8
 	if widthInBins*heightInBins > wgSize {
-		return fmt.Errorf("gpu: output too large (%dx%d)",
+		return fmt.Errorf(
+			"gpu: output too large (%dx%d)",
 			tileDims.X*tileWidthPx, tileDims.Y*tileHeightPx,
 		)
 	}
@@ -777,11 +797,13 @@ func (g *compute) render(tileDims image.Point) error {
 			return err
 		}
 	}
-	g.ctx.BindImageTexture(kernel4OutputUnit, g.output.image,
+	g.ctx.BindImageTexture(
+		kernel4OutputUnit, g.output.image,
 		driver.AccessWrite, driver.TextureFormatRGBA8,
 	)
 	if t := g.materials.tex; t != nil {
-		g.ctx.BindImageTexture(kernel4AtlasUnit, t, driver.AccessRead,
+		g.ctx.BindImageTexture(
+			kernel4AtlasUnit, t, driver.AccessRead,
 			driver.TextureFormatRGBA8,
 		)
 	}
@@ -899,7 +921,8 @@ func (g *compute) render(tileDims image.Point) error {
 			}
 			continue
 		default:
-			return fmt.Errorf("compute: shader program failed with error %d",
+			return fmt.Errorf(
+				"compute: shader program failed with error %d",
 				errCode,
 			)
 		}
@@ -919,7 +942,8 @@ func (g *compute) resizeOutput(size image.Point) error {
 		g.output.image.Release()
 		g.output.image = nil
 	}
-	img, err := g.ctx.NewTexture(driver.TextureFormatRGBA8, size.X, size.Y,
+	img, err := g.ctx.NewTexture(
+		driver.TextureFormatRGBA8, size.X, size.Y,
 		driver.FilterNearest,
 		driver.FilterNearest,
 		driver.BufferBindingShaderStorage|driver.BufferBindingTexture,
@@ -991,25 +1015,32 @@ func (g *compute) Release() {
 }
 
 func (g *compute) bindBuffers() {
-	bindStorageBuffers(g.programs.elements, g.buffers.memory.buffer,
+	bindStorageBuffers(
+		g.programs.elements, g.buffers.memory.buffer,
 		g.buffers.config, g.buffers.scene.buffer, g.buffers.state.buffer,
 	)
-	bindStorageBuffers(g.programs.tileAlloc, g.buffers.memory.buffer,
+	bindStorageBuffers(
+		g.programs.tileAlloc, g.buffers.memory.buffer,
 		g.buffers.config,
 	)
-	bindStorageBuffers(g.programs.pathCoarse, g.buffers.memory.buffer,
+	bindStorageBuffers(
+		g.programs.pathCoarse, g.buffers.memory.buffer,
 		g.buffers.config,
 	)
-	bindStorageBuffers(g.programs.backdrop, g.buffers.memory.buffer,
+	bindStorageBuffers(
+		g.programs.backdrop, g.buffers.memory.buffer,
 		g.buffers.config,
 	)
-	bindStorageBuffers(g.programs.binning, g.buffers.memory.buffer,
+	bindStorageBuffers(
+		g.programs.binning, g.buffers.memory.buffer,
 		g.buffers.config,
 	)
-	bindStorageBuffers(g.programs.coarse, g.buffers.memory.buffer,
+	bindStorageBuffers(
+		g.programs.coarse, g.buffers.memory.buffer,
 		g.buffers.config,
 	)
-	bindStorageBuffers(g.programs.kernel4, g.buffers.memory.buffer,
+	bindStorageBuffers(
+		g.programs.kernel4, g.buffers.memory.buffer,
 		g.buffers.config,
 	)
 }
@@ -1089,7 +1120,8 @@ func (e *encoder) endClip(bbox f32.Rectangle) {
 
 func (e *encoder) rect(r f32.Rectangle) {
 	// Rectangle corners, clock-wise.
-	c0, c1, c2, c3 := r.Min, f32.Pt(r.Min.X, r.Max.Y), r.Max, f32.Pt(r.Max.X,
+	c0, c1, c2, c3 := r.Min, f32.Pt(r.Min.X, r.Max.Y), r.Max, f32.Pt(
+		r.Max.X,
 		r.Min.Y,
 	)
 	e.line(c0, c1)

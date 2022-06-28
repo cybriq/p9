@@ -290,7 +290,10 @@ out:
 					break
 				}
 				I.Ln("sending out templates...")
-				if e = s.multiConn.SendMany(job.Magic, s.templateShards); E.Chk(e) {
+				if e = s.multiConn.SendMany(
+					job.Magic,
+					s.templateShards,
+				); E.Chk(e) {
 				}
 			case bu := <-s.blockUpdate:
 				// _ = bu
@@ -299,7 +302,10 @@ out:
 					I.Ln("received new block update while running")
 					s.doBlockUpdate(bu)
 					I.Ln("sending out templates...")
-					if e = s.multiConn.SendMany(job.Magic, s.templateShards); E.Chk(e) {
+					if e = s.multiConn.SendMany(
+						job.Magic,
+						s.templateShards,
+					); E.Chk(e) {
 						return
 					}
 				}()
@@ -309,7 +315,10 @@ out:
 					break running
 				}
 				// I.Ln("resending current templates...")
-				if e = s.multiConn.SendMany(job.Magic, s.templateShards); E.Chk(e) {
+				if e = s.multiConn.SendMany(
+					job.Magic,
+					s.templateShards,
+				); E.Chk(e) {
 					break
 				}
 				if s.walletClient.Disconnected() {
@@ -615,7 +624,8 @@ func processSolMsg(
 	}
 
 	I.Ln("sending pause to workers")
-	if e = s.multiConn.SendMany(pause.Magic,
+	if e = s.multiConn.SendMany(
+		pause.Magic,
 		transport.GetShards(p2padvt.Get(s.uuid, (s.cfg.P2PListeners.S())[0])),
 	); E.Chk(e) {
 		return
@@ -627,7 +637,10 @@ func processSolMsg(
 	blk.SetHeight(tpl.Height)
 	var isOrphan bool
 	I.Ln("submitting blk for processing")
-	if isOrphan, e = s.node.SyncManager.ProcessBlock(blk, blockchain.BFNone); E.Chk(e) {
+	if isOrphan, e = s.node.SyncManager.ProcessBlock(
+		blk,
+		blockchain.BFNone,
+	); E.Chk(e) {
 		// Anything other than a rule violation is an unexpected error, so log that
 		// error as an internal error.
 		if _, ok := e.(blockchain.RuleError); !ok {

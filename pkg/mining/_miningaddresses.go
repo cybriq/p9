@@ -2,15 +2,16 @@ package mining
 
 import (
 	"github.com/cybriq/p9/cmd/node/active"
+	"github.com/cybriq/p9/cmd/wallet"
 	"github.com/cybriq/p9/pkg/btcaddr"
 	wm "github.com/cybriq/p9/pkg/waddrmgr"
-	"github.com/cybriq/p9/cmd/wallet"
 	"github.com/cybriq/p9/pod/config"
 )
 
 // RefillMiningAddresses adds new addresses to the mining address pool for the miner
 // todo: make this remove ones that have been used or received a payment or mined
-func RefillMiningAddresses(w *wallet.Wallet, cfg *config.Config,
+func RefillMiningAddresses(
+	w *wallet.Wallet, cfg *config.Config,
 	stateCfg *active.Config,
 ) {
 	if w == nil {
@@ -46,13 +47,16 @@ func RefillMiningAddresses(w *wallet.Wallet, cfg *config.Config,
 		)
 		if e == nil {
 			// add them to the configuration to be saved
-			cfg.MiningAddrs.Set(append(cfg.MiningAddrs.S(),
-				addr.EncodeAddress(),
-			),
+			cfg.MiningAddrs.Set(
+				append(
+					cfg.MiningAddrs.S(),
+					addr.EncodeAddress(),
+				),
 			)
 			// add them to the active mining address list so they
 			// are ready to use
-			stateCfg.ActiveMiningAddrs = append(stateCfg.ActiveMiningAddrs,
+			stateCfg.ActiveMiningAddrs = append(
+				stateCfg.ActiveMiningAddrs,
 				addr,
 			)
 		} else {

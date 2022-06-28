@@ -17,7 +17,8 @@ func TestMutableEmpty(t *testing.T) {
 	}
 	// Ensure the reported size is 0.
 	if gotSize := testTreap.Size(); gotSize != 0 {
-		t.Fatalf("Size: unexpected byte size - got %d, want 0",
+		t.Fatalf(
+			"Size: unexpected byte size - got %d, want 0",
 			gotSize,
 		)
 	}
@@ -34,13 +35,15 @@ func TestMutableEmpty(t *testing.T) {
 	// Ensure the number of keys iterated by ForEach on an empty treap is
 	// zero.
 	var numIterated int
-	testTreap.ForEach(func(k, v []byte) bool {
-		numIterated++
-		return true
-	},
+	testTreap.ForEach(
+		func(k, v []byte) bool {
+			numIterated++
+			return true
+		},
 	)
 	if numIterated != 0 {
-		t.Fatalf("ForEach: unexpected iterate count - got %d, want 0",
+		t.Fatalf(
+			"ForEach: unexpected iterate count - got %d, want 0",
 			numIterated,
 		)
 	}
@@ -64,7 +67,8 @@ func TestMutableReset(t *testing.T) {
 	}
 	// Ensure the reported size is now 0.
 	if gotSize := testTreap.Size(); gotSize != 0 {
-		t.Fatalf("Size: unexpected byte size - got %d, want 0",
+		t.Fatalf(
+			"Size: unexpected byte size - got %d, want 0",
 			gotSize,
 		)
 	}
@@ -78,20 +82,23 @@ func TestMutableReset(t *testing.T) {
 		// Get the key that no longer exists from the treap and ensure
 		// it is nil.
 		if gotVal := testTreap.Get(key); gotVal != nil {
-			t.Fatalf("Get #%d: unexpected value - got %x, want nil",
+			t.Fatalf(
+				"Get #%d: unexpected value - got %x, want nil",
 				i, gotVal,
 			)
 		}
 	}
 	// Ensure the number of keys iterated by ForEach is zero.
 	var numIterated int
-	testTreap.ForEach(func(k, v []byte) bool {
-		numIterated++
-		return true
-	},
+	testTreap.ForEach(
+		func(k, v []byte) bool {
+			numIterated++
+			return true
+		},
 	)
 	if numIterated != 0 {
-		t.Fatalf("ForEach: unexpected iterate count - got %d, want 0",
+		t.Fatalf(
+			"ForEach: unexpected iterate count - got %d, want 0",
 			numIterated,
 		)
 	}
@@ -109,7 +116,8 @@ func TestMutableSequential(t *testing.T) {
 		testTreap.Put(key, key)
 		// Ensure the treap length is the expected value.
 		if gotLen := testTreap.Len(); gotLen != i+1 {
-			t.Fatalf("Len #%d: unexpected length - got %d, want %d",
+			t.Fatalf(
+				"Len #%d: unexpected length - got %d, want %d",
 				i, gotLen, i+1,
 			)
 		}
@@ -119,41 +127,47 @@ func TestMutableSequential(t *testing.T) {
 		}
 		// Get the key from the treap and ensure it is the expected value.
 		if gotVal := testTreap.Get(key); !bytes.Equal(gotVal, key) {
-			t.Fatalf("Get #%d: unexpected value - got %x, want %x",
+			t.Fatalf(
+				"Get #%d: unexpected value - got %x, want %x",
 				i, gotVal, key,
 			)
 		}
 		// Ensure the expected size is reported.
 		expectedSize += nodeFieldsSize + 8
 		if gotSize := testTreap.Size(); gotSize != expectedSize {
-			t.Fatalf("Size #%d: unexpected byte size - got %d, "+
-				"want %d", i, gotSize, expectedSize,
+			t.Fatalf(
+				"Size #%d: unexpected byte size - got %d, "+
+					"want %d", i, gotSize, expectedSize,
 			)
 		}
 	}
 	// Ensure the all keys are iterated by ForEach in order.
 	var numIterated int
-	testTreap.ForEach(func(k, v []byte) bool {
-		wantKey := serializeUint32(uint32(numIterated))
-		// Ensure the key is as expected.
-		if !bytes.Equal(k, wantKey) {
-			t.Fatalf("ForEach #%d: unexpected key - got %x, want %x",
-				numIterated, k, wantKey,
-			)
-		}
-		// Ensure the value is as expected.
-		if !bytes.Equal(v, wantKey) {
-			t.Fatalf("ForEach #%d: unexpected value - got %x, want %x",
-				numIterated, v, wantKey,
-			)
-		}
-		numIterated++
-		return true
-	},
+	testTreap.ForEach(
+		func(k, v []byte) bool {
+			wantKey := serializeUint32(uint32(numIterated))
+			// Ensure the key is as expected.
+			if !bytes.Equal(k, wantKey) {
+				t.Fatalf(
+					"ForEach #%d: unexpected key - got %x, want %x",
+					numIterated, k, wantKey,
+				)
+			}
+			// Ensure the value is as expected.
+			if !bytes.Equal(v, wantKey) {
+				t.Fatalf(
+					"ForEach #%d: unexpected value - got %x, want %x",
+					numIterated, v, wantKey,
+				)
+			}
+			numIterated++
+			return true
+		},
 	)
 	// Ensure all items were iterated.
 	if numIterated != numItems {
-		t.Fatalf("ForEach: unexpected iterate count - got %d, want %d",
+		t.Fatalf(
+			"ForEach: unexpected iterate count - got %d, want %d",
 			numIterated, numItems,
 		)
 	}
@@ -163,7 +177,8 @@ func TestMutableSequential(t *testing.T) {
 		testTreap.Delete(key)
 		// Ensure the treap length is the expected value.
 		if gotLen := testTreap.Len(); gotLen != numItems-i-1 {
-			t.Fatalf("Len #%d: unexpected length - got %d, want %d",
+			t.Fatalf(
+				"Len #%d: unexpected length - got %d, want %d",
 				i, gotLen, numItems-i-1,
 			)
 		}
@@ -173,15 +188,17 @@ func TestMutableSequential(t *testing.T) {
 		}
 		// Get the key that no longer exists from the treap and ensure it is nil.
 		if gotVal := testTreap.Get(key); gotVal != nil {
-			t.Fatalf("Get #%d: unexpected value - got %x, want nil",
+			t.Fatalf(
+				"Get #%d: unexpected value - got %x, want nil",
 				i, gotVal,
 			)
 		}
 		// Ensure the expected size is reported.
 		expectedSize -= nodeFieldsSize + 8
 		if gotSize := testTreap.Size(); gotSize != expectedSize {
-			t.Fatalf("Size #%d: unexpected byte size - got %d, "+
-				"want %d", i, gotSize, expectedSize,
+			t.Fatalf(
+				"Size #%d: unexpected byte size - got %d, "+
+					"want %d", i, gotSize, expectedSize,
 			)
 		}
 	}
@@ -200,7 +217,8 @@ func TestMutableReverseSequential(t *testing.T) {
 		testTreap.Put(key, key)
 		// Ensure the treap length is the expected value.
 		if gotLen := testTreap.Len(); gotLen != i+1 {
-			t.Fatalf("Len #%d: unexpected length - got %d, want %d",
+			t.Fatalf(
+				"Len #%d: unexpected length - got %d, want %d",
 				i, gotLen, i+1,
 			)
 		}
@@ -210,41 +228,47 @@ func TestMutableReverseSequential(t *testing.T) {
 		}
 		// Get the key from the treap and ensure it is the expected value.
 		if gotVal := testTreap.Get(key); !bytes.Equal(gotVal, key) {
-			t.Fatalf("Get #%d: unexpected value - got %x, want %x",
+			t.Fatalf(
+				"Get #%d: unexpected value - got %x, want %x",
 				i, gotVal, key,
 			)
 		}
 		// Ensure the expected size is reported.
 		expectedSize += nodeFieldsSize + 8
 		if gotSize := testTreap.Size(); gotSize != expectedSize {
-			t.Fatalf("Size #%d: unexpected byte size - got %d, "+
-				"want %d", i, gotSize, expectedSize,
+			t.Fatalf(
+				"Size #%d: unexpected byte size - got %d, "+
+					"want %d", i, gotSize, expectedSize,
 			)
 		}
 	}
 	// Ensure the all keys are iterated by ForEach in order.
 	var numIterated int
-	testTreap.ForEach(func(k, v []byte) bool {
-		wantKey := serializeUint32(uint32(numIterated))
-		// Ensure the key is as expected.
-		if !bytes.Equal(k, wantKey) {
-			t.Fatalf("ForEach #%d: unexpected key - got %x, want %x",
-				numIterated, k, wantKey,
-			)
-		}
-		// Ensure the value is as expected.
-		if !bytes.Equal(v, wantKey) {
-			t.Fatalf("ForEach #%d: unexpected value - got %x, want %x",
-				numIterated, v, wantKey,
-			)
-		}
-		numIterated++
-		return true
-	},
+	testTreap.ForEach(
+		func(k, v []byte) bool {
+			wantKey := serializeUint32(uint32(numIterated))
+			// Ensure the key is as expected.
+			if !bytes.Equal(k, wantKey) {
+				t.Fatalf(
+					"ForEach #%d: unexpected key - got %x, want %x",
+					numIterated, k, wantKey,
+				)
+			}
+			// Ensure the value is as expected.
+			if !bytes.Equal(v, wantKey) {
+				t.Fatalf(
+					"ForEach #%d: unexpected value - got %x, want %x",
+					numIterated, v, wantKey,
+				)
+			}
+			numIterated++
+			return true
+		},
 	)
 	// Ensure all items were iterated.
 	if numIterated != numItems {
-		t.Fatalf("ForEach: unexpected iterate count - got %d, want %d",
+		t.Fatalf(
+			"ForEach: unexpected iterate count - got %d, want %d",
 			numIterated, numItems,
 		)
 	}
@@ -255,7 +279,8 @@ func TestMutableReverseSequential(t *testing.T) {
 		testTreap.Delete(key)
 		// Ensure the treap length is the expected value.
 		if gotLen := testTreap.Len(); gotLen != numItems-i-1 {
-			t.Fatalf("Len #%d: unexpected length - got %d, want %d",
+			t.Fatalf(
+				"Len #%d: unexpected length - got %d, want %d",
 				i, gotLen, numItems-i-1,
 			)
 		}
@@ -265,15 +290,17 @@ func TestMutableReverseSequential(t *testing.T) {
 		}
 		// Get the key that no longer exists from the treap and ensure it is nil.
 		if gotVal := testTreap.Get(key); gotVal != nil {
-			t.Fatalf("Get #%d: unexpected value - got %x, want nil",
+			t.Fatalf(
+				"Get #%d: unexpected value - got %x, want nil",
 				i, gotVal,
 			)
 		}
 		// Ensure the expected size is reported.
 		expectedSize -= nodeFieldsSize + 8
 		if gotSize := testTreap.Size(); gotSize != expectedSize {
-			t.Fatalf("Size #%d: unexpected byte size - got %d, "+
-				"want %d", i, gotSize, expectedSize,
+			t.Fatalf(
+				"Size #%d: unexpected byte size - got %d, "+
+					"want %d", i, gotSize, expectedSize,
 			)
 		}
 	}
@@ -293,7 +320,8 @@ func TestMutableUnordered(t *testing.T) {
 		testTreap.Put(key, key)
 		// Ensure the treap length is the expected value.
 		if gotLen := testTreap.Len(); gotLen != i+1 {
-			t.Fatalf("Len #%d: unexpected length - got %d, want %d",
+			t.Fatalf(
+				"Len #%d: unexpected length - got %d, want %d",
 				i, gotLen, i+1,
 			)
 		}
@@ -304,15 +332,17 @@ func TestMutableUnordered(t *testing.T) {
 		// Get the key from the treap and ensure it is the expected
 		// value.
 		if gotVal := testTreap.Get(key); !bytes.Equal(gotVal, key) {
-			t.Fatalf("Get #%d: unexpected value - got %x, want %x",
+			t.Fatalf(
+				"Get #%d: unexpected value - got %x, want %x",
 				i, gotVal, key,
 			)
 		}
 		// Ensure the expected size is reported.
 		expectedSize += nodeFieldsSize + uint64(len(key)+len(key))
 		if gotSize := testTreap.Size(); gotSize != expectedSize {
-			t.Fatalf("Size #%d: unexpected byte size - got %d, "+
-				"want %d", i, gotSize, expectedSize,
+			t.Fatalf(
+				"Size #%d: unexpected byte size - got %d, "+
+					"want %d", i, gotSize, expectedSize,
 			)
 		}
 	}
@@ -324,7 +354,8 @@ func TestMutableUnordered(t *testing.T) {
 		testTreap.Delete(key)
 		// Ensure the treap length is the expected value.
 		if gotLen := testTreap.Len(); gotLen != numItems-i-1 {
-			t.Fatalf("Len #%d: unexpected length - got %d, want %d",
+			t.Fatalf(
+				"Len #%d: unexpected length - got %d, want %d",
 				i, gotLen, numItems-i-1,
 			)
 		}
@@ -334,15 +365,17 @@ func TestMutableUnordered(t *testing.T) {
 		}
 		// Get the key that no longer exists from the treap and ensure it is nil.
 		if gotVal := testTreap.Get(key); gotVal != nil {
-			t.Fatalf("Get #%d: unexpected value - got %x, want nil",
+			t.Fatalf(
+				"Get #%d: unexpected value - got %x, want nil",
 				i, gotVal,
 			)
 		}
 		// Ensure the expected size is reported.
 		expectedSize -= nodeFieldsSize + 64
 		if gotSize := testTreap.Size(); gotSize != expectedSize {
-			t.Fatalf("Size #%d: unexpected byte size - got %d, "+
-				"want %d", i, gotSize, expectedSize,
+			t.Fatalf(
+				"Size #%d: unexpected byte size - got %d, "+
+					"want %d", i, gotSize, expectedSize,
 			)
 		}
 	}
@@ -367,7 +400,8 @@ func TestMutableDuplicatePut(t *testing.T) {
 	// Ensure the expected size is reported.
 	expectedSize := uint64(nodeFieldsSize + len(key) + len(val))
 	if gotSize := testTreap.Size(); gotSize != expectedSize {
-		t.Fatalf("Size: unexpected byte size - got %d, want %d",
+		t.Fatalf(
+			"Size: unexpected byte size - got %d, want %d",
 			gotSize, expectedSize,
 		)
 	}
@@ -389,7 +423,8 @@ func TestMutableNilValue(t *testing.T) {
 		t.Fatalf("Get: unexpected result - got nil, want empty slice")
 	}
 	if gotVal := testTreap.Get(key); len(gotVal) != 0 {
-		t.Fatalf("Get: unexpected result - got %x, want empty slice",
+		t.Fatalf(
+			"Get: unexpected result - got %x, want empty slice",
 			gotVal,
 		)
 	}
@@ -408,13 +443,15 @@ func TestMutableForEachStopIterator(t *testing.T) {
 	}
 	// Ensure ForEach exits early on false return by caller.
 	var numIterated int
-	testTreap.ForEach(func(k, v []byte) bool {
-		numIterated++
-		return numIterated != numItems/2
-	},
+	testTreap.ForEach(
+		func(k, v []byte) bool {
+			numIterated++
+			return numIterated != numItems/2
+		},
 	)
 	if numIterated != numItems/2 {
-		t.Fatalf("ForEach: unexpected iterate count - got %d, want %d",
+		t.Fatalf(
+			"ForEach: unexpected iterate count - got %d, want %d",
 			numIterated, numItems/2,
 		)
 	}

@@ -19,13 +19,21 @@ type Device interface {
 	// IsContinuousTime reports whether all timer measurements
 	// are valid at the point of call.
 	IsTimeContinuous() bool
-	NewTexture(format TextureFormat, width, height int, minFilter, magFilter TextureFilter, bindings BufferBinding) (Texture, error)
+	NewTexture(
+		format TextureFormat,
+		width, height int,
+		minFilter, magFilter TextureFilter,
+		bindings BufferBinding,
+	) (Texture, error)
 	NewFramebuffer(tex Texture, depthBits int) (Framebuffer, error)
 	NewImmutableBuffer(typ BufferBinding, data []byte) (Buffer, error)
 	NewBuffer(typ BufferBinding, size int) (Buffer, error)
 	NewComputeProgram(shader ShaderSources) (Program, error)
 	NewProgram(vertexShader, fragmentShader ShaderSources) (Program, error)
-	NewInputLayout(vertexShader ShaderSources, layout []InputDesc) (InputLayout, error)
+	NewInputLayout(vertexShader ShaderSources, layout []InputDesc) (
+		InputLayout,
+		error,
+	)
 
 	DepthFunc(f DepthFunc)
 	ClearDepth(d float32)
@@ -44,7 +52,12 @@ type Device interface {
 	BindTexture(unit int, t Texture)
 	BindVertexBuffer(b Buffer, stride, offset int)
 	BindIndexBuffer(b Buffer)
-	BindImageTexture(unit int, texture Texture, access AccessBits, format TextureFormat)
+	BindImageTexture(
+		unit int,
+		texture Texture,
+		access AccessBits,
+		format TextureFormat,
+	)
 
 	MemoryBarrier()
 	DispatchCompute(x, y, z int)
@@ -230,7 +243,10 @@ func (f Features) Has(feats Features) bool {
 	return f&feats == feats
 }
 
-func DownloadImage(d Device, f Framebuffer, r image.Rectangle) (*image.RGBA, error) {
+func DownloadImage(d Device, f Framebuffer, r image.Rectangle) (
+	*image.RGBA,
+	error,
+) {
 	img := image.NewRGBA(r)
 	if err := f.ReadPixels(r, img.Pix); err != nil {
 		return nil, err

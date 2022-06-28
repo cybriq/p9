@@ -44,7 +44,8 @@ func (msg *MsgCFCheckpt) AddCFHeader(header *chainhash.Hash) (e error) {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation.
-func (msg *MsgCFCheckpt) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding,
+func (msg *MsgCFCheckpt) BtcDecode(
+	r io.Reader, pver uint32, _ MessageEncoding,
 ) (e error) {
 	// Read filter type
 	if e = readElement(r, &msg.FilterType); E.Chk(e) {
@@ -78,7 +79,8 @@ func (msg *MsgCFCheckpt) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding,
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This
 // is part of the Message interface implementation.
-func (msg *MsgCFCheckpt) BtcEncode(w io.Writer, pver uint32, _ MessageEncoding,
+func (msg *MsgCFCheckpt) BtcEncode(
+	w io.Writer, pver uint32, _ MessageEncoding,
 ) (e error) {
 	// Write filter type
 	if e = writeElement(w, msg.FilterType); E.Chk(e) {
@@ -132,7 +134,8 @@ func (msg *MsgCFCheckpt) MaxPayloadLength(pver uint32) uint32 {
 
 // NewMsgCFCheckpt returns a new bitcoin cfheaders message that conforms to the
 // Message interface. See MsgCFCheckpt for details.
-func NewMsgCFCheckpt(filterType FilterType, stopHash *chainhash.Hash,
+func NewMsgCFCheckpt(
+	filterType FilterType, stopHash *chainhash.Hash,
 	headersCount int,
 ) *MsgCFCheckpt {
 	return &MsgCFCheckpt{

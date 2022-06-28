@@ -33,7 +33,8 @@ type WebsocketClient struct {
 	wg            sync.WaitGroup
 }
 
-func NewWebsocketClient(c *websocket.Conn, authenticated bool,
+func NewWebsocketClient(
+	c *websocket.Conn, authenticated bool,
 	remoteAddr string,
 ) *WebsocketClient {
 	return &WebsocketClient{
@@ -81,7 +82,8 @@ func JSONAuthFail(w http.ResponseWriter) {
 }
 
 // NewServer creates a new server for serving legacy RPC client connections, both HTTP POST and websocket.
-func NewServer(opts *Options, walletLoader *Loader, listeners []net.Listener,
+func NewServer(
+	opts *Options, walletLoader *Loader, listeners []net.Listener,
 	quit qu.C,
 ) *Server {
 	serveMux := http.NewServeMux()
@@ -579,7 +581,8 @@ func (s *Server) POSTClientRPC(w http.ResponseWriter, r *http.Request) {
 	e = js.Unmarshal(rpcRequest, &req)
 	if e != nil {
 		var resp []byte
-		resp, e = btcjson.MarshalResponse(req.ID, nil,
+		resp, e = btcjson.MarshalResponse(
+			req.ID, nil,
 			btcjson.ErrRPCInvalidRequest,
 		)
 		if e != nil {
@@ -624,7 +627,8 @@ func (s *Server) POSTClientRPC(w http.ResponseWriter, r *http.Request) {
 		E.Ln(
 			"unable to marshal response:", e,
 		)
-		http.Error(w, "500 Internal Server BTCJSONError",
+		http.Error(
+			w, "500 Internal Server BTCJSONError",
 			http.StatusInternalServerError,
 		)
 		return

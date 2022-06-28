@@ -170,7 +170,8 @@ func IsPushOnlyScript(script []byte) bool {
 
 // ParseScriptTemplate is the same as parseScript but allows the passing of the template list for testing purposes. When
 // there are parse errors, it returns the list of parsed opcodes up to the point of failure along with the error.
-func ParseScriptTemplate(script []byte, opcodes *[256]opcode) ([]parsedOpcode,
+func ParseScriptTemplate(script []byte, opcodes *[256]opcode) (
+	[]parsedOpcode,
 	error,
 ) {
 	retScript := make([]parsedOpcode, 0, len(script))
@@ -542,7 +543,8 @@ func shallowCopyTx(tx *wire.MsgTx) wire.MsgTx {
 
 // CalcSignatureHash will given a script and hash type for the current script engine instance calculate the signature
 // hash to be used for signing and verification.
-func CalcSignatureHash(script []byte, hashType SigHashType, tx *wire.MsgTx,
+func CalcSignatureHash(
+	script []byte, hashType SigHashType, tx *wire.MsgTx,
 	idx int,
 ) ([]byte, error) {
 	parsedScript, e := parseScript(script)
@@ -554,7 +556,8 @@ func CalcSignatureHash(script []byte, hashType SigHashType, tx *wire.MsgTx,
 
 // calcSignatureHash will given a script and hash type for the current script engine instance calculate the signature
 // hash to be used for signing and verification.
-func calcSignatureHash(script []parsedOpcode, hashType SigHashType,
+func calcSignatureHash(
+	script []parsedOpcode, hashType SigHashType,
 	tx *wire.MsgTx, idx int,
 ) []byte {
 	// The SigHashSingle signature type signs only the corresponding input and output (the output with the same index

@@ -2,12 +2,13 @@ package peer_test
 
 import (
 	"errors"
-	"github.com/cybriq/p9/pkg/chaincfg"
 	"io"
 	"net"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/cybriq/p9/pkg/chaincfg"
 
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -106,55 +107,64 @@ type peerStats struct {
 // testPeer tests the given peer's flags and stats
 func testPeer(t *testing.T, p *peer.Peer, s peerStats) {
 	if p.UserAgent() != s.wantUserAgent {
-		t.Errorf("testPeer: wrong UserAgent - got %v, want %v", p.UserAgent(),
+		t.Errorf(
+			"testPeer: wrong UserAgent - got %v, want %v", p.UserAgent(),
 			s.wantUserAgent,
 		)
 		return
 	}
 	if p.Services() != s.wantServices {
-		t.Errorf("testPeer: wrong Services - got %v, want %v", p.Services(),
+		t.Errorf(
+			"testPeer: wrong Services - got %v, want %v", p.Services(),
 			s.wantServices,
 		)
 		return
 	}
 	if !p.LastPingTime().Equal(s.wantLastPingTime) {
-		t.Errorf("testPeer: wrong LastPingTime - got %v, want %v",
+		t.Errorf(
+			"testPeer: wrong LastPingTime - got %v, want %v",
 			p.LastPingTime(), s.wantLastPingTime,
 		)
 		return
 	}
 	if p.LastPingNonce() != s.wantLastPingNonce {
-		t.Errorf("testPeer: wrong LastPingNonce - got %v, want %v",
+		t.Errorf(
+			"testPeer: wrong LastPingNonce - got %v, want %v",
 			p.LastPingNonce(), s.wantLastPingNonce,
 		)
 		return
 	}
 	if p.LastPingMicros() != s.wantLastPingMicros {
-		t.Errorf("testPeer: wrong LastPingMicros - got %v, want %v",
+		t.Errorf(
+			"testPeer: wrong LastPingMicros - got %v, want %v",
 			p.LastPingMicros(), s.wantLastPingMicros,
 		)
 		return
 	}
 	if p.VerAckReceived() != s.wantVerAckReceived {
-		t.Errorf("testPeer: wrong VerAckReceived - got %v, want %v",
+		t.Errorf(
+			"testPeer: wrong VerAckReceived - got %v, want %v",
 			p.VerAckReceived(), s.wantVerAckReceived,
 		)
 		return
 	}
 	if p.VersionKnown() != s.wantVersionKnown {
-		t.Errorf("testPeer: wrong VersionKnown - got %v, want %v",
+		t.Errorf(
+			"testPeer: wrong VersionKnown - got %v, want %v",
 			p.VersionKnown(), s.wantVersionKnown,
 		)
 		return
 	}
 	if p.ProtocolVersion() != s.wantProtocolVersion {
-		t.Errorf("testPeer: wrong ProtocolVersion - got %v, want %v",
+		t.Errorf(
+			"testPeer: wrong ProtocolVersion - got %v, want %v",
 			p.ProtocolVersion(), s.wantProtocolVersion,
 		)
 		return
 	}
 	if p.LastBlock() != s.wantLastBlock {
-		t.Errorf("testPeer: wrong LastBlock - got %v, want %v", p.LastBlock(),
+		t.Errorf(
+			"testPeer: wrong LastBlock - got %v, want %v", p.LastBlock(),
 			s.wantLastBlock,
 		)
 		return
@@ -169,25 +179,29 @@ func testPeer(t *testing.T, p *peer.Peer, s peerStats) {
 		return
 	}
 	if p.BytesSent() != s.wantBytesSent {
-		t.Errorf("testPeer: wrong BytesSent - got %v, want %v", p.BytesSent(),
+		t.Errorf(
+			"testPeer: wrong BytesSent - got %v, want %v", p.BytesSent(),
 			s.wantBytesSent,
 		)
 		return
 	}
 	if p.BytesReceived() != s.wantBytesReceived {
-		t.Errorf("testPeer: wrong BytesReceived - got %v, want %v",
+		t.Errorf(
+			"testPeer: wrong BytesReceived - got %v, want %v",
 			p.BytesReceived(), s.wantBytesReceived,
 		)
 		return
 	}
 	if p.StartingHeight() != s.wantStartingHeight {
-		t.Errorf("testPeer: wrong StartingHeight - got %v, want %v",
+		t.Errorf(
+			"testPeer: wrong StartingHeight - got %v, want %v",
 			p.StartingHeight(), s.wantStartingHeight,
 		)
 		return
 	}
 	if p.Connected() != s.wantConnected {
-		t.Errorf("testPeer: wrong Connected - got %v, want %v", p.Connected(),
+		t.Errorf(
+			"testPeer: wrong Connected - got %v, want %v", p.Connected(),
 			s.wantConnected,
 		)
 		return
@@ -209,13 +223,15 @@ func testPeer(t *testing.T, p *peer.Peer, s peerStats) {
 		return
 	}
 	if p.LastSend() != stats.LastSend {
-		t.Errorf("testPeer: wrong LastSend - got %v, want %v", p.LastSend(),
+		t.Errorf(
+			"testPeer: wrong LastSend - got %v, want %v", p.LastSend(),
 			stats.LastSend,
 		)
 		return
 	}
 	if p.LastRecv() != stats.LastRecv {
-		t.Errorf("testPeer: wrong LastRecv - got %v, want %v", p.LastRecv(),
+		t.Errorf(
+			"testPeer: wrong LastRecv - got %v, want %v", p.LastRecv(),
 			stats.LastRecv,
 		)
 		return
@@ -433,7 +449,8 @@ func TestPeerListeners(t *testing.T) {
 			OnMerkleBlock: func(p *peer.Peer, msg *wire.MsgMerkleBlock) {
 				ok <- msg
 			},
-			OnVersion: func(p *peer.Peer, msg *wire.MsgVersion,
+			OnVersion: func(
+				p *peer.Peer, msg *wire.MsgVersion,
 			) *wire.MsgReject {
 				ok <- msg
 				return nil
@@ -551,7 +568,11 @@ func TestPeerListeners(t *testing.T) {
 		},
 		{
 			"OnGetCFHeaders",
-			wire.NewMsgGetCFHeaders(wire.GCSFilterRegular, 0, &chainhash.Hash{}),
+			wire.NewMsgGetCFHeaders(
+				wire.GCSFilterRegular,
+				0,
+				&chainhash.Hash{},
+			),
 		},
 		{
 			"OnGetCFCheckpt",

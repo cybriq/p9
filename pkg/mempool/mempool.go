@@ -3,14 +3,15 @@ package mempool
 import (
 	"container/list"
 	"fmt"
-	"github.com/cybriq/p9/pkg/amt"
-	"github.com/cybriq/p9/pkg/chaincfg"
-	"github.com/cybriq/p9/pkg/constant"
-	"github.com/cybriq/p9/pkg/log"
 	"math"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/constant"
+	"github.com/cybriq/p9/pkg/log"
 
 	"github.com/cybriq/p9/pkg/blockchain"
 	"github.com/cybriq/p9/pkg/chainhash"
@@ -238,7 +239,8 @@ func (mp *TxPool) MiningDescs() []*mining.TxDesc {
 // accepted transactions (to detect further orphans which may no longer be orphans) until there are no more. It returns
 // a slice of transactions added to the mempool. A nil slice means no transactions were moved from the orphan pool to
 // the mempool. This function is safe for concurrent access.
-func (mp *TxPool) ProcessOrphans(b *blockchain.BlockChain, acceptedTx *util.Tx,
+func (mp *TxPool) ProcessOrphans(
+	b *blockchain.BlockChain, acceptedTx *util.Tx,
 ) []*TxDesc {
 	mp.mtx.Lock()
 	acceptedTxns := mp.processOrphans(b, acceptedTx)
@@ -443,7 +445,8 @@ func (mp *TxPool) addOrphan(tx *util.Tx, tag Tag) {
 		}
 		mp.orphansByPrev[txIn.PreviousOutPoint][*tx.Hash()] = tx
 	}
-	D.Ln("stored orphan transaction", tx.Hash(), "(total:", len(mp.orphans),
+	D.Ln(
+		"stored orphan transaction", tx.Hash(), "(total:", len(mp.orphans),
 		")",
 	)
 }
@@ -451,7 +454,8 @@ func (mp *TxPool) addOrphan(tx *util.Tx, tag Tag) {
 // addTransaction adds the passed transaction to the memory pool. It should not be called directly as it doesn't perform
 // any validation. This is a helper for maybeAcceptTransaction. This function MUST be called with the mempool lock held
 // (for writes).
-func (mp *TxPool) addTransaction(utxoView *blockchain.UtxoViewpoint,
+func (mp *TxPool) addTransaction(
+	utxoView *blockchain.UtxoViewpoint,
 	tx *util.Tx, height int32, fee int64,
 ) *TxDesc {
 	// Add the transaction to the pool and mark the referenced outpoints as spent by the pool.
@@ -504,7 +508,8 @@ func (mp *TxPool) checkPoolDoubleSpend(tx *util.Tx) (e error) {
 // fetchInputUtxos loads utxo details about the input transactions referenced by the passed transaction. First it loads
 // the details form the viewpoint of the main chain, then it adjusts them based upon the contents of the transaction
 // pool. This function MUST be called with the mempool lock held (for reads).
-func (mp *TxPool) fetchInputUtxos(tx *util.Tx) (*blockchain.UtxoViewpoint,
+func (mp *TxPool) fetchInputUtxos(tx *util.Tx) (
+	*blockchain.UtxoViewpoint,
 	error,
 ) {
 	utxoView, e := mp.cfg.FetchUtxoView(tx)
@@ -893,7 +898,8 @@ func (mp *TxPool) maybeAddOrphan(tx *util.Tx, tag Tag) (e error) {
 
 // processOrphans is the internal function which implements the public ProcessOrphans. See the comment for
 // ProcessOrphans for more details. This function MUST be called with the mempool lock held (for writes).
-func (mp *TxPool) processOrphans(b *blockchain.BlockChain, acceptedTx *util.Tx,
+func (mp *TxPool) processOrphans(
+	b *blockchain.BlockChain, acceptedTx *util.Tx,
 ) []*TxDesc {
 	var acceptedTxns []*TxDesc
 	// Start with processing at least the passed transaction.

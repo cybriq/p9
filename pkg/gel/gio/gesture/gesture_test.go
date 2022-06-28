@@ -38,29 +38,31 @@ func TestMouseClicks(t *testing.T) {
 			clicks: []int{1, 1},
 		},
 	} {
-		t.Run(tc.label, func(t *testing.T) {
-			var click Click
-			var ops op.Ops
-			click.Add(&ops)
+		t.Run(
+			tc.label, func(t *testing.T) {
+				var click Click
+				var ops op.Ops
+				click.Add(&ops)
 
-			var r router.Router
-			r.Frame(&ops)
-			r.Queue(tc.events...)
+				var r router.Router
+				r.Frame(&ops)
+				r.Queue(tc.events...)
 
-			events := click.Events(&r)
-			clicks := filterMouseClicks(events)
-			if got, want := len(clicks), len(tc.clicks); got != want {
-				t.Fatalf("got %d mouse clicks, expected %d", got, want)
-			}
-
-			for i, click := range clicks {
-				if got, want := click.NumClicks, tc.clicks[i]; got != want {
-					t.Errorf("got %d combined mouse clicks, expected %d", got,
-						want,
-					)
+				events := click.Events(&r)
+				clicks := filterMouseClicks(events)
+				if got, want := len(clicks), len(tc.clicks); got != want {
+					t.Fatalf("got %d mouse clicks, expected %d", got, want)
 				}
-			}
-		},
+
+				for i, click := range clicks {
+					if got, want := click.NumClicks, tc.clicks[i]; got != want {
+						t.Errorf(
+							"got %d combined mouse clicks, expected %d", got,
+							want,
+						)
+					}
+				}
+			},
 		)
 	}
 }

@@ -42,8 +42,9 @@ testLoop:
 		// Ensure the limited number of most recent entries in the inventory vector list exist.
 		for j := numInvVects - test.limit; j < numInvVects; j++ {
 			if !mruInvMap.Exists(invVects[j]) {
-				t.Errorf("Exists #%d (%s) entry %s does not "+
-					"exist", i, test.name, *invVects[j],
+				t.Errorf(
+					"Exists #%d (%s) entry %s does not "+
+						"exist", i, test.name, *invVects[j],
 				)
 				continue testLoop
 			}
@@ -52,7 +53,8 @@ testLoop:
 		// exist.
 		for j := 0; j < numInvVects-test.limit; j++ {
 			if mruInvMap.Exists(invVects[j]) {
-				t.Errorf("Exists #%d (%s) entry %s exists", i,
+				t.Errorf(
+					"Exists #%d (%s) entry %s exists", i,
 					test.name, *invVects[j],
 				)
 				continue testLoop
@@ -64,13 +66,15 @@ testLoop:
 		if test.limit > 1 {
 			origLruIndex := numInvVects - test.limit
 			mruInvMap.Add(invVects[origLruIndex])
-			iv := wire.NewInvVect(wire.InvTypeBlock,
+			iv := wire.NewInvVect(
+				wire.InvTypeBlock,
 				&chainhash.Hash{0x00, 0x01},
 			)
 			mruInvMap.Add(iv)
 			// Ensure the original lru entry still exists since it was updated and should've have become the mru entry.
 			if !mruInvMap.Exists(invVects[origLruIndex]) {
-				t.Errorf("MRU #%d (%s) entry %s does not exist",
+				t.Errorf(
+					"MRU #%d (%s) entry %s does not exist",
 					i, test.name, *invVects[origLruIndex],
 				)
 				continue testLoop
@@ -78,7 +82,8 @@ testLoop:
 			// Ensure the entry that should've become the new lru entry was evicted.
 			newLruIndex := origLruIndex + 1
 			if mruInvMap.Exists(invVects[newLruIndex]) {
-				t.Errorf("MRU #%d (%s) entry %s exists", i,
+				t.Errorf(
+					"MRU #%d (%s) entry %s exists", i,
 					test.name, *invVects[newLruIndex],
 				)
 				continue testLoop
@@ -89,7 +94,8 @@ testLoop:
 		for j := 0; j < numInvVects; j++ {
 			mruInvMap.Delete(invVects[j])
 			if mruInvMap.Exists(invVects[j]) {
-				t.Errorf("Delete #%d (%s) entry %s exists", i,
+				t.Errorf(
+					"Delete #%d (%s) entry %s exists", i,
 					test.name, *invVects[j],
 				)
 				continue testLoop
@@ -115,8 +121,9 @@ func TestMruInventoryMapStringer(t *testing.T) {
 	wantStr2 := fmt.Sprintf("<%d>[%s, %s]", 2, *iv2, *iv1)
 	gotStr := mruInvMap.String()
 	if gotStr != wantStr1 && gotStr != wantStr2 {
-		t.Fatalf("unexpected string representation - got %q, want %q "+
-			"or %q", gotStr, wantStr1, wantStr2,
+		t.Fatalf(
+			"unexpected string representation - got %q, want %q "+
+				"or %q", gotStr, wantStr1, wantStr2,
 		)
 	}
 }

@@ -12,7 +12,8 @@ import (
 // execution failure when executed normally, so the function is not called under normal circumstances.
 func TestOpcodeDisabled(t *testing.T) {
 	t.Parallel()
-	tests := []byte{OP_CAT, OP_SUBSTR, OP_LEFT, OP_RIGHT, OP_INVERT,
+	tests := []byte{
+		OP_CAT, OP_SUBSTR, OP_LEFT, OP_RIGHT, OP_INVERT,
 		OP_AND, OP_OR, OP_2MUL, OP_2DIV, OP_MUL, OP_DIV, OP_MOD,
 		OP_LSHIFT, OP_RSHIFT,
 	}
@@ -20,8 +21,9 @@ func TestOpcodeDisabled(t *testing.T) {
 		pop := parsedOpcode{opcode: &OpcodeArray[opcodeVal], data: nil}
 		e := opcodeDisabled(&pop, nil)
 		if !IsErrorCode(e, ErrDisabledOpcode) {
-			t.Errorf("opcodeDisabled: unexpected error - got %v, "+
-				"want %v", e, ErrDisabledOpcode,
+			t.Errorf(
+				"opcodeDisabled: unexpected error - got %v, "+
+					"want %v", e, ErrDisabledOpcode,
 			)
 			continue
 		}
@@ -37,7 +39,8 @@ func TestOpcodeDisasm(t *testing.T) {
 	// it's easier than manually listing them here.
 	oneBytes := []byte{0x01}
 	oneStr := "01"
-	expectedStrings := [256]string{0x00: "0", 0x4f: "-1",
+	expectedStrings := [256]string{
+		0x00: "0", 0x4f: "-1",
 		0x50: "OP_RESERVED", 0x61: "OP_NOP", 0x62: "OP_VER",
 		0x63: "OP_IF", 0x64: "OP_NOTIF", 0x65: "OP_VERIF",
 		0x66: "OP_VERNOTIF", 0x67: "OP_ELSE", 0x68: "OP_ENDIF",
@@ -114,8 +117,9 @@ func TestOpcodeDisasm(t *testing.T) {
 		pop := parsedOpcode{opcode: &OpcodeArray[opcodeVal], data: data}
 		gotStr := pop.print(true)
 		if gotStr != expectedStr {
-			t.Errorf("pop.print (opcode %x): Unexpected disasm "+
-				"string - got %v, want %v", opcodeVal, gotStr,
+			t.Errorf(
+				"pop.print (opcode %x): Unexpected disasm "+
+					"string - got %v, want %v", opcodeVal, gotStr,
 				expectedStr,
 			)
 			continue
@@ -130,25 +134,29 @@ func TestOpcodeDisasm(t *testing.T) {
 		// OP_DATA_1 through OP_DATA_65 display the opcode followed by the pushed data.
 		case opcodeVal >= 0x01 && opcodeVal < 0x4c:
 			data = bytes.Repeat(oneBytes, opcodeVal)
-			expectedStr = fmt.Sprintf("OP_DATA_%d 0x%s", opcodeVal,
+			expectedStr = fmt.Sprintf(
+				"OP_DATA_%d 0x%s", opcodeVal,
 				strings.Repeat(oneStr, opcodeVal),
 			)
 		// OP_PUSHDATA1.
 		case opcodeVal == 0x4c:
 			data = bytes.Repeat(oneBytes, 1)
-			expectedStr = fmt.Sprintf("OP_PUSHDATA1 0x%02x 0x%s",
+			expectedStr = fmt.Sprintf(
+				"OP_PUSHDATA1 0x%02x 0x%s",
 				len(data), strings.Repeat(oneStr, 1),
 			)
 		// OP_PUSHDATA2.
 		case opcodeVal == 0x4d:
 			data = bytes.Repeat(oneBytes, 2)
-			expectedStr = fmt.Sprintf("OP_PUSHDATA2 0x%04x 0x%s",
+			expectedStr = fmt.Sprintf(
+				"OP_PUSHDATA2 0x%04x 0x%s",
 				len(data), strings.Repeat(oneStr, 2),
 			)
 		// OP_PUSHDATA4.
 		case opcodeVal == 0x4e:
 			data = bytes.Repeat(oneBytes, 3)
-			expectedStr = fmt.Sprintf("OP_PUSHDATA4 0x%08x 0x%s",
+			expectedStr = fmt.Sprintf(
+				"OP_PUSHDATA4 0x%08x 0x%s",
 				len(data), strings.Repeat(oneStr, 3),
 			)
 		// OP_1 through OP_16.
@@ -176,8 +184,9 @@ func TestOpcodeDisasm(t *testing.T) {
 		pop := parsedOpcode{opcode: &OpcodeArray[opcodeVal], data: data}
 		gotStr := pop.print(false)
 		if gotStr != expectedStr {
-			t.Errorf("pop.print (opcode %x): Unexpected disasm "+
-				"string - got %v, want %v", opcodeVal, gotStr,
+			t.Errorf(
+				"pop.print (opcode %x): Unexpected disasm "+
+					"string - got %v, want %v", opcodeVal, gotStr,
 				expectedStr,
 			)
 			continue

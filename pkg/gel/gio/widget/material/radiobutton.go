@@ -16,7 +16,8 @@ type RadioButtonStyle struct {
 
 // RadioButton returns a RadioButton with a label. The key specifies
 // the value for the Enum.
-func RadioButton(th *Theme, group *widget.Enum, key, label string,
+func RadioButton(
+	th *Theme, group *widget.Enum, key, label string,
 ) RadioButtonStyle {
 	return RadioButtonStyle{
 		Group: group,

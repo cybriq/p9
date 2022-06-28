@@ -114,62 +114,73 @@ func (w *window) contextView() C.CFTypeRef {
 }
 
 func (w *window) ReadClipboard() {
-	runOnMain(func() {
-		content := nsstringToString(C.gio_readClipboard())
-		w.w.Event(clipboard.Event{Text: content})
-	},
+	runOnMain(
+		func() {
+			content := nsstringToString(C.gio_readClipboard())
+			w.w.Event(clipboard.Event{Text: content})
+		},
 	)
 }
 
 func (w *window) WriteClipboard(s string) {
 	u16 := utf16.Encode([]rune(s))
-	runOnMain(func() {
-		var chars *C.unichar
-		if len(u16) > 0 {
-			chars = (*C.unichar)(unsafe.Pointer(&u16[0]))
-		}
-		C.gio_writeClipboard(chars, C.NSUInteger(len(u16)))
-	},
+	runOnMain(
+		func() {
+			var chars *C.unichar
+			if len(u16) > 0 {
+				chars = (*C.unichar)(unsafe.Pointer(&u16[0]))
+			}
+			C.gio_writeClipboard(chars, C.NSUInteger(len(u16)))
+		},
 	)
 }
 
 func (w *window) Option(opts *Options) {
-	w.runOnMain(func() {
-		screenScale := float32(C.gio_getScreenBackingScale())
-		cfg := configFor(screenScale)
-		val := func(v unit.Value) float32 {
-			return float32(cfg.Px(v)) / screenScale
-		}
-		if o := opts.Size; o != nil {
-			width := val(o.Width)
-			height := val(o.Height)
-			if width > 0 || height > 0 {
-				C.gio_setSize(w.window, C.CGFloat(width), C.CGFloat(height))
+	w.runOnMain(
+		func() {
+			screenScale := float32(C.gio_getScreenBackingScale())
+			cfg := configFor(screenScale)
+			val := func(v unit.Value) float32 {
+				return float32(cfg.Px(v)) / screenScale
 			}
-		}
-		if o := opts.MinSize; o != nil {
-			width := val(o.Width)
-			height := val(o.Height)
-			if width > 0 || height > 0 {
-				C.gio_setMinSize(w.window, C.CGFloat(width), C.CGFloat(height))
+			if o := opts.Size; o != nil {
+				width := val(o.Width)
+				height := val(o.Height)
+				if width > 0 || height > 0 {
+					C.gio_setSize(w.window, C.CGFloat(width), C.CGFloat(height))
+				}
 			}
-		}
-		if o := opts.MaxSize; o != nil {
-			width := val(o.Width)
-			height := val(o.Height)
-			if width > 0 || height > 0 {
-				C.gio_setMaxSize(w.window, C.CGFloat(width), C.CGFloat(height))
+			if o := opts.MinSize; o != nil {
+				width := val(o.Width)
+				height := val(o.Height)
+				if width > 0 || height > 0 {
+					C.gio_setMinSize(
+						w.window,
+						C.CGFloat(width),
+						C.CGFloat(height),
+					)
+				}
 			}
-		}
-		if o := opts.Title; o != nil {
-			title := C.CString(*o)
-			defer C.free(unsafe.Pointer(title))
-			C.gio_setTitle(w.window, title)
-		}
-		if o := opts.WindowMode; o != nil {
-			w.SetWindowMode(*o)
-		}
-	},
+			if o := opts.MaxSize; o != nil {
+				width := val(o.Width)
+				height := val(o.Height)
+				if width > 0 || height > 0 {
+					C.gio_setMaxSize(
+						w.window,
+						C.CGFloat(width),
+						C.CGFloat(height),
+					)
+				}
+			}
+			if o := opts.Title; o != nil {
+				title := C.CString(*o)
+				defer C.free(unsafe.Pointer(title))
+				C.gio_setTitle(w.window, title)
+			}
+			if o := opts.WindowMode; o != nil {
+				w.SetWindowMode(*o)
+			}
+		},
 	)
 }
 
@@ -197,20 +208,22 @@ func (w *window) SetAnimating(anim bool) {
 }
 
 func (w *window) runOnMain(f func()) {
-	runOnMain(func() {
-		// Make sure the view is still valid. The window might've been closed
-		// during the switch to the main thread.
-		if w.view != 0 {
-			f()
-		}
-	},
+	runOnMain(
+		func() {
+			// Make sure the view is still valid. The window might've been closed
+			// during the switch to the main thread.
+			if w.view != 0 {
+				f()
+			}
+		},
 	)
 }
 
 func (w *window) Close() {
-	w.runOnMain(func() {
-		C.gio_close(w.window)
-	},
+	w.runOnMain(
+		func() {
+			C.gio_close(w.window)
+		},
 	)
 }
 
@@ -223,7 +236,8 @@ func (w *window) setStage(stage system.Stage) {
 }
 
 //export gio_onKeys
-func gio_onKeys(view C.CFTypeRef, cstr *C.char, ti C.double, mods C.NSUInteger,
+func gio_onKeys(
+	view C.CFTypeRef, cstr *C.char, ti C.double, mods C.NSUInteger,
 	keyDown C.bool,
 ) {
 	str := C.GoString(cstr)
@@ -235,11 +249,12 @@ func gio_onKeys(view C.CFTypeRef, cstr *C.char, ti C.double, mods C.NSUInteger,
 	w := mustView(view)
 	for _, k := range str {
 		if n, ok := convertKey(k); ok {
-			w.w.Event(key.Event{
-				Name:      n,
-				Modifiers: kmods,
-				State:     ks,
-			},
+			w.w.Event(
+				key.Event{
+					Name:      n,
+					Modifiers: kmods,
+					State:     ks,
+				},
 			)
 		}
 	}
@@ -253,7 +268,8 @@ func gio_onText(view C.CFTypeRef, cstr *C.char) {
 }
 
 //export gio_onMouse
-func gio_onMouse(view C.CFTypeRef, cdir C.int, cbtns C.NSUInteger,
+func gio_onMouse(
+	view C.CFTypeRef, cdir C.int, cbtns C.NSUInteger,
 	x, y, dx, dy C.CGFloat, ti C.double, mods C.NSUInteger,
 ) {
 	var typ pointer.Type
@@ -283,15 +299,16 @@ func gio_onMouse(view C.CFTypeRef, cdir C.int, cbtns C.NSUInteger,
 	w := mustView(view)
 	xf, yf := float32(x)*w.scale, float32(y)*w.scale
 	dxf, dyf := float32(dx)*w.scale, float32(dy)*w.scale
-	w.w.Event(pointer.Event{
-		Type:      typ,
-		Source:    pointer.Mouse,
-		Time:      t,
-		Buttons:   btns,
-		Position:  f32.Point{X: xf, Y: yf},
-		Scroll:    f32.Point{X: dxf, Y: dyf},
-		Modifiers: convertMods(mods),
-	},
+	w.w.Event(
+		pointer.Event{
+			Type:      typ,
+			Source:    pointer.Mouse,
+			Time:      t,
+			Buttons:   btns,
+			Position:  f32.Point{X: xf, Y: yf},
+			Scroll:    f32.Point{X: dxf, Y: dyf},
+			Modifiers: convertMods(mods),
+		},
 	)
 }
 
@@ -324,17 +341,18 @@ func (w *window) draw() {
 	height := int(hf*w.scale + .5)
 	cfg := configFor(w.scale)
 	w.setStage(system.StageRunning)
-	w.w.Event(FrameEvent{
-		FrameEvent: system.FrameEvent{
-			Now: time.Now(),
-			Size: image.Point{
-				X: width,
-				Y: height,
+	w.w.Event(
+		FrameEvent{
+			FrameEvent: system.FrameEvent{
+				Now: time.Now(),
+				Size: image.Point{
+					X: width,
+					Y: height,
+				},
+				Metric: cfg,
 			},
-			Metric: cfg,
+			Sync: true,
 		},
-		Sync: true,
-	},
 	)
 }
 
@@ -391,25 +409,29 @@ func gio_onFinishLaunching() {
 func NewWindow(win Callbacks, opts *Options) error {
 	<-launched
 	errch := make(chan error)
-	runOnMain(func() {
-		w, err := newWindow(opts)
-		if err != nil {
-			errch <- err
-			return
-		}
-		errch <- nil
-		win.SetDriver(w)
-		w.w = win
-		w.window = C.gio_createWindow(w.view, nil, 0, 0, 0, 0, 0, 0)
-		w.Option(opts)
-		if nextTopLeft.x == 0 && nextTopLeft.y == 0 {
-			// cascadeTopLeftFromPoint treats (0, 0) as a no-op,
-			// and just returns the offset we need for the first window.
+	runOnMain(
+		func() {
+			w, err := newWindow(opts)
+			if err != nil {
+				errch <- err
+				return
+			}
+			errch <- nil
+			win.SetDriver(w)
+			w.w = win
+			w.window = C.gio_createWindow(w.view, nil, 0, 0, 0, 0, 0, 0)
+			w.Option(opts)
+			if nextTopLeft.x == 0 && nextTopLeft.y == 0 {
+				// cascadeTopLeftFromPoint treats (0, 0) as a no-op,
+				// and just returns the offset we need for the first window.
+				nextTopLeft = C.gio_cascadeTopLeftFromPoint(
+					w.window,
+					nextTopLeft,
+				)
+			}
 			nextTopLeft = C.gio_cascadeTopLeftFromPoint(w.window, nextTopLeft)
-		}
-		nextTopLeft = C.gio_cascadeTopLeftFromPoint(w.window, nextTopLeft)
-		C.gio_makeKeyAndOrderFront(w.window)
-	},
+			C.gio_makeKeyAndOrderFront(w.window)
+		},
 	)
 	return <-errch
 }
@@ -424,12 +446,14 @@ func newWindow(opts *Options) (*window, error) {
 		view:  view,
 		scale: scale,
 	}
-	dl, err := NewDisplayLink(func() {
-		w.runOnMain(func() {
-			C.gio_setNeedsDisplay(w.view)
+	dl, err := NewDisplayLink(
+		func() {
+			w.runOnMain(
+				func() {
+					C.gio_setNeedsDisplay(w.view)
+				},
+			)
 		},
-		)
-	},
 	)
 	w.displayLink = dl
 	if err != nil {

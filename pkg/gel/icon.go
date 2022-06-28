@@ -90,17 +90,21 @@ func (i *Icon) image(sz int) paint.ImageOp {
 	}
 	m, _ := iconvg.DecodeMetadata(*i.src)
 	dx, dy := m.ViewBox.AspectRatio()
-	img := image.NewRGBA(image.Rectangle{Max: image.Point{X: sz,
-		Y: int(float32(sz) * dy / dx),
-	},
-	},
+	img := image.NewRGBA(
+		image.Rectangle{
+			Max: image.Point{
+				X: sz,
+				Y: int(float32(sz) * dy / dx),
+			},
+		},
 	)
 	var ico iconvg.Rasterizer
 	ico.SetDstImage(img, img.Bounds(), draw.Src)
 	m.Palette[0] = color.RGBA(i.Theme.Colors.GetNRGBAFromName(i.color))
-	if e := iconvg.Decode(&ico, *i.src, &iconvg.DecodeOptions{
-		Palette: &m.Palette,
-	},
+	if e := iconvg.Decode(
+		&ico, *i.src, &iconvg.DecodeOptions{
+			Palette: &m.Palette,
+		},
 	); E.Chk(e) {
 	}
 	operation := paint.NewImageOp(img)

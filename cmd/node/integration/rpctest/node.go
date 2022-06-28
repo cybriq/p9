@@ -34,7 +34,8 @@ type nodeConfig struct {
 }
 
 // newConfig returns a newConfig with all default values.
-func newConfig(prefix, certFile, keyFile string, extra []string) (*nodeConfig,
+func newConfig(prefix, certFile, keyFile string, extra []string) (
+	*nodeConfig,
 	error,
 ) {
 	podPath, e := podExecutablePath()

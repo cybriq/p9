@@ -27,11 +27,12 @@ func (c Commands) PopulateParents(parent *Command) {
 
 // GetAllCommands returns all of the available command names
 func (c Commands) GetAllCommands() (o []string) {
-	c.ForEach(func(cm Command) bool {
-		o = append(o, cm.Name)
-		o = append(o, cm.Commands.GetAllCommands()...)
-		return true
-	}, 0, 0,
+	c.ForEach(
+		func(cm Command) bool {
+			o = append(o, cm.Name)
+			o = append(o, cm.Commands.GetAllCommands()...)
+			return true
+		}, 0, 0,
 	)
 	return
 }
@@ -62,13 +63,25 @@ func (c Commands) Find(
 				continue
 			}
 			dist--
-			T.Ln(tabs[:depth]+"found", name, "at depth", depth, "distance", dist)
+			T.Ln(
+				tabs[:depth]+"found",
+				name,
+				"at depth",
+				depth,
+				"distance",
+				dist,
+			)
 			found = true
 			cm = &c[i]
 			e = nil
 			return
 		}
-		if found, depth, dist, cm, e = c[i].Commands.Find(name, depth, dist, false); E.Chk(e) {
+		if found, depth, dist, cm, e = c[i].Commands.Find(
+			name,
+			depth,
+			dist,
+			false,
+		); E.Chk(e) {
 			T.Ln(tabs[:depth]+"error", c[i].Name)
 			return
 		}
@@ -84,7 +97,10 @@ func (c Commands) Find(
 	return
 }
 
-func (c Commands) ForEach(fn func(Command) bool, hereDepth, hereDist int) (ret bool, depth, dist int, e error) {
+func (c Commands) ForEach(
+	fn func(Command) bool,
+	hereDepth, hereDist int,
+) (ret bool, depth, dist int, e error) {
 	if c == nil {
 		dist = hereDist
 		depth = hereDepth

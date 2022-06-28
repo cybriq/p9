@@ -3,8 +3,9 @@ package bloom_test
 import (
 	"bytes"
 	"encoding/hex"
-	"github.com/cybriq/p9/pkg/block"
 	"testing"
+
+	"github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/bloom"
 	"github.com/cybriq/p9/pkg/chainhash"
@@ -56,8 +57,9 @@ func TestMerkleBlock3(t *testing.T) {
 		return
 	}
 	if !bytes.Equal(want, got.Bytes()) {
-		t.Errorf("TestMerkleBlock3 failed merkle block comparison: "+
-			"got %v want %v", got.Bytes(), want,
+		t.Errorf(
+			"TestMerkleBlock3 failed merkle block comparison: "+
+				"got %v want %v", got.Bytes(), want,
 		)
 		return
 	}

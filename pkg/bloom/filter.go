@@ -34,7 +34,8 @@ type Filter struct {
 //
 // Thus, providing any false positive rates less than 0 or greater than 1 will be adjusted to the valid range. For more
 // information on what values to use for both elements and fprate, see https://en.wikipedia.org/wiki/Bloom_filter.
-func NewFilter(elements, tweak uint32, fprate float64,
+func NewFilter(
+	elements, tweak uint32, fprate float64,
 	flags wire.BloomUpdateType,
 ) *Filter {
 	// Massage the false positive rate to sane values.
@@ -217,7 +218,8 @@ func (bf *Filter) AddOutPoint(outpoint *wire.OutPoint) {
 }
 
 // maybeAddOutpoint potentially adds the passed outpoint to the bloom filter depending on the bloom update flags and the type of the passed public key script. This function MUST be called with the filter lock held.
-func (bf *Filter) maybeAddOutpoint(pkScript []byte, outHash *chainhash.Hash,
+func (bf *Filter) maybeAddOutpoint(
+	pkScript []byte, outHash *chainhash.Hash,
 	outIdx uint32,
 ) {
 	switch bf.msgFilterLoad.Flags {

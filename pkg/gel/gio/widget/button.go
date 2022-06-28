@@ -46,10 +46,11 @@ type Press struct {
 
 // Click executes a simple programmatic click
 func (b *Clickable) Click() {
-	b.clicks = append(b.clicks, Click{
-		Modifiers: 0,
-		NumClicks: 1,
-	},
+	b.clicks = append(
+		b.clicks, Click{
+			Modifiers: 0,
+			NumClicks: 1,
+		},
 	)
 }
 
@@ -119,10 +120,11 @@ func (b *Clickable) update(gtx layout.Context) {
 	for _, e := range b.click.Events(gtx) {
 		switch e.Type {
 		case gesture.TypeClick:
-			b.clicks = append(b.clicks, Click{
-				Modifiers: e.Modifiers,
-				NumClicks: e.NumClicks,
-			},
+			b.clicks = append(
+				b.clicks, Click{
+					Modifiers: e.Modifiers,
+					NumClicks: e.NumClicks,
+				},
 			)
 			if l := len(b.history); l > 0 {
 				b.history[l-1].End = gtx.Now
@@ -135,10 +137,11 @@ func (b *Clickable) update(gtx layout.Context) {
 				}
 			}
 		case gesture.TypePress:
-			b.history = append(b.history, Press{
-				Position: e.Position,
-				Start:    gtx.Now,
-			},
+			b.history = append(
+				b.history, Press{
+					Position: e.Position,
+					Start:    gtx.Now,
+				},
 			)
 		}
 	}

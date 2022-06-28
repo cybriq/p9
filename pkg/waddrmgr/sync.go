@@ -41,7 +41,8 @@ func newSyncState(startBlock, syncedTo *BlockStamp) *syncState {
 // addresses will be used. This effectively allows the manager to be marked as
 // unsynced back to the oldest known point any of the addresses have appeared in
 // the block chain.
-func (m *Manager) SetSyncedTo(ns walletdb.ReadWriteBucket, bs *BlockStamp,
+func (m *Manager) SetSyncedTo(
+	ns walletdb.ReadWriteBucket, bs *BlockStamp,
 ) (e error) {
 	m.mtx.Lock()
 	defer m.mtx.Unlock()
@@ -90,7 +91,8 @@ func (m *Manager) Birthday() time.Time {
 
 // SetBirthday sets the birthday, or earliest time a key could have been used,
 // for the manager.
-func (m *Manager) SetBirthday(ns walletdb.ReadWriteBucket,
+func (m *Manager) SetBirthday(
+	ns walletdb.ReadWriteBucket,
 	birthday time.Time,
 ) (e error) {
 	m.mtx.Lock()

@@ -69,7 +69,11 @@ func (f *Functions) BeginQuery(target Enum, query Query) {
 	if !f.EXT_disjoint_timer_query_webgl2.IsNull() {
 		f.Ctx.Call("beginQuery", int(target), js.Value(query))
 	} else {
-		f.EXT_disjoint_timer_query.Call("beginQueryEXT", int(target), js.Value(query))
+		f.EXT_disjoint_timer_query.Call(
+			"beginQueryEXT",
+			int(target),
+			js.Value(query),
+		)
 	}
 }
 func (f *Functions) BindAttribLocation(p Program, a Attrib, name string) {
@@ -90,7 +94,14 @@ func (f *Functions) BindRenderbuffer(target Enum, rb Renderbuffer) {
 func (f *Functions) BindTexture(target Enum, t Texture) {
 	f.Ctx.Call("bindTexture", int(target), js.Value(t))
 }
-func (f *Functions) BindImageTexture(unit int, t Texture, level int, layered bool, layer int, access, format Enum) {
+func (f *Functions) BindImageTexture(
+	unit int,
+	t Texture,
+	level int,
+	layered bool,
+	layer int,
+	access, format Enum,
+) {
 	panic("not implemented")
 }
 func (f *Functions) BlendEquation(mode Enum) {
@@ -99,7 +110,11 @@ func (f *Functions) BlendEquation(mode Enum) {
 func (f *Functions) BlendFunc(sfactor, dfactor Enum) {
 	f.Ctx.Call("blendFunc", int(sfactor), int(dfactor))
 }
-func (f *Functions) BlitFramebuffer(sx0, sy0, sx1, sy1, dx0, dy0, dx1, dy1 int, mask Enum, filter Enum) {
+func (f *Functions) BlitFramebuffer(
+	sx0, sy0, sx1, sy1, dx0, dy0, dx1, dy1 int,
+	mask Enum,
+	filter Enum,
+) {
 	panic("not implemented")
 }
 func (f *Functions) BufferData(target Enum, size int, usage Enum) {
@@ -206,11 +221,31 @@ func (f *Functions) EndQuery(target Enum) {
 func (f *Functions) Finish() {
 	f.Ctx.Call("finish")
 }
-func (f *Functions) FramebufferRenderbuffer(target, attachment, renderbuffertarget Enum, renderbuffer Renderbuffer) {
-	f.Ctx.Call("framebufferRenderbuffer", int(target), int(attachment), int(renderbuffertarget), js.Value(renderbuffer))
+func (f *Functions) FramebufferRenderbuffer(
+	target, attachment, renderbuffertarget Enum,
+	renderbuffer Renderbuffer,
+) {
+	f.Ctx.Call(
+		"framebufferRenderbuffer",
+		int(target),
+		int(attachment),
+		int(renderbuffertarget),
+		js.Value(renderbuffer),
+	)
 }
-func (f *Functions) FramebufferTexture2D(target, attachment, texTarget Enum, t Texture, level int) {
-	f.Ctx.Call("framebufferTexture2D", int(target), int(attachment), int(texTarget), js.Value(t), level)
+func (f *Functions) FramebufferTexture2D(
+	target, attachment, texTarget Enum,
+	t Texture,
+	level int,
+) {
+	f.Ctx.Call(
+		"framebufferTexture2D",
+		int(target),
+		int(attachment),
+		int(texTarget),
+		js.Value(t),
+		level,
+	)
 }
 func (f *Functions) GetError() Enum {
 	// Avoid slow getError calls. See gio#179.
@@ -220,7 +255,14 @@ func (f *Functions) GetRenderbufferParameteri(target, pname Enum) int {
 	return paramVal(f.Ctx.Call("getRenderbufferParameteri", int(pname)))
 }
 func (f *Functions) GetFramebufferAttachmentParameteri(target, attachment, pname Enum) int {
-	return paramVal(f.Ctx.Call("getFramebufferAttachmentParameter", int(target), int(attachment), int(pname)))
+	return paramVal(
+		f.Ctx.Call(
+			"getFramebufferAttachmentParameter",
+			int(target),
+			int(attachment),
+			int(pname),
+		),
+	)
 }
 func (f *Functions) GetBinding(pname Enum) Object {
 	return Object(f.Ctx.Call("getParameter", int(pname)))
@@ -236,9 +278,25 @@ func (f *Functions) GetProgramInfoLog(p Program) string {
 }
 func (f *Functions) GetQueryObjectuiv(query Query, pname Enum) uint {
 	if !f.EXT_disjoint_timer_query_webgl2.IsNull() {
-		return uint(paramVal(f.Ctx.Call("getQueryParameter", js.Value(query), int(pname))))
+		return uint(
+			paramVal(
+				f.Ctx.Call(
+					"getQueryParameter",
+					js.Value(query),
+					int(pname),
+				),
+			),
+		)
 	} else {
-		return uint(paramVal(f.EXT_disjoint_timer_query.Call("getQueryObjectEXT", js.Value(query), int(pname))))
+		return uint(
+			paramVal(
+				f.EXT_disjoint_timer_query.Call(
+					"getQueryObjectEXT",
+					js.Value(query),
+					int(pname),
+				),
+			),
+		)
 	}
 }
 func (f *Functions) GetShaderi(s Shader, pname Enum) int {
@@ -285,13 +343,30 @@ func (f *Functions) PixelStorei(pname Enum, param int32) {
 func (f *Functions) MemoryBarrier(barriers Enum) {
 	panic("not implemented")
 }
-func (f *Functions) MapBufferRange(target Enum, offset, length int, access Enum) []byte {
+func (f *Functions) MapBufferRange(
+	target Enum,
+	offset, length int,
+	access Enum,
+) []byte {
 	panic("not implemented")
 }
-func (f *Functions) RenderbufferStorage(target, internalformat Enum, width, height int) {
-	f.Ctx.Call("renderbufferStorage", int(target), int(internalformat), width, height)
+func (f *Functions) RenderbufferStorage(
+	target, internalformat Enum,
+	width, height int,
+) {
+	f.Ctx.Call(
+		"renderbufferStorage",
+		int(target),
+		int(internalformat),
+		width,
+		height,
+	)
 }
-func (f *Functions) ReadPixels(x, y, width, height int, format, ty Enum, data []byte) {
+func (f *Functions) ReadPixels(
+	x, y, width, height int,
+	format, ty Enum,
+	data []byte,
+) {
 	ba := f.byteArrayOf(data)
 	f.Ctx.Call("readPixels", x, y, width, height, int(format), int(ty), ba)
 	js.CopyBytesToGo(data, ba)
@@ -302,20 +377,75 @@ func (f *Functions) Scissor(x, y, width, height int32) {
 func (f *Functions) ShaderSource(s Shader, src string) {
 	f.Ctx.Call("shaderSource", js.Value(s), src)
 }
-func (f *Functions) TexImage2D(target Enum, level int, internalFormat Enum, width, height int, format, ty Enum) {
-	f.Ctx.Call("texImage2D", int(target), int(level), int(internalFormat), int(width), int(height), 0, int(format), int(ty), nil)
+func (f *Functions) TexImage2D(
+	target Enum,
+	level int,
+	internalFormat Enum,
+	width, height int,
+	format, ty Enum,
+) {
+	f.Ctx.Call(
+		"texImage2D",
+		int(target),
+		int(level),
+		int(internalFormat),
+		int(width),
+		int(height),
+		0,
+		int(format),
+		int(ty),
+		nil,
+	)
 }
-func (f *Functions) TexStorage2D(target Enum, levels int, internalFormat Enum, width, height int) {
-	f.Ctx.Call("texStorage2D", int(target), levels, int(internalFormat), width, height)
+func (f *Functions) TexStorage2D(
+	target Enum,
+	levels int,
+	internalFormat Enum,
+	width, height int,
+) {
+	f.Ctx.Call(
+		"texStorage2D",
+		int(target),
+		levels,
+		int(internalFormat),
+		width,
+		height,
+	)
 }
-func (f *Functions) TexSubImage2D(target Enum, level int, x, y, width, height int, format, ty Enum, data []byte) {
-	f.Ctx.Call("texSubImage2D", int(target), level, x, y, width, height, int(format), int(ty), f.byteArrayOf(data))
+func (f *Functions) TexSubImage2D(
+	target Enum,
+	level int,
+	x, y, width, height int,
+	format, ty Enum,
+	data []byte,
+) {
+	f.Ctx.Call(
+		"texSubImage2D",
+		int(target),
+		level,
+		x,
+		y,
+		width,
+		height,
+		int(format),
+		int(ty),
+		f.byteArrayOf(data),
+	)
 }
 func (f *Functions) TexParameteri(target, pname Enum, param int) {
 	f.Ctx.Call("texParameteri", int(target), int(pname), int(param))
 }
-func (f *Functions) UniformBlockBinding(p Program, uniformBlockIndex uint, uniformBlockBinding uint) {
-	f.Ctx.Call("uniformBlockBinding", js.Value(p), int(uniformBlockIndex), int(uniformBlockBinding))
+func (f *Functions) UniformBlockBinding(
+	p Program,
+	uniformBlockIndex uint,
+	uniformBlockBinding uint,
+) {
+	f.Ctx.Call(
+		"uniformBlockBinding",
+		js.Value(p),
+		int(uniformBlockIndex),
+		int(uniformBlockBinding),
+	)
 }
 func (f *Functions) Uniform1f(dst Uniform, v float32) {
 	f.Ctx.Call("uniform1f", js.Value(dst), v)
@@ -338,8 +468,22 @@ func (f *Functions) UseProgram(p Program) {
 func (f *Functions) UnmapBuffer(target Enum) bool {
 	panic("not implemented")
 }
-func (f *Functions) VertexAttribPointer(dst Attrib, size int, ty Enum, normalized bool, stride, offset int) {
-	f.Ctx.Call("vertexAttribPointer", int(dst), size, int(ty), normalized, stride, offset)
+func (f *Functions) VertexAttribPointer(
+	dst Attrib,
+	size int,
+	ty Enum,
+	normalized bool,
+	stride, offset int,
+) {
+	f.Ctx.Call(
+		"vertexAttribPointer",
+		int(dst),
+		size,
+		int(ty),
+		normalized,
+		stride,
+		offset,
+	)
 }
 func (f *Functions) Viewport(x, y, width, height int) {
 	f.Ctx.Call("viewport", x, y, width, height)

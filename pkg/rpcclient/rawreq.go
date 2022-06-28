@@ -19,7 +19,8 @@ func (r FutureRawResult) Receive() (js.RawMessage, error) {
 // future time by invoking the Receive function on the returned instance.
 //
 // See RawRequest for the blocking version and more details.
-func (c *Client) RawRequestAsync(method string, params []js.RawMessage,
+func (c *Client) RawRequestAsync(
+	method string, params []js.RawMessage,
 ) FutureRawResult {
 	// Method may not be empty.
 	if method == "" {
@@ -60,7 +61,8 @@ func (c *Client) RawRequestAsync(method string, params []js.RawMessage,
 // This method may be used to send and receive requests and responses for requests that are not handled by this client
 // package, or to proxy partially unmarshalled requests to another JSON-RPC server if a request cannot be handled
 // directly.
-func (c *Client) RawRequest(method string, params []js.RawMessage,
+func (c *Client) RawRequest(
+	method string, params []js.RawMessage,
 ) (js.RawMessage, error) {
 	return c.RawRequestAsync(method, params).Receive()
 }

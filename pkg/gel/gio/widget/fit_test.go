@@ -94,7 +94,8 @@ func TestFit(t *testing.T) {
 				},
 			}
 
-			result := fit.scale(gtx, layout.NW,
+			result := fit.scale(
+				gtx, layout.NW,
 				layout.Dimensions{Size: test.Dims},
 			)
 
@@ -103,19 +104,22 @@ func TestFit(t *testing.T) {
 				scaleX := float32Bytes(test.Scale.X)
 				scaleY := float32Bytes(test.Scale.Y)
 				if !bytes.Contains(opsdata, scaleX) {
-					t.Errorf("did not find scale.X:%v (%x) in ops: %x",
+					t.Errorf(
+						"did not find scale.X:%v (%x) in ops: %x",
 						test.Scale.X, scaleX, opsdata,
 					)
 				}
 				if !bytes.Contains(opsdata, scaleY) {
-					t.Errorf("did not find scale.Y:%v (%x) in ops: %x",
+					t.Errorf(
+						"did not find scale.Y:%v (%x) in ops: %x",
 						test.Scale.Y, scaleY, opsdata,
 					)
 				}
 			}
 
 			if result.Size != test.Result {
-				t.Errorf("fit %v, #%v: expected %#v, got %#v", fit, i,
+				t.Errorf(
+					"fit %v, #%v: expected %#v, got %#v", fit, i,
 					test.Result, result.Size,
 				)
 			}

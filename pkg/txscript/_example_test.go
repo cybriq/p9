@@ -6,10 +6,10 @@ import (
 
 	"github.com/cybriq/p9/pkg/chain/config/netparams"
 	chainhash "github.com/cybriq/p9/pkg/chainhash"
-	txscript "github.com/cybriq/p9/pkg/txscript"
-	"github.com/cybriq/p9/pkg/wire"
 	ecc "github.com/cybriq/p9/pkg/ecc"
+	txscript "github.com/cybriq/p9/pkg/txscript"
 	"github.com/cybriq/p9/pkg/util"
+	"github.com/cybriq/p9/pkg/wire"
 )
 
 // This example demonstrates creating a script which pays to a bitcoin address. It also prints the created script hex
@@ -64,15 +64,16 @@ func ExamplePayToAddrScript() {
 // This example demonstrates manually creating and signing a redeem transaction.
 func ExampleSignTxOutput() {
 	// Ordinarily the private key would come from whatever storage mechanism is being used, but for this example just hard code it.
-	privKeyBytes, e := hex.DecodeString("22a47fa09a223f2aa079edf85a7c2" +
-		"d4f8720ee63e502ee2869afab7de234b80c",
+	privKeyBytes, e := hex.DecodeString(
+		"22a47fa09a223f2aa079edf85a7c2d4f8720ee63e502ee2869afab7de234b80c",
 	)
 	if e != nil {
 		return
 	}
 	privKey, pubKey := ecc.PrivKeyFromBytes(ecc.S256(), privKeyBytes)
 	pubKeyHash := util.Hash160(pubKey.SerializeCompressed())
-	addr, e := util.NewAddressPubKeyHash(pubKeyHash,
+	addr, e := util.NewAddressPubKeyHash(
+		pubKeyHash,
 		&netparams.MainNetParams,
 	)
 	if e != nil {
@@ -108,7 +109,8 @@ func ExampleSignTxOutput() {
 		return privKey, true, nil
 	}
 	// Notice that the script database parameter is nil here since it isn't used.  It must be specified when pay-to-script-hash transactions are being signed.
-	sigScript, e := txscript.SignTxOutput(&netparams.MainNetParams,
+	sigScript, e := txscript.SignTxOutput(
+		&netparams.MainNetParams,
 		redeemTx, 0, originTx.TxOut[0].PkScript, txscript.SigHashAll,
 		txscript.KeyClosure(lookupKey), nil, nil,
 	)
@@ -120,7 +122,8 @@ func ExampleSignTxOutput() {
 	flags := txscript.ScriptBip16 | txscript.ScriptVerifyDERSignatures |
 		txscript.ScriptStrictMultiSig |
 		txscript.ScriptDiscourageUpgradableNops
-	vm, e := txscript.NewEngine(originTx.TxOut[0].PkScript, redeemTx, 0,
+	vm, e := txscript.NewEngine(
+		originTx.TxOut[0].PkScript, redeemTx, 0,
 		flags, nil, nil, -1,
 	)
 	if e != nil {

@@ -1,3 +1,4 @@
+//go:build headless
 // +build headless
 
 package launchers
@@ -7,7 +8,7 @@ import (
 )
 
 func GUIHandle(ifc interface{}) (e error) {
-	W.Ln("GUI was disabled for this podbuild (server only version)")
+	W.Ln("GUI was disabled for this build (server only version)")
 	os.Exit(1)
 	return nil
 }

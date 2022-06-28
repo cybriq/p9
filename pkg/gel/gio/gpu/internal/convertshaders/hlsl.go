@@ -22,7 +22,12 @@ type FXC struct {
 func NewFXC() *FXC { return &FXC{Bin: "fxc.exe"} }
 
 // Compile compiles the input shader.
-func (fxc *FXC) Compile(path, variant string, input []byte, entryPoint string, profileVersion string) (string, error) {
+func (fxc *FXC) Compile(
+	path, variant string,
+	input []byte,
+	entryPoint string,
+	profileVersion string,
+) (string, error) {
 	base := fxc.WorkDir.Path(filepath.Base(path), variant, profileVersion)
 	pathin := base + ".in"
 	pathout := base + ".out"
@@ -52,7 +57,8 @@ func (fxc *FXC) Compile(path, variant string, input []byte, entryPoint string, p
 		return "", fmt.Errorf("unrecognized shader type %s", path)
 	}
 
-	cmd.Args = append(cmd.Args,
+	cmd.Args = append(
+		cmd.Args,
 		"/Fo", pathout,
 		"/T", profile,
 		"/E", entryPoint,
@@ -65,7 +71,13 @@ func (fxc *FXC) Compile(path, variant string, input []byte, entryPoint string, p
 		if runtime.GOOS != "windows" {
 			info = "If the fxc tool cannot be found, set WINEPATH to the Windows path for the Windows SDK.\n"
 		}
-		return "", fmt.Errorf("%s\n%sfailed to run %v: %w", output, info, cmd.Args, err)
+		return "", fmt.Errorf(
+			"%s\n%sfailed to run %v: %w",
+			output,
+			info,
+			cmd.Args,
+			err,
+		)
 	}
 
 	compiled, err := ioutil.ReadFile(result)
@@ -85,7 +97,12 @@ type DXC struct {
 func NewDXC() *DXC { return &DXC{Bin: "dxc"} }
 
 // Compile compiles the input shader.
-func (dxc *DXC) Compile(path, variant string, input []byte, entryPoint string, profile string) (string, error) {
+func (dxc *DXC) Compile(
+	path, variant string,
+	input []byte,
+	entryPoint string,
+	profile string,
+) (string, error) {
 	base := dxc.WorkDir.Path(filepath.Base(path), variant, profile)
 	pathin := base + ".in"
 	pathout := base + ".out"
@@ -97,7 +114,8 @@ func (dxc *DXC) Compile(path, variant string, input []byte, entryPoint string, p
 
 	cmd := exec.Command(dxc.Bin)
 
-	cmd.Args = append(cmd.Args,
+	cmd.Args = append(
+		cmd.Args,
 		"-Fo", pathout,
 		"-T", profile,
 		"-E", entryPoint,

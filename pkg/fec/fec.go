@@ -6,7 +6,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"hash/crc32"
-	
+
 	"github.com/vivint/infectious"
 )
 

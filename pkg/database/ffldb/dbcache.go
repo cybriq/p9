@@ -592,7 +592,8 @@ func (c *dbCache) Close() (e error) {
 //
 // The cache will be flushed to leveldb when the max size exceeds the provided value or it has been longer than the
 // provided interval since the last flush.
-func newDbCache(ldb *leveldb.DB, store *blockStore, maxSize uint64,
+func newDbCache(
+	ldb *leveldb.DB, store *blockStore, maxSize uint64,
 	flushIntervalSecs uint32,
 ) *dbCache {
 	return &dbCache{

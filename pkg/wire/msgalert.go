@@ -123,13 +123,22 @@ type Alert struct {
 
 // Serialize encodes the alert to w using the alert protocol encoding format.
 func (alert *Alert) Serialize(w io.Writer, pver uint32) (e error) {
-	if e = writeElements(w, alert.Version, alert.RelayUntil, alert.Expiration, alert.ID, alert.Cancel); E.Chk(e) {
+	if e = writeElements(
+		w,
+		alert.Version,
+		alert.RelayUntil,
+		alert.Expiration,
+		alert.ID,
+		alert.Cancel,
+	); E.Chk(e) {
 		return
 	}
 	count := len(alert.SetCancel)
 	if count > maxCountSetCancel {
 		str := fmt.Sprintf(
-			"too many cancel alert IDs for alert [count %v, max %v]", count, maxCountSetCancel,
+			"too many cancel alert IDs for alert [count %v, max %v]",
+			count,
+			maxCountSetCancel,
 		)
 		return messageError("Alert.Serialize", str)
 	}
@@ -147,7 +156,9 @@ func (alert *Alert) Serialize(w io.Writer, pver uint32) (e error) {
 	count = len(alert.SetSubVer)
 	if count > maxCountSetSubVer {
 		str := fmt.Sprintf(
-			"too many sub versions for alert [count %v, max %v]", count, maxCountSetSubVer,
+			"too many sub versions for alert [count %v, max %v]",
+			count,
+			maxCountSetSubVer,
 		)
 		return messageError("Alert.Serialize", str)
 	}
@@ -207,7 +218,9 @@ func (alert *Alert) Deserialize(r io.Reader, pver uint32) (e error) {
 	}
 	if count > maxCountSetSubVer {
 		str := fmt.Sprintf(
-			"too many sub versions for alert [count %v, max %v]", count, maxCountSetSubVer,
+			"too many sub versions for alert [count %v, max %v]",
+			count,
+			maxCountSetSubVer,
 		)
 		return messageError("Alert.Deserialize", str)
 	}
@@ -255,7 +268,10 @@ func NewAlert(
 }
 
 // NewAlertFromPayload returns an Alert with values deserialized from the serialized payload.
-func NewAlertFromPayload(serializedPayload []byte, pver uint32) (a *Alert, e error) {
+func NewAlertFromPayload(serializedPayload []byte, pver uint32) (
+	a *Alert,
+	e error,
+) {
 	var alert Alert
 	r := bytes.NewReader(serializedPayload)
 	if e = alert.Deserialize(r, pver); E.Chk(e) {
@@ -278,11 +294,23 @@ type MsgAlert struct {
 }
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface implementation.
-func (msg *MsgAlert) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e error) {
-	if msg.SerializedPayload, e = ReadVarBytes(r, pver, MaxMessagePayload, "alert serialized payload"); E.Chk(e) {
+func (msg *MsgAlert) BtcDecode(
+	r io.Reader,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
+	if msg.SerializedPayload, e = ReadVarBytes(
+		r,
+		pver,
+		MaxMessagePayload,
+		"alert serialized payload",
+	); E.Chk(e) {
 		return
 	}
-	if msg.Payload, e = NewAlertFromPayload(msg.SerializedPayload, pver); E.Chk(e) {
+	if msg.Payload, e = NewAlertFromPayload(
+		msg.SerializedPayload,
+		pver,
+	); E.Chk(e) {
 		msg.Payload = nil
 	}
 	msg.Signature, e = ReadVarBytes(
@@ -293,13 +321,17 @@ func (msg *MsgAlert) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgAlert) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgAlert) BtcEncode(
+	w io.Writer,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	var serializedpayload []byte
 	if msg.Payload != nil {
 		// try to Serialize Payload if possible
 		r := new(bytes.Buffer)
 		if e = msg.Payload.Serialize(r, pver); E.Chk(e) {
-			
+
 			// Serialize failed - ignore & fallback to SerializedPayload
 			serializedpayload = msg.SerializedPayload
 		} else {
@@ -313,7 +345,7 @@ func (msg *MsgAlert) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) (e
 		return messageError("MsgAlert.BtcEncode", "empty serialized payload")
 	}
 	if e = WriteVarBytes(w, pver, serializedpayload); E.Chk(e) {
-		
+
 		return
 	}
 	return WriteVarBytes(w, pver, msg.Signature)

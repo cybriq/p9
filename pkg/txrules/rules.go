@@ -4,6 +4,7 @@ package txrules
 
 import (
 	"errors"
+
 	"github.com/cybriq/p9/pkg/amt"
 
 	"github.com/cybriq/p9/pkg/txscript"
@@ -36,7 +37,8 @@ func GetDustThreshold(scriptSize int, relayFeePerKb amt.Amount) amt.Amount {
 
 // IsDustAmount determines whether a transaction output value and script length would cause the output to be considered
 // dust. Transactions with dust outputs are not standard and are rejected by mempools with default policies.
-func IsDustAmount(amount amt.Amount, scriptSize int, relayFeePerKb amt.Amount,
+func IsDustAmount(
+	amount amt.Amount, scriptSize int, relayFeePerKb amt.Amount,
 ) bool {
 	return amount < GetDustThreshold(scriptSize, relayFeePerKb)
 }
@@ -74,7 +76,8 @@ func CheckOutput(output *wire.TxOut, relayFeePerKb amt.Amount) (e error) {
 
 // FeeForSerializeSize calculates the required fee for a transaction of some arbitrary size given a mempool's relay fee
 // policy.
-func FeeForSerializeSize(relayFeePerKb amt.Amount, txSerializeSize int,
+func FeeForSerializeSize(
+	relayFeePerKb amt.Amount, txSerializeSize int,
 ) amt.Amount {
 	fee := relayFeePerKb * amt.Amount(txSerializeSize) / 1000
 	if fee == 0 && relayFeePerKb > 0 {

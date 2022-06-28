@@ -18,7 +18,8 @@ func TestInv(t *testing.T) {
 	wantCmd := "inv"
 	msg := NewMsgInv()
 	if cmd := msg.Command(); cmd != wantCmd {
-		t.Errorf("NewMsgInv: wrong command - got %v want %v",
+		t.Errorf(
+			"NewMsgInv: wrong command - got %v want %v",
 			cmd, wantCmd,
 		)
 	}
@@ -27,8 +28,9 @@ func TestInv(t *testing.T) {
 	wantPayload := uint32(1800009)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -40,7 +42,8 @@ func TestInv(t *testing.T) {
 		t.Errorf("AddInvVect: %v", e)
 	}
 	if msg.InvList[0] != iv {
-		t.Errorf("AddInvVect: wrong invvect added - got %v, want %v",
+		t.Errorf(
+			"AddInvVect: wrong invvect added - got %v, want %v",
 			spew.Sprint(msg.InvList[0]), spew.Sprint(iv),
 		)
 	}
@@ -49,16 +52,18 @@ func TestInv(t *testing.T) {
 		e = msg.AddInvVect(iv)
 	}
 	if e == nil {
-		t.Errorf("AddInvVect: expected error on too many inventory " +
-			"vectors not received",
+		t.Errorf(
+			"AddInvVect: expected error on too many inventory " +
+				"vectors not received",
 		)
 	}
 	// Ensure creating the message with a size hint larger than the max works as expected.
 	msg = NewMsgInvSizeHint(MaxInvPerMsg + 1)
 	wantCap := MaxInvPerMsg
 	if cap(msg.InvList) != wantCap {
-		t.Errorf("NewMsgInvSizeHint: wrong cap for size hint - "+
-			"got %v, want %v", cap(msg.InvList), wantCap,
+		t.Errorf(
+			"NewMsgInvSizeHint: wrong cap for size hint - "+
+				"got %v, want %v", cap(msg.InvList), wantCap,
 		)
 	}
 }
@@ -206,7 +211,8 @@ func TestInvWire(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("BtcEncode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcEncode #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -220,7 +226,8 @@ func TestInvWire(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(&msg, test.out) {
-			t.Errorf("BtcDecode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcDecode #%d\n got: %s want: %s", i,
 				spew.Sdump(msg), spew.Sdump(test.out),
 			)
 			continue
@@ -274,11 +281,13 @@ func TestInvWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Latest protocol version with intentional read/write errors. Force error in inventory vector count
-		{baseInv, baseInvEncoded, pver, BaseEncoding, 0, io.ErrShortWrite,
+		{
+			baseInv, baseInvEncoded, pver, BaseEncoding, 0, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in inventory list.
-		{baseInv, baseInvEncoded, pver, BaseEncoding, 1, io.ErrShortWrite,
+		{
+			baseInv, baseInvEncoded, pver, BaseEncoding, 1, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error with greater than max inventory vectors.
@@ -290,7 +299,8 @@ func TestInvWireErrors(t *testing.T) {
 		w := newFixedWriter(test.max)
 		e := test.in.BtcEncode(w, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.writeErr) {
-			t.Errorf("BtcEncode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcEncode #%d wrong error got: %v, want: %v",
 				i, e, test.writeErr,
 			)
 			continue
@@ -298,8 +308,9 @@ func TestInvWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.writeErr {
-				t.Errorf("BtcEncode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.writeErr,
+				t.Errorf(
+					"BtcEncode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.writeErr,
 				)
 				continue
 			}
@@ -309,7 +320,8 @@ func TestInvWireErrors(t *testing.T) {
 		r := newFixedReader(test.max, test.buf)
 		e = msg.BtcDecode(r, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.readErr) {
-			t.Errorf("BtcDecode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcDecode #%d wrong error got: %v, want: %v",
 				i, e, test.readErr,
 			)
 			continue
@@ -317,8 +329,9 @@ func TestInvWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.readErr {
-				t.Errorf("BtcDecode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.readErr,
+				t.Errorf(
+					"BtcDecode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.readErr,
 				)
 				continue
 			}

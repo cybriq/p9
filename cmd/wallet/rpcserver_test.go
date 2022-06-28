@@ -13,7 +13,8 @@ func TestThrottle(t *testing.T) {
 	const threshold = 1
 	busy := qu.T()
 	srv := httptest.NewServer(
-		ThrottledFn(threshold,
+		ThrottledFn(
+			threshold,
 			func(w http.ResponseWriter, r *http.Request) {
 				<-busy
 			},

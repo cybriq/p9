@@ -25,7 +25,8 @@ func TestBlock(t *testing.T) {
 	wantCmd := "block"
 	msg := NewMsgBlock(bh)
 	if cmd := msg.Command(); cmd != wantCmd {
-		t.Errorf("NewMsgBlock: wrong command - got %v want %v",
+		t.Errorf(
+			"NewMsgBlock: wrong command - got %v want %v",
 			cmd, wantCmd,
 		)
 	}
@@ -33,14 +34,16 @@ func TestBlock(t *testing.T) {
 	wantPayload := uint32(4000000)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
 	// Ensure we get the same block header data back out.
 	if !reflect.DeepEqual(&msg.Header, bh) {
-		t.Errorf("NewMsgBlock: wrong block header - got %v, want %v",
+		t.Errorf(
+			"NewMsgBlock: wrong block header - got %v, want %v",
 			spew.Sdump(&msg.Header), spew.Sdump(bh),
 		)
 	}
@@ -51,7 +54,8 @@ func TestBlock(t *testing.T) {
 		t.Log(e)
 	}
 	if !reflect.DeepEqual(msg.Transactions, blockOne.Transactions) {
-		t.Errorf("AddTransaction: wrong transactions - got %v, want %v",
+		t.Errorf(
+			"AddTransaction: wrong transactions - got %v, want %v",
 			spew.Sdump(msg.Transactions),
 			spew.Sdump(blockOne.Transactions),
 		)
@@ -59,7 +63,8 @@ func TestBlock(t *testing.T) {
 	// Ensure transactions are properly cleared.
 	msg.ClearTransactions()
 	if len(msg.Transactions) != 0 {
-		t.Errorf("ClearTransactions: wrong transactions - got %v, want %v",
+		t.Errorf(
+			"ClearTransactions: wrong transactions - got %v, want %v",
 			len(msg.Transactions), 0,
 		)
 	}
@@ -80,7 +85,8 @@ func TestBlockTxHashes(t *testing.T) {
 		t.Errorf("TxHashes: %v", e)
 	}
 	if !reflect.DeepEqual(hashes, wantHashes) {
-		t.Errorf("TxHashes: wrong transaction hashes - got %v, want %v",
+		t.Errorf(
+			"TxHashes: wrong transaction hashes - got %v, want %v",
 			spew.Sdump(hashes), spew.Sdump(wantHashes),
 		)
 	}
@@ -97,7 +103,8 @@ func TestBlockHash(t *testing.T) {
 	// Ensure the hash produced is expected.
 	blockHash := blockOne.BlockHash()
 	if !blockHash.IsEqual(wantHash) {
-		t.Errorf("BlockHash: wrong hash - got %v, want %v",
+		t.Errorf(
+			"BlockHash: wrong hash - got %v, want %v",
 			spew.Sprint(blockHash), spew.Sprint(wantHash),
 		)
 	}
@@ -171,7 +178,8 @@ func TestBlockWire(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("BtcEncode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcEncode #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -185,7 +193,8 @@ func TestBlockWire(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(&msg, test.out) {
-			t.Errorf("BtcDecode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcDecode #%d\n got: %s want: %s", i,
 				spew.Sdump(&msg), spew.Sdump(test.out),
 			)
 			continue
@@ -209,35 +218,43 @@ func TestBlockWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in version.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 0, io.ErrShortWrite,
+		{
+			&blockOne, blockOneBytes, pver, BaseEncoding, 0, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in prev block hash.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 4, io.ErrShortWrite,
+		{
+			&blockOne, blockOneBytes, pver, BaseEncoding, 4, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in merkle root.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 36, io.ErrShortWrite,
+		{
+			&blockOne, blockOneBytes, pver, BaseEncoding, 36, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in timestamp.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 68, io.ErrShortWrite,
+		{
+			&blockOne, blockOneBytes, pver, BaseEncoding, 68, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in difficulty bits.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 72, io.ErrShortWrite,
+		{
+			&blockOne, blockOneBytes, pver, BaseEncoding, 72, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in header nonce.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 76, io.ErrShortWrite,
+		{
+			&blockOne, blockOneBytes, pver, BaseEncoding, 76, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in transaction count.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 80, io.ErrShortWrite,
+		{
+			&blockOne, blockOneBytes, pver, BaseEncoding, 80, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in transactions.
-		{&blockOne, blockOneBytes, pver, BaseEncoding, 81, io.ErrShortWrite,
+		{
+			&blockOne, blockOneBytes, pver, BaseEncoding, 81, io.ErrShortWrite,
 			io.EOF,
 		},
 	}
@@ -247,7 +264,8 @@ func TestBlockWireErrors(t *testing.T) {
 		w := newFixedWriter(test.max)
 		e := test.in.BtcEncode(w, test.pver, test.enc)
 		if e != test.writeErr {
-			t.Errorf("BtcEncode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcEncode #%d wrong error got: %v, want: %v",
 				i, e, test.writeErr,
 			)
 			continue
@@ -257,7 +275,8 @@ func TestBlockWireErrors(t *testing.T) {
 		r := newFixedReader(test.max, test.buf)
 		e = msg.BtcDecode(r, test.pver, test.enc)
 		if e != test.readErr {
-			t.Errorf("BtcDecode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcDecode #%d wrong error got: %v, want: %v",
 				i, e, test.readErr,
 			)
 			continue
@@ -290,7 +309,8 @@ func TestBlockSerialize(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("Serialize #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"Serialize #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -304,7 +324,8 @@ func TestBlockSerialize(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(&block, test.out) {
-			t.Errorf("Deserialize #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"Deserialize #%d\n got: %s want: %s", i,
 				spew.Sdump(&block), spew.Sdump(test.out),
 			)
 			continue
@@ -318,13 +339,15 @@ func TestBlockSerialize(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(&txLocBlock, test.out) {
-			t.Errorf("DeserializeTxLoc #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"DeserializeTxLoc #%d\n got: %s want: %s", i,
 				spew.Sdump(&txLocBlock), spew.Sdump(test.out),
 			)
 			continue
 		}
 		if !reflect.DeepEqual(txLocs, test.txLocs) {
-			t.Errorf("DeserializeTxLoc #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"DeserializeTxLoc #%d\n got: %s want: %s", i,
 				spew.Sdump(txLocs), spew.Sdump(test.txLocs),
 			)
 			continue
@@ -365,7 +388,8 @@ func TestBlockSerializeErrors(t *testing.T) {
 		w := newFixedWriter(test.max)
 		e := test.in.Serialize(w)
 		if e != test.writeErr {
-			t.Errorf("Serialize #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"Serialize #%d wrong error got: %v, want: %v",
 				i, e, test.writeErr,
 			)
 			continue
@@ -375,7 +399,8 @@ func TestBlockSerializeErrors(t *testing.T) {
 		r := newFixedReader(test.max, test.buf)
 		e = block.Deserialize(r)
 		if e != test.readErr {
-			t.Errorf("Deserialize #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"Deserialize #%d wrong error got: %v, want: %v",
 				i, e, test.readErr,
 			)
 			continue
@@ -384,7 +409,8 @@ func TestBlockSerializeErrors(t *testing.T) {
 		br := bytes.NewBuffer(test.buf[0:test.max])
 		_, e = txLocBlock.DeserializeTxLoc(br)
 		if e != test.readErr {
-			t.Errorf("DeserializeTxLoc #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"DeserializeTxLoc #%d wrong error got: %v, want: %v",
 				i, e, test.readErr,
 			)
 			continue
@@ -432,7 +458,8 @@ func TestBlockOverflowErrors(t *testing.T) {
 		r := bytes.NewReader(test.buf)
 		e := msg.BtcDecode(r, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("BtcDecode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcDecode #%d wrong error got: %v, want: %v",
 				i, e, reflect.TypeOf(test.e),
 			)
 			continue
@@ -441,7 +468,8 @@ func TestBlockOverflowErrors(t *testing.T) {
 		r = bytes.NewReader(test.buf)
 		e = msg.Deserialize(r)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("Deserialize #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"Deserialize #%d wrong error got: %v, want: %v",
 				i, e, reflect.TypeOf(test.e),
 			)
 			continue
@@ -450,8 +478,9 @@ func TestBlockOverflowErrors(t *testing.T) {
 		br := bytes.NewBuffer(test.buf)
 		_, e = msg.DeserializeTxLoc(br)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("DeserializeTxLoc #%d wrong error got: %v, "+
-				"want: %v", i, e, reflect.TypeOf(test.e),
+			t.Errorf(
+				"DeserializeTxLoc #%d wrong error got: %v, "+
+					"want: %v", i, e, reflect.TypeOf(test.e),
 			)
 			continue
 		}
@@ -475,8 +504,9 @@ func TestBlockSerializeSize(t *testing.T) {
 	for i, test := range tests {
 		serializedSize := test.in.SerializeSize()
 		if serializedSize != test.size {
-			t.Errorf("Block.SerializeSize: #%d got: %d, want: "+
-				"%d", i, serializedSize, test.size,
+			t.Errorf(
+				"Block.SerializeSize: #%d got: %d, want: "+
+					"%d", i, serializedSize, test.size,
 			)
 			continue
 		}
@@ -487,19 +517,23 @@ func TestBlockSerializeSize(t *testing.T) {
 var blockOne = Block{
 	Header: BlockHeader{
 		Version: 1,
-		PrevBlock: chainhash.Hash([chainhash.HashSize]byte{ // Make go vet happy.
-			0x6f, 0xe2, 0x8c, 0x0a, 0xb6, 0xf1, 0xb3, 0x72,
-			0xc1, 0xa6, 0xa2, 0x46, 0xae, 0x63, 0xf7, 0x4f,
-			0x93, 0x1e, 0x83, 0x65, 0xe1, 0x5a, 0x08, 0x9c,
-			0x68, 0xd6, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00,
-		},
+		PrevBlock: chainhash.Hash(
+			[chainhash.HashSize]byte{
+				// Make go vet happy.
+				0x6f, 0xe2, 0x8c, 0x0a, 0xb6, 0xf1, 0xb3, 0x72,
+				0xc1, 0xa6, 0xa2, 0x46, 0xae, 0x63, 0xf7, 0x4f,
+				0x93, 0x1e, 0x83, 0x65, 0xe1, 0x5a, 0x08, 0x9c,
+				0x68, 0xd6, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00,
+			},
 		),
-		MerkleRoot: chainhash.Hash([chainhash.HashSize]byte{ // Make go vet happy.
-			0x98, 0x20, 0x51, 0xfd, 0x1e, 0x4b, 0xa7, 0x44,
-			0xbb, 0xbe, 0x68, 0x0e, 0x1f, 0xee, 0x14, 0x67,
-			0x7b, 0xa1, 0xa3, 0xc3, 0x54, 0x0b, 0xf7, 0xb1,
-			0xcd, 0xb6, 0x06, 0xe8, 0x57, 0x23, 0x3e, 0x0e,
-		},
+		MerkleRoot: chainhash.Hash(
+			[chainhash.HashSize]byte{
+				// Make go vet happy.
+				0x98, 0x20, 0x51, 0xfd, 0x1e, 0x4b, 0xa7, 0x44,
+				0xbb, 0xbe, 0x68, 0x0e, 0x1f, 0xee, 0x14, 0x67,
+				0x7b, 0xa1, 0xa3, 0xc3, 0x54, 0x0b, 0xf7, 0xb1,
+				0xcd, 0xb6, 0x06, 0xe8, 0x57, 0x23, 0x3e, 0x0e,
+			},
 		),
 		Timestamp: time.Unix(0x4966bc61, 0), // 2009-01-08 20:54:25 -0600 CST
 		Bits:      0x1d00ffff,               // 486604799

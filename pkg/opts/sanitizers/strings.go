@@ -42,7 +42,7 @@ func StringType(typ, input string, defaultPort int) (cleaned string, e error) {
 			if e != nil || homeDir == "" {
 				homeDir = os.Getenv("HOME")
 			}
-			
+
 			input = strings.Replace(input, "~", homeDir, 1)
 		}
 		if cleaned, e = filepath.Abs(filepath.Clean(input)); E.Chk(e) {
@@ -60,7 +60,7 @@ func StringType(typ, input string, defaultPort int) (cleaned string, e error) {
 			if e != nil || homeDir == "" {
 				homeDir = os.Getenv("HOME")
 			}
-			
+
 			input = strings.Replace(input, "~", homeDir, 1)
 		}
 		if cleaned, e = filepath.Abs(filepath.Clean(input)); E.Chk(e) {

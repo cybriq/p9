@@ -2,8 +2,9 @@
 package txauthor
 
 import (
-	"github.com/cybriq/p9/pkg/amt"
 	"testing"
+
+	"github.com/cybriq/p9/pkg/amt"
 
 	"github.com/cybriq/p9/pkg/txrules"
 	"github.com/cybriq/p9/pkg/txsizes"
@@ -23,7 +24,8 @@ func makeInputSource(unspents []*wire.TxOut) InputSource {
 	currentTotal := amt.Amount(0)
 	currentInputs := make([]*wire.TxIn, 0, len(unspents))
 	currentInputValues := make([]amt.Amount, 0, len(unspents))
-	f := func(target amt.Amount) (amt.Amount, []*wire.TxIn, []amt.Amount,
+	f := func(target amt.Amount) (
+		amt.Amount, []*wire.TxIn, []amt.Amount,
 		[][]byte, error,
 	) {
 		for currentTotal < target && len(unspents) != 0 {
@@ -34,7 +36,8 @@ func makeInputSource(unspents []*wire.TxOut) InputSource {
 			currentInputs = append(currentInputs, nextInput)
 			currentInputValues = append(currentInputValues, amt.Amount(u.Value))
 		}
-		return currentTotal, currentInputs, currentInputValues, make([][]byte,
+		return currentTotal, currentInputs, currentInputValues, make(
+			[][]byte,
 			len(currentInputs),
 		), nil
 	}
@@ -59,7 +62,8 @@ func TestNewUnsignedTransaction(t *testing.T) {
 			UnspentOutputs: p2pkhOutputs(1e8),
 			Outputs:        p2pkhOutputs(1e6),
 			RelayFee:       1e3,
-			ChangeAmount: 1e8 - 1e6 - txrules.FeeForSerializeSize(1e3,
+			ChangeAmount: 1e8 - 1e6 - txrules.FeeForSerializeSize(
+				1e3,
 				txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(1e6), true),
 			),
 			InputCount: 1,
@@ -68,7 +72,8 @@ func TestNewUnsignedTransaction(t *testing.T) {
 			UnspentOutputs: p2pkhOutputs(1e8),
 			Outputs:        p2pkhOutputs(1e6),
 			RelayFee:       1e4,
-			ChangeAmount: 1e8 - 1e6 - txrules.FeeForSerializeSize(1e4,
+			ChangeAmount: 1e8 - 1e6 - txrules.FeeForSerializeSize(
+				1e4,
 				txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(1e6), true),
 			),
 			InputCount: 1,
@@ -77,8 +82,10 @@ func TestNewUnsignedTransaction(t *testing.T) {
 			UnspentOutputs: p2pkhOutputs(1e8),
 			Outputs:        p2pkhOutputs(1e6, 1e6, 1e6),
 			RelayFee:       1e4,
-			ChangeAmount: 1e8 - 3e6 - txrules.FeeForSerializeSize(1e4,
-				txsizes.EstimateVirtualSize(1, 0, 0,
+			ChangeAmount: 1e8 - 3e6 - txrules.FeeForSerializeSize(
+				1e4,
+				txsizes.EstimateVirtualSize(
+					1, 0, 0,
 					p2pkhOutputs(1e6, 1e6, 1e6), true,
 				),
 			),
@@ -88,8 +95,10 @@ func TestNewUnsignedTransaction(t *testing.T) {
 			UnspentOutputs: p2pkhOutputs(1e8),
 			Outputs:        p2pkhOutputs(1e6, 1e6, 1e6),
 			RelayFee:       2.55e3,
-			ChangeAmount: 1e8 - 3e6 - txrules.FeeForSerializeSize(2.55e3,
-				txsizes.EstimateVirtualSize(1, 0, 0,
+			ChangeAmount: 1e8 - 3e6 - txrules.FeeForSerializeSize(
+				2.55e3,
+				txsizes.EstimateVirtualSize(
+					1, 0, 0,
 					p2pkhOutputs(1e6, 1e6, 1e6), true,
 				),
 			),
@@ -98,9 +107,11 @@ func TestNewUnsignedTransaction(t *testing.T) {
 		// Test dust thresholds (546 for a 1e3 relay fee).
 		5: {
 			UnspentOutputs: p2pkhOutputs(1e8),
-			Outputs: p2pkhOutputs(1e8 - 545 - txrules.FeeForSerializeSize(1e3,
-				txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(0), true),
-			),
+			Outputs: p2pkhOutputs(
+				1e8 - 545 - txrules.FeeForSerializeSize(
+					1e3,
+					txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(0), true),
+				),
 			),
 			RelayFee:     1e3,
 			ChangeAmount: 545,
@@ -108,9 +119,11 @@ func TestNewUnsignedTransaction(t *testing.T) {
 		},
 		6: {
 			UnspentOutputs: p2pkhOutputs(1e8),
-			Outputs: p2pkhOutputs(1e8 - 546 - txrules.FeeForSerializeSize(1e3,
-				txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(0), true),
-			),
+			Outputs: p2pkhOutputs(
+				1e8 - 546 - txrules.FeeForSerializeSize(
+					1e3,
+					txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(0), true),
+				),
 			),
 			RelayFee:     1e3,
 			ChangeAmount: 546,
@@ -119,9 +132,11 @@ func TestNewUnsignedTransaction(t *testing.T) {
 		// Test dust thresholds (1392.3 for a 2.55e3 relay fee).
 		7: {
 			UnspentOutputs: p2pkhOutputs(1e8),
-			Outputs: p2pkhOutputs(1e8 - 1392 - txrules.FeeForSerializeSize(2.55e3,
-				txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(0), true),
-			),
+			Outputs: p2pkhOutputs(
+				1e8 - 1392 - txrules.FeeForSerializeSize(
+					2.55e3,
+					txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(0), true),
+				),
 			),
 			RelayFee:     2.55e3,
 			ChangeAmount: 1392,
@@ -129,9 +144,11 @@ func TestNewUnsignedTransaction(t *testing.T) {
 		},
 		8: {
 			UnspentOutputs: p2pkhOutputs(1e8),
-			Outputs: p2pkhOutputs(1e8 - 1393 - txrules.FeeForSerializeSize(2.55e3,
-				txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(0), true),
-			),
+			Outputs: p2pkhOutputs(
+				1e8 - 1393 - txrules.FeeForSerializeSize(
+					2.55e3,
+					txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(0), true),
+				),
 			),
 			RelayFee:     2.55e3,
 			ChangeAmount: 1393,
@@ -141,9 +158,11 @@ func TestNewUnsignedTransaction(t *testing.T) {
 		// a serialize size for each).
 		9: {
 			UnspentOutputs: p2pkhOutputs(1e8, 1e8),
-			Outputs: p2pkhOutputs(1e8 - 546 - txrules.FeeForSerializeSize(1e3,
-				txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(0), true),
-			),
+			Outputs: p2pkhOutputs(
+				1e8 - 546 - txrules.FeeForSerializeSize(
+					1e3,
+					txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(0), true),
+				),
 			),
 			RelayFee:     1e3,
 			ChangeAmount: 546,
@@ -155,9 +174,11 @@ func TestNewUnsignedTransaction(t *testing.T) {
 		// It's debatable whether or not this is a good idea, but it's how the function was written, so test it anyways.
 		10: {
 			UnspentOutputs: p2pkhOutputs(1e8, 1e8),
-			Outputs: p2pkhOutputs(1e8 - 545 - txrules.FeeForSerializeSize(1e3,
-				txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(0), true),
-			),
+			Outputs: p2pkhOutputs(
+				1e8 - 545 - txrules.FeeForSerializeSize(
+					1e3,
+					txsizes.EstimateVirtualSize(1, 0, 0, p2pkhOutputs(0), true),
+				),
 			),
 			RelayFee:     1e3,
 			ChangeAmount: 545,
@@ -168,7 +189,8 @@ func TestNewUnsignedTransaction(t *testing.T) {
 			UnspentOutputs: p2pkhOutputs(1e8, 1e8),
 			Outputs:        p2pkhOutputs(1e8),
 			RelayFee:       1e3,
-			ChangeAmount: 1e8 - txrules.FeeForSerializeSize(1e3,
+			ChangeAmount: 1e8 - txrules.FeeForSerializeSize(
+				1e3,
 				txsizes.EstimateVirtualSize(2, 0, 0, p2pkhOutputs(1e8), true),
 			),
 			InputCount: 2,
@@ -188,15 +210,17 @@ func TestNewUnsignedTransaction(t *testing.T) {
 	}
 	for i, test := range tests {
 		inputSource := makeInputSource(test.UnspentOutputs)
-		tx, e := NewUnsignedTransaction(test.Outputs, test.RelayFee,
+		tx, e := NewUnsignedTransaction(
+			test.Outputs, test.RelayFee,
 			inputSource, changeSource,
 		)
 		switch e := e.(type) {
 		case nil:
 		case InputSourceError:
 			if !test.InputSourceError {
-				t.Errorf("Test %d: Returned InputSourceError but expected "+
-					"change output with amount %v", i, test.ChangeAmount,
+				t.Errorf(
+					"Test %d: Returned InputSourceError but expected "+
+						"change output with amount %v", i, test.ChangeAmount,
 				)
 			}
 			continue
@@ -206,7 +230,8 @@ func TestNewUnsignedTransaction(t *testing.T) {
 		}
 		if tx.ChangeIndex < 0 {
 			if test.ChangeAmount != 0 {
-				t.Errorf("Test %d: No change output added but expected output with amount %v",
+				t.Errorf(
+					"Test %d: No change output added but expected output with amount %v",
 					i, test.ChangeAmount,
 				)
 				continue
@@ -214,20 +239,23 @@ func TestNewUnsignedTransaction(t *testing.T) {
 		} else {
 			changeAmount := amt.Amount(tx.Tx.TxOut[tx.ChangeIndex].Value)
 			if test.ChangeAmount == 0 {
-				t.Errorf("Test %d: Included change output with value %v but expected no change",
+				t.Errorf(
+					"Test %d: Included change output with value %v but expected no change",
 					i, changeAmount,
 				)
 				continue
 			}
 			if changeAmount != test.ChangeAmount {
-				t.Errorf("Test %d: Got change amount %v, Expected %v",
+				t.Errorf(
+					"Test %d: Got change amount %v, Expected %v",
 					i, changeAmount, test.ChangeAmount,
 				)
 				continue
 			}
 		}
 		if len(tx.Tx.TxIn) != test.InputCount {
-			t.Errorf("Test %d: Used %d outputs from input source, Expected %d",
+			t.Errorf(
+				"Test %d: Used %d outputs from input source, Expected %d",
 				i, len(tx.Tx.TxIn), test.InputCount,
 			)
 		}

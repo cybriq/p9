@@ -17,7 +17,7 @@ const MaxBlockLocatorsPerMsg = 500
 // the maximum number of blocks per message, which is currently 500.
 //
 // The HashStop field to the hash at which to stop and use AddBlockLocatorHash
-// to podbuild up the list of block locator hashes. The algorithm for building the
+// to build up the list of block locator hashes. The algorithm for building the
 // block locator hashes should be to add the hashes in reverse order until you
 // reach the genesis block. In order to keep the list of locator hashes to a
 // reasonable number of entries, first add the most recent 10 block hashes, then
@@ -44,7 +44,8 @@ func (msg *MsgGetBlocks) AddBlockLocatorHash(hash *chainhash.Hash) (e error) {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receive r. This is part of the Message interface
 // implementation.
-func (msg *MsgGetBlocks) BtcDecode(r io.Reader, pver uint32,
+func (msg *MsgGetBlocks) BtcDecode(
+	r io.Reader, pver uint32,
 	enc MessageEncoding,
 ) (e error) {
 	if e = readElement(r, &msg.ProtocolVersion); E.Chk(e) {
@@ -79,7 +80,8 @@ func (msg *MsgGetBlocks) BtcDecode(r io.Reader, pver uint32,
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgGetBlocks) BtcEncode(w io.Writer, pver uint32,
+func (msg *MsgGetBlocks) BtcEncode(
+	w io.Writer, pver uint32,
 	enc MessageEncoding,
 ) (e error) {
 	count := len(msg.BlockLocatorHashes)

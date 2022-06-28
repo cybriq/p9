@@ -4,11 +4,12 @@ package waddrmgr_test
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/cybriq/p9/pkg/btcaddr"
 	"os"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/cybriq/p9/pkg/btcaddr"
 
 	"github.com/davecgh/go-spew/spew"
 
@@ -284,7 +285,8 @@ func testManagedScriptAddress(
 // When the test context indicates the manager is unlocked, the private data
 // will also be tested, otherwise, the functions which deal with private data
 // are checked to ensure they return the correct error.
-func testAddress(tc *testContext, prefix string,
+func testAddress(
+	tc *testContext, prefix string,
 	gotAddr waddrmgr.ManagedAddress, wantAddr *expectedAddr,
 ) bool {
 	if gotAddr.Account() != tc.account {
@@ -400,7 +402,8 @@ func testExternalAddresses(tc *testContext) bool {
 			tc.t.Errorf("%s: unexpected error: %v", leaPrefix, e)
 			return false
 		}
-		if !testAddress(tc, leaPrefix, lastAddr,
+		if !testAddress(
+			tc, leaPrefix, lastAddr,
 			&expectedExternalAddrs[len(expectedExternalAddrs)-1],
 		) {
 			return false
@@ -553,7 +556,8 @@ func testInternalAddresses(tc *testContext) bool {
 			tc.t.Errorf("%s: unexpected error: %v", liaPrefix, e)
 			return false
 		}
-		if !testAddress(tc, liaPrefix, lastAddr,
+		if !testAddress(
+			tc, liaPrefix, lastAddr,
 			&expectedInternalAddrs[len(expectedInternalAddrs)-1],
 		) {
 			return false
@@ -793,7 +797,8 @@ func testImportPrivateKey(tc *testContext) bool {
 			e = walletdb.Update(
 				tc.db, func(tx walletdb.ReadWriteTx) (e error) {
 					ns := tx.ReadWriteBucket(waddrmgrNamespaceKey)
-					addr, e = tc.manager.ImportPrivateKey(ns, wif,
+					addr, e = tc.manager.ImportPrivateKey(
+						ns, wif,
 						&test.blockstamp,
 					)
 					return e
@@ -974,7 +979,8 @@ func testImportScript(tc *testContext) bool {
 			e := walletdb.Update(
 				tc.db, func(tx walletdb.ReadWriteTx) (e error) {
 					ns := tx.ReadWriteBucket(waddrmgrNamespaceKey)
-					addr, e = tc.manager.ImportScript(ns, test.in,
+					addr, e = tc.manager.ImportScript(
+						ns, test.in,
 						&test.blockstamp,
 					)
 					return e
@@ -1110,7 +1116,8 @@ func testMarkUsed(tc *testContext) bool {
 				ns := tx.ReadWriteBucket(waddrmgrNamespaceKey)
 				maddr, e := tc.manager.Address(ns, addr)
 				if e != nil {
-					tc.t.Errorf("%s #%d: Address unexpected error: %v", prefix,
+					tc.t.Errorf(
+						"%s #%d: Address unexpected error: %v", prefix,
 						i, e,
 					)
 					return nil

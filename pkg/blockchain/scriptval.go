@@ -2,9 +2,10 @@ package blockchain
 
 import (
 	"fmt"
-	"github.com/cybriq/p9/pkg/block"
 	"math"
 	"runtime"
+
+	"github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/qu"
 

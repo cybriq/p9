@@ -36,7 +36,8 @@ const (
 )
 
 func moveFileEx(from *uint16, to *uint16, flags uint32) (e error) {
-	r1, _, e1 := syscall.Syscall(procMoveFileExW.Addr(), 3,
+	r1, _, e1 := syscall.Syscall(
+		procMoveFileExW.Addr(), 3,
 		uintptr(unsafe.Pointer(from)), uintptr(unsafe.Pointer(to)),
 		uintptr(flags),
 	)

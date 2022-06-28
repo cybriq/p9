@@ -36,16 +36,18 @@ func TestCmdMethod(t *testing.T) {
 	for i, test := range tests {
 		method, e := btcjson.CmdMethod(test.cmd)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("Test #%d (%s) wrong error - got %T (%[3]v), "+
-				"want %T", i, test.name, e, test.e,
+			t.Errorf(
+				"Test #%d (%s) wrong error - got %T (%[3]v), "+
+					"want %T", i, test.name, e, test.e,
 			)
 			continue
 		}
 		if e != nil {
 			gotErrorCode := e.(btcjson.GeneralError).ErrorCode
 			if gotErrorCode != test.e.(btcjson.GeneralError).ErrorCode {
-				t.Errorf("Test #%d (%s) mismatched error code "+
-					"- got %v (%v), want %v", i, test.name,
+				t.Errorf(
+					"Test #%d (%s) mismatched error code "+
+						"- got %v (%v), want %v", i, test.name,
 					gotErrorCode, e,
 					test.e.(btcjson.GeneralError).ErrorCode,
 				)
@@ -55,8 +57,9 @@ func TestCmdMethod(t *testing.T) {
 		}
 		// Ensure method matches the expected value.
 		if method != test.method {
-			t.Errorf("Test #%d (%s) mismatched method - got %v, "+
-				"want %v", i, test.name, method, test.method,
+			t.Errorf(
+				"Test #%d (%s) mismatched method - got %v, "+
+					"want %v", i, test.name, method, test.method,
 			)
 			continue
 		}
@@ -92,16 +95,18 @@ func TestMethodUsageFlags(t *testing.T) {
 	for i, test := range tests {
 		flags, e := btcjson.MethodUsageFlags(test.method)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("Test #%d (%s) wrong error - got %T (%[3]v), "+
-				"want %T", i, test.name, e, test.e,
+			t.Errorf(
+				"Test #%d (%s) wrong error - got %T (%[3]v), "+
+					"want %T", i, test.name, e, test.e,
 			)
 			continue
 		}
 		if e != nil {
 			gotErrorCode := e.(btcjson.GeneralError).ErrorCode
 			if gotErrorCode != test.e.(btcjson.GeneralError).ErrorCode {
-				t.Errorf("Test #%d (%s) mismatched error code "+
-					"- got %v (%v), want %v", i, test.name,
+				t.Errorf(
+					"Test #%d (%s) mismatched error code "+
+						"- got %v (%v), want %v", i, test.name,
 					gotErrorCode, e,
 					test.e.(btcjson.GeneralError).ErrorCode,
 				)
@@ -111,8 +116,9 @@ func TestMethodUsageFlags(t *testing.T) {
 		}
 		// Ensure flags match the expected value.
 		if flags != test.flags {
-			t.Errorf("Test #%d (%s) mismatched flags - got %v, "+
-				"want %v", i, test.name, flags, test.flags,
+			t.Errorf(
+				"Test #%d (%s) mismatched flags - got %v, "+
+					"want %v", i, test.name, flags, test.flags,
 			)
 			continue
 		}
@@ -148,16 +154,18 @@ func TestMethodUsageText(t *testing.T) {
 	for i, test := range tests {
 		usage, e := btcjson.MethodUsageText(test.method)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("Test #%d (%s) wrong error - got %T (%[3]v), "+
-				"want %T", i, test.name, e, test.e,
+			t.Errorf(
+				"Test #%d (%s) wrong error - got %T (%[3]v), "+
+					"want %T", i, test.name, e, test.e,
 			)
 			continue
 		}
 		if e != nil {
 			gotErrorCode := e.(btcjson.GeneralError).ErrorCode
 			if gotErrorCode != test.e.(btcjson.GeneralError).ErrorCode {
-				t.Errorf("Test #%d (%s) mismatched error code "+
-					"- got %v (%v), want %v", i, test.name,
+				t.Errorf(
+					"Test #%d (%s) mismatched error code "+
+						"- got %v (%v), want %v", i, test.name,
 					gotErrorCode, e,
 					test.e.(btcjson.GeneralError).ErrorCode,
 				)
@@ -167,23 +175,26 @@ func TestMethodUsageText(t *testing.T) {
 		}
 		// Ensure usage matches the expected value.
 		if usage != test.expected {
-			t.Errorf("Test #%d (%s) mismatched usage - got %v, "+
-				"want %v", i, test.name, usage, test.expected,
+			t.Errorf(
+				"Test #%d (%s) mismatched usage - got %v, "+
+					"want %v", i, test.name, usage, test.expected,
 			)
 			continue
 		}
 		// Get the usage again to exercise caching.
 		usage, e = btcjson.MethodUsageText(test.method)
 		if e != nil {
-			t.Errorf("Test #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"Test #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		// Ensure usage still matches the expected value.
 		if usage != test.expected {
-			t.Errorf("Test #%d (%s) mismatched usage - got %v, "+
-				"want %v", i, test.name, usage, test.expected,
+			t.Errorf(
+				"Test #%d (%s) mismatched usage - got %v, "+
+					"want %v", i, test.name, usage, test.expected,
 			)
 			continue
 		}
@@ -409,8 +420,9 @@ func TestFieldUsage(t *testing.T) {
 		// Ensure usage matches the expected value.
 		usage := btcjson.TstFieldUsage(test.field, test.defValue)
 		if usage != test.expected {
-			t.Errorf("Test #%d (%s) mismatched usage - got %v, "+
-				"want %v", i, test.name, usage, test.expected,
+			t.Errorf(
+				"Test #%d (%s) mismatched usage - got %v, "+
+					"want %v", i, test.name, usage, test.expected,
 			)
 			continue
 		}

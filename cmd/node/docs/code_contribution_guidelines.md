@@ -69,8 +69,8 @@ understanding of the various aspects involved with cryptography such as the secu
   document. For your code to be accepted, it must follow the guidelines therein.
 
 - [Original Satoshi Whitepaper](http://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&ved=0CCkQFjAA&url=http%3A%2F%2Fbitcoin.org%2Fbitcoin.pdf&ei=os3VUuH8G4SlsASV74GoAg&usg=AFQjCNEipPLigou_1MfB7DQjXCNdlylrBg&sig2=FaHDuT5z36GMWDEnybDJLg&bvm=bv.59378465,d.b2I)
-  - This is the white paper that started it all. Having a solid foundation to build on will make the code much more
-  comprehensible.
+    - This is the white paper that started it all. Having a solid foundation to build on will make the code much more
+      comprehensible.
 
 <a name="DevelopmentPractices"></a>
 

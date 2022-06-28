@@ -94,7 +94,11 @@ type LoadTxFilterCmd struct {
 // NewLoadTxFilterCmd returns a new instance which can be used to issue a loadtxfilter JSON-RPC command.
 //
 // NOTE: This is a pod extension ported from github.com/decred/dcrd/dcrjson and requires a websocket connection.
-func NewLoadTxFilterCmd(reload bool, addresses []string, outPoints []OutPoint) *LoadTxFilterCmd {
+func NewLoadTxFilterCmd(
+	reload bool,
+	addresses []string,
+	outPoints []OutPoint,
+) *LoadTxFilterCmd {
 	return &LoadTxFilterCmd{
 		Reload:    reload,
 		Addresses: addresses,
@@ -162,7 +166,12 @@ type RescanCmd struct {
 // pointers indicate they are optional. Passing nil for optional parameters will use the default value.
 //
 // NOTE: Deprecated. Use NewRescanBlocksCmd instead.
-func NewRescanCmd(beginBlock string, addresses []string, outPoints []OutPoint, endBlock *string) *RescanCmd {
+func NewRescanCmd(
+	beginBlock string,
+	addresses []string,
+	outPoints []OutPoint,
+	endBlock *string,
+) *RescanCmd {
 	return &RescanCmd{
 		BeginBlock: beginBlock,
 		Addresses:  addresses,
@@ -186,18 +195,26 @@ func NewRescanBlocksCmd(blockHashes []string) *RescanBlocksCmd {
 	return &RescanBlocksCmd{BlockHashes: blockHashes}
 }
 func init() {
-	
+
 	// The commands in this file are only usable by websockets.
 	flags := UFWebsocketOnly
 	MustRegisterCmd("authenticate", (*AuthenticateCmd)(nil), flags)
 	MustRegisterCmd("loadtxfilter", (*LoadTxFilterCmd)(nil), flags)
 	MustRegisterCmd("notifyblocks", (*NotifyBlocksCmd)(nil), flags)
-	MustRegisterCmd("notifynewtransactions", (*NotifyNewTransactionsCmd)(nil), flags)
+	MustRegisterCmd(
+		"notifynewtransactions",
+		(*NotifyNewTransactionsCmd)(nil),
+		flags,
+	)
 	MustRegisterCmd("notifyreceived", (*NotifyReceivedCmd)(nil), flags)
 	MustRegisterCmd("notifyspent", (*NotifySpentCmd)(nil), flags)
 	MustRegisterCmd("session", (*SessionCmd)(nil), flags)
 	MustRegisterCmd("stopnotifyblocks", (*StopNotifyBlocksCmd)(nil), flags)
-	MustRegisterCmd("stopnotifynewtransactions", (*StopNotifyNewTransactionsCmd)(nil), flags)
+	MustRegisterCmd(
+		"stopnotifynewtransactions",
+		(*StopNotifyNewTransactionsCmd)(nil),
+		flags,
+	)
 	MustRegisterCmd("stopnotifyspent", (*StopNotifySpentCmd)(nil), flags)
 	MustRegisterCmd("stopnotifyreceived", (*StopNotifyReceivedCmd)(nil), flags)
 	MustRegisterCmd("rescan", (*RescanCmd)(nil), flags)

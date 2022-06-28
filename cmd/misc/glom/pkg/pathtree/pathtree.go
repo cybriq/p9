@@ -95,7 +95,8 @@ func (w *Widget) Fn(gtx l.Context) l.Dimensions {
 	return w.App.Fn()(gtx)
 }
 
-func (w *Widget) Page(title string, widget gel.Widgets,
+func (w *Widget) Page(
+	title string, widget gel.Widgets,
 ) func(gtx l.Context) l.Dimensions {
 	return func(gtx l.Context) l.Dimensions {
 		return w.VFlex().
@@ -140,7 +141,8 @@ func (wg *Widget) GetButtons() {
 	}
 }
 
-func (w *Widget) SideBarButton(title, page string, index int,
+func (w *Widget) SideBarButton(
+	title, page string, index int,
 ) func(gtx l.Context) l.Dimensions {
 	return func(gtx l.Context) l.Dimensions {
 		var scale float32

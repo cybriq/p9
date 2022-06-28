@@ -103,7 +103,8 @@ func main() {
 			if strings.HasPrefix(prs, "v") {
 				var va [3]int
 				var meta string
-				_, _ = fmt.Sscanf(prs, "v%d.%d.%d%s", &va[0], &va[1], &va[2],
+				_, _ = fmt.Sscanf(
+					prs, "v%d.%d.%d%s", &va[0], &va[1], &va[2],
 					&meta,
 				)
 				vn := va[0]*1000000 + va[1]*1000 + va[2]

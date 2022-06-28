@@ -12,7 +12,8 @@ const (
 )
 
 // parseArgs parses the arguments from the database Open/Create methods.
-func parseArgs(funcName string, args ...interface{}) (string, wire.BitcoinNet,
+func parseArgs(funcName string, args ...interface{}) (
+	string, wire.BitcoinNet,
 	error,
 ) {
 	if len(args) != 2 {

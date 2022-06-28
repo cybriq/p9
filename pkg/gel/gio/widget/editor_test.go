@@ -109,12 +109,14 @@ func assertCaret(t *testing.T, e *Editor, line, col, bytes int) {
 	t.Helper()
 	gotLine, gotCol := e.CaretPos()
 	if gotLine != line || gotCol != col {
-		t.Errorf("caret at (%d, %d), expected (%d, %d)", gotLine, gotCol, line,
+		t.Errorf(
+			"caret at (%d, %d), expected (%d, %d)", gotLine, gotCol, line,
 			col,
 		)
 	}
 	if bytes != e.caret.start.ofs {
-		t.Errorf("caret at buffer position %d, expected %d", e.caret.start.ofs,
+		t.Errorf(
+			"caret at buffer position %d, expected %d", e.caret.start.ofs,
 			bytes,
 		)
 	}
@@ -158,7 +160,8 @@ func TestEditorCaretConsistency(t *testing.T) {
 			if want.lineCol.Y == gotLine && want.lineCol.X == gotCol && gotCoords == wantCoords {
 				return nil
 			}
-			return fmt.Errorf("caret (%d,%d) pos %s, want (%d,%d) pos %s",
+			return fmt.Errorf(
+				"caret (%d,%d) pos %s, want (%d,%d) pos %s",
 				gotLine, gotCol, gotCoords, want.lineCol.Y, want.lineCol.X,
 				wantCoords,
 			)
@@ -167,7 +170,8 @@ func TestEditorCaretConsistency(t *testing.T) {
 			t.Errorf("initial editor inconsistency (alignment %s): %v", a, err)
 		}
 
-		move := func(mutation editMutation, str string, distance int8,
+		move := func(
+			mutation editMutation, str string, distance int8,
 			x, y uint16,
 		) bool {
 			switch mutation {
@@ -246,7 +250,8 @@ func TestEditorMoveWord(t *testing.T) {
 		e.MoveCaret(tt.Start, tt.Start)
 		e.moveWord(tt.Skip, selectionClear)
 		if e.caret.start.ofs != tt.Want {
-			t.Fatalf("[%d] moveWord: bad caret position: got %d, want %d", ii,
+			t.Fatalf(
+				"[%d] moveWord: bad caret position: got %d, want %d", ii,
 				e.caret.start.ofs, tt.Want,
 			)
 		}
@@ -275,7 +280,14 @@ func TestEditorDeleteWord(t *testing.T) {
 
 		// Document (imho) incorrect behavior w.r.t. deleting spaces following
 		// words.
-		{"hello world", 0, 0, 1, 0, " world"},   // Should be "world", if you ask me.
+		{
+			"hello world",
+			0,
+			0,
+			1,
+			0,
+			" world",
+		}, // Should be "world", if you ask me.
 		{"hello world", 0, 0, 2, 0, "world"},    // Should be "".
 		{"hello ", 0, 0, 1, 0, " "},             // Should be "".
 		{"hello world", 11, 0, -1, 6, "hello "}, // Should be "hello".
@@ -299,14 +311,49 @@ func TestEditorDeleteWord(t *testing.T) {
 		// - abs(Delete) == 1 or > 1
 		//
 		// "brave |" selected; caret at |
-		{"hello there brave new world", 12, 6, 1, 12, "hello there new world"}, // #16
-		{"hello there brave new world", 12, 6, 2, 12, "hello there  world"},    // The two spaces after "there" are actually suboptimal, if you ask me. See also above cases.
+		{
+			"hello there brave new world",
+			12,
+			6,
+			1,
+			12,
+			"hello there new world",
+		}, // #16
+		{
+			"hello there brave new world",
+			12,
+			6,
+			2,
+			12,
+			"hello there  world",
+		}, // The two spaces after "there" are actually suboptimal, if you ask me. See also above cases.
 		{"hello there brave new world", 12, 6, -1, 12, "hello there new world"},
 		{"hello there brave new world", 12, 6, -2, 6, "hello new world"},
 		// "|brave " selected
-		{"hello there brave new world", 18, -6, 1, 12, "hello there new world"}, // #20
-		{"hello there brave new world", 18, -6, 2, 12, "hello there  world"},    // ditto
-		{"hello there brave new world", 18, -6, -1, 12, "hello there new world"},
+		{
+			"hello there brave new world",
+			18,
+			-6,
+			1,
+			12,
+			"hello there new world",
+		}, // #20
+		{
+			"hello there brave new world",
+			18,
+			-6,
+			2,
+			12,
+			"hello there  world",
+		}, // ditto
+		{
+			"hello there brave new world",
+			18,
+			-6,
+			-1,
+			12,
+			"hello there new world",
+		},
 		{"hello there brave new world", 18, -6, -2, 6, "hello new world"},
 		// Random edge cases
 		{"hello there brave new world", 12, 6, 99, 12, "hello there "},
@@ -331,12 +378,14 @@ func TestEditorDeleteWord(t *testing.T) {
 		e.MoveCaret(0, tt.Selection)
 		e.deleteWord(tt.Delete)
 		if e.caret.start.ofs != tt.Want {
-			t.Fatalf("[%d] deleteWord: bad caret position: got %d, want %d", ii,
+			t.Fatalf(
+				"[%d] deleteWord: bad caret position: got %d, want %d", ii,
 				e.caret.start.ofs, tt.Want,
 			)
 		}
 		if e.Text() != tt.Result {
-			t.Fatalf("[%d] deleteWord: invalid result: got %q, want %q", ii,
+			t.Fatalf(
+				"[%d] deleteWord: invalid result: got %q, want %q", ii,
 				e.Text(), tt.Result,
 			)
 		}
@@ -362,7 +411,8 @@ func (editMutation) Generate(rand *rand.Rand, size int) reflect.Value {
 // are where we expect.
 func TestSelect(t *testing.T) {
 	e := new(Editor)
-	e.SetText(`a123456789a
+	e.SetText(
+		`a123456789a
 b123456789b
 c123456789c
 d123456789d
@@ -391,17 +441,21 @@ g123456789g
 					Buttons: pointer.ButtonPrimary,
 					Type:    pointer.Press,
 					Source:  pointer.Mouse,
-					Position: f32.Pt(textWidth(e, startPos.lineCol.Y, 0,
-						startPos.lineCol.X,
-					), textHeight(e, startPos.lineCol.Y),
+					Position: f32.Pt(
+						textWidth(
+							e, startPos.lineCol.Y, 0,
+							startPos.lineCol.X,
+						), textHeight(e, startPos.lineCol.Y),
 					),
 				},
 				pointer.Event{
 					Type:   pointer.Release,
 					Source: pointer.Mouse,
-					Position: f32.Pt(textWidth(e, endPos.lineCol.Y, 0,
-						endPos.lineCol.X,
-					), textHeight(e, endPos.lineCol.Y),
+					Position: f32.Pt(
+						textWidth(
+							e, endPos.lineCol.Y, 0,
+							endPos.lineCol.X,
+						), textHeight(e, endPos.lineCol.Y),
 					),
 				},
 			},
@@ -433,7 +487,8 @@ g123456789g
 		{0, 4, "a123", screenPos{}, screenPos{Y: 0, X: 4}},
 		{0, 11, "a123456789a", screenPos{}, screenPos{Y: 1, X: 5}},
 		{2, 6, "2345", screenPos{Y: 0, X: 2}, screenPos{Y: 1, X: 0}},
-		{41, 66, "56789d\ne123456789e\nf12345", screenPos{Y: 6, X: 5},
+		{
+			41, 66, "56789d\ne123456789e\nf12345", screenPos{Y: 6, X: 5},
 			screenPos{Y: 11, X: 0},
 		},
 	} {
@@ -452,7 +507,8 @@ g123456789g
 		e.Layout(gtx, cache, font, fontSize)
 
 		if e.caret.end.lineCol != tst.startPos || e.caret.start.lineCol != tst.endPos {
-			t.Errorf("Test %d pt2: Expected %#v, %#v; got %#v, %#v",
+			t.Errorf(
+				"Test %d pt2: Expected %#v, %#v; got %#v, %#v",
 				n,
 				e.caret.end.lineCol, e.caret.start.lineCol,
 				tst.startPos, tst.endPos,

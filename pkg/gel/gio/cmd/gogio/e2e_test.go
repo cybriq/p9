@@ -20,7 +20,8 @@ import (
 
 var raceEnabled = false
 
-var headless = flag.Bool("headless", true,
+var headless = flag.Bool(
+	"headless", true,
 	"run end-to-end tests in headless mode",
 )
 
@@ -80,7 +81,8 @@ func TestEndToEnd(t *testing.T) {
 		driver  TestDriver
 		pkgPath string
 	}{
-		{"X11 using go import path", &X11TestDriver{},
+		{
+			"X11 using go import path", &X11TestDriver{},
 			testdataWithGoImportPkgPath,
 		},
 		{"X11", &X11TestDriver{}, testdataWithRelativePkgPath},
@@ -91,11 +93,12 @@ func TestEndToEnd(t *testing.T) {
 	}
 
 	for _, subtest := range subtests {
-		t.Run(subtest.name, func(t *testing.T) {
-			subtest := subtest // copy the changing loop variable
-			t.Parallel()
-			runEndToEndTest(t, subtest.driver, subtest.pkgPath)
-		},
+		t.Run(
+			subtest.name, func(t *testing.T) {
+				subtest := subtest // copy the changing loop variable
+				t.Parallel()
+				runEndToEndTest(t, subtest.driver, subtest.pkgPath)
+			},
 		)
 	}
 }
@@ -115,11 +118,12 @@ func runEndToEndTest(t *testing.T, driver TestDriver, pkgPath string) {
 
 	// These are the four colors at the beginning.
 	t.Log("taking initial screenshot")
-	withRetries(t, 4*time.Second, func() error {
-		img := driver.Screenshot()
-		size = img.Bounds().Size() // override the default size
-		return checkImageCorners(img, beef, white, black, gray)
-	},
+	withRetries(
+		t, 4*time.Second, func() error {
+			img := driver.Screenshot()
+			size = img.Bounds().Size() // override the default size
+			return checkImageCorners(img, beef, white, black, gray)
+		},
 	)
 
 	// TODO(mvdan): implement this properly in the Wayland driver; swaymsg
@@ -133,10 +137,11 @@ func runEndToEndTest(t *testing.T, driver TestDriver, pkgPath string) {
 	t.Log("clicking twice and taking another screenshot")
 	driver.Click(1*(size.X/4), 1*(size.Y/4))
 	driver.Click(3*(size.X/4), 3*(size.Y/4))
-	withRetries(t, 4*time.Second, func() error {
-		img := driver.Screenshot()
-		return checkImageCorners(img, red, white, black, red)
-	},
+	withRetries(
+		t, 4*time.Second, func() error {
+			img := driver.Screenshot()
+			return checkImageCorners(img, red, white, black, red)
+		},
 	)
 }
 
@@ -187,14 +192,16 @@ type colorMismatch struct {
 }
 
 func (m colorMismatch) String() string {
-	return fmt.Sprintf("%3d,%-3d got 0x%04x%04x%04x, want 0x%04x%04x%04x",
+	return fmt.Sprintf(
+		"%3d,%-3d got 0x%04x%04x%04x, want 0x%04x%04x%04x",
 		m.x, m.y,
 		m.gotRGB[0], m.gotRGB[1], m.gotRGB[2],
 		m.wantRGB[0], m.wantRGB[1], m.wantRGB[2],
 	)
 }
 
-func checkImageCorners(img image.Image,
+func checkImageCorners(
+	img image.Image,
 	topLeft, topRight, botLeft, botRight color.Color,
 ) error {
 	// The colors are split in four rectangular sections. Check the corners
@@ -209,12 +216,13 @@ func checkImageCorners(img image.Image,
 		got := img.At(x, y)
 		r_, g_, b_, _ := got.RGBA()
 		if r_ != r || g_ != g || b_ != b {
-			mismatches = append(mismatches, colorMismatch{
-				x:       x,
-				y:       y,
-				wantRGB: [3]uint32{r, g, b},
-				gotRGB:  [3]uint32{r_, g_, b_},
-			},
+			mismatches = append(
+				mismatches, colorMismatch{
+					x:       x,
+					y:       y,
+					wantRGB: [3]uint32{r, g, b},
+					gotRGB:  [3]uint32{r_, g_, b_},
+				},
 			)
 		}
 	}
@@ -286,7 +294,10 @@ func (d *driverBase) waitForFrame() {
 			// Since we're only interested in the output while the
 			// app runs, and we don't know when it finishes here,
 			// ignore "already closed" pipe errors.
-			if err := scanner.Err(); err != nil && !errors.Is(err, os.ErrClosed) {
+			if err := scanner.Err(); err != nil && !errors.Is(
+				err,
+				os.ErrClosed,
+			) {
 				d.Errorf("reading app output: %v", err)
 			}
 		}()

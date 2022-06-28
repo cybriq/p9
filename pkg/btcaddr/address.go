@@ -4,8 +4,9 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
-	"golang.org/x/crypto/ripemd160"
 	"hash"
+
+	"golang.org/x/crypto/ripemd160"
 
 	"github.com/cybriq/p9/pkg/base58"
 	"github.com/cybriq/p9/pkg/chaincfg"
@@ -274,7 +275,8 @@ type ScriptHash struct {
 }
 
 // NewScriptHash returns a new ScriptHash.
-func NewScriptHash(serializedScript []byte, net *chaincfg.Params) (*ScriptHash,
+func NewScriptHash(serializedScript []byte, net *chaincfg.Params) (
+	*ScriptHash,
 	error,
 ) {
 	scriptHash := Hash160(serializedScript)
@@ -282,7 +284,8 @@ func NewScriptHash(serializedScript []byte, net *chaincfg.Params) (*ScriptHash,
 }
 
 // NewScriptHashFromHash returns a new ScriptHash.  scriptHash must be 20 bytes.
-func NewScriptHashFromHash(scriptHash []byte, net *chaincfg.Params,
+func NewScriptHashFromHash(
+	scriptHash []byte, net *chaincfg.Params,
 ) (*ScriptHash, error) {
 	return newScriptHashFromHash(scriptHash, net.ScriptHashAddrID)
 }

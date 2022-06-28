@@ -25,7 +25,8 @@ func TestTx(t *testing.T) {
 	wantCmd := "tx"
 	msg := NewMsgTx(1)
 	if cmd := msg.Command(); cmd != wantCmd {
-		t.Errorf("NewMsgAddr: wrong command - got %v want %v",
+		t.Errorf(
+			"NewMsgAddr: wrong command - got %v want %v",
 			cmd, wantCmd,
 		)
 	}
@@ -33,7 +34,8 @@ func TestTx(t *testing.T) {
 	wantPayload := uint32(1000 * 4000)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for protocol version %d - got %v, want %v",
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for protocol version %d - got %v, want %v",
 			pver, maxPayload, wantPayload,
 		)
 	}
@@ -42,19 +44,22 @@ func TestTx(t *testing.T) {
 	prevOutIndex := uint32(1)
 	prevOut := NewOutPoint(hash, prevOutIndex)
 	if !prevOut.Hash.IsEqual(hash) {
-		t.Errorf("NewOutPoint: wrong hash - got %v, want %v",
+		t.Errorf(
+			"NewOutPoint: wrong hash - got %v, want %v",
 			spew.Sprint(&prevOut.Hash), spew.Sprint(hash),
 		)
 	}
 	if prevOut.Index != prevOutIndex {
-		t.Errorf("NewOutPoint: wrong index - got %v, want %v",
+		t.Errorf(
+			"NewOutPoint: wrong index - got %v, want %v",
 			prevOut.Index, prevOutIndex,
 		)
 	}
 	prevOutStr := fmt.Sprintf("%s:%d", hash.String(), prevOutIndex)
 	if s := prevOut.String(); s != prevOutStr {
-		t.Errorf("OutPoint.String: unexpected result - got %v, "+
-			"want %v", s, prevOutStr,
+		t.Errorf(
+			"OutPoint.String: unexpected result - got %v, "+
+				"want %v", s, prevOutStr,
 		)
 	}
 	// Ensure we get the same transaction input back out.
@@ -65,13 +70,15 @@ func TestTx(t *testing.T) {
 	}
 	txIn := NewTxIn(prevOut, sigScript, witnessData)
 	if !reflect.DeepEqual(&txIn.PreviousOutPoint, prevOut) {
-		t.Errorf("NewTxIn: wrong prev outpoint - got %v, want %v",
+		t.Errorf(
+			"NewTxIn: wrong prev outpoint - got %v, want %v",
 			spew.Sprint(&txIn.PreviousOutPoint),
 			spew.Sprint(prevOut),
 		)
 	}
 	if !bytes.Equal(txIn.SignatureScript, sigScript) {
-		t.Errorf("NewTxIn: wrong signature script - got %v, want %v",
+		t.Errorf(
+			"NewTxIn: wrong signature script - got %v, want %v",
 			spew.Sdump(txIn.SignatureScript),
 			spew.Sdump(sigScript),
 		)
@@ -98,12 +105,14 @@ func TestTx(t *testing.T) {
 	}
 	txOut := NewTxOut(txValue, pkScript)
 	if txOut.Value != txValue {
-		t.Errorf("NewTxOut: wrong pk script - got %v, want %v",
+		t.Errorf(
+			"NewTxOut: wrong pk script - got %v, want %v",
 			txOut.Value, txValue,
 		)
 	}
 	if !bytes.Equal(txOut.PkScript, pkScript) {
-		t.Errorf("NewTxOut: wrong pk script - got %v, want %v",
+		t.Errorf(
+			"NewTxOut: wrong pk script - got %v, want %v",
 			spew.Sdump(txOut.PkScript),
 			spew.Sdump(pkScript),
 		)
@@ -111,21 +120,24 @@ func TestTx(t *testing.T) {
 	// Ensure transaction inputs are added properly.
 	msg.AddTxIn(txIn)
 	if !reflect.DeepEqual(msg.TxIn[0], txIn) {
-		t.Errorf("AddTxIn: wrong transaction input added - got %v, want %v",
+		t.Errorf(
+			"AddTxIn: wrong transaction input added - got %v, want %v",
 			spew.Sprint(msg.TxIn[0]), spew.Sprint(txIn),
 		)
 	}
 	// Ensure transaction outputs are added properly.
 	msg.AddTxOut(txOut)
 	if !reflect.DeepEqual(msg.TxOut[0], txOut) {
-		t.Errorf("AddTxIn: wrong transaction output added - got %v, want %v",
+		t.Errorf(
+			"AddTxIn: wrong transaction output added - got %v, want %v",
 			spew.Sprint(msg.TxOut[0]), spew.Sprint(txOut),
 		)
 	}
 	// Ensure the copy produced an identical transaction message.
 	newMsg := msg.Copy()
 	if !reflect.DeepEqual(newMsg, msg) {
-		t.Errorf("Copy: mismatched tx messages - got %v, want %v",
+		t.Errorf(
+			"Copy: mismatched tx messages - got %v, want %v",
 			spew.Sdump(newMsg), spew.Sdump(msg),
 		)
 	}
@@ -172,7 +184,8 @@ func TestTxHash(t *testing.T) {
 	// Ensure the hash produced is expected.
 	txHash := msgTx.TxHash()
 	if !txHash.IsEqual(wantHash) {
-		t.Errorf("TxHash: wrong hash - got %v, want %v",
+		t.Errorf(
+			"TxHash: wrong hash - got %v, want %v",
 			spew.Sprint(txHash), spew.Sprint(wantHash),
 		)
 	}
@@ -243,7 +256,8 @@ func TestWTxSha(t *testing.T) {
 	// Ensure the correct txid, and wtxid is produced as expected.
 	txid := msgTx.TxHash()
 	if !txid.IsEqual(wantHashTxid) {
-		t.Errorf("TxSha: wrong hash - got %v, want %v",
+		t.Errorf(
+			"TxSha: wrong hash - got %v, want %v",
 			spew.Sprint(txid), spew.Sprint(wantHashTxid),
 		)
 	}
@@ -363,7 +377,8 @@ func TestTxWire(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("BtcEncode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcEncode #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -377,7 +392,8 @@ func TestTxWire(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(&msg, test.out) {
-			t.Errorf("BtcDecode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcDecode #%d\n got: %s want: %s", i,
 				spew.Sdump(&msg), spew.Sdump(test.out),
 			)
 			continue
@@ -401,51 +417,63 @@ func TestTxWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in version.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 0, io.ErrShortWrite,
+		{
+			multiTx, multiTxEncoded, pver, BaseEncoding, 0, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in number of transaction inputs.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 4, io.ErrShortWrite,
+		{
+			multiTx, multiTxEncoded, pver, BaseEncoding, 4, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in transaction input previous block hash.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 5, io.ErrShortWrite,
+		{
+			multiTx, multiTxEncoded, pver, BaseEncoding, 5, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in transaction input previous block output index.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 37, io.ErrShortWrite,
+		{
+			multiTx, multiTxEncoded, pver, BaseEncoding, 37, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in transaction input signature script length.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 41, io.ErrShortWrite,
+		{
+			multiTx, multiTxEncoded, pver, BaseEncoding, 41, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in transaction input signature script.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 42, io.ErrShortWrite,
+		{
+			multiTx, multiTxEncoded, pver, BaseEncoding, 42, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in transaction input sequence.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 49, io.ErrShortWrite,
+		{
+			multiTx, multiTxEncoded, pver, BaseEncoding, 49, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in number of transaction outputs.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 53, io.ErrShortWrite,
+		{
+			multiTx, multiTxEncoded, pver, BaseEncoding, 53, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in transaction output value.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 54, io.ErrShortWrite,
+		{
+			multiTx, multiTxEncoded, pver, BaseEncoding, 54, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in transaction output pk script length.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 62, io.ErrShortWrite,
+		{
+			multiTx, multiTxEncoded, pver, BaseEncoding, 62, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in transaction output pk script.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 63, io.ErrShortWrite,
+		{
+			multiTx, multiTxEncoded, pver, BaseEncoding, 63, io.ErrShortWrite,
 			io.EOF,
 		},
 		// Force error in transaction output lock time.
-		{multiTx, multiTxEncoded, pver, BaseEncoding, 206, io.ErrShortWrite,
+		{
+			multiTx, multiTxEncoded, pver, BaseEncoding, 206, io.ErrShortWrite,
 			io.EOF,
 		},
 	}
@@ -455,7 +483,8 @@ func TestTxWireErrors(t *testing.T) {
 		w := newFixedWriter(test.max)
 		e := test.in.BtcEncode(w, test.pver, test.enc)
 		if e != test.writeErr {
-			t.Errorf("BtcEncode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcEncode #%d wrong error got: %v, want: %v",
 				i, e, test.writeErr,
 			)
 			continue
@@ -465,7 +494,8 @@ func TestTxWireErrors(t *testing.T) {
 		r := newFixedReader(test.max, test.buf)
 		e = msg.BtcDecode(r, test.pver, test.enc)
 		if e != test.readErr {
-			t.Errorf("BtcDecode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcDecode #%d wrong error got: %v, want: %v",
 				i, e, test.readErr,
 			)
 			continue
@@ -525,7 +555,8 @@ func TestTxSerialize(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("Serialize #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"Serialize #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -543,7 +574,8 @@ func TestTxSerialize(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(&tx, test.out) {
-			t.Errorf("Deserialize #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"Deserialize #%d\n got: %s want: %s", i,
 				spew.Sdump(&tx), spew.Sdump(test.out),
 			)
 			continue
@@ -551,7 +583,8 @@ func TestTxSerialize(t *testing.T) {
 		// Ensure the public key script locations are accurate.
 		pkScriptLocs := test.in.PkScriptLocs()
 		if !reflect.DeepEqual(pkScriptLocs, test.pkScriptLocs) {
-			t.Errorf("PkScriptLocs #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"PkScriptLocs #%d\n got: %s want: %s", i,
 				spew.Sdump(pkScriptLocs),
 				spew.Sdump(test.pkScriptLocs),
 			)
@@ -561,8 +594,9 @@ func TestTxSerialize(t *testing.T) {
 			wantPkScript := test.in.TxOut[j].PkScript
 			gotPkScript := test.buf[loc : loc+len(wantPkScript)]
 			if !bytes.Equal(gotPkScript, wantPkScript) {
-				t.Errorf("PkScriptLocs #%d:%d\n unexpected "+
-					"script got: %s want: %s", i, j,
+				t.Errorf(
+					"PkScriptLocs #%d:%d\n unexpected "+
+						"script got: %s want: %s", i, j,
 					spew.Sdump(gotPkScript),
 					spew.Sdump(wantPkScript),
 				)
@@ -612,7 +646,8 @@ func TestTxSerializeErrors(t *testing.T) {
 		w := newFixedWriter(test.max)
 		e := test.in.Serialize(w)
 		if e != test.writeErr {
-			t.Errorf("Serialize #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"Serialize #%d wrong error got: %v, want: %v",
 				i, e, test.writeErr,
 			)
 			continue
@@ -622,7 +657,8 @@ func TestTxSerializeErrors(t *testing.T) {
 		r := newFixedReader(test.max, test.buf)
 		e = tx.Deserialize(r)
 		if e != test.readErr {
-			t.Errorf("Deserialize #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"Deserialize #%d wrong error got: %v, want: %v",
 				i, e, test.readErr,
 			)
 			continue
@@ -705,7 +741,8 @@ func TestTxOverflowErrors(t *testing.T) {
 		r := bytes.NewReader(test.buf)
 		e := msg.BtcDecode(r, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("BtcDecode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcDecode #%d wrong error got: %v, want: %v",
 				i, e, reflect.TypeOf(test.e),
 			)
 			continue
@@ -714,7 +751,8 @@ func TestTxOverflowErrors(t *testing.T) {
 		r = bytes.NewReader(test.buf)
 		e = msg.Deserialize(r)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("Deserialize #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"Deserialize #%d wrong error got: %v, want: %v",
 				i, e, reflect.TypeOf(test.e),
 			)
 			continue
@@ -744,7 +782,8 @@ func TestTxSerializeSizeStripped(t *testing.T) {
 	for i, test := range tests {
 		serializedSize := test.in.SerializeSizeStripped()
 		if serializedSize != test.size {
-			t.Errorf("MsgTx.SerializeSizeStripped: #%d got: %d, want: %d", i,
+			t.Errorf(
+				"MsgTx.SerializeSizeStripped: #%d got: %d, want: %d", i,
 				serializedSize, test.size,
 			)
 			continue
@@ -766,7 +805,8 @@ func TestTxWitnessSize(t *testing.T) {
 	for i, test := range tests {
 		serializedSize := test.in.SerializeSize()
 		if serializedSize != test.size {
-			t.Errorf("MsgTx.SerializeSize: #%d got: %d, want: %d", i,
+			t.Errorf(
+				"MsgTx.SerializeSize: #%d got: %d, want: %d", i,
 				serializedSize, test.size,
 			)
 			continue
@@ -912,7 +952,8 @@ var multiWitnessTx = &MsgTx{
 	TxOut: []*TxOut{
 		{
 			Value: 395019,
-			PkScript: []byte{ // p2wkh output
+			PkScript: []byte{
+				// p2wkh output
 				0x00, // Version 0 witness program
 				0x14, // OP_DATA_20
 				0x9d, 0xda, 0xc6, 0xf3, 0x9d, 0x51, 0xe0, 0x39,

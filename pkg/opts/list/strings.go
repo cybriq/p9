@@ -49,7 +49,8 @@ func (x *Opt) GetMetadata() *meta.Data {
 // ReadInput adds the value from a string. For this opt this means appending to the list
 func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 	if input == "" {
-		e = fmt.Errorf("string opt %s %v may not be empty", x.Name(),
+		e = fmt.Errorf(
+			"string opt %s %v may not be empty", x.Name(),
 			x.Data.Aliases,
 		)
 		return
@@ -63,7 +64,8 @@ func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 		split := strings.Split(input, ",")
 		for i := range split {
 			var cleaned string
-			if cleaned, e = sanitizers.StringType(x.Data.Type, split[i],
+			if cleaned, e = sanitizers.StringType(
+				x.Data.Type, split[i],
 				x.Data.DefaultPort,
 			); E.Chk(e) {
 				return
@@ -76,7 +78,8 @@ func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 		e = x.Set(append(slice, split...))
 	} else {
 		var cleaned string
-		if cleaned, e = sanitizers.StringType(x.Data.Type, input,
+		if cleaned, e = sanitizers.StringType(
+			x.Data.Type, input,
 			x.Data.DefaultPort,
 		); E.Chk(e) {
 			return

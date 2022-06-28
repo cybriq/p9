@@ -170,7 +170,8 @@ func (t *TxIn) SerializeSize() int {
 
 // NewTxIn returns a new bitcoin transaction input with the provided previous outpoint point and signature script with a
 // default sequence of MaxTxInSequenceNum.
-func NewTxIn(prevOut *OutPoint, signatureScript []byte, witness [][]byte,
+func NewTxIn(
+	prevOut *OutPoint, signatureScript []byte, witness [][]byte,
 ) *TxIn {
 	return &TxIn{
 		PreviousOutPoint: *prevOut,
@@ -220,7 +221,7 @@ func NewTxOut(value int64, pkScript []byte) *TxOut {
 
 // MsgTx implements the Message interface and represents a bitcoin tx message. It is used to deliver transaction
 // information in response to a getdata message (MsgGetData) for a given transaction. Use the AddTxIn and AddTxOut
-// functions to podbuild up the list of transaction inputs and outputs.
+// functions to build up the list of transaction inputs and outputs.
 type MsgTx struct {
 	Version  int32
 	TxIn     []*TxIn
@@ -329,7 +330,8 @@ func (msg *MsgTx) Copy() *MsgTx {
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation. See Deserialize for decoding transactions stored to disk, such as in a database, as opposed to
 // decoding transactions from the wire.
-func (msg *MsgTx) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding,
+func (msg *MsgTx) BtcDecode(
+	r io.Reader, pver uint32, enc MessageEncoding,
 ) (e error) {
 	var version uint32
 	if version, e = binarySerializer.Uint32(r, littleEndian); E.Chk(e) {
@@ -560,9 +562,14 @@ func (msg *MsgTx) DeserializeNoWitness(r io.Reader) (e error) {
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation. See Serialize for encoding transactions to be stored to disk, such as in a database, as opposed to
 // encoding transactions for the wire.
-func (msg *MsgTx) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding,
+func (msg *MsgTx) BtcEncode(
+	w io.Writer, pver uint32, enc MessageEncoding,
 ) (e error) {
-	if e = binarySerializer.PutUint32(w, littleEndian, uint32(msg.Version)); E.Chk(e) {
+	if e = binarySerializer.PutUint32(
+		w,
+		littleEndian,
+		uint32(msg.Version),
+	); E.Chk(e) {
 		return
 	}
 	// // If the encoding version is set to BaseEncoding, and the Flags field for
@@ -742,7 +749,8 @@ func NewMsgTx(version int32) *MsgTx {
 }
 
 // readOutPoint reads the next sequence of bytes from r as an OutPoint.
-func readOutPoint(r io.Reader, pver uint32, version int32, op *OutPoint,
+func readOutPoint(
+	r io.Reader, pver uint32, version int32, op *OutPoint,
 ) (e error) {
 	if _, e = io.ReadFull(r, op.Hash[:]); E.Chk(e) {
 		return
@@ -752,7 +760,8 @@ func readOutPoint(r io.Reader, pver uint32, version int32, op *OutPoint,
 }
 
 // writeOutPoint encodes op to the bitcoin protocol encoding for an OutPoint to w.
-func writeOutPoint(w io.Writer, pver uint32, version int32, op *OutPoint,
+func writeOutPoint(
+	w io.Writer, pver uint32, version int32, op *OutPoint,
 ) (e error) {
 	if _, e = w.Write(op.Hash[:]); E.Chk(e) {
 		return
@@ -765,7 +774,8 @@ func writeOutPoint(w io.Writer, pver uint32, version int32, op *OutPoint,
 // than the passed maxAllowed parameter which helps protect against memory exhaustion attacks and forced panics through
 // malformed messages. The fieldName parameter is only used for the error message so it provides more context in the
 // error.
-func readScript(r io.Reader, pver uint32, maxAllowed uint32, fieldName string,
+func readScript(
+	r io.Reader, pver uint32, maxAllowed uint32, fieldName string,
 ) (b []byte, e error) {
 	var count uint64
 	if count, e = ReadVarInt(r, pver); E.Chk(e) {
@@ -829,7 +839,11 @@ func readTxOut(r io.Reader, pver uint32, version int32, to *TxOut) (e error) {
 // output (TxOut) to w. NOTE: This function is exported in order to allow
 // txscript to compute the new sighashes for witness transactions (BIP0143).
 func WriteTxOut(w io.Writer, pver uint32, version int32, to *TxOut) (e error) {
-	if e = binarySerializer.PutUint64(w, littleEndian, uint64(to.Value)); E.Chk(e) {
+	if e = binarySerializer.PutUint64(
+		w,
+		littleEndian,
+		uint64(to.Value),
+	); E.Chk(e) {
 		return
 	}
 	return WriteVarBytes(w, pver, to.PkScript)
@@ -837,7 +851,8 @@ func WriteTxOut(w io.Writer, pver uint32, version int32, to *TxOut) (e error) {
 
 // writeTxWitness encodes the bitcoin protocol encoding for a transaction
 // input's witness into to w.
-func writeTxWitness(w io.Writer, pver uint32, version int32, wit [][]byte,
+func writeTxWitness(
+	w io.Writer, pver uint32, version int32, wit [][]byte,
 ) (e error) {
 	if e = WriteVarInt(w, pver, uint64(len(wit))); E.Chk(e) {
 		return

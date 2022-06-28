@@ -46,7 +46,8 @@ func Call(
 		// Show the error along with its error code when it's a json. BTCJSONError as it realistically will always be
 		// since the NewCmd function is only supposed to return errors of that type.
 		if jerr, ok := e.(btcjson.GeneralError); ok {
-			errText := fmt.Sprintf("%s command: %v (code: %s)\n", method, e,
+			errText := fmt.Sprintf(
+				"%s command: %v (code: %s)\n", method, e,
 				jerr.ErrorCode,
 			)
 			e = errors.New(errText)
@@ -77,7 +78,8 @@ func Call(
 // newHTTPClient returns a new HTTP client that is configured according to the proxy and TLS settings in the associated
 // connection configuration.
 func newHTTPClient(cfg *config.Config) (*http.Client, func(), error) {
-	var dial func(ctx context.Context, network string,
+	var dial func(
+		ctx context.Context, network string,
 		addr string,
 	) (net.Conn, error)
 	ctx, cancel := context.WithCancel(context.Background())
@@ -201,7 +203,8 @@ func sendPostRequest(
 		// Generate a standard error to return if the server body is empty. This should not happen very often, but it's
 		// better than showing nothing in case the target server has a poor implementation.
 		if len(respBytes) == 0 {
-			return nil, fmt.Errorf("%d %s", httpResponse.StatusCode,
+			return nil, fmt.Errorf(
+				"%d %s", httpResponse.StatusCode,
 				http.StatusText(httpResponse.StatusCode),
 			)
 		}
@@ -286,7 +289,8 @@ func CtlMain(cx *config.Config) {
 		os.Exit(1)
 	}
 	if usageFlags&btcjson.UnusableFlags != 0 {
-		_, _ = fmt.Fprintf(os.Stderr,
+		_, _ = fmt.Fprintf(
+			os.Stderr,
 			"The '%s' command can only be used via websockets\n", method,
 		)
 		HelpPrint()
@@ -302,13 +306,15 @@ func CtlMain(cx *config.Config) {
 		if arg == "-" {
 			var param string
 			if param, e = bio.ReadString('\n'); E.Chk(e) && e != io.EOF {
-				_, _ = fmt.Fprintf(os.Stderr,
+				_, _ = fmt.Fprintf(
+					os.Stderr,
 					"Failed to read data from stdin: %v\n", e,
 				)
 				os.Exit(1)
 			}
 			if e == io.EOF && len(param) == 0 {
-				_, _ = fmt.Fprintln(os.Stderr,
+				_, _ = fmt.Fprintln(
+					os.Stderr,
 					"Not enough lines provided on stdin",
 				)
 				os.Exit(1)

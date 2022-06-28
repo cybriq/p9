@@ -304,7 +304,10 @@ func soapRequest(url, function, message string) (replyXML []byte, e error) {
 	req.Header.Set("Content-Type", "text/xml ; charset=\"utf-8\"")
 	req.Header.Set("User-Agent", "Darwin/10.0.0, UPnP/1.0, MiniUPnPc/1.3")
 	// req.Header.Set("Transfer-Encoding", "chunked")
-	req.Header.Set("SOAPAction", "\"urn:schemas-upnp-org:service:WANIPConnection:1#"+function+"\"")
+	req.Header.Set(
+		"SOAPAction",
+		"\"urn:schemas-upnp-org:service:WANIPConnection:1#"+function+"\"",
+	)
 	req.Header.Set("Connection", "Close")
 	req.Header.Set("Cache-Control", "no-cache")
 	req.Header.Set("Pragma", "no-cache")
@@ -398,7 +401,10 @@ func (n *upnpNAT) AddPortMapping(
 
 // DeletePortMapping implements the NAT interface by removing up a port forwarding from the UPnP router to the local
 // machine with the given ports and.
-func (n *upnpNAT) DeletePortMapping(protocol string, externalPort, internalPort int) (e error) {
+func (n *upnpNAT) DeletePortMapping(
+	protocol string,
+	externalPort, internalPort int,
+) (e error) {
 	message := "<u:DeletePortMapping xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\">\r\n" +
 		"<NewRemoteHost></NewRemoteHost><NewExternalPort>" + strconv.Itoa(externalPort) +
 		"</NewExternalPort><NewProtocol>" + strings.ToUpper(protocol) + "</NewProtocol>" +

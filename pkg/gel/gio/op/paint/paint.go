@@ -75,9 +75,10 @@ func NewImageOp(src image.Image) ImageOp {
 
 	sz := src.Bounds().Size()
 	// Copy the image into a GPU friendly format.
-	dst := image.NewRGBA(image.Rectangle{
-		Max: sz,
-	},
+	dst := image.NewRGBA(
+		image.Rectangle{
+			Max: sz,
+		},
 	)
 	draw.Draw(dst, dst.Bounds(), src, src.Bounds().Min, draw.Src)
 	return ImageOp{

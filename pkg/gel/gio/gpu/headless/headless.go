@@ -41,40 +41,41 @@ func NewWindow(width, height int) (*Window, error) {
 		size: image.Point{X: width, Y: height},
 		ctx:  ctx,
 	}
-	err = contextDo(ctx, func() error {
-		api := ctx.API()
-		dev, err := driver.NewDevice(api)
-		if err != nil {
+	err = contextDo(
+		ctx, func() error {
+			api := ctx.API()
+			dev, err := driver.NewDevice(api)
+			if err != nil {
+				return err
+			}
+			dev.Viewport(0, 0, width, height)
+			fboTex, err := dev.NewTexture(
+				driver.TextureFormatSRGB,
+				width, height,
+				driver.FilterNearest, driver.FilterNearest,
+				driver.BufferBindingFramebuffer,
+			)
+			if err != nil {
+				return nil
+			}
+			const depthBits = 16
+			fbo, err := dev.NewFramebuffer(fboTex, depthBits)
+			if err != nil {
+				fboTex.Release()
+				return err
+			}
+			gp, err := gpu.New(api)
+			if err != nil {
+				fbo.Release()
+				fboTex.Release()
+				return err
+			}
+			w.fboTex = fboTex
+			w.fbo = fbo
+			w.gpu = gp
+			w.dev = dev
 			return err
-		}
-		dev.Viewport(0, 0, width, height)
-		fboTex, err := dev.NewTexture(
-			driver.TextureFormatSRGB,
-			width, height,
-			driver.FilterNearest, driver.FilterNearest,
-			driver.BufferBindingFramebuffer,
-		)
-		if err != nil {
-			return nil
-		}
-		const depthBits = 16
-		fbo, err := dev.NewFramebuffer(fboTex, depthBits)
-		if err != nil {
-			fboTex.Release()
-			return err
-		}
-		gp, err := gpu.New(api)
-		if err != nil {
-			fbo.Release()
-			fboTex.Release()
-			return err
-		}
-		w.fboTex = fboTex
-		w.fbo = fbo
-		w.gpu = gp
-		w.dev = dev
-		return err
-	},
+		},
 	)
 	if err != nil {
 		ctx.Release()
@@ -85,21 +86,22 @@ func NewWindow(width, height int) (*Window, error) {
 
 // Release resources associated with the window.
 func (w *Window) Release() {
-	contextDo(w.ctx, func() error {
-		if w.fbo != nil {
-			w.fbo.Release()
-			w.fbo = nil
-		}
-		if w.fboTex != nil {
-			w.fboTex.Release()
-			w.fboTex = nil
-		}
-		if w.gpu != nil {
-			w.gpu.Release()
-			w.gpu = nil
-		}
-		return nil
-	},
+	contextDo(
+		w.ctx, func() error {
+			if w.fbo != nil {
+				w.fbo.Release()
+				w.fbo = nil
+			}
+			if w.fboTex != nil {
+				w.fboTex.Release()
+				w.fboTex = nil
+			}
+			if w.gpu != nil {
+				w.gpu.Release()
+				w.gpu = nil
+			}
+			return nil
+		},
 	)
 	if w.ctx != nil {
 		w.ctx.Release()
@@ -110,25 +112,28 @@ func (w *Window) Release() {
 // Frame replace the window content and state with the
 // operation list.
 func (w *Window) Frame(frame *op.Ops) error {
-	return contextDo(w.ctx, func() error {
-		w.dev.BindFramebuffer(w.fbo)
-		w.gpu.Clear(color.NRGBA{A: 0xff, R: 0xff, G: 0xff, B: 0xff})
-		w.gpu.Collect(w.size, frame)
-		return w.gpu.Frame()
-	},
+	return contextDo(
+		w.ctx, func() error {
+			w.dev.BindFramebuffer(w.fbo)
+			w.gpu.Clear(color.NRGBA{A: 0xff, R: 0xff, G: 0xff, B: 0xff})
+			w.gpu.Collect(w.size, frame)
+			return w.gpu.Frame()
+		},
 	)
 }
 
 // Screenshot returns an image with the content of the window.
 func (w *Window) Screenshot() (*image.RGBA, error) {
 	var img *image.RGBA
-	err := contextDo(w.ctx, func() error {
-		var err error
-		img, err = driver.DownloadImage(w.dev, w.fbo,
-			image.Rectangle{Max: w.size},
-		)
-		return err
-	},
+	err := contextDo(
+		w.ctx, func() error {
+			var err error
+			img, err = driver.DownloadImage(
+				w.dev, w.fbo,
+				image.Rectangle{Max: w.size},
+			)
+			return err
+		},
 	)
 	if err != nil {
 		return nil, err

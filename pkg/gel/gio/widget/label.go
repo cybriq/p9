@@ -49,7 +49,8 @@ type segmentIterator struct {
 
 const inf = 1e6
 
-func (l *segmentIterator) Next() (text.Layout, image.Point, bool, int,
+func (l *segmentIterator) Next() (
+	text.Layout, image.Point, bool, int,
 	image.Point, bool,
 ) {
 	for l.pos.Y < len(l.Lines) {
@@ -63,7 +64,8 @@ func (l *segmentIterator) Next() (text.Layout, image.Point, bool, int,
 			l.y += l.prevDesc + l.line.Ascent
 			l.prevDesc = l.line.Descent
 			// Align baseline and line start to the pixel grid.
-			l.off = fixed.Point26_6{X: fixed.I(x.Floor()),
+			l.off = fixed.Point26_6{
+				X: fixed.I(x.Floor()),
 				Y: fixed.I(l.y.Ceil()),
 			}
 			l.y = l.off.Y
@@ -158,7 +160,8 @@ func (p1 screenPos) Less(p2 screenPos) bool {
 	return p1.Y < p2.Y || (p1.Y == p2.Y && p1.X < p2.X)
 }
 
-func (l Label) Layout(gtx layout.Context, s text.Shaper, font text.Font,
+func (l Label) Layout(
+	gtx layout.Context, s text.Shaper, font text.Font,
 	size unit.Value, txt string,
 ) layout.Dimensions {
 	cs := gtx.Constraints
@@ -239,7 +242,8 @@ func linesDimens(lines []text.Line) layout.Dimensions {
 	}
 }
 
-func align(align text.Alignment, width fixed.Int26_6, maxWidth int,
+func align(
+	align text.Alignment, width fixed.Int26_6, maxWidth int,
 ) fixed.Int26_6 {
 	mw := fixed.I(maxWidth)
 	switch align {

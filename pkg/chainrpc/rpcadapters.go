@@ -190,7 +190,8 @@ func (cm *ConnManager) BroadcastMessage(msg wire.Message) {
 // until they show up in a block.
 //
 // This function is safe for concurrent access and is part of the RPCServerConnManager interface implementation.
-func (cm *ConnManager) AddRebroadcastInventory(iv *wire.InvVect,
+func (cm *ConnManager) AddRebroadcastInventory(
+	iv *wire.InvVect,
 	data interface{},
 ) {
 	cm.Server.AddRebroadcastInventory(iv, data)
@@ -221,7 +222,8 @@ func (b *SyncManager) IsCurrent() bool {
 // SubmitBlock submits the provided block to the network after processing it locally.
 //
 // This function is safe for concurrent access and is part of the RPCServerSyncManager interface implementation.
-func (b *SyncManager) SubmitBlock(block *block.Block,
+func (b *SyncManager) SubmitBlock(
+	block *block.Block,
 	flags blockchain.BehaviorFlags,
 ) (bool, error) {
 	return b.SyncMgr.ProcessBlock(block, flags)
@@ -246,7 +248,8 @@ func (b *SyncManager) SyncPeerID() int32 {
 // stop hash or the current tip is reached, up to a max of wire.MaxBlockHeadersPerMsg hashes.
 //
 // This function is safe for concurrent access and is part of the RPCServerSyncManager interface implementation.
-func (b *SyncManager) LocateHeaders(locators []*chainhash.Hash,
+func (b *SyncManager) LocateHeaders(
+	locators []*chainhash.Hash,
 	hashStop *chainhash.Hash,
 ) []wire.BlockHeader {
 	return b.Server.Chain.LocateHeaders(locators, hashStop)

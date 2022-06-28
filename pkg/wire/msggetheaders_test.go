@@ -24,7 +24,8 @@ func TestGetHeaders(t *testing.T) {
 	wantCmd := "getheaders"
 	msg := NewMsgGetHeaders()
 	if cmd := msg.Command(); cmd != wantCmd {
-		t.Errorf("NewMsgGetHeaders: wrong command - got %v want %v",
+		t.Errorf(
+			"NewMsgGetHeaders: wrong command - got %v want %v",
 			cmd, wantCmd,
 		)
 	}
@@ -33,8 +34,9 @@ func TestGetHeaders(t *testing.T) {
 	wantPayload := uint32(16045)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -44,8 +46,9 @@ func TestGetHeaders(t *testing.T) {
 		t.Errorf("AddBlockLocatorHash: %v", e)
 	}
 	if msg.BlockLocatorHashes[0] != locatorHash {
-		t.Errorf("AddBlockLocatorHash: wrong block locator added - "+
-			"got %v, want %v",
+		t.Errorf(
+			"AddBlockLocatorHash: wrong block locator added - "+
+				"got %v, want %v",
 			spew.Sprint(msg.BlockLocatorHashes[0]),
 			spew.Sprint(locatorHash),
 		)
@@ -55,8 +58,9 @@ func TestGetHeaders(t *testing.T) {
 		e = msg.AddBlockLocatorHash(locatorHash)
 	}
 	if e == nil {
-		t.Errorf("AddBlockLocatorHash: expected error on too many " +
-			"block locator hashes not received",
+		t.Errorf(
+			"AddBlockLocatorHash: expected error on too many " +
+				"block locator hashes not received",
 		)
 	}
 }
@@ -222,7 +226,8 @@ func TestGetHeadersWire(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("BtcEncode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcEncode #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -236,7 +241,8 @@ func TestGetHeadersWire(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(&msg, test.out) {
-			t.Errorf("BtcDecode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcDecode #%d\n got: %s want: %s", i,
 				spew.Sdump(&msg), spew.Sdump(test.out),
 			)
 			continue
@@ -306,7 +312,8 @@ func TestGetHeadersWireErrors(t *testing.T) {
 			t.Log(e)
 		}
 	}
-	maxGetHeaders.BlockLocatorHashes = append(maxGetHeaders.BlockLocatorHashes,
+	maxGetHeaders.BlockLocatorHashes = append(
+		maxGetHeaders.BlockLocatorHashes,
 		&mainNetGenesisHash,
 	)
 	maxGetHeadersEncoded := []byte{
@@ -323,23 +330,28 @@ func TestGetHeadersWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in protocol version.
-		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 0,
+		{
+			baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 0,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in block locator hash count.
-		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 4,
+		{
+			baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 4,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in block locator hashes.
-		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 5,
+		{
+			baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 5,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in stop hash.
-		{baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 69,
+		{
+			baseGetHeaders, baseGetHeadersEncoded, pver, BaseEncoding, 69,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error with greater than max block locator hashes.
-		{maxGetHeaders, maxGetHeadersEncoded, pver, BaseEncoding, 7, wireErr,
+		{
+			maxGetHeaders, maxGetHeadersEncoded, pver, BaseEncoding, 7, wireErr,
 			wireErr,
 		},
 	}
@@ -349,7 +361,8 @@ func TestGetHeadersWireErrors(t *testing.T) {
 		w := newFixedWriter(test.max)
 		e := test.in.BtcEncode(w, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.writeErr) {
-			t.Errorf("BtcEncode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcEncode #%d wrong error got: %v, want: %v",
 				i, e, test.writeErr,
 			)
 			continue
@@ -357,8 +370,9 @@ func TestGetHeadersWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.writeErr {
-				t.Errorf("BtcEncode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.writeErr,
+				t.Errorf(
+					"BtcEncode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.writeErr,
 				)
 				continue
 			}
@@ -368,7 +382,8 @@ func TestGetHeadersWireErrors(t *testing.T) {
 		r := newFixedReader(test.max, test.buf)
 		e = msg.BtcDecode(r, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.readErr) {
-			t.Errorf("BtcDecode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcDecode #%d wrong error got: %v, want: %v",
 				i, e, test.readErr,
 			)
 			continue
@@ -376,8 +391,9 @@ func TestGetHeadersWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.readErr {
-				t.Errorf("BtcDecode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.readErr,
+				t.Errorf(
+					"BtcDecode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.readErr,
 				)
 				continue
 			}

@@ -2,6 +2,7 @@ package indexers
 
 import (
 	"errors"
+
 	"github.com/cybriq/p9/pkg/block"
 	"github.com/cybriq/p9/pkg/chaincfg"
 
@@ -45,14 +46,16 @@ var (
 
 // dbFetchFilterIdxEntry retrieves a data blob from the filter index database. An entry's absence is not considered an
 // error.
-func dbFetchFilterIdxEntry(dbTx database.Tx, key []byte, h *chainhash.Hash,
+func dbFetchFilterIdxEntry(
+	dbTx database.Tx, key []byte, h *chainhash.Hash,
 ) ([]byte, error) {
 	idx := dbTx.Metadata().Bucket(cfIndexParentBucketKey).Bucket(key)
 	return idx.Get(h[:]), nil
 }
 
 // dbStoreFilterIdxEntry stores a data blob in the filter index database.
-func dbStoreFilterIdxEntry(dbTx database.Tx, key []byte, h *chainhash.Hash,
+func dbStoreFilterIdxEntry(
+	dbTx database.Tx, key []byte, h *chainhash.Hash,
 	f []byte,
 ) (e error) {
 	idx := dbTx.Metadata().Bucket(cfIndexParentBucketKey).Bucket(key)
@@ -60,7 +63,8 @@ func dbStoreFilterIdxEntry(dbTx database.Tx, key []byte, h *chainhash.Hash,
 }
 
 // dbDeleteFilterIdxEntry deletes a data blob from the filter index database.
-func dbDeleteFilterIdxEntry(dbTx database.Tx, key []byte, h *chainhash.Hash,
+func dbDeleteFilterIdxEntry(
+	dbTx database.Tx, key []byte, h *chainhash.Hash,
 ) (e error) {
 	idx := dbTx.Metadata().Bucket(cfIndexParentBucketKey).Bucket(key)
 	return idx.Delete(h[:])

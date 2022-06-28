@@ -86,7 +86,8 @@ func (q *keyQueue) Push(e event.Event, events *handlerEvents) {
 	}
 }
 
-func (q *keyQueue) resolveFocus(events *handlerEvents) (focus event.Tag,
+func (q *keyQueue) resolveFocus(events *handlerEvents) (
+	focus event.Tag,
 	changed bool, state TextInputState,
 ) {
 	for encOp, ok := q.reader.Decode(); ok; encOp, ok = q.reader.Decode() {

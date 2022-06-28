@@ -38,7 +38,8 @@ var (
 )
 
 // loadBlocks loads the blocks contained in the tstdata directory and returns a slice of them.
-func loadBlocks(t *testing.T, dataFile string, network wire.BitcoinNet,
+func loadBlocks(
+	t *testing.T, dataFile string, network wire.BitcoinNet,
 ) ([]*block.Block, error) {
 	// Open the file that contains the blocks for reading.
 	fi, e := os.Open(dataFile)
@@ -109,7 +110,8 @@ func loadBlocks(t *testing.T, dataFile string, network wire.BitcoinNet,
 }
 
 // checkDbError ensures the passed error is a database.DBError with an error code that matches the passed  error code.
-func checkDbError(t *testing.T, testName string, gotErr error,
+func checkDbError(
+	t *testing.T, testName string, gotErr error,
 	wantErrCode database.ErrorCode,
 ) bool {
 	dbErr, ok := gotErr.(database.DBError)
@@ -183,7 +185,8 @@ func rollbackValues(values []keyPair) []keyPair {
 
 // testCursorKeyPair checks that the provide key and value match the expected keypair at the provided index. It also
 // ensures the index is in range for the provided slice of expected keypairs.
-func testCursorKeyPair(tc *testContext, k, v []byte, index int,
+func testCursorKeyPair(
+	tc *testContext, k, v []byte, index int,
 	values []keyPair,
 ) bool {
 	if index >= len(values) || index < 0 {
@@ -215,7 +218,8 @@ func testCursorKeyPair(tc *testContext, k, v []byte, index int,
 
 // testGetValues checks that all of the provided key/value pairs can be retrieved from the database and the retrieved
 // values match the provided values.
-func testGetValues(tc *testContext, bucket database.Bucket, values []keyPair,
+func testGetValues(
+	tc *testContext, bucket database.Bucket, values []keyPair,
 ) bool {
 	for _, item := range values {
 		gotValue := bucket.Get(item.key)
@@ -231,7 +235,8 @@ func testGetValues(tc *testContext, bucket database.Bucket, values []keyPair,
 }
 
 // testPutValues stores all of the provided key/value pairs in the provided bucket while checking for errors.
-func testPutValues(tc *testContext, bucket database.Bucket, values []keyPair,
+func testPutValues(
+	tc *testContext, bucket database.Bucket, values []keyPair,
 ) bool {
 	for _, item := range values {
 		if e := bucket.Put(item.key, item.value); E.Chk(e) {
@@ -243,7 +248,8 @@ func testPutValues(tc *testContext, bucket database.Bucket, values []keyPair,
 }
 
 // testDeleteValues removes all of the provided key/value pairs from the provided bucket.
-func testDeleteValues(tc *testContext, bucket database.Bucket, values []keyPair,
+func testDeleteValues(
+	tc *testContext, bucket database.Bucket, values []keyPair,
 ) bool {
 	for _, item := range values {
 		if e := bucket.Delete(item.key); E.Chk(e) {
@@ -1071,7 +1077,7 @@ func testFetchBlockIOMissing(tc *testContext, tx database.Tx) bool {
 	wantErrCode := database.ErrBlockNotFound
 	// Non-bulk Block IO API
 	//
-	// Test the individual block APIs one block at a time to ensure they return the expected error. Also, podbuild the data
+	// Test the individual block APIs one block at a time to ensure they return the expected error. Also, build the data
 	// needed to test the bulk APIs below while looping.
 	allBlockHashes := make([]chainhash.Hash, len(tc.blocks))
 	allBlockRegions := make([]database.BlockRegion, len(tc.blocks))
@@ -1163,7 +1169,7 @@ func testFetchBlockIOMissing(tc *testContext, tx database.Tx) bool {
 func testFetchBlockIO(tc *testContext, tx database.Tx) bool {
 	// Non-bulk Block IO API
 	//
-	// Test the individual block APIs one block at a time. Also, podbuild the data needed to test the bulk APIs below while
+	// Test the individual block APIs one block at a time. Also, build the data needed to test the bulk APIs below while
 	// looping.
 	allBlockHashes := make([]chainhash.Hash, len(tc.blocks))
 	allBlockBytes := make([][]byte, len(tc.blocks))
@@ -1759,7 +1765,7 @@ func testClosedTxInterface(tc *testContext, tx database.Tx) bool {
 	}
 	// Non-bulk Block IO API
 	//
-	// Test the individual block APIs one block at a time to ensure they return the expected error. Also, podbuild the data
+	// Test the individual block APIs one block at a time to ensure they return the expected error. Also, build the data
 	// needed to test the bulk APIs below while looping.
 	allBlockHashes := make([]chainhash.Hash, len(tc.blocks))
 	allBlockRegions := make([]database.BlockRegion, len(tc.blocks))
@@ -1956,7 +1962,8 @@ func testConcurrency(tc *testContext) bool {
 	)
 	// Consider it a failure if it took longer than half the time it would take with no concurrency.
 	if elapsed > sleepTime*time.Duration(numReaders/2) {
-		tc.t.Errorf("Concurrent views for same block did not appear to run simultaneously: elapsed %v",
+		tc.t.Errorf(
+			"Concurrent views for same block did not appear to run simultaneously: elapsed %v",
 			elapsed,
 		)
 		return false
@@ -1972,7 +1979,8 @@ func testConcurrency(tc *testContext) bool {
 		}
 	}
 	elapsed = time.Since(startTime)
-	tc.t.Logf("%d concurrent reads of different blocks elapsed: %v", numReaders,
+	tc.t.Logf(
+		"%d concurrent reads of different blocks elapsed: %v", numReaders,
 		elapsed,
 	)
 	// Consider it a failure if it took longer than half the time it would take with no concurrency.

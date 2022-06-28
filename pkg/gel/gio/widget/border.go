@@ -31,7 +31,8 @@ func (b Border) Layout(gtx layout.Context, w layout.Widget) layout.Dimensions {
 	r := f32.Rectangle{Max: sz}
 	r = r.Add(f32.Point{X: width * 0.5, Y: width * 0.5})
 
-	paint.FillShape(gtx.Ops,
+	paint.FillShape(
+		gtx.Ops,
 		b.Color,
 		clip.Stroke{
 			Path:  clip.UniformRRect(r, rr).Path(gtx.Ops),

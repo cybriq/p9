@@ -3,10 +3,11 @@ package blockchain
 import (
 	"container/list"
 	"fmt"
-	block2 "github.com/cybriq/p9/pkg/block"
-	"github.com/cybriq/p9/pkg/fork"
 	"sync"
 	"time"
+
+	block2 "github.com/cybriq/p9/pkg/block"
+	"github.com/cybriq/p9/pkg/fork"
 
 	"go.uber.org/atomic"
 
@@ -409,7 +410,8 @@ func (b *BlockChain) addOrphanBlock(block *block2.Block) {
 // passed node is not on a side chain. This function may modify node statuses in
 // the block index without flushing. This function MUST be called with the chain
 // state lock held ( for reads).
-func (b *BlockChain) getReorganizeNodes(node *BlockNode) (*list.List,
+func (b *BlockChain) getReorganizeNodes(node *BlockNode) (
+	*list.List,
 	*list.List,
 ) {
 	attachNodes := list.New()
@@ -951,7 +953,8 @@ func (b *BlockChain) reorganizeChain(detachNodes, attachNodes *list.List) (e err
 //    This is useful when using checkpoints.
 //
 // This function MUST be called with the chain state lock held (for writes).
-func (b *BlockChain) connectBestChain(node *BlockNode, block *block2.Block,
+func (b *BlockChain) connectBestChain(
+	node *BlockNode, block *block2.Block,
 	flags BehaviorFlags,
 ) (bool, error) {
 	T.Ln("running connectBestChain")
@@ -1112,7 +1115,8 @@ func (b *BlockChain) BestSnapshot() *BestState {
 // HeaderByHash returns the block header identified by the given hash or an error if it doesn't exist.
 //
 // Note that this will return headers from both the main and side chains.
-func (b *BlockChain) HeaderByHash(hash *chainhash.Hash) (bh wire.BlockHeader,
+func (b *BlockChain) HeaderByHash(hash *chainhash.Hash) (
+	bh wire.BlockHeader,
 	e error,
 ) {
 	node := b.Index.LookupNode(hash)
@@ -1168,7 +1172,8 @@ func (b *BlockChain) BlockHeightByHash(hash *chainhash.Hash) (int32, error) {
 
 // BlockHashByHeight returns the hash of the block at the given height in the main chain. This function is safe for
 // concurrent access.
-func (b *BlockChain) BlockHashByHeight(blockHeight int32) (*chainhash.Hash,
+func (b *BlockChain) BlockHashByHeight(blockHeight int32) (
+	*chainhash.Hash,
 	error,
 ) {
 	node := b.BestChain.NodeByHeight(blockHeight)
@@ -1395,7 +1400,8 @@ func (b *BlockChain) locateBlocks(
 // - When locators are provided, but none of them are known, hashes starting after the genesis block will be returned
 //
 // This function is safe for concurrent access.
-func (b *BlockChain) LocateBlocks(locator BlockLocator,
+func (b *BlockChain) LocateBlocks(
+	locator BlockLocator,
 	hashStop *chainhash.Hash, maxHashes uint32,
 ) []chainhash.Hash {
 	b.ChainLock.RLock()
@@ -1441,7 +1447,8 @@ func (b *BlockChain) locateHeaders(
 // - When locators are provided, but none of them are known, headers starting after the genesis block will be returned
 //
 // This function is safe for concurrent access.
-func (b *BlockChain) LocateHeaders(locator BlockLocator,
+func (b *BlockChain) LocateHeaders(
+	locator BlockLocator,
 	hashStop *chainhash.Hash,
 ) []wire.BlockHeader {
 	b.ChainLock.RLock()

@@ -77,10 +77,11 @@ func (b *ButtonLayout) Fn(gtx l.Context) l.Dimensions {
 			func(gtx l.Context) l.Dimensions {
 				rr := float32(gtx.Px(b.cornerRadius))
 				clip.RRect{
-					Rect: f32.Rectangle{Max: f32.Point{
-						X: float32(gtx.Constraints.Min.X),
-						Y: float32(gtx.Constraints.Min.Y),
-					},
+					Rect: f32.Rectangle{
+						Max: f32.Point{
+							X: float32(gtx.Constraints.Min.X),
+							Y: float32(gtx.Constraints.Min.Y),
+						},
 					},
 					NW: ifDir(rr, b.corners&NW),
 					NE: ifDir(rr, b.corners&NE),

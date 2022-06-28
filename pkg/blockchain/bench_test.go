@@ -1,8 +1,9 @@
 package blockchain
 
 import (
-	"github.com/cybriq/p9/pkg/block"
 	"testing"
+
+	"github.com/cybriq/p9/pkg/block"
 )
 
 // BenchmarkIsCoinBase performs a simple benchmark against the IsCoinBase function.

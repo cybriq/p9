@@ -59,7 +59,8 @@ func Fill(gtx l.Context, col color.NRGBA) l.Dimensions {
 // }
 
 func argb(c uint32) color.RGBA {
-	return color.RGBA{A: uint8(c >> 24), R: uint8(c >> 16), G: uint8(c >> 8),
+	return color.RGBA{
+		A: uint8(c >> 24), R: uint8(c >> 16), G: uint8(c >> 8),
 		B: uint8(c),
 	}
 }
@@ -117,14 +118,17 @@ func axisCrossConstraint(a l.Axis, cs l.Constraints) (int, int) {
 	return cs.Min.X, cs.Max.X
 }
 
-func axisConstraints(a l.Axis, mainMin, mainMax, crossMin, crossMax int,
+func axisConstraints(
+	a l.Axis, mainMin, mainMax, crossMin, crossMax int,
 ) l.Constraints {
 	if a == l.Horizontal {
-		return l.Constraints{Min: image.Pt(mainMin, crossMin),
+		return l.Constraints{
+			Min: image.Pt(mainMin, crossMin),
 			Max: image.Pt(mainMax, crossMax),
 		}
 	}
-	return l.Constraints{Min: image.Pt(crossMin, mainMin),
+	return l.Constraints{
+		Min: image.Pt(crossMin, mainMin),
 		Max: image.Pt(crossMax, mainMax),
 	}
 }
@@ -151,7 +155,8 @@ func EmptyFromSize(size image.Point) func(gtx l.Context) l.Dimensions {
 func EmptyMaxWidth() func(gtx l.Context) l.Dimensions {
 	return func(gtx l.Context) l.Dimensions {
 		return l.Dimensions{
-			Size: image.Point{X: gtx.Constraints.Max.X,
+			Size: image.Point{
+				X: gtx.Constraints.Max.X,
 				Y: gtx.Constraints.Min.Y,
 			},
 			Baseline: 0,
@@ -160,9 +165,11 @@ func EmptyMaxWidth() func(gtx l.Context) l.Dimensions {
 }
 func EmptyMaxHeight() func(gtx l.Context) l.Dimensions {
 	return func(gtx l.Context) l.Dimensions {
-		return l.Dimensions{Size: image.Point{X: gtx.Constraints.Min.X,
-			Y: gtx.Constraints.Min.Y,
-		},
+		return l.Dimensions{
+			Size: image.Point{
+				X: gtx.Constraints.Min.X,
+				Y: gtx.Constraints.Min.Y,
+			},
 		}
 	}
 }
@@ -170,7 +177,8 @@ func EmptyMaxHeight() func(gtx l.Context) l.Dimensions {
 func EmptyMinWidth() func(gtx l.Context) l.Dimensions {
 	return func(gtx l.Context) l.Dimensions {
 		return l.Dimensions{
-			Size: image.Point{X: gtx.Constraints.Min.X,
+			Size: image.Point{
+				X: gtx.Constraints.Min.X,
 				Y: gtx.Constraints.Min.Y,
 			},
 			Baseline: 0,

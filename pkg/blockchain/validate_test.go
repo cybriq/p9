@@ -1,11 +1,12 @@
 package blockchain
 
 import (
-	block2 "github.com/cybriq/p9/pkg/block"
 	"math"
 	"reflect"
 	"testing"
 	"time"
+
+	block2 "github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/chainhash"
@@ -109,7 +110,7 @@ import (
 // 		t.Fatalf("CheckConnectBlockTemplate: Received unexpected error on "+
 // 			"block 4: %v", e)
 // 	}
-// 	// Block 3a should fail to connect since does not podbuild on chain tip.
+// 	// Block 3a should fail to connect since does not build on chain tip.
 // 	e = chain.CheckConnectBlockTemplate(blocks[5])
 // 	if e ==  nil {
 // 		t.Fatal("CheckConnectBlockTemplate: Did not received expected error " +

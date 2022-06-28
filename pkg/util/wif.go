@@ -3,6 +3,7 @@ package util
 import (
 	"bytes"
 	"errors"
+
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chaincfg"
 
@@ -36,7 +37,8 @@ type WIF struct {
 // NewWIF creates a new WIF structure to export an address and its private key as a string encoded in the Wallet Import
 // Format. The compress argument specifies whether the address intended to be imported or exported was created by
 // serializing the public key compressed rather than uncompressed.
-func NewWIF(privKey *ec.PrivateKey, net *chaincfg.Params, compress bool) (*WIF,
+func NewWIF(privKey *ec.PrivateKey, net *chaincfg.Params, compress bool) (
+	*WIF,
 	error,
 ) {
 	if net == nil {

@@ -219,13 +219,17 @@ func (qs StrokeQuads) splitAt(contour *uint32, ts ...float64) []StrokeQuads {
 				continue
 			}
 			speed := func(t float64) float64 {
-				return float64(lenPt(quadBezierD1(q.Quad.From, q.Quad.Ctrl,
-					q.Quad.To, float32(t),
-				),
-				),
+				return float64(
+					lenPt(
+						quadBezierD1(
+							q.Quad.From, q.Quad.Ctrl,
+							q.Quad.To, float32(t),
+						),
+					),
 				)
 			}
-			invL, dt := invSpeedPolynomialChebyshevApprox(20, gaussLegendre7,
+			invL, dt := invSpeedPolynomialChebyshevApprox(
+				20, gaussLegendre7,
 				speed, 0, 1,
 			)
 
@@ -244,21 +248,23 @@ func (qs StrokeQuads) splitAt(contour *uint32, ts ...float64) []StrokeQuads {
 				t0 = tj
 
 				var q1 f32.Point
-				_, q1, _, r0, r1, r2 = quadBezierSplit(r0, r1, r2,
+				_, q1, _, r0, r1, r2 = quadBezierSplit(
+					r0, r1, r2,
 					float32(tsub),
 				)
 
-				oi = append(oi, StrokeQuad{
-					Contour: *contour,
-					Quad: QuadSegment{
-						From: from,
-						Ctrl: q1,
-						To:   r0,
+				oi = append(
+					oi, StrokeQuad{
+						Contour: *contour,
+						Quad: QuadSegment{
+							From: from,
+							Ctrl: q1,
+							To:   r0,
+						},
 					},
-				},
 				)
 				push()
-				(*contour)++
+				*contour++
 
 				from = r0
 				j++
@@ -267,14 +273,15 @@ func (qs StrokeQuads) splitAt(contour *uint32, ts ...float64) []StrokeQuads {
 				if len(oi) > 0 {
 					r0 = oi.pen()
 				}
-				oi = append(oi, StrokeQuad{
-					Contour: *contour,
-					Quad: QuadSegment{
-						From: r0,
-						Ctrl: r1,
-						To:   r2,
+				oi = append(
+					oi, StrokeQuad{
+						Contour: *contour,
+						Quad: QuadSegment{
+							From: r0,
+							Ctrl: r1,
+							To:   r2,
+						},
 					},
-				},
 				)
 			}
 			t += dt
@@ -282,7 +289,7 @@ func (qs StrokeQuads) splitAt(contour *uint32, ts ...float64) []StrokeQuads {
 	}
 	if len(oi) > 0 {
 		push()
-		(*contour)++
+		*contour++
 	}
 
 	return oo
@@ -298,7 +305,8 @@ func f64Eq(a, b float64) bool {
 	return math.Abs(a-b) < epsilon
 }
 
-func invSpeedPolynomialChebyshevApprox(N int, gaussLegendre gaussLegendreFunc,
+func invSpeedPolynomialChebyshevApprox(
+	N int, gaussLegendre gaussLegendreFunc,
 	fp func(float64) float64, tmin, tmax float64,
 ) (func(float64) float64, float64) {
 	// The TODOs below are copied verbatim from tdewolff/canvas:
@@ -316,10 +324,18 @@ func invSpeedPolynomialChebyshevApprox(N int, gaussLegendre gaussLegendreFunc,
 	t := func(L float64) float64 {
 		return bisectionMethod(fLength, L, tmin, tmax)
 	}
-	return polynomialChebyshevApprox(N, t, 0.0, totalLength, tmin, tmax), totalLength
+	return polynomialChebyshevApprox(
+		N,
+		t,
+		0.0,
+		totalLength,
+		tmin,
+		tmax,
+	), totalLength
 }
 
-func polynomialChebyshevApprox(N int, f func(float64) float64,
+func polynomialChebyshevApprox(
+	N int, f func(float64) float64,
 	xmin, xmax, ymin, ymax float64,
 ) func(float64) float64 {
 	var (

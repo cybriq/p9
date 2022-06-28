@@ -99,7 +99,8 @@ func (s *stack) PopBool() (bool, error) {
 func (s *stack) PeekByteArray(idx int32) ([]byte, error) {
 	sz := int32(len(s.stk))
 	if idx < 0 || idx >= sz {
-		str := fmt.Sprintf("index %d is invalid for stack size %d", idx,
+		str := fmt.Sprintf(
+			"index %d is invalid for stack size %d", idx,
 			sz,
 		)
 		return nil, scriptError(ErrInvalidStackOperation, str)
@@ -137,7 +138,8 @@ func (s *stack) nipN(idx int32) ([]byte, error) {
 	{
 		sz := int32(len(s.stk))
 		if idx < 0 || idx > sz-1 {
-			str := fmt.Sprintf("index %d is invalid for stack size %d", idx,
+			str := fmt.Sprintf(
+				"index %d is invalid for stack size %d", idx,
 				sz,
 			)
 			return nil, scriptError(ErrInvalidStackOperation, str)
@@ -286,7 +288,8 @@ func (s *stack) SwapN(n int32) (e error) {
 // OverN(2): [... x1 x2 x3 x4] -> [... x1 x2 x3 x4 x1 x2]
 func (s *stack) OverN(n int32) (e error) {
 	if n < 1 {
-		str := fmt.Sprintf("attempt to perform over on %d stack items",
+		str := fmt.Sprintf(
+			"attempt to perform over on %d stack items",
 			n,
 		)
 		return scriptError(ErrInvalidStackOperation, str)

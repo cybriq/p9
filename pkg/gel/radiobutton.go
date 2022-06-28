@@ -16,7 +16,8 @@ type RadioButton struct {
 }
 
 // RadioButton returns a RadioButton with a label. The key specifies the value for the Enum.
-func (w *Window) RadioButton(checkable *Checkable, group *Enum, key,
+func (w *Window) RadioButton(
+	checkable *Checkable, group *Enum, key,
 	label string,
 ) *RadioButton {
 	// if checkable == nil {

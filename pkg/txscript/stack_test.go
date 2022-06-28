@@ -14,7 +14,8 @@ func tstCheckScriptError(gotErr, wantErr error) (e error) {
 	// Ensure the error code is of the expected type and the error code matches the value specified in the test
 	// instance.
 	if reflect.TypeOf(gotErr) != reflect.TypeOf(wantErr) {
-		return fmt.Errorf("wrong error - got %T (%[1]v), want %T",
+		return fmt.Errorf(
+			"wrong error - got %T (%[1]v), want %T",
 			gotErr, wantErr,
 		)
 	}
@@ -30,7 +31,8 @@ func tstCheckScriptError(gotErr, wantErr error) (e error) {
 	// are the same type and the want error is a script error.
 	gotErrorCode := gotErr.(ScriptError).ErrorCode
 	if gotErrorCode != werr.ErrorCode {
-		return fmt.Errorf("mismatched error code - got %v (%v), want %v",
+		return fmt.Errorf(
+			"mismatched error code - got %v (%v), want %v",
 			gotErrorCode, gotErr, werr.ErrorCode,
 		)
 	}
@@ -895,8 +897,9 @@ func TestStack(t *testing.T) {
 		}
 		// Ensure the resulting stack is the expected length.
 		if int32(len(test.after)) != s.Depth() {
-			t.Errorf("%s: stack depth doesn't match expected: %v "+
-				"vs %v", test.name, len(test.after),
+			t.Errorf(
+				"%s: stack depth doesn't match expected: %v "+
+					"vs %v", test.name, len(test.after),
 				s.Depth(),
 			)
 			continue
@@ -906,14 +909,16 @@ func TestStack(t *testing.T) {
 			var val []byte
 			val, e = s.PeekByteArray(s.Depth() - int32(i) - 1)
 			if e != nil {
-				t.Errorf("%s: can't peek %dth stack entry: %v",
+				t.Errorf(
+					"%s: can't peek %dth stack entry: %v",
 					test.name, i, e,
 				)
 				break
 			}
 			if !bytes.Equal(val, test.after[i]) {
-				t.Errorf("%s: %dth stack entry doesn't match "+
-					"expected: %v vs %v", test.name, i, val,
+				t.Errorf(
+					"%s: %dth stack entry doesn't match "+
+						"expected: %v vs %v", test.name, i, val,
 					test.after[i],
 				)
 				break

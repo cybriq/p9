@@ -2,6 +2,7 @@ package ring
 
 import (
 	"context"
+
 	"github.com/cybriq/p9/pkg/log"
 
 	"github.com/marusama/semaphore"

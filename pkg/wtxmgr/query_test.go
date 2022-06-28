@@ -6,9 +6,10 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/cybriq/p9/pkg/amt"
 	"testing"
 	"time"
+
+	"github.com/cybriq/p9/pkg/amt"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/walletdb"
@@ -448,7 +449,8 @@ func TestStoreQueries(t *testing.T) {
 				return e
 			}
 			if missingDetails != nil {
-				return fmt.Errorf("expected no details, found details for tx %v",
+				return fmt.Errorf(
+					"expected no details, found details for tx %v",
 					missingDetails.Hash,
 				)
 			}
@@ -469,7 +471,8 @@ func TestStoreQueries(t *testing.T) {
 					t.Fatal(e)
 				}
 				if missingDetails != nil {
-					t.Errorf("Expected no details, found details for tx %v",
+					t.Errorf(
+						"Expected no details, found details for tx %v",
 						missingDetails.Hash,
 					)
 				}
@@ -485,7 +488,8 @@ func TestStoreQueries(t *testing.T) {
 				t.Log(e)
 			}
 			if iterations != 1 {
-				t.Errorf("RangeTransactions (forwards) ran func %d times",
+				t.Errorf(
+					"RangeTransactions (forwards) ran func %d times",
 					iterations,
 				)
 			}
@@ -500,7 +504,8 @@ func TestStoreQueries(t *testing.T) {
 				t.Log(e)
 			}
 			if iterations != 1 {
-				t.Errorf("RangeTransactions (reverse) ran func %d times",
+				t.Errorf(
+					"RangeTransactions (reverse) ran func %d times",
 					iterations,
 				)
 			}
@@ -519,7 +524,8 @@ func TestStoreQueries(t *testing.T) {
 				t.Log(e)
 			}
 			if iterations != 1 {
-				t.Errorf("RangeTransactions (reverse) ran func %d times",
+				t.Errorf(
+					"RangeTransactions (reverse) ran func %d times",
 					iterations,
 				)
 			}
@@ -598,7 +604,8 @@ func TestPreviousPkScripts(t *testing.T) {
 	)
 	// Create a transaction spending two prevous outputs and generating two new outputs the passed pkScipts. Spends
 	// outputs 0 and 1 from prevHash.
-	buildTx := func(prevHash *chainhash.Hash, script0, script1 []byte,
+	buildTx := func(
+		prevHash *chainhash.Hash, script0, script1 []byte,
 	) *wire.MsgTx {
 		return &wire.MsgTx{
 			TxIn: []*wire.TxIn{
@@ -639,7 +646,8 @@ func TestPreviousPkScripts(t *testing.T) {
 		txD  = buildTx(&recC.Hash, nil, nil)
 		recD = newTxRecordFromMsgTx(txD)
 	)
-	insertTx := func(ns walletdb.ReadWriteBucket, rec *TxRecord,
+	insertTx := func(
+		ns walletdb.ReadWriteBucket, rec *TxRecord,
 		block *BlockMeta,
 	) {
 		e = s.InsertTx(ns, rec, block)
@@ -647,7 +655,8 @@ func TestPreviousPkScripts(t *testing.T) {
 			t.Fatal(e)
 		}
 	}
-	addCredit := func(ns walletdb.ReadWriteBucket, rec *TxRecord,
+	addCredit := func(
+		ns walletdb.ReadWriteBucket, rec *TxRecord,
 		block *BlockMeta, index uint32,
 	) {
 		e = s.AddCredit(ns, rec, block, index, false)

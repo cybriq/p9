@@ -29,14 +29,16 @@ func TestGetBlocks(t *testing.T) {
 	// Ensure we get the same data back out.
 	msg := NewMsgGetBlocks(hashStop)
 	if !msg.HashStop.IsEqual(hashStop) {
-		t.Errorf("NewMsgGetBlocks: wrong stop hash - got %v, want %v",
+		t.Errorf(
+			"NewMsgGetBlocks: wrong stop hash - got %v, want %v",
 			msg.HashStop, hashStop,
 		)
 	}
 	// Ensure the command is expected value.
 	wantCmd := "getblocks"
 	if cmd := msg.Command(); cmd != wantCmd {
-		t.Errorf("NewMsgGetBlocks: wrong command - got %v want %v",
+		t.Errorf(
+			"NewMsgGetBlocks: wrong command - got %v want %v",
 			cmd, wantCmd,
 		)
 	}
@@ -45,8 +47,9 @@ func TestGetBlocks(t *testing.T) {
 	wantPayload := uint32(16045)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -56,8 +59,9 @@ func TestGetBlocks(t *testing.T) {
 		t.Errorf("AddBlockLocatorHash: %v", e)
 	}
 	if msg.BlockLocatorHashes[0] != locatorHash {
-		t.Errorf("AddBlockLocatorHash: wrong block locator added - "+
-			"got %v, want %v",
+		t.Errorf(
+			"AddBlockLocatorHash: wrong block locator added - "+
+				"got %v, want %v",
 			spew.Sprint(msg.BlockLocatorHashes[0]),
 			spew.Sprint(locatorHash),
 		)
@@ -67,8 +71,9 @@ func TestGetBlocks(t *testing.T) {
 		e = msg.AddBlockLocatorHash(locatorHash)
 	}
 	if e == nil {
-		t.Errorf("AddBlockLocatorHash: expected error on too many " +
-			"block locator hashes not received",
+		t.Errorf(
+			"AddBlockLocatorHash: expected error on too many " +
+				"block locator hashes not received",
 		)
 	}
 }
@@ -232,7 +237,8 @@ func TestGetBlocksWire(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("BtcEncode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcEncode #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -246,7 +252,8 @@ func TestGetBlocksWire(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(&msg, test.out) {
-			t.Errorf("BtcDecode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcDecode #%d\n got: %s want: %s", i,
 				spew.Sdump(&msg), spew.Sdump(test.out),
 			)
 			continue
@@ -315,7 +322,8 @@ func TestGetBlocksWireErrors(t *testing.T) {
 			t.Log(e)
 		}
 	}
-	maxGetBlocks.BlockLocatorHashes = append(maxGetBlocks.BlockLocatorHashes,
+	maxGetBlocks.BlockLocatorHashes = append(
+		maxGetBlocks.BlockLocatorHashes,
 		&mainNetGenesisHash,
 	)
 	maxGetBlocksEncoded := []byte{
@@ -332,23 +340,28 @@ func TestGetBlocksWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Force error in protocol version.
-		{baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 0,
+		{
+			baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 0,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in block locator hash count.
-		{baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 4,
+		{
+			baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 4,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in block locator hashes.
-		{baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 5,
+		{
+			baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 5,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error in stop hash.
-		{baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 69,
+		{
+			baseGetBlocks, baseGetBlocksEncoded, pver, BaseEncoding, 69,
 			io.ErrShortWrite, io.EOF,
 		},
 		// Force error with greater than max block locator hashes.
-		{maxGetBlocks, maxGetBlocksEncoded, pver, BaseEncoding, 7, wireErr,
+		{
+			maxGetBlocks, maxGetBlocksEncoded, pver, BaseEncoding, 7, wireErr,
 			wireErr,
 		},
 	}
@@ -358,7 +371,8 @@ func TestGetBlocksWireErrors(t *testing.T) {
 		w := newFixedWriter(test.max)
 		e := test.in.BtcEncode(w, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.writeErr) {
-			t.Errorf("BtcEncode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcEncode #%d wrong error got: %v, want: %v",
 				i, e, test.writeErr,
 			)
 			continue
@@ -366,8 +380,9 @@ func TestGetBlocksWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.writeErr {
-				t.Errorf("BtcEncode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.writeErr,
+				t.Errorf(
+					"BtcEncode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.writeErr,
 				)
 				continue
 			}
@@ -377,7 +392,8 @@ func TestGetBlocksWireErrors(t *testing.T) {
 		r := newFixedReader(test.max, test.buf)
 		e = msg.BtcDecode(r, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.readErr) {
-			t.Errorf("BtcDecode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcDecode #%d wrong error got: %v, want: %v",
 				i, e, test.readErr,
 			)
 			continue
@@ -385,8 +401,9 @@ func TestGetBlocksWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.readErr {
-				t.Errorf("BtcDecode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.readErr,
+				t.Errorf(
+					"BtcDecode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.readErr,
 				)
 				continue
 			}

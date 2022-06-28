@@ -58,7 +58,8 @@ type App struct {
 
 type WidgetMap map[string]l.Widget
 
-func (w *Window) App(size *atomic.Int32, activePage *atomic.String,
+func (w *Window) App(
+	size *atomic.Int32, activePage *atomic.String,
 	Break1 float32,
 ) *App {
 	// mc := w.Clickable()
@@ -129,7 +130,8 @@ func (a *App) MainDirection() l.Direction {
 // Fn renders the node widget
 func (a *App) Fn() func(gtx l.Context) l.Dimensions {
 	return func(gtx l.Context) l.Dimensions {
-		return a.Fill(a.bodyBackground, l.Center, 0, 0,
+		return a.Fill(
+			a.bodyBackground, l.Center, 0, 0,
 			a.VFlex().
 				Rigid(
 					a.RenderHeader,
@@ -167,9 +169,11 @@ func (a *App) RenderHeader(gtx l.Context) l.Dimensions {
 			a.Theme.Responsive(
 				a.Size.Load(),
 				Widgets{
-					{Widget: If(len(a.sideBar) > 0, a.MenuButton,
-						a.NoMenuButton,
-					),
+					{
+						Widget: If(
+							len(a.sideBar) > 0, a.MenuButton,
+							a.NoMenuButton,
+						),
 					},
 					{Size: a.Break1, Widget: a.NoMenuButton},
 				},
@@ -376,9 +380,11 @@ func (a *App) RenderPage(gtx l.Context) l.Dimensions {
 }
 
 func (a *App) DimensionCaption(gtx l.Context) l.Dimensions {
-	return a.Caption(fmt.Sprintf("%dx%d", gtx.Constraints.Max.X,
-		gtx.Constraints.Max.Y,
-	),
+	return a.Caption(
+		fmt.Sprintf(
+			"%dx%d", gtx.Constraints.Max.X,
+			gtx.Constraints.Max.Y,
+		),
 	).Fn(gtx)
 }
 

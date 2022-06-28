@@ -2,8 +2,9 @@ package mempool
 
 import (
 	"fmt"
-	"github.com/cybriq/p9/pkg/amt"
 	"time"
+
+	"github.com/cybriq/p9/pkg/amt"
 
 	"github.com/cybriq/p9/pkg/blockchain"
 	"github.com/cybriq/p9/pkg/txscript"
@@ -46,7 +47,8 @@ const (
 // calcMinRequiredTxRelayFee returns the minimum transaction fee required for a
 // transaction with the passed serialized size to be accepted into the memory
 // pool and relayed.
-func calcMinRequiredTxRelayFee(serializedSize int64, minRelayTxFee amt.Amount,
+func calcMinRequiredTxRelayFee(
+	serializedSize int64, minRelayTxFee amt.Amount,
 ) int64 {
 	// Calculate the minimum fee for a transaction to be allowed into the mempool
 	// and relayed by scaling the base fee ( which is the minimum free transaction
@@ -75,7 +77,8 @@ func calcMinRequiredTxRelayFee(serializedSize int64, minRelayTxFee amt.Amount,
 // not perform those checks because the script engine already does this more
 // accurately and concisely via the txscript. ScriptVerifyCleanStack and
 // txscript.ScriptVerifySigPushOnly flags.
-func checkInputsStandard(tx *util.Tx, utxoView *blockchain.UtxoViewpoint,
+func checkInputsStandard(
+	tx *util.Tx, utxoView *blockchain.UtxoViewpoint,
 ) (e error) {
 	// NOTE: The reference implementation also does a coinbase check here, but
 	// coinbases have already been rejected prior to calling this function so no
@@ -114,7 +117,8 @@ func checkInputsStandard(tx *util.Tx, utxoView *blockchain.UtxoViewpoint,
 // standard public key script is one that is a recognized form, and for
 // multi-signature scripts only contains from 1 to maxStandardMultiSigKeys
 // public keys.
-func checkPkScriptStandard(pkScript []byte, scriptClass txscript.ScriptClass,
+func checkPkScriptStandard(
+	pkScript []byte, scriptClass txscript.ScriptClass,
 ) (e error) {
 	switch scriptClass {
 	case txscript.MultiSigTy:

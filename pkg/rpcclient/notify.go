@@ -6,9 +6,10 @@ import (
 	js "encoding/json"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/cybriq/p9/pkg/amt"
 	"github.com/cybriq/p9/pkg/btcaddr"
-	"time"
 
 	"github.com/cybriq/p9/pkg/btcjson"
 	"github.com/cybriq/p9/pkg/chainhash"
@@ -91,7 +92,8 @@ type NotificationHandlers struct {
 	// invoked if a preceding call to NotifyBlocks has been made to register for the notification and the function is
 	// non-nil. Its parameters differ from OnBlockConnected: it receives the block's height, header, and relevant
 	// transactions.
-	OnFilteredBlockConnected func(height int32, header *wire.BlockHeader,
+	OnFilteredBlockConnected func(
+		height int32, header *wire.BlockHeader,
 		txs []*util.Tx,
 	)
 	// OnBlockDisconnected is invoked when a block is disconnected from the longest (best) chain. It will only be
@@ -507,7 +509,8 @@ func parseHexParam(param js.RawMessage) ([]byte, error) {
 }
 
 // parseRelevantTxAcceptedParams parses out the parameter included in a relevanttxaccepted notification.
-func parseRelevantTxAcceptedParams(params []js.RawMessage) (transaction []byte,
+func parseRelevantTxAcceptedParams(params []js.RawMessage) (
+	transaction []byte,
 	e error,
 ) {
 	if len(params) < 1 {
@@ -557,7 +560,8 @@ func parseChainTxNtfnParams(params []js.RawMessage) (
 
 // parseRescanProgressParams parses out the height of the last rescanned block from the parameters of rescanfinished and
 // rescanprogress notifications.
-func parseRescanProgressParams(params []js.RawMessage) (*chainhash.Hash, int32,
+func parseRescanProgressParams(params []js.RawMessage) (
+	*chainhash.Hash, int32,
 	time.Time, error,
 ) {
 	if len(params) != 3 {
@@ -1159,7 +1163,8 @@ func (c *Client) LoadTxFilterAsync(
 // for all rescanned blocks.
 //
 // NOTE: This is a pod extension ported from github. com/decred/dcrrpcclient and requires a websocket connection.
-func (c *Client) LoadTxFilter(reload bool, addresses []btcaddr.Address,
+func (c *Client) LoadTxFilter(
+	reload bool, addresses []btcaddr.Address,
 	outPoints []wire.OutPoint,
 ) (e error) {
 	return c.LoadTxFilterAsync(reload, addresses, outPoints).Receive()

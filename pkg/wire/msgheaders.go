@@ -33,7 +33,11 @@ func (msg *MsgHeaders) AddBlockHeader(bh *BlockHeader) (e error) {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver.
 // This is part of the Message interface implementation.
-func (msg *MsgHeaders) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgHeaders) BtcDecode(
+	r io.Reader,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	var count uint64
 	if count, e = ReadVarInt(r, pver); E.Chk(e) {
 		return
@@ -75,7 +79,11 @@ func (msg *MsgHeaders) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) 
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This
 // is part of the Message interface implementation.
-func (msg *MsgHeaders) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgHeaders) BtcEncode(
+	w io.Writer,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	// Limit to max block headers per message.
 	count := len(msg.Headers)
 	if count > MaxBlockHeadersPerMsg {

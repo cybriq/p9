@@ -646,7 +646,8 @@ func (c *Client) handleSendPostMessage(details *sendPostDetails) {
 	if e = js.Unmarshal(respBytes, &resp); E.Chk(e) {
 		// When the response itself isn't a valid JSON-RPC response return an error
 		// which includes the HTTP status code and raw response bytes.
-		e = fmt.Errorf("status code: %d, response: %q", httpResponse.StatusCode,
+		e = fmt.Errorf(
+			"status code: %d, response: %q", httpResponse.StatusCode,
 			string(respBytes),
 		)
 		jReq.responseChan <- &response{err: e}
@@ -1133,7 +1134,8 @@ func dial(config *ConnConfig) (*websocket.Conn, error) {
 // The notification handlers parameter may be nil if you are not interested in
 // receiving notifications and will be ignored if the configuration is set to
 // run in HTTP POST mode.
-func New(config *ConnConfig, ntfnHandlers *NotificationHandlers, quit qu.C,
+func New(
+	config *ConnConfig, ntfnHandlers *NotificationHandlers, quit qu.C,
 ) (*Client, error) {
 	// Either open a websocket connection or create an HTTP client depending on the
 	// HTTP POST mode. Also, set the notification handlers to nil when running in

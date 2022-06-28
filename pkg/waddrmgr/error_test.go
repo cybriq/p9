@@ -41,7 +41,8 @@ func TestErrorCodeStringer(t *testing.T) {
 	for i, test := range tests {
 		result := test.in.String()
 		if result != test.want {
-			t.Errorf("String #%d\ngot: %s\nwant: %s", i, result,
+			t.Errorf(
+				"String #%d\ngot: %s\nwant: %s", i, result,
 				test.want,
 			)
 			continue
@@ -98,7 +99,8 @@ func TestManagerError(t *testing.T) {
 	for i, test := range tests {
 		result := test.in.Error()
 		if result != test.want {
-			t.Errorf("Error #%d\ngot: %s\nwant: %s", i, result,
+			t.Errorf(
+				"Error #%d\ngot: %s\nwant: %s", i, result,
 				test.want,
 			)
 			continue

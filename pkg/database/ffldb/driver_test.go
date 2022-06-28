@@ -2,11 +2,12 @@ package ffldb_test
 
 import (
 	"fmt"
-	"github.com/cybriq/p9/pkg/block"
 	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
+
+	"github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/database"

@@ -36,8 +36,9 @@ testLoop:
 		// Ensure the limited number of most recent entries in the list exist.
 		for j := numNonces - test.limit; j < numNonces; j++ {
 			if !mruNonceMap.Exists(nonces[j]) {
-				t.Errorf("Exists #%d (%s) entry %d does not "+
-					"exist", i, test.name, nonces[j],
+				t.Errorf(
+					"Exists #%d (%s) entry %d does not "+
+						"exist", i, test.name, nonces[j],
 				)
 				continue testLoop
 			}
@@ -45,7 +46,8 @@ testLoop:
 		// Ensure the entries before the limited number of most recent entries in the list do not exist.
 		for j := 0; j < numNonces-test.limit; j++ {
 			if mruNonceMap.Exists(nonces[j]) {
-				t.Errorf("Exists #%d (%s) entry %d exists", i,
+				t.Errorf(
+					"Exists #%d (%s) entry %d exists", i,
 					test.name, nonces[j],
 				)
 				continue testLoop
@@ -60,7 +62,8 @@ testLoop:
 			mruNonceMap.Add(uint64(numNonces) + 1)
 			// Ensure the original lru entry still exists since it was updated and should've have become the mru entry.
 			if !mruNonceMap.Exists(nonces[origLruIndex]) {
-				t.Errorf("MRU #%d (%s) entry %d does not exist",
+				t.Errorf(
+					"MRU #%d (%s) entry %d does not exist",
 					i, test.name, nonces[origLruIndex],
 				)
 				continue testLoop
@@ -68,7 +71,8 @@ testLoop:
 			// Ensure the entry that should've become the new lru entry was evicted.
 			newLruIndex := origLruIndex + 1
 			if mruNonceMap.Exists(nonces[newLruIndex]) {
-				t.Errorf("MRU #%d (%s) entry %d exists", i,
+				t.Errorf(
+					"MRU #%d (%s) entry %d exists", i,
 					test.name, nonces[newLruIndex],
 				)
 				continue testLoop
@@ -79,7 +83,8 @@ testLoop:
 		for j := 0; j < numNonces; j++ {
 			mruNonceMap.Delete(nonces[j])
 			if mruNonceMap.Exists(nonces[j]) {
-				t.Errorf("Delete #%d (%s) entry %d exists", i,
+				t.Errorf(
+					"Delete #%d (%s) entry %d exists", i,
 					test.name, nonces[j],
 				)
 				continue testLoop
@@ -103,8 +108,9 @@ func TestMruNonceMapStringer(t *testing.T) {
 	wantStr2 := fmt.Sprintf("<%d>[%d, %d]", 2, nonce2, nonce1)
 	gotStr := mruNonceMap.String()
 	if gotStr != wantStr1 && gotStr != wantStr2 {
-		t.Fatalf("unexpected string representation - got %q, want %q "+
-			"or %q", gotStr, wantStr1, wantStr2,
+		t.Fatalf(
+			"unexpected string representation - got %q, want %q "+
+				"or %q", gotStr, wantStr1, wantStr2,
 		)
 	}
 }

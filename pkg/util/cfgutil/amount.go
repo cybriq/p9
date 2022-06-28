@@ -1,9 +1,10 @@
 package cfgutil
 
 import (
-	"github.com/cybriq/p9/pkg/amt"
 	"strconv"
 	"strings"
+
+	"github.com/cybriq/p9/pkg/amt"
 )
 
 // AmountFlag embeds a util.Amount and implements the flags.Marshaler and Unmarshaler interfaces so it can be used as a

@@ -2,9 +2,10 @@ package wallet
 
 import (
 	"bytes"
+	"sync"
+
 	"github.com/cybriq/p9/pkg/amt"
 	"github.com/cybriq/p9/pkg/btcaddr"
-	"sync"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/txscript"
@@ -218,7 +219,8 @@ func (s *NotificationServer) notifyAccountProperties(props *waddrmgr.AccountProp
 		c <- n
 	}
 }
-func (s *NotificationServer) notifyAttachedBlock(dbtx walletdb.ReadTx,
+func (s *NotificationServer) notifyAttachedBlock(
+	dbtx walletdb.ReadTx,
 	block *wtxmgr.BlockMeta,
 ) {
 	if s.currentTxNtfn == nil {
@@ -283,7 +285,8 @@ func (s *NotificationServer) notifyDetachedBlock(hash *chainhash.Hash) {
 	if s.currentTxNtfn == nil {
 		s.currentTxNtfn = &TransactionNotifications{}
 	}
-	s.currentTxNtfn.DetachedBlocks = append(s.currentTxNtfn.DetachedBlocks,
+	s.currentTxNtfn.DetachedBlocks = append(
+		s.currentTxNtfn.DetachedBlocks,
 		hash,
 	)
 }
@@ -331,7 +334,8 @@ func (s *NotificationServer) notifyMinedTransaction(
 // 		c <- n
 // 	}
 // }
-func (s *NotificationServer) notifyUnminedTransaction(dbtx walletdb.ReadTx,
+func (s *NotificationServer) notifyUnminedTransaction(
+	dbtx walletdb.ReadTx,
 	details *wtxmgr.TxDetails,
 ) {
 	// Sanity check: should not be currently coalescing a notification for mined transactions at the same time that an
@@ -377,7 +381,8 @@ func (s *NotificationServer) notifyUnminedTransaction(dbtx walletdb.ReadTx,
 }
 
 // notifyUnspentOutput notifies registered clients of a new unspent output that is controlled by the wallet.
-func (s *NotificationServer) notifyUnspentOutput(account uint32,
+func (s *NotificationServer) notifyUnspentOutput(
+	account uint32,
 	hash *chainhash.Hash, index uint32,
 ) {
 	defer s.mu.Unlock()
@@ -465,7 +470,8 @@ func flattenBalanceMap(m map[uint32]amt.Amount) []AccountBalance {
 	}
 	return s
 }
-func lookupInputAccount(dbtx walletdb.ReadTx, w *Wallet,
+func lookupInputAccount(
+	dbtx walletdb.ReadTx, w *Wallet,
 	details *wtxmgr.TxDetails, deb wtxmgr.DebitRecord,
 ) uint32 {
 	addrmgrNs := dbtx.ReadBucket(waddrmgrNamespaceKey)
@@ -489,7 +495,8 @@ func lookupInputAccount(dbtx walletdb.ReadTx, w *Wallet,
 	}
 	prevOut := prev.MsgTx.TxOut[prevOP.Index]
 	var addrs []btcaddr.Address
-	_, addrs, _, e = txscript.ExtractPkScriptAddrs(prevOut.PkScript,
+	_, addrs, _, e = txscript.ExtractPkScriptAddrs(
+		prevOut.PkScript,
 		w.chainParams,
 	)
 	var inputAcct uint32
@@ -512,7 +519,8 @@ func lookupOutputChain(
 	output := details.MsgTx.TxOut[cred.Index]
 	var addrs []btcaddr.Address
 	var e error
-	_, addrs, _, e = txscript.ExtractPkScriptAddrs(output.PkScript,
+	_, addrs, _, e = txscript.ExtractPkScriptAddrs(
+		output.PkScript,
 		w.chainParams,
 	)
 	var ma waddrmgr.ManagedAddress
@@ -529,7 +537,8 @@ func lookupOutputChain(
 	}
 	return
 }
-func makeTxSummary(dbtx walletdb.ReadTx, w *Wallet, details *wtxmgr.TxDetails,
+func makeTxSummary(
+	dbtx walletdb.ReadTx, w *Wallet, details *wtxmgr.TxDetails,
 ) TransactionSummary {
 	serializedTx := details.SerializedTx
 	if serializedTx == nil {
@@ -567,7 +576,8 @@ func makeTxSummary(dbtx walletdb.ReadTx, w *Wallet, details *wtxmgr.TxDetails,
 		if !mine {
 			continue
 		}
-		acct, internal := lookupOutputChain(dbtx, w, details,
+		acct, internal := lookupOutputChain(
+			dbtx, w, details,
 			details.Credits[credIndex],
 		)
 		output := TransactionSummaryOutput{
@@ -592,7 +602,8 @@ func newNotificationServer(wallet *Wallet) *NotificationServer {
 		wallet:    wallet,
 	}
 }
-func relevantAccounts(w *Wallet, m map[uint32]amt.Amount,
+func relevantAccounts(
+	w *Wallet, m map[uint32]amt.Amount,
 	txs []TransactionSummary,
 ) {
 	for _, tx := range txs {
@@ -604,7 +615,8 @@ func relevantAccounts(w *Wallet, m map[uint32]amt.Amount,
 		}
 	}
 }
-func totalBalances(dbtx walletdb.ReadTx, w *Wallet, m map[uint32]amt.Amount,
+func totalBalances(
+	dbtx walletdb.ReadTx, w *Wallet, m map[uint32]amt.Amount,
 ) (e error) {
 	addrmgrNs := dbtx.ReadBucket(waddrmgrNamespaceKey)
 	unspent, e := w.TxStore.UnspentOutputs(dbtx.ReadBucket(wtxmgrNamespaceKey))

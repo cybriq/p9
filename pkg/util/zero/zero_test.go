@@ -98,7 +98,8 @@ func TestBigInt(t *testing.T) {
 			continue
 		}
 		if v.Cmp(bigZero) != 0 {
-			t.Errorf("Test %d (s=%s) zeroed big.Int represents non-zero number %v",
+			t.Errorf(
+				"Test %d (s=%s) zeroed big.Int represents non-zero number %v",
 				i, s, v,
 			)
 			continue

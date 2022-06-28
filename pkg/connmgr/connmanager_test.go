@@ -70,9 +70,10 @@ func TestNewConfig(t *testing.T) {
 	if e == nil {
 		t.Fatalf("New expected error: 'Dial can't be nil', got nil")
 	}
-	_, e = New(&Config{
-		Dial: mockDialer,
-	},
+	_, e = New(
+		&Config{
+			Dial: mockDialer,
+		},
 	)
 	if e != nil {
 		t.Fatalf("New unexpected error: %v", e)
@@ -83,22 +84,23 @@ func TestNewConfig(t *testing.T) {
 func TestStartStop(t *testing.T) {
 	connected := make(chan *ConnReq)
 	disconnected := make(chan *ConnReq)
-	cmgr, e := New(&Config{
-		TargetOutbound: 1,
-		GetNewAddress: func() (net.Addr, error) {
-			return &net.TCPAddr{
-				IP:   net.ParseIP("127.0.0.1"),
-				Port: 18555,
-			}, nil
+	cmgr, e := New(
+		&Config{
+			TargetOutbound: 1,
+			GetNewAddress: func() (net.Addr, error) {
+				return &net.TCPAddr{
+					IP:   net.ParseIP("127.0.0.1"),
+					Port: 18555,
+				}, nil
+			},
+			Dial: mockDialer,
+			OnConnection: func(c *ConnReq, conn net.Conn) {
+				connected <- c
+			},
+			OnDisconnection: func(c *ConnReq) {
+				disconnected <- c
+			},
 		},
-		Dial: mockDialer,
-		OnConnection: func(c *ConnReq, conn net.Conn) {
-			connected <- c
-		},
-		OnDisconnection: func(c *ConnReq) {
-			disconnected <- c
-		},
-	},
 	)
 	if e != nil {
 		t.Fatalf("New error: %v", e)
@@ -134,13 +136,14 @@ func TestStartStop(t *testing.T) {
 // are disabled, so we test that requests using Connect are handled and that no other connections are made.
 func TestConnectMode(t *testing.T) {
 	connected := make(chan *ConnReq)
-	cmgr, e := New(&Config{
-		TargetOutbound: 2,
-		Dial:           mockDialer,
-		OnConnection: func(c *ConnReq, conn net.Conn) {
-			connected <- c
+	cmgr, e := New(
+		&Config{
+			TargetOutbound: 2,
+			Dial:           mockDialer,
+			OnConnection: func(c *ConnReq, conn net.Conn) {
+				connected <- c
+			},
 		},
-	},
 	)
 	if e != nil {
 		t.Fatalf("New error: %v", e)
@@ -158,14 +161,16 @@ func TestConnectMode(t *testing.T) {
 	wantID := cr.ID()
 	gotID := gotConnReq.ID()
 	if gotID != wantID {
-		t.Fatalf("connect mode: %v - want ID %v, got ID %v", cr.Addr, wantID,
+		t.Fatalf(
+			"connect mode: %v - want ID %v, got ID %v", cr.Addr, wantID,
 			gotID,
 		)
 	}
 	gotState := cr.State()
 	wantState := ConnEstablished
 	if gotState != wantState {
-		t.Fatalf("connect mode: %v - want state %v, got state %v", cr.Addr,
+		t.Fatalf(
+			"connect mode: %v - want state %v, got state %v", cr.Addr,
 			wantState, gotState,
 		)
 	}
@@ -183,19 +188,20 @@ func TestConnectMode(t *testing.T) {
 func TestTargetOutbound(t *testing.T) {
 	targetOutbound := uint32(10)
 	connected := make(chan *ConnReq)
-	cmgr, e := New(&Config{
-		TargetOutbound: targetOutbound,
-		Dial:           mockDialer,
-		GetNewAddress: func() (net.Addr, error) {
-			return &net.TCPAddr{
-				IP:   net.ParseIP("127.0.0.1"),
-				Port: 18555,
-			}, nil
+	cmgr, e := New(
+		&Config{
+			TargetOutbound: targetOutbound,
+			Dial:           mockDialer,
+			GetNewAddress: func() (net.Addr, error) {
+				return &net.TCPAddr{
+					IP:   net.ParseIP("127.0.0.1"),
+					Port: 18555,
+				}, nil
+			},
+			OnConnection: func(c *ConnReq, conn net.Conn) {
+				connected <- c
+			},
 		},
-		OnConnection: func(c *ConnReq, conn net.Conn) {
-			connected <- c
-		},
-	},
 	)
 	if e != nil {
 		t.Fatalf("New error: %v", e)
@@ -218,17 +224,18 @@ func TestTargetOutbound(t *testing.T) {
 func TestRetryPermanent(t *testing.T) {
 	connected := make(chan *ConnReq)
 	disconnected := make(chan *ConnReq)
-	cmgr, e := New(&Config{
-		RetryDuration:  time.Millisecond,
-		TargetOutbound: 1,
-		Dial:           mockDialer,
-		OnConnection: func(c *ConnReq, conn net.Conn) {
-			connected <- c
+	cmgr, e := New(
+		&Config{
+			RetryDuration:  time.Millisecond,
+			TargetOutbound: 1,
+			Dial:           mockDialer,
+			OnConnection: func(c *ConnReq, conn net.Conn) {
+				connected <- c
+			},
+			OnDisconnection: func(c *ConnReq) {
+				disconnected <- c
+			},
 		},
-		OnDisconnection: func(c *ConnReq) {
-			disconnected <- c
-		},
-	},
 	)
 	if e != nil {
 		t.Fatalf("New error: %v", e)
@@ -251,7 +258,8 @@ func TestRetryPermanent(t *testing.T) {
 	gotState := cr.State()
 	wantState := ConnEstablished
 	if gotState != wantState {
-		t.Fatalf("retry: %v - want state %v, got state %v", cr.Addr, wantState,
+		t.Fatalf(
+			"retry: %v - want state %v, got state %v", cr.Addr, wantState,
 			gotState,
 		)
 	}
@@ -265,7 +273,8 @@ func TestRetryPermanent(t *testing.T) {
 	gotState = cr.State()
 	wantState = ConnPending
 	if gotState != wantState {
-		t.Fatalf("retry: %v - want state %v, got state %v", cr.Addr, wantState,
+		t.Fatalf(
+			"retry: %v - want state %v, got state %v", cr.Addr, wantState,
 			gotState,
 		)
 	}
@@ -278,7 +287,8 @@ func TestRetryPermanent(t *testing.T) {
 	gotState = cr.State()
 	wantState = ConnEstablished
 	if gotState != wantState {
-		t.Fatalf("retry: %v - want state %v, got state %v", cr.Addr, wantState,
+		t.Fatalf(
+			"retry: %v - want state %v, got state %v", cr.Addr, wantState,
 			gotState,
 		)
 	}
@@ -292,7 +302,8 @@ func TestRetryPermanent(t *testing.T) {
 	gotState = cr.State()
 	wantState = ConnDisconnected
 	if gotState != wantState {
-		t.Fatalf("retry: %v - want state %v, got state %v", cr.Addr, wantState,
+		t.Fatalf(
+			"retry: %v - want state %v, got state %v", cr.Addr, wantState,
 			gotState,
 		)
 	}
@@ -303,9 +314,10 @@ func TestRetryPermanent(t *testing.T) {
 // RetryDuration hits maxRetryDuration returns a mock conn.
 func TestMaxRetryDuration(t *testing.T) {
 	networkUp := qu.T()
-	time.AfterFunc(5*time.Millisecond, func() {
-		networkUp.Q()
-	},
+	time.AfterFunc(
+		5*time.Millisecond, func() {
+			networkUp.Q()
+		},
 	)
 	timedDialer := func(addr net.Addr) (net.Conn, error) {
 		select {
@@ -316,14 +328,15 @@ func TestMaxRetryDuration(t *testing.T) {
 		}
 	}
 	connected := make(chan *ConnReq)
-	cmgr, e := New(&Config{
-		RetryDuration:  time.Millisecond,
-		TargetOutbound: 1,
-		Dial:           timedDialer,
-		OnConnection: func(c *ConnReq, conn net.Conn) {
-			connected <- c
+	cmgr, e := New(
+		&Config{
+			RetryDuration:  time.Millisecond,
+			TargetOutbound: 1,
+			Dial:           timedDialer,
+			OnConnection: func(c *ConnReq, conn net.Conn) {
+				connected <- c
+			},
 		},
-	},
 	)
 	if e != nil {
 		t.Fatalf("New error: %v", e)
@@ -354,20 +367,24 @@ func TestNetworkFailure(t *testing.T) {
 		atomic.AddUint32(&dials, 1)
 		return nil, errors.New("network down")
 	}
-	cmgr, e := New(&Config{
-		TargetOutbound: 5,
-		RetryDuration:  5 * time.Millisecond,
-		Dial:           errDialer,
-		GetNewAddress: func() (net.Addr, error) {
-			return &net.TCPAddr{
-				IP:   net.ParseIP("127.0.0.1"),
-				Port: 18555,
-			}, nil
+	cmgr, e := New(
+		&Config{
+			TargetOutbound: 5,
+			RetryDuration:  5 * time.Millisecond,
+			Dial:           errDialer,
+			GetNewAddress: func() (net.Addr, error) {
+				return &net.TCPAddr{
+					IP:   net.ParseIP("127.0.0.1"),
+					Port: 18555,
+				}, nil
+			},
+			OnConnection: func(c *ConnReq, conn net.Conn) {
+				t.Fatalf(
+					"network failure: got unexpected connection - %v",
+					c.Addr,
+				)
+			},
 		},
-		OnConnection: func(c *ConnReq, conn net.Conn) {
-			t.Fatalf("network failure: got unexpected connection - %v", c.Addr)
-		},
-	},
 	)
 	if e != nil {
 		t.Fatalf("New error: %v", e)
@@ -377,7 +394,8 @@ func TestNetworkFailure(t *testing.T) {
 	cmgr.Wait()
 	wantMaxDials := uint32(75)
 	if atomic.LoadUint32(&dials) > wantMaxDials {
-		t.Fatalf("network failure: unexpected number of dials - got %v, want < %v",
+		t.Fatalf(
+			"network failure: unexpected number of dials - got %v, want < %v",
 			atomic.LoadUint32(&dials), wantMaxDials,
 		)
 	}
@@ -393,9 +411,10 @@ func TestStopFailed(t *testing.T) {
 		time.Sleep(time.Millisecond)
 		return nil, errors.New("network down")
 	}
-	cmgr, e := New(&Config{
-		Dial: waitDialer,
-	},
+	cmgr, e := New(
+		&Config{
+			Dial: waitDialer,
+		},
 	)
 	if e != nil {
 		t.Fatalf("New error: %v", e)
@@ -428,9 +447,10 @@ func TestRemovePendingConnection(t *testing.T) {
 		<-wait
 		return nil, fmt.Errorf("error")
 	}
-	cmgr, e := New(&Config{
-		Dial: indefiniteDialer,
-	},
+	cmgr, e := New(
+		&Config{
+			Dial: indefiniteDialer,
+		},
 	)
 	if e != nil {
 		t.Fatalf("New error: %v", e)
@@ -447,7 +467,8 @@ func TestRemovePendingConnection(t *testing.T) {
 	go cmgr.Connect(cr)
 	time.Sleep(10 * time.Millisecond)
 	if cr.State() != ConnPending {
-		t.Fatalf("pending request hasn't been registered, status: %v",
+		t.Fatalf(
+			"pending request hasn't been registered, status: %v",
 			cr.State(),
 		)
 	}
@@ -480,13 +501,14 @@ func TestCancelIgnoreDelayedConnection(t *testing.T) {
 		return nil, fmt.Errorf("error")
 	}
 	connected := make(chan *ConnReq)
-	cmgr, e := New(&Config{
-		Dial:          failingDialer,
-		RetryDuration: retryTimeout,
-		OnConnection: func(c *ConnReq, conn net.Conn) {
-			connected <- c
+	cmgr, e := New(
+		&Config{
+			Dial:          failingDialer,
+			RetryDuration: retryTimeout,
+			OnConnection: func(c *ConnReq, conn net.Conn) {
+				connected <- c
+			},
 		},
-	},
 	)
 	if e != nil {
 		t.Fatalf("New error: %v", e)
@@ -506,7 +528,8 @@ func TestCancelIgnoreDelayedConnection(t *testing.T) {
 	// Connection be marked as failed, even after reattempting to
 	// connect.
 	if cr.State() != ConnFailing {
-		t.Fatalf("failing request should have status failed, status: %v",
+		t.Fatalf(
+			"failing request should have status failed, status: %v",
 			cr.State(),
 		)
 	}
@@ -586,13 +609,14 @@ func TestListeners(t *testing.T) {
 	listener1 := newMockListener("127.0.0.1:11047")
 	listener2 := newMockListener("127.0.0.1:9333")
 	listeners := []net.Listener{listener1, listener2}
-	cmgr, e := New(&Config{
-		Listeners: listeners,
-		OnAccept: func(conn net.Conn) {
-			receivedConns <- conn
+	cmgr, e := New(
+		&Config{
+			Listeners: listeners,
+			OnAccept: func(conn net.Conn) {
+				receivedConns <- conn
+			},
+			Dial: mockDialer,
 		},
-		Dial: mockDialer,
-	},
 	)
 	if e != nil {
 		t.Fatalf("New error: %v", e)
@@ -619,7 +643,8 @@ out:
 				break out
 			}
 		case <-time.After(time.Millisecond * 50):
-			t.Fatalf("Timeout waiting for %d expected connections",
+			t.Fatalf(
+				"Timeout waiting for %d expected connections",
 				expectedNumConns,
 			)
 		}

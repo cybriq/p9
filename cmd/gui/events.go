@@ -27,9 +27,11 @@ func (wg *WalletGUI) Advertise() (e error) {
 		// I.Ln("sending out p2p advertisment")
 		if e = wg.multiConn.SendMany(
 			p2padvt.Magic,
-			transport.GetShards(p2padvt.Get(uint64(wg.cx.Config.UUID.V()),
-				(wg.cx.Config.P2PListeners.S())[0],
-			),
+			transport.GetShards(
+				p2padvt.Get(
+					uint64(wg.cx.Config.UUID.V()),
+					(wg.cx.Config.P2PListeners.S())[0],
+				),
 			),
 		); E.Chk(e) {
 		}
@@ -203,7 +205,8 @@ func (wg *WalletGUI) updateChainBlock() {
 	wg.State.SetBestBlockHash(h)
 }
 
-func (wg *WalletGUI) processChainBlockNotification(hash *chainhash.Hash,
+func (wg *WalletGUI) processChainBlockNotification(
+	hash *chainhash.Hash,
 	height int32, t time.Time,
 ) {
 	D.Ln("processChainBlockNotification")
@@ -234,7 +237,10 @@ func (wg *WalletGUI) processWalletBlockNotification() bool {
 	wg.State.SetBalance(confirmed.ToDUO())
 	var atr []btcjson.ListTransactionsResult
 	// str := wg.State.allTxs.Load()
-	if atr, e = wg.WalletClient.ListTransactionsCount("default", 2<<32); E.Chk(e) {
+	if atr, e = wg.WalletClient.ListTransactionsCount(
+		"default",
+		2<<32,
+	); E.Chk(e) {
 		return false
 	}
 	// D.Ln(len(atr))
@@ -297,7 +303,8 @@ func (wg *WalletGUI) ChainNotifications() *rpcclient.NotificationHandlers {
 		// 	wg.RecentTransactions(-1, "history")
 		// 	wg.invalidate <- struct{}{}
 		// },
-		OnFilteredBlockConnected: func(height int32, header *wire.BlockHeader,
+		OnFilteredBlockConnected: func(
+			height int32, header *wire.BlockHeader,
 			txs []*util.Tx,
 		) {
 			nbh := header.BlockHash()

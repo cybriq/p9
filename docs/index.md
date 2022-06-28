@@ -1,4 +1,4 @@
-[![](https://raw.githubusercontent.com/p9c/p9/main/pkg/logo/logo_nocircle128x128.svg)](https://p9c.github.io/pod/) 
+[![](https://raw.githubusercontent.com/p9c/p9/main/pkg/logo/logo_nocircle128x128.svg)](https://p9c.github.io/pod/)
 
 # ParallelCoin pod
 
@@ -10,9 +10,9 @@
 
 ![](https://raw.githubusercontent.com/p9c/p9/main/docs/GitHub-Mark-32px.png) [github.com/cybriq/p9](https://github.com/cybriq/p9)
 
-wiki: [![](https://raw.githubusercontent.com/p9c/p9/main/docs/wiki.svg)](https://github.com/cybriq/p9/wiki) 
-social: [![](https://raw.githubusercontent.com/p9c/p9/main/docs/telegram.svg)](https://t.me/ParallelCoinPlan9) 
-[![](https://raw.githubusercontent.com/p9c/p9/main/docs/discord.svg)](https://discord.gg/yB9sYmm3cZ) 
+wiki: [![](https://raw.githubusercontent.com/p9c/p9/main/docs/wiki.svg)](https://github.com/cybriq/p9/wiki)
+social: [![](https://raw.githubusercontent.com/p9c/p9/main/docs/telegram.svg)](https://t.me/ParallelCoinPlan9)
+[![](https://raw.githubusercontent.com/p9c/p9/main/docs/discord.svg)](https://discord.gg/yB9sYmm3cZ)
 [![](https://raw.githubusercontent.com/p9c/p9/main/docs/fb.svg)](https://www.facebook.com/parallelcoin)
 [![](https://raw.githubusercontent.com/p9c/p9/main/docs/twitter.svg)](https://twitter.com/parallelcoinduo)
 [![](https://raw.githubusercontent.com/p9c/p9/main/docs/GitHub-Mark-32px.png)](https://github.com/cybriq/p9/discussions)
@@ -21,7 +21,7 @@ social: [![](https://raw.githubusercontent.com/p9c/p9/main/docs/telegram.svg)](h
 
 [![](https://raw.githubusercontent.com/p9c/p9/main/docs/socialpreview.jpg)](https://raw.githubusercontent.com/p9c/p9/main/docs/whitepaper/whitepaper.md)
 
-click the image above  for the **ParallelCoin** *Plan 9 from Crypto Space* 
+click the image above for the **ParallelCoin** *Plan 9 from Crypto Space*
 Whitepaper
 
 ---

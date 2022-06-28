@@ -444,7 +444,8 @@ out:
 			auth := "Basic " + base64.StdEncoding.EncodeToString([]byte(login))
 			authSha := sha256.Sum256([]byte(auth))
 			cmp := subtle.ConstantTimeCompare(authSha[:], c.Server.AuthSHA[:])
-			limitcmp := subtle.ConstantTimeCompare(authSha[:],
+			limitcmp := subtle.ConstantTimeCompare(
+				authSha[:],
 				c.Server.LimitAuthSHA[:],
 			)
 			if cmp != 1 && limitcmp != 1 {
@@ -1178,12 +1179,14 @@ func (*WSNtfnMgr) NotifyFilteredBlockDisconnected(
 	var w bytes.Buffer
 	e := block.WireBlock().Header.Serialize(&w)
 	if e != nil {
-		E.Ln("failed to serialize header for filtered block disconnected notification:",
+		E.Ln(
+			"failed to serialize header for filtered block disconnected notification:",
 			e,
 		)
 		return
 	}
-	ntfn := btcjson.NewFilteredBlockDisconnectedNtfn(block.Height(),
+	ntfn := btcjson.NewFilteredBlockDisconnectedNtfn(
+		block.Height(),
 		hex.EncodeToString(w.Bytes()),
 	)
 	marshalledJSON, e := btcjson.MarshalCmd(nil, ntfn)
@@ -1289,7 +1292,8 @@ func (m *WSNtfnMgr) NotifyForTxIns(
 			if txHex == "" {
 				txHex = TxHexString(tx.MsgTx())
 			}
-			marshalledJSON, e := NewRedeemingTxNotification(txHex, tx.Index(),
+			marshalledJSON, e := NewRedeemingTxNotification(
+				txHex, tx.Index(),
 				block,
 			)
 			if e != nil {
@@ -1899,7 +1903,8 @@ fetchRange:
 			// A select statement is used to stop rescans if the client requesting the rescan has disconnected.
 			select {
 			case <-wsc.Quit.Wait():
-				D.F("stopped rescan at height %v for disconnected client",
+				D.F(
+					"stopped rescan at height %v for disconnected client",
 					blk.Height(),
 				)
 				return nil, nil
@@ -2362,7 +2367,8 @@ func RescanBlock(wsc *WSClient, lookups *RescanKeys, blk *block.Block) {
 							found = true
 						}
 					default:
-						W.F("skipping rescanned pubkey of unknown serialized length",
+						W.F(
+							"skipping rescanned pubkey of unknown serialized length",
 							len(sa),
 						)
 						continue

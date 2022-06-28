@@ -71,9 +71,11 @@ func WalletHandle(ifc interface{}) (e error) {
 	if cx, ok = ifc.(*state.State); !ok {
 		return fmt.Errorf("cannot run without a state")
 	}
-	cx.Config.WalletFile.Set(filepath.Join(cx.Config.DataDir.V(),
-		cx.ActiveNet.Name, constant.DbName,
-	),
+	cx.Config.WalletFile.Set(
+		filepath.Join(
+			cx.Config.DataDir.V(),
+			cx.ActiveNet.Name, constant.DbName,
+		),
 	)
 	// dbFilename := *cx.Config.DataDir + slash + cx.ActiveNet.
 	// 	Params.Name + slash + wallet.WalletDbName
@@ -88,7 +90,8 @@ func WalletHandle(ifc interface{}) (e error) {
 		interrupt.RequestRestart()
 	}
 	// for security with apps launching the wallet, the public password can be set with a file that is deleted after
-	walletPassPath := filepath.Join(cx.Config.DataDir.V(), cx.ActiveNet.Name,
+	walletPassPath := filepath.Join(
+		cx.Config.DataDir.V(), cx.ActiveNet.Name,
 		"wp.txt",
 	)
 	D.Ln("reading password from", walletPassPath)
@@ -97,7 +100,8 @@ func WalletHandle(ifc interface{}) (e error) {
 		if b, e = ioutil.ReadFile(walletPassPath); !E.Chk(e) {
 			cx.Config.WalletPass.SetBytes(b)
 			D.Ln("read password '"+string(b)+"'", cx.Config.WalletPass.V())
-			if e = ioutil.WriteFile(walletPassPath, make([]byte, len(b)),
+			if e = ioutil.WriteFile(
+				walletPassPath, make([]byte, len(b)),
 				0700,
 			); E.Chk(e) {
 			}

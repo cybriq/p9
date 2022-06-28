@@ -251,7 +251,8 @@ func (wg *WalletGUI) recentTxCardStub(txs *btcjson.ListTransactionsResult) l.Wid
 			// 	).Fn,
 			// ).
 			Rigid(
-				wg.Caption(fmt.Sprintf("%-6.8f DUO", txs.Amount),
+				wg.Caption(
+					fmt.Sprintf("%-6.8f DUO", txs.Amount),
 				).Font("go regular").Color("DocText").Fn,
 			).
 			Rigid(
@@ -330,7 +331,8 @@ func (wg *WalletGUI) recentTxCardSummary(txs *btcjson.ListTransactionsResult) l.
 			// 	0.25,
 			wg.Flex().AlignStart().SpaceBetween().
 				Rigid(
-					wg.H6(fmt.Sprintf("%-.8f DUO", txs.Amount),
+					wg.H6(
+						fmt.Sprintf("%-.8f DUO", txs.Amount),
 					).Alignment(text.Start).Color("PanelText").Fn,
 				).
 				Flexed(
@@ -367,9 +369,11 @@ func (wg *WalletGUI) recentTxCardSummary(txs *btcjson.ListTransactionsResult) l.
 								// 	// 	wg.blockPage(*txs.BlockIndex)),
 								// ).
 								Rigid(
-									wg.Caption(fmt.Sprintf("%d ",
-										txs.BlockIndex,
-									),
+									wg.Caption(
+										fmt.Sprintf(
+											"%d ",
+											txs.BlockIndex,
+										),
 									).Fn,
 								).
 								Fn,
@@ -380,9 +384,11 @@ func (wg *WalletGUI) recentTxCardSummary(txs *btcjson.ListTransactionsResult) l.
 									wg.Icon().Color("PanelText").Scale(1).Src(&icons2.ActionCheckCircle).Fn,
 								).
 								Rigid(
-									wg.Caption(fmt.Sprintf("%d ",
-										txs.Confirmations,
-									),
+									wg.Caption(
+										fmt.Sprintf(
+											"%d ",
+											txs.Confirmations,
+										),
 									).Fn,
 								).
 								Fn,
@@ -575,7 +581,8 @@ func (wg *WalletGUI) recentTxCardSummaryButtonGenerate(
 		).Fn
 }
 
-func (wg *WalletGUI) recentTxCardDetail(txs *btcjson.ListTransactionsResult,
+func (wg *WalletGUI) recentTxCardDetail(
+	txs *btcjson.ListTransactionsResult,
 	clickable *gel.Clickable,
 ) l.Widget {
 	return wg.VFlex().
@@ -658,7 +665,8 @@ func (wg *WalletGUI) recentTxCardDetail(txs *btcjson.ListTransactionsResult,
 		).Fn
 }
 
-func (wg *WalletGUI) txDetailEntry(name, detail string, bgColor string,
+func (wg *WalletGUI) txDetailEntry(
+	name, detail string, bgColor string,
 	small bool,
 ) l.Widget {
 	content := wg.Body1
@@ -758,7 +766,8 @@ func (wg *WalletGUI) RecentTransactions(n int, listName string) l.Widget {
 			func(gtx l.Context) l.Dimensions {
 				return gel.If(
 					txs.Category == "immature",
-					wg.recentTxCardSummaryButtonGenerate(&txs, ck, "DocBg",
+					wg.recentTxCardSummaryButtonGenerate(
+						&txs, ck, "DocBg",
 						false,
 					),
 					gel.If(
@@ -766,20 +775,24 @@ func (wg *WalletGUI) RecentTransactions(n int, listName string) l.Widget {
 						wg.recentTxCardSummaryButton(&txs, ck, "Danger", false),
 						gel.If(
 							txs.Category == "receive",
-							wg.recentTxCardSummaryButton(&txs, ck, "Success",
+							wg.recentTxCardSummaryButton(
+								&txs, ck, "Success",
 								false,
 							),
 							gel.If(
 								txs.Category == "generate",
-								wg.recentTxCardSummaryButtonGenerate(&txs, ck,
+								wg.recentTxCardSummaryButtonGenerate(
+									&txs, ck,
 									"DocBg", false,
 								),
 								gel.If(
 									wg.prevOpenTxID.Load() == txs.TxID,
-									wg.recentTxCardSummaryButton(&txs, ck,
+									wg.recentTxCardSummaryButton(
+										&txs, ck,
 										"Primary", false,
 									),
-									wg.recentTxCardSummaryButton(&txs, ck,
+									wg.recentTxCardSummaryButton(
+										&txs, ck,
 										"DocBg", false,
 									),
 								),

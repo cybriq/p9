@@ -120,7 +120,8 @@ out:
 			// if !requested {
 			// D.Ln("adding handler")
 			interruptCallbacks = append(interruptCallbacks, handler.Fn)
-			interruptCallbackSources = append(interruptCallbackSources,
+			interruptCallbackSources = append(
+				interruptCallbackSources,
 				handler.Source,
 			)
 			// }

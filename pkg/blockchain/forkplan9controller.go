@@ -1,9 +1,10 @@
 package blockchain
 
 import (
+	"sort"
+
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/fork"
-	"sort"
 )
 
 type Algo struct {
@@ -59,7 +60,8 @@ func (b *BlockChain) CalcNextRequiredDifficultyPlan9Controller(lastNode *BlockNo
 			}
 			sort.Sort(algos)
 			for _, v := range algos {
-				nTB[v.Params.Version], _, e = b.CalcNextRequiredDifficultyPlan9(lastNode,
+				nTB[v.Params.Version], _, e = b.CalcNextRequiredDifficultyPlan9(
+					lastNode,
 					v.Name, true,
 				)
 			}

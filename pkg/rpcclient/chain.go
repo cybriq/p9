@@ -96,7 +96,8 @@ func (c *Client) GetBlock(blockHash *chainhash.Hash) (*wire.Block, error) {
 type FutureGetBlockVerboseResult chan *response
 
 // Receive waits for the response promised by the future and returns the data structure from the server with information about the requested block.
-func (r FutureGetBlockVerboseResult) Receive() (*btcjson.GetBlockVerboseResult,
+func (r FutureGetBlockVerboseResult) Receive() (
+	*btcjson.GetBlockVerboseResult,
 	error,
 ) {
 	res, e := receiveFuture(r)
@@ -126,7 +127,8 @@ func (c *Client) GetBlockVerboseAsync(blockHash *chainhash.Hash) FutureGetBlockV
 
 // GetBlockVerbose returns a data structure from the server with information about a block given its hash. See
 // GetBlockVerboseTx to retrieve transaction data structures as well. See GetBlock to retrieve a raw block instead.
-func (c *Client) GetBlockVerbose(blockHash *chainhash.Hash) (*btcjson.GetBlockVerboseResult,
+func (c *Client) GetBlockVerbose(blockHash *chainhash.Hash) (
+	*btcjson.GetBlockVerboseResult,
 	error,
 ) {
 	return c.GetBlockVerboseAsync(blockHash).Receive()
@@ -146,7 +148,8 @@ func (c *Client) GetBlockVerboseTxAsync(blockHash *chainhash.Hash) FutureGetBloc
 
 // GetBlockVerboseTx returns a data structure from the server with information about a block and its transactions given
 // its hash. See GetBlockVerbose if only transaction hashes are preferred. See GetBlock to retrieve a raw block instead.
-func (c *Client) GetBlockVerboseTx(blockHash *chainhash.Hash) (*btcjson.GetBlockVerboseResult,
+func (c *Client) GetBlockVerboseTx(blockHash *chainhash.Hash) (
+	*btcjson.GetBlockVerboseResult,
 	error,
 ) {
 	return c.GetBlockVerboseTxAsync(blockHash).Receive()
@@ -220,7 +223,8 @@ func (c *Client) GetDifficulty(algo string) (float64, error) {
 type FutureGetBlockChainInfoResult chan *response
 
 // Receive waits for the response promised by the future and returns chain info result provided by the server.
-func (r FutureGetBlockChainInfoResult) Receive() (*btcjson.GetBlockChainInfoResult,
+func (r FutureGetBlockChainInfoResult) Receive() (
+	*btcjson.GetBlockChainInfoResult,
 	error,
 ) {
 	res, e := receiveFuture(r)
@@ -324,7 +328,8 @@ func (c *Client) GetBlockHeaderAsync(blockHash *chainhash.Hash) FutureGetBlockHe
 
 // GetBlockHeader returns the blockheader from the server given its hash. See GetBlockHeaderVerbose to retrieve a data
 // structure with information about the block instead.
-func (c *Client) GetBlockHeader(blockHash *chainhash.Hash) (*wire.BlockHeader,
+func (c *Client) GetBlockHeader(blockHash *chainhash.Hash) (
+	*wire.BlockHeader,
 	error,
 ) {
 	return c.GetBlockHeaderAsync(blockHash).Receive()
@@ -336,7 +341,8 @@ type FutureGetBlockHeaderVerboseResult chan *response
 
 // Receive waits for the response promised by the future and returns the data structure of the blockheader requested
 // from the server given its hash.
-func (r FutureGetBlockHeaderVerboseResult) Receive() (*btcjson.GetBlockHeaderVerboseResult,
+func (r FutureGetBlockHeaderVerboseResult) Receive() (
+	*btcjson.GetBlockHeaderVerboseResult,
 	error,
 ) {
 	res, e := receiveFuture(r)
@@ -366,7 +372,8 @@ func (c *Client) GetBlockHeaderVerboseAsync(blockHash *chainhash.Hash) FutureGet
 
 // GetBlockHeaderVerbose returns a data structure with information about the blockheader from the server given its hash.
 // See GetBlockHeader to retrieve a blockheader instead.
-func (c *Client) GetBlockHeaderVerbose(blockHash *chainhash.Hash) (*btcjson.GetBlockHeaderVerboseResult,
+func (c *Client) GetBlockHeaderVerbose(blockHash *chainhash.Hash) (
+	*btcjson.GetBlockHeaderVerboseResult,
 	error,
 ) {
 	return c.GetBlockHeaderVerboseAsync(blockHash).Receive()
@@ -378,7 +385,8 @@ type FutureGetMempoolEntryResult chan *response
 
 // Receive waits for the response promised by the future and returns a data structure with information about the
 // transaction in the memory pool given its hash.
-func (r FutureGetMempoolEntryResult) Receive() (*btcjson.GetMempoolEntryResult,
+func (r FutureGetMempoolEntryResult) Receive() (
+	*btcjson.GetMempoolEntryResult,
 	error,
 ) {
 	res, e := receiveFuture(r)
@@ -403,7 +411,8 @@ func (c *Client) GetMempoolEntryAsync(txHash string) FutureGetMempoolEntryResult
 }
 
 // GetMempoolEntry returns a data structure with information about the transaction in the memory pool given its hash.
-func (c *Client) GetMempoolEntry(txHash string) (*btcjson.GetMempoolEntryResult,
+func (c *Client) GetMempoolEntry(txHash string) (
+	*btcjson.GetMempoolEntryResult,
 	error,
 ) {
 	return c.GetMempoolEntryAsync(txHash).Receive()
@@ -456,7 +465,8 @@ type FutureGetRawMempoolVerboseResult chan *response
 
 // Receive waits for the response promised by the future and returns a map of transaction hashes to an associated data
 // structure with information about the transaction for all transactions in the memory pool.
-func (r FutureGetRawMempoolVerboseResult) Receive() (map[string]btcjson.GetRawMempoolVerboseResult,
+func (r FutureGetRawMempoolVerboseResult) Receive() (
+	map[string]btcjson.GetRawMempoolVerboseResult,
 	error,
 ) {
 	res, e := receiveFuture(r)
@@ -483,7 +493,8 @@ func (c *Client) GetRawMempoolVerboseAsync() FutureGetRawMempoolVerboseResult {
 // GetRawMempoolVerbose returns a map of transaction hashes to an associated data structure with information about the
 // transaction for all transactions in the memory pool. See GetRawMempool to retrieve only the transaction hashes
 // instead.
-func (c *Client) GetRawMempoolVerbose() (map[string]btcjson.GetRawMempoolVerboseResult,
+func (c *Client) GetRawMempoolVerbose() (
+	map[string]btcjson.GetRawMempoolVerboseResult,
 	error,
 ) {
 	return c.GetRawMempoolVerboseAsync().Receive()
@@ -610,7 +621,8 @@ func (r FutureGetTxOutResult) Receive() (*btcjson.GetTxOutResult, error) {
 
 // GetTxOutAsync returns an instance of a type that can be used to get the result of the RPC at some future time by
 // invoking the Receive function on the returned instance. See GetTxOut for the blocking version and more details.
-func (c *Client) GetTxOutAsync(txHash *chainhash.Hash, index uint32,
+func (c *Client) GetTxOutAsync(
+	txHash *chainhash.Hash, index uint32,
 	mempool bool,
 ) FutureGetTxOutResult {
 	hash := ""
@@ -622,7 +634,8 @@ func (c *Client) GetTxOutAsync(txHash *chainhash.Hash, index uint32,
 }
 
 // GetTxOut returns the transaction output info if it's unspent and nil, otherwise.
-func (c *Client) GetTxOut(txHash *chainhash.Hash, index uint32, mempool bool,
+func (c *Client) GetTxOut(
+	txHash *chainhash.Hash, index uint32, mempool bool,
 ) (*btcjson.GetTxOutResult, error) {
 	return c.GetTxOutAsync(txHash, index, mempool).Receive()
 }
@@ -665,7 +678,8 @@ func (c *Client) RescanBlocksAsync(blockHashes []chainhash.Hash) FutureRescanBlo
 // The blocks do not need to be on the main chain, but they do need to be adjacent to each other.
 //
 // NOTE: This is a btcsuite extension ported from github.com/decred/dcrrpcclient.
-func (c *Client) RescanBlocks(blockHashes []chainhash.Hash) ([]btcjson.RescannedBlock,
+func (c *Client) RescanBlocks(blockHashes []chainhash.Hash) (
+	[]btcjson.RescannedBlock,
 	error,
 ) {
 	return c.RescanBlocksAsync(blockHashes).Receive()

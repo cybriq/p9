@@ -71,7 +71,8 @@ func NodeMain(cx *state.State) (e error) {
 		go func() {
 			listenAddr := net.JoinHostPort("", cx.Config.Profile.V())
 			I.Ln("profile server listening on", listenAddr)
-			profileRedirect := http.RedirectHandler("/debug/pprof",
+			profileRedirect := http.RedirectHandler(
+				"/debug/pprof",
 				http.StatusSeeOther,
 			)
 			http.Handle("/", profileRedirect)
@@ -142,22 +143,28 @@ func NodeMain(cx *state.State) (e error) {
 	// it
 	if cx.StateCfg.DropAddrIndex {
 		W.Ln("dropping address index")
-		if e = indexers.DropAddrIndex(db,
-			interrupt.ShutdownRequestChan); E.Chk(e) {
+		if e = indexers.DropAddrIndex(
+			db,
+			interrupt.ShutdownRequestChan,
+		); E.Chk(e) {
 			return
 		}
 	}
 	if cx.StateCfg.DropTxIndex {
 		W.Ln("dropping transaction index")
-		if e = indexers.DropTxIndex(db,
-			interrupt.ShutdownRequestChan); E.Chk(e) {
+		if e = indexers.DropTxIndex(
+			db,
+			interrupt.ShutdownRequestChan,
+		); E.Chk(e) {
 			return
 		}
 	}
 	if cx.StateCfg.DropCfIndex {
 		W.Ln("dropping cfilter index")
-		if e = indexers.DropCfIndex(db,
-			interrupt.ShutdownRequestChan); E.Chk(e) {
+		if e = indexers.DropCfIndex(
+			db,
+			interrupt.ShutdownRequestChan,
+		); E.Chk(e) {
 			return
 		}
 	}
@@ -283,9 +290,11 @@ func loadBlockDB(cx *state.State) (db database.DB, e error) {
 	}
 	I.F("loading block database from '%s'", dbPath)
 	D.Ln("Supported database types", database.SupportedDrivers())
-	if db, e = database.Open(cx.Config.DbType.V(),
+	if db, e = database.Open(
+		cx.Config.DbType.V(),
 		dbPath,
-		cx.ActiveNet.Net); E.Chk(e) {
+		cx.ActiveNet.Net,
+	); E.Chk(e) {
 		T.Ln(e) // return the error if it's not because the database doesn't exist
 		if dbErr, ok := e.(database.DBError); !ok || dbErr.ErrorCode !=
 			database.ErrDbDoesNotExist {
@@ -350,7 +359,8 @@ func warnMultipleDBs(cx *state.State) {
 	}
 	// warn if there are extra databases
 	if len(duplicateDbPaths) > 0 {
-		selectedDbPath := state.BlockDb(cx, cx.Config.DbType.V(),
+		selectedDbPath := state.BlockDb(
+			cx, cx.Config.DbType.V(),
 			blockdb.NamePrefix,
 		)
 		W.F(
@@ -493,10 +503,12 @@ func upgradeDataPaths() (e error) {
 			return e
 		}
 		// Move old pod.conf into new location if needed
-		oldConfPath := filepath.Join(oldHomePath,
+		oldConfPath := filepath.Join(
+			oldHomePath,
 			constant.DefaultConfigFilename,
 		)
-		newConfPath := filepath.Join(newHomePath,
+		newConfPath := filepath.Join(
+			newHomePath,
 			constant.DefaultConfigFilename,
 		)
 		if apputil.FileExists(oldConfPath) && !apputil.FileExists(newConfPath) {

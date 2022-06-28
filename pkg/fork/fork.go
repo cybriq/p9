@@ -4,12 +4,13 @@ package fork
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/cybriq/p9/pkg/bits"
-	"github.com/cybriq/p9/pkg/log"
 	"math/big"
 	"math/rand"
 	"sort"
 	"time"
+
+	"github.com/cybriq/p9/pkg/bits"
+	"github.com/cybriq/p9/pkg/log"
 )
 
 const (
@@ -69,7 +70,8 @@ func ForkCalc() {
 	done = true
 	T.Ln("running fork data init")
 	for i := range P9AlgosNumeric {
-		List[1].AlgoVers[i] = fmt.Sprintf("Div%d",
+		List[1].AlgoVers[i] = fmt.Sprintf(
+			"Div%d",
 			P9AlgosNumeric[i].VersionInterval,
 		)
 	}
@@ -187,31 +189,40 @@ var (
 	// P9Algos is the algorithm specifications after the hard fork
 	P9Algos        = make(map[string]AlgoParams)
 	P9AlgosNumeric = map[int32]AlgoParams{
-		5: {5, p9PowLimitBits, 0,
+		5: {
+			5, p9PowLimitBits, 0,
 			IntervalBase * DoublingSequence[0] / IntervalDivisor,
 		}, // 2
-		6: {6, p9PowLimitBits, 1,
+		6: {
+			6, p9PowLimitBits, 1,
 			IntervalBase * DoublingSequence[1] / IntervalDivisor,
 		}, // 3
-		7: {7, p9PowLimitBits, 2,
+		7: {
+			7, p9PowLimitBits, 2,
 			IntervalBase * DoublingSequence[2] / IntervalDivisor,
 		}, // 5
-		8: {8, p9PowLimitBits, 3,
+		8: {
+			8, p9PowLimitBits, 3,
 			IntervalBase * DoublingSequence[3] / IntervalDivisor,
 		}, // 7
-		9: {9, p9PowLimitBits, 4,
+		9: {
+			9, p9PowLimitBits, 4,
 			IntervalBase * DoublingSequence[4] / IntervalDivisor,
 		}, // 11
-		10: {10, p9PowLimitBits, 5,
+		10: {
+			10, p9PowLimitBits, 5,
 			IntervalBase * DoublingSequence[5] / IntervalDivisor,
 		}, // 13
-		11: {11, p9PowLimitBits, 7,
+		11: {
+			11, p9PowLimitBits, 7,
 			IntervalBase * DoublingSequence[7] / IntervalDivisor,
 		}, // 17
-		12: {12, p9PowLimitBits, 6,
+		12: {
+			12, p9PowLimitBits, 6,
 			IntervalBase * DoublingSequence[6] / IntervalDivisor,
 		}, // 19
-		13: {13, p9PowLimitBits, 8,
+		13: {
+			13, p9PowLimitBits, 8,
 			IntervalBase * DoublingSequence[8] / IntervalDivisor,
 		}, // 23
 	}
@@ -296,7 +307,8 @@ func GetAlgoVerSlice(height int32) (o []int32) {
 
 // AlgoVerIterator returns a next and more function to use in a for loop to
 // iterate over block versions at current height
-func AlgoVerIterator(height int32) (next func(), curr func() int32,
+func AlgoVerIterator(height int32) (
+	next func(), curr func() int32,
 	more func() bool,
 ) {
 	current := GetCurrent(height)
@@ -304,7 +316,8 @@ func AlgoVerIterator(height int32) (next func(), curr func() int32,
 	length := int32(GetNumAlgos(height))
 	var verNumbers []int32
 	for i := range List[current].AlgoVers {
-		verNumbers = append(verNumbers,
+		verNumbers = append(
+			verNumbers,
 			List[current].Algos[List[current].AlgoVers[i]].Version,
 		)
 	}

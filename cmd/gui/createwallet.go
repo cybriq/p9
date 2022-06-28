@@ -53,7 +53,8 @@ func (wg *WalletGUI) createConfirmExitBar() l.Widget {
 		// 			).Fn,
 		// 		).
 		Rigid(
-			wg.Inset(0.5,
+			wg.Inset(
+				0.5,
 				wg.Flex().
 					Rigid(
 						func(gtx l.Context) l.Dimensions {
@@ -198,9 +199,11 @@ func (wg *WalletGUI) createWalletInputsAreValid() bool {
 func (wg *WalletGUI) createWalletAction() {
 	// wg.NodeRunCommandChan <- "stop"
 	D.Ln("clicked submit wallet")
-	wg.cx.Config.WalletFile.Set(filepath.Join(wg.cx.Config.DataDir.V(),
-		wg.cx.ActiveNet.Name, constant.DbName,
-	),
+	wg.cx.Config.WalletFile.Set(
+		filepath.Join(
+			wg.cx.Config.DataDir.V(),
+			wg.cx.ActiveNet.Name, constant.DbName,
+		),
 	)
 	dbDir := wg.cx.Config.WalletFile.V()
 	loader := wallet.NewLoader(wg.cx.ActiveNet, dbDir, 250)
@@ -285,9 +288,11 @@ func (wg *WalletGUI) createWalletTestnetToggle(b bool) {
 	wg.cx.Config.P2PListeners.Set(
 		[]string{"0.0.0.0:" + wg.cx.ActiveNet.DefaultPort},
 	)
-	wg.cx.Config.P2PConnect.Set([]string{"127.0.0.1:" + wg.cx.ActiveNet.
-		DefaultPort,
-	},
+	wg.cx.Config.P2PConnect.Set(
+		[]string{
+			"127.0.0.1:" + wg.cx.ActiveNet.
+				DefaultPort,
+		},
 	)
 	address := fmt.Sprintf(
 		"127.0.0.1:%s",

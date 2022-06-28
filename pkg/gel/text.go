@@ -126,7 +126,8 @@ func (l *lineIterator) Next() (text.Layout, image.Point, bool) {
 // 	}
 // }
 
-func (t *Text) Fn(gtx l.Context, s text.Shaper, font text.Font, size unit.Value,
+func (t *Text) Fn(
+	gtx l.Context, s text.Shaper, font text.Font, size unit.Value,
 	txt string,
 ) l.Dimensions {
 	cs := gtx.Constraints

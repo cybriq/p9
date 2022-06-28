@@ -48,7 +48,8 @@ func reflectTypeToJSONType(xT descLookupFunc, rt reflect.Type) string {
 	case reflect.Bool:
 		return xT("json-type-bool")
 	case reflect.Array, reflect.Slice:
-		return xT("json-type-array") + reflectTypeToJSONType(xT,
+		return xT("json-type-array") + reflectTypeToJSONType(
+			xT,
 			rt.Elem(),
 		)
 	case reflect.Struct:
@@ -63,7 +64,11 @@ func reflectTypeToJSONType(xT descLookupFunc, rt reflect.Type) string {
 // tabs to separate the relevant pieces so a tabwriter can be used later to line everything up. The descriptions are
 // pulled from the active help descriptions map based on the lowercase version of the provided reflect type and json
 // name (or the lowercase version of the field name if no json tag was specified).
-func resultStructHelp(xT descLookupFunc, rt reflect.Type, indentLevel int) []string {
+func resultStructHelp(
+	xT descLookupFunc,
+	rt reflect.Type,
+	indentLevel int,
+) []string {
 	indent := strings.Repeat(" ", indentLevel)
 	typeName := strings.ToLower(rt.Name())
 	// Generate the help for each of the fields in the result struct.
@@ -87,7 +92,8 @@ func resultStructHelp(xT descLookupFunc, rt reflect.Type, indentLevel int) []str
 		// type and adjust the opening bracket and brace combination accordingly.
 		fieldType := reflectTypeToJSONType(xT, rtfType)
 		fieldDescKey := typeName + "-" + fieldName
-		fieldExamples, isComplex := reflectTypeToJSONExample(xT,
+		fieldExamples, isComplex := reflectTypeToJSONExample(
+			xT,
 			rtfType, indentLevel, fieldDescKey,
 		)
 		if isComplex {
@@ -98,13 +104,15 @@ func resultStructHelp(xT descLookupFunc, rt reflect.Type, indentLevel int) []str
 			} else {
 				brace = "{"
 			}
-			result := fmt.Sprintf("%s\"%s\": %s\t(%s)\t%s", indent,
+			result := fmt.Sprintf(
+				"%s\"%s\": %s\t(%s)\t%s", indent,
 				fieldName, brace, fieldType, xT(fieldDescKey),
 			)
 			results = append(results, result)
 			results = append(results, fieldExamples...)
 		} else {
-			result := fmt.Sprintf("%s\"%s\": %s,\t(%s)\t%s", indent,
+			result := fmt.Sprintf(
+				"%s\"%s\": %s,\t(%s)\t%s", indent,
 				fieldName, fieldExamples[0], fieldType,
 				xT(fieldDescKey),
 			)
@@ -118,7 +126,13 @@ func resultStructHelp(xT descLookupFunc, rt reflect.Type, indentLevel int) []str
 // structs recursively. The output is returned as a slice of lines so the final help can be nicely aligned via a tab
 // writer. A bool is also returned which specifies whether or not the type results in a complex JSON object since they
 // need to be handled differently.
-func reflectTypeToJSONExample(xT descLookupFunc, rt reflect.Type, indentLevel int, fieldDescKey string) ([]string, bool,
+func reflectTypeToJSONExample(
+	xT descLookupFunc,
+	rt reflect.Type,
+	indentLevel int,
+	fieldDescKey string,
+) (
+	[]string, bool,
 ) {
 	// Indirect pointer if needed.
 	if rt.Kind() == reflect.Ptr {
@@ -156,7 +170,8 @@ func reflectTypeToJSONExample(xT descLookupFunc, rt reflect.Type, indentLevel in
 		results = append(results, closingBrace+"\t\t")
 		return results, true
 	case reflect.Array, reflect.Slice:
-		results, isComplex := reflectTypeToJSONExample(xT, rt.Elem(),
+		results, isComplex := reflectTypeToJSONExample(
+			xT, rt.Elem(),
 			indentLevel, fieldDescKey,
 		)
 		// When the result is complex, it is because this is an array of objects.
@@ -190,8 +205,13 @@ func reflectTypeToJSONExample(xT descLookupFunc, rt reflect.Type, indentLevel in
 		// Maps are a bit special in that they need to have the key, value, and description of the object entry
 		// specifically called out.
 		innerIndent := strings.Repeat(" ", indentLevel+1)
-		result := fmt.Sprintf("%s%q: %s, (%s) %s", innerIndent, xT(fieldDescKey+"--key"), xT(fieldDescKey+"--value"),
-			reflectTypeToJSONType(xT, rt), xT(fieldDescKey+"--desc"),
+		result := fmt.Sprintf(
+			"%s%q: %s, (%s) %s",
+			innerIndent,
+			xT(fieldDescKey+"--key"),
+			xT(fieldDescKey+"--value"),
+			reflectTypeToJSONType(xT, rt),
+			xT(fieldDescKey+"--desc"),
 		)
 		results = append(results, result)
 		results = append(results, innerIndent+"...")
@@ -202,13 +222,22 @@ func reflectTypeToJSONExample(xT descLookupFunc, rt reflect.Type, indentLevel in
 }
 
 // resultTypeHelp generates and returns formatted help for the provided result type.
-func resultTypeHelp(xT descLookupFunc, rt reflect.Type, fieldDescKey string) string {
+func resultTypeHelp(
+	xT descLookupFunc,
+	rt reflect.Type,
+	fieldDescKey string,
+) string {
 	// Generate the JSON example for the result type.
 	results, isComplex := reflectTypeToJSONExample(xT, rt, 0, fieldDescKey)
 	// When this is a primitive type, add the associated JSON type and result description into the final string, format
 	// it accordingly, and return it.
 	if !isComplex {
-		return fmt.Sprintf("%s (%s) %s", results[0], reflectTypeToJSONType(xT, rt), xT(fieldDescKey))
+		return fmt.Sprintf(
+			"%s (%s) %s",
+			results[0],
+			reflectTypeToJSONType(xT, rt),
+			xT(fieldDescKey),
+		)
 	}
 	// At this point, this is a complex type that already has the JSON types and descriptions in the results. Thus, use
 	// a tab writer to nicely align the help text.
@@ -230,7 +259,11 @@ func resultTypeHelp(xT descLookupFunc, rt reflect.Type, fieldDescKey string) str
 // argTypeHelp returns the type of provided command argument as a string in the format used by the help output. In
 // particular, it includes the JSON type (boolean, numeric, string, array, object) along with optional and the default
 // value if applicable.
-func argTypeHelp(xT descLookupFunc, structField reflect.StructField, defaultVal *reflect.Value) string {
+func argTypeHelp(
+	xT descLookupFunc,
+	structField reflect.StructField,
+	defaultVal *reflect.Value,
+) string {
 	// Indirect the pointer if needed and track if it's an optional field.
 	fieldType := structField.Type
 	var isOptional bool
@@ -266,7 +299,12 @@ func argTypeHelp(xT descLookupFunc, structField reflect.StructField, defaultVal 
 }
 
 // argHelp generates and returns formatted help for the provided command.
-func argHelp(xT descLookupFunc, rtp reflect.Type, defaults map[int]reflect.Value, method string) string {
+func argHelp(
+	xT descLookupFunc,
+	rtp reflect.Type,
+	defaults map[int]reflect.Value,
+	method string,
+) string {
 	// Return now if the command has no arguments.
 	rt := rtp.Elem()
 	numFields := rt.NumField()
@@ -283,7 +321,8 @@ func argHelp(xT descLookupFunc, rtp reflect.Type, defaults map[int]reflect.Value
 			defaultVal = &defVal
 		}
 		fieldName := strings.ToLower(rtf.Name)
-		helpText := fmt.Sprintf("%d.\t%s\t(%s)\t%s", i+1, fieldName,
+		helpText := fmt.Sprintf(
+			"%d.\t%s\t(%s)\t%s", i+1, fieldName,
 			argTypeHelp(xT, rtf, defaultVal),
 			xT(method+"-"+fieldName),
 		)
@@ -307,7 +346,8 @@ func argHelp(xT descLookupFunc, rtp reflect.Type, defaults map[int]reflect.Value
 		case reflect.Array, reflect.Slice:
 			fieldDescKey := fmt.Sprintf("%s-%s", method, fieldName)
 			if rtf.Type.Elem().Kind() == reflect.Struct {
-				resultText := resultTypeHelp(xT, fieldType,
+				resultText := resultTypeHelp(
+					xT, fieldType,
 					fieldDescKey,
 				)
 				args = append(args, resultText)
@@ -328,20 +368,27 @@ func argHelp(xT descLookupFunc, rtp reflect.Type, defaults map[int]reflect.Value
 
 // methodHelp generates and returns the help output for the provided command and method info. This is the main work
 // horse for the exported MethodHelp function.
-func methodHelp(xT descLookupFunc, rtp reflect.Type, defaults map[int]reflect.Value, method string,
+func methodHelp(
+	xT descLookupFunc,
+	rtp reflect.Type,
+	defaults map[int]reflect.Value,
+	method string,
 	resultTypes []interface{},
 ) string {
 	// Start off with the method usage and help synopsis.
-	help := fmt.Sprintf("%s\n\n%s\n", methodUsageText(rtp, defaults, method),
+	help := fmt.Sprintf(
+		"%s\n\n%s\n", methodUsageText(rtp, defaults, method),
 		xT(method+"--synopsis"),
 	)
 	// Generate the help for each argument in the command.
 	if argText := argHelp(xT, rtp, defaults, method); argText != "" {
-		help += fmt.Sprintf("\n%s:\n%s", xT("help-arguments"),
+		help += fmt.Sprintf(
+			"\n%s:\n%s", xT("help-arguments"),
 			argText,
 		)
 	} else {
-		help += fmt.Sprintf("\n%s:\n%s\n", xT("help-arguments"),
+		help += fmt.Sprintf(
+			"\n%s:\n%s\n", xT("help-arguments"),
 			xT("help-arguments-none"),
 		)
 	}
@@ -363,16 +410,19 @@ func methodHelp(xT descLookupFunc, rtp reflect.Type, defaults map[int]reflect.Va
 	if len(resultTexts) > 1 {
 		for i, resultText := range resultTexts {
 			condKey := fmt.Sprintf("%s--condition%d", method, i)
-			help += fmt.Sprintf("\n%s (%s):\n%s\n",
+			help += fmt.Sprintf(
+				"\n%s (%s):\n%s\n",
 				xT("help-result"), xT(condKey), resultText,
 			)
 		}
 	} else if len(resultTexts) > 0 {
-		help += fmt.Sprintf("\n%s:\n%s\n", xT("help-result"),
+		help += fmt.Sprintf(
+			"\n%s:\n%s\n", xT("help-result"),
 			resultTexts[0],
 		)
 	} else {
-		help += fmt.Sprintf("\n%s:\n%s\n", xT("help-result"),
+		help += fmt.Sprintf(
+			"\n%s:\n%s\n", xT("help-result"),
 			xT("help-result-nothing"),
 		)
 	}
@@ -438,7 +488,11 @@ func isValidResultType(kind reflect.Kind) bool {
 //   "help--result0":    "List of commands"
 //
 //   "help--result1":    "Help for specified command"
-func GenerateHelp(method string, descs map[string]string, resultTypes ...interface{}) (string, error) {
+func GenerateHelp(
+	method string,
+	descs map[string]string,
+	resultTypes ...interface{},
+) (string, error) {
 	// Look up details about the provided method and error out if not registered.
 	registerLock.RLock()
 	rtp, ok := methodToConcreteType[method]
@@ -455,15 +509,17 @@ func GenerateHelp(method string, descs map[string]string, resultTypes ...interfa
 		}
 		rtp = reflect.TypeOf(resultType)
 		if rtp.Kind() != reflect.Ptr {
-			str := fmt.Sprintf("result #%d (%v) is not a pointer",
+			str := fmt.Sprintf(
+				"result #%d (%v) is not a pointer",
 				i, rtp.Kind(),
 			)
 			return "", makeError(ErrInvalidType, str)
 		}
 		elemKind := rtp.Elem().Kind()
 		if !isValidResultType(elemKind) {
-			str := fmt.Sprintf("result #%d (%v) is not an allowed "+
-				"type", i, elemKind,
+			str := fmt.Sprintf(
+				"result #%d (%v) is not an allowed "+
+					"type", i, elemKind,
 			)
 			return "", makeError(ErrInvalidType, str)
 		}

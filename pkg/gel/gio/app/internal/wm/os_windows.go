@@ -144,7 +144,8 @@ func initResources() error {
 		return err
 	}
 	resources.cursor = c
-	icon, _ := windows.LoadImage(hInst, iconID, windows.IMAGE_ICON, 0, 0,
+	icon, _ := windows.LoadImage(
+		hInst, iconID, windows.IMAGE_ICON, 0, 0,
 		windows.LR_DEFAULTSIZE|windows.LR_SHARED,
 	)
 	wcls := windows.WndClassEx{
@@ -178,9 +179,10 @@ func getWindowConstraints(cfg unit.Metric, opts *Options) winConstraints {
 
 func createNativeWindow(opts *Options) (*window, error) {
 	var resErr error
-	resources.once.Do(func() {
-		resErr = initResources()
-	},
+	resources.once.Do(
+		func() {
+			resErr = initResources()
+		},
 	)
 	if resErr != nil {
 		return nil, resErr
@@ -190,7 +192,8 @@ func createNativeWindow(opts *Options) (*window, error) {
 	dwStyle := uint32(windows.WS_OVERLAPPEDWINDOW)
 	dwExStyle := uint32(windows.WS_EX_APPWINDOW | windows.WS_EX_WINDOWEDGE)
 
-	hwnd, err := windows.CreateWindowEx(dwExStyle,
+	hwnd, err := windows.CreateWindowEx(
+		dwExStyle,
 		resources.class,
 		"",
 		dwStyle|windows.WS_CLIPSIBLINGS|windows.WS_CLIPCHILDREN,
@@ -216,7 +219,8 @@ func createNativeWindow(opts *Options) (*window, error) {
 	return w, nil
 }
 
-func windowProc(hwnd syscall.Handle, msg uint32, wParam, lParam uintptr,
+func windowProc(
+	hwnd syscall.Handle, msg uint32, wParam, lParam uintptr,
 ) uintptr {
 	win, exists := winMap.Load(hwnd)
 	if !exists {
@@ -276,9 +280,10 @@ func windowProc(hwnd syscall.Handle, msg uint32, wParam, lParam uintptr,
 	case windows.WM_MBUTTONUP:
 		w.pointerButton(pointer.ButtonTertiary, false, lParam, getModifiers())
 	case windows.WM_CANCELMODE:
-		w.w.Event(pointer.Event{
-			Type: pointer.Cancel,
-		},
+		w.w.Event(
+			pointer.Event{
+				Type: pointer.Cancel,
+			},
 		)
 	case windows.WM_SETFOCUS:
 		w.w.Event(key.FocusEvent{Focus: true})
@@ -287,13 +292,14 @@ func windowProc(hwnd syscall.Handle, msg uint32, wParam, lParam uintptr,
 	case windows.WM_MOUSEMOVE:
 		x, y := coordsFromlParam(lParam)
 		p := f32.Point{X: float32(x), Y: float32(y)}
-		w.w.Event(pointer.Event{
-			Type:     pointer.Move,
-			Source:   pointer.Mouse,
-			Position: p,
-			Buttons:  w.pointerBtns,
-			Time:     windows.GetMessageTime(),
-		},
+		w.w.Event(
+			pointer.Event{
+				Type:     pointer.Move,
+				Source:   pointer.Mouse,
+				Position: p,
+				Buttons:  w.pointerBtns,
+				Time:     windows.GetMessageTime(),
+			},
 		)
 	case windows.WM_MOUSEWHEEL:
 		w.scrollEvent(wParam, lParam, false)
@@ -356,7 +362,8 @@ func getModifiers() key.Modifiers {
 	return kmods
 }
 
-func (w *window) pointerButton(btn pointer.Buttons, press bool, lParam uintptr,
+func (w *window) pointerButton(
+	btn pointer.Buttons, press bool, lParam uintptr,
 	kmods key.Modifiers,
 ) {
 	var typ pointer.Type
@@ -375,14 +382,15 @@ func (w *window) pointerButton(btn pointer.Buttons, press bool, lParam uintptr,
 	}
 	x, y := coordsFromlParam(lParam)
 	p := f32.Point{X: float32(x), Y: float32(y)}
-	w.w.Event(pointer.Event{
-		Type:      typ,
-		Source:    pointer.Mouse,
-		Position:  p,
-		Buttons:   w.pointerBtns,
-		Time:      windows.GetMessageTime(),
-		Modifiers: kmods,
-	},
+	w.w.Event(
+		pointer.Event{
+			Type:      typ,
+			Source:    pointer.Mouse,
+			Position:  p,
+			Buttons:   w.pointerBtns,
+			Time:      windows.GetMessageTime(),
+			Modifiers: kmods,
+		},
 	)
 }
 
@@ -406,14 +414,15 @@ func (w *window) scrollEvent(wParam, lParam uintptr, horizontal bool) {
 	} else {
 		sp.Y = -dist
 	}
-	w.w.Event(pointer.Event{
-		Type:     pointer.Scroll,
-		Source:   pointer.Mouse,
-		Position: p,
-		Buttons:  w.pointerBtns,
-		Scroll:   sp,
-		Time:     windows.GetMessageTime(),
-	},
+	w.w.Event(
+		pointer.Event{
+			Type:     pointer.Scroll,
+			Source:   pointer.Mouse,
+			Position: p,
+			Buttons:  w.pointerBtns,
+			Scroll:   sp,
+			Time:     windows.GetMessageTime(),
+		},
 	)
 }
 
@@ -473,17 +482,18 @@ func (w *window) draw(sync bool) {
 	dpi := windows.GetWindowDPI(w.hwnd)
 	cfg := configForDPI(dpi)
 	w.minmax = getWindowConstraints(cfg, w.opts)
-	w.w.Event(FrameEvent{
-		FrameEvent: system.FrameEvent{
-			Now: time.Now(),
-			Size: image.Point{
-				X: w.width,
-				Y: w.height,
+	w.w.Event(
+		FrameEvent{
+			FrameEvent: system.FrameEvent{
+				Now: time.Now(),
+				Size: image.Point{
+					X: w.width,
+					Y: w.height,
+				},
+				Metric: cfg,
 			},
-			Metric: cfg,
+			Sync: sync,
 		},
-		Sync: sync,
-	},
 	)
 }
 
@@ -499,9 +509,10 @@ func (w *window) destroy() {
 }
 
 func (w *window) NewContext() (Context, error) {
-	sort.Slice(drivers, func(i, j int) bool {
-		return drivers[i].priority < drivers[j].priority
-	},
+	sort.Slice(
+		drivers, func(i, j int) bool {
+			return drivers[i].priority < drivers[j].priority
+		},
 	)
 	var errs []string
 	for _, b := range drivers {
@@ -512,7 +523,8 @@ func (w *window) NewContext() (Context, error) {
 		errs = append(errs, err.Error())
 	}
 	if len(errs) > 0 {
-		return nil, fmt.Errorf("NewContext: failed to create a GPU device, tried: %s",
+		return nil, fmt.Errorf(
+			"NewContext: failed to create a GPU device, tried: %s",
 			strings.Join(errs, ", "),
 		)
 	}
@@ -605,10 +617,12 @@ func (w *window) SetWindowMode(mode WindowMode) {
 		windows.SetWindowPlacement(w.hwnd, w.placement)
 		w.placement = nil
 		style := windows.GetWindowLong(w.hwnd)
-		windows.SetWindowLong(w.hwnd, windows.GWL_STYLE,
+		windows.SetWindowLong(
+			w.hwnd, windows.GWL_STYLE,
 			style|windows.WS_OVERLAPPEDWINDOW,
 		)
-		windows.SetWindowPos(w.hwnd, windows.HWND_TOPMOST,
+		windows.SetWindowPos(
+			w.hwnd, windows.HWND_TOPMOST,
 			0, 0, 0, 0,
 			windows.SWP_NOOWNERZORDER|windows.SWP_FRAMECHANGED,
 		)
@@ -618,11 +632,13 @@ func (w *window) SetWindowMode(mode WindowMode) {
 		}
 		w.placement = windows.GetWindowPlacement(w.hwnd)
 		style := windows.GetWindowLong(w.hwnd)
-		windows.SetWindowLong(w.hwnd, windows.GWL_STYLE,
+		windows.SetWindowLong(
+			w.hwnd, windows.GWL_STYLE,
 			style&^windows.WS_OVERLAPPEDWINDOW,
 		)
 		mi := windows.GetMonitorInfo(w.hwnd)
-		windows.SetWindowPos(w.hwnd, 0,
+		windows.SetWindowPos(
+			w.hwnd, 0,
 			mi.Monitor.Left, mi.Monitor.Top,
 			mi.Monitor.Right-mi.Monitor.Left,
 			mi.Monitor.Bottom-mi.Monitor.Top,
@@ -664,7 +680,10 @@ func (w *window) writeClipboard(s string) error {
 	hdr.Len = len(u16)
 	copy(u16v, u16)
 	windows.GlobalUnlock(mem)
-	if err := windows.SetClipboardData(windows.CF_UNICODETEXT, mem); err != nil {
+	if err := windows.SetClipboardData(
+		windows.CF_UNICODETEXT,
+		mem,
+	); err != nil {
 		windows.GlobalFree(mem)
 		return err
 	}

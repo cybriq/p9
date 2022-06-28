@@ -21,7 +21,8 @@ import (
 
 // CreateSimulationWallet is intended to be called from the rpcclient and used
 // to create a wallet for actors involved in simulations.
-func CreateSimulationWallet(activenet *chaincfg.Params, cfg *config.Config,
+func CreateSimulationWallet(
+	activenet *chaincfg.Params, cfg *config.Config,
 ) (e error) {
 	// Simulation wallet password is 'password'.
 	privPass := []byte("password")
@@ -132,7 +133,8 @@ func CreateWallet(activenet *chaincfg.Params, config *config.Config) (e error) {
 	// Ascertain the public passphrase. This will either be a value specified by the user or the default hard-coded
 	// public passphrase if the user does not want the additional public data encryption.
 	var pubPass []byte
-	if pubPass, e = prompt.PublicPass(reader, privPass, []byte(""),
+	if pubPass, e = prompt.PublicPass(
+		reader, privPass, []byte(""),
 		config.WalletPass.Bytes(),
 	); E.Chk(e) {
 		time.Sleep(time.Second * 5)
@@ -147,7 +149,8 @@ func CreateWallet(activenet *chaincfg.Params, config *config.Config) (e error) {
 		return e
 	}
 	D.Ln("Creating the wallet")
-	w, e := loader.CreateNewWallet(pubPass, privPass, seed, time.Now(), false,
+	w, e := loader.CreateNewWallet(
+		pubPass, privPass, seed, time.Now(), false,
 		config, nil,
 	)
 	if e != nil {
@@ -194,7 +197,8 @@ func NetworkDir(dataDir string, chainParams *chaincfg.Params) string {
 
 // convertLegacyKeystore converts all of the addresses in the passed legacy key store to the new waddrmgr.Manager
 // format. Both the legacy keystore and the new manager must be unlocked.
-func convertLegacyKeystore(legacyKeyStore *keystore.Store, w *Wallet,
+func convertLegacyKeystore(
+	legacyKeyStore *keystore.Store, w *Wallet,
 ) (e error) {
 	netParams := legacyKeyStore.Net()
 	blockStamp := waddrmgr.BlockStamp{

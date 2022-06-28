@@ -56,7 +56,8 @@ func buildIOS(tmpDir, target string, bi *buildInfo) error {
 			return err
 		}
 		if !forDevice && !strings.HasSuffix(out, ".app") {
-			return fmt.Errorf("the specified output directory %q does not end in .app or .ipa",
+			return fmt.Errorf(
+				"the specified output directory %q does not end in .app or .ipa",
 				out,
 			)
 		}
@@ -85,7 +86,8 @@ func signIOS(bi *buildInfo, tmpDir, app string) error {
 	if err != nil {
 		return err
 	}
-	provPattern := filepath.Join(home, "Library", "MobileDevice",
+	provPattern := filepath.Join(
+		home, "Library", "MobileDevice",
 		"Provisioning Profiles", "*.mobileprovision",
 	)
 	provisions, err := filepath.Glob(provPattern)
@@ -96,39 +98,48 @@ func signIOS(bi *buildInfo, tmpDir, app string) error {
 	var avail []string
 	for _, prov := range provisions {
 		// Decode the provision file to a plist.
-		_, err := runCmd(exec.Command("security", "cms", "-D", "-i", prov, "-o",
-			provInfo,
-		),
+		_, err := runCmd(
+			exec.Command(
+				"security", "cms", "-D", "-i", prov, "-o",
+				provInfo,
+			),
 		)
 		if err != nil {
 			return err
 		}
-		expUnix, err := runCmd(exec.Command("/usr/libexec/PlistBuddy", "-c",
-			"Print:ExpirationDate", provInfo,
-		),
+		expUnix, err := runCmd(
+			exec.Command(
+				"/usr/libexec/PlistBuddy", "-c",
+				"Print:ExpirationDate", provInfo,
+			),
 		)
 		if err != nil {
 			return err
 		}
 		exp, err := time.Parse(time.UnixDate, expUnix)
 		if err != nil {
-			return fmt.Errorf("sign: failed to parse expiration date from %q: %v",
+			return fmt.Errorf(
+				"sign: failed to parse expiration date from %q: %v",
 				prov, err,
 			)
 		}
 		if exp.Before(time.Now()) {
 			continue
 		}
-		appIDPrefix, err := runCmd(exec.Command("/usr/libexec/PlistBuddy", "-c",
-			"Print:ApplicationIdentifierPrefix:0", provInfo,
-		),
+		appIDPrefix, err := runCmd(
+			exec.Command(
+				"/usr/libexec/PlistBuddy", "-c",
+				"Print:ApplicationIdentifierPrefix:0", provInfo,
+			),
 		)
 		if err != nil {
 			return err
 		}
-		provAppID, err := runCmd(exec.Command("/usr/libexec/PlistBuddy", "-c",
-			"Print:Entitlements:application-identifier", provInfo,
-		),
+		provAppID, err := runCmd(
+			exec.Command(
+				"/usr/libexec/PlistBuddy", "-c",
+				"Print:Entitlements:application-identifier", provInfo,
+			),
 		)
 		if err != nil {
 			return err
@@ -143,35 +154,46 @@ func signIOS(bi *buildInfo, tmpDir, app string) error {
 		if err := copyFile(embedded, prov); err != nil {
 			return err
 		}
-		certDER, err := runCmdRaw(exec.Command("/usr/libexec/PlistBuddy", "-c",
-			"Print:DeveloperCertificates:0", provInfo,
-		),
+		certDER, err := runCmdRaw(
+			exec.Command(
+				"/usr/libexec/PlistBuddy", "-c",
+				"Print:DeveloperCertificates:0", provInfo,
+			),
 		)
 		if err != nil {
 			return err
 		}
 		// Omit trailing newline.
 		certDER = certDER[:len(certDER)-1]
-		entitlements, err := runCmd(exec.Command("/usr/libexec/PlistBuddy",
-			"-x", "-c", "Print:Entitlements", provInfo,
-		),
+		entitlements, err := runCmd(
+			exec.Command(
+				"/usr/libexec/PlistBuddy",
+				"-x", "-c", "Print:Entitlements", provInfo,
+			),
 		)
 		if err != nil {
 			return err
 		}
 		entFile := filepath.Join(tmpDir, "entitlements.plist")
-		if err := ioutil.WriteFile(entFile, []byte(entitlements), 0660); err != nil {
+		if err := ioutil.WriteFile(
+			entFile,
+			[]byte(entitlements),
+			0660,
+		); err != nil {
 			return err
 		}
 		identity := sha1.Sum(certDER)
 		idHex := hex.EncodeToString(identity[:])
-		_, err = runCmd(exec.Command("codesign", "-s", idHex, "-v",
-			"--entitlements", entFile, app,
-		),
+		_, err = runCmd(
+			exec.Command(
+				"codesign", "-s", idHex, "-v",
+				"--entitlements", entFile, app,
+			),
 		)
 		return err
 	}
-	return fmt.Errorf("sign: no valid provisioning profile found for bundle id %q among %v",
+	return fmt.Errorf(
+		"sign: no valid provisioning profile found for bundle id %q among %v",
 		bi.appID, avail,
 	)
 }
@@ -224,7 +246,8 @@ int main(int argc, char * argv[]) {
 		exeSlice := filepath.Join(tmpDir, "app-"+a)
 		lipo.Args = append(lipo.Args, exeSlice)
 		compile := exec.Command(clang, cflags...)
-		compile.Args = append(compile.Args,
+		compile.Args = append(
+			compile.Args,
 			"-Werror",
 			"-fmodules",
 			"-fobjc-arc",
@@ -233,10 +256,11 @@ int main(int argc, char * argv[]) {
 			"-o", exeSlice,
 			mainm,
 		)
-		builds.Go(func() error {
-			_, err := runCmd(compile)
-			return err
-		},
+		builds.Go(
+			func() error {
+				_, err := runCmd(compile)
+				return err
+			},
 		)
 	}
 	if err := builds.Wait(); err != nil {
@@ -265,7 +289,8 @@ int main(int argc, char * argv[]) {
 			return err
 		}
 	}
-	if _, err := runCmd(exec.Command("plutil", "-convert", "binary1", plistFile),
+	if _, err := runCmd(
+		exec.Command("plutil", "-convert", "binary1", plistFile),
 	); err != nil {
 		return err
 	}
@@ -280,13 +305,14 @@ func iosIcons(bi *buildInfo, tmpDir, appDir, icon string) (string, error) {
 		return "", err
 	}
 	appIcon := filepath.Join(assets, "AppIcon.appiconset")
-	err := buildIcons(appIcon, icon, []iconVariant{
-		{path: "ios_2x.png", size: 120},
-		{path: "ios_3x.png", size: 180},
-		// The App Store icon is not allowed to contain
-		// transparent pixels.
-		{path: "ios_store.png", size: 1024, fill: true},
-	},
+	err := buildIcons(
+		appIcon, icon, []iconVariant{
+			{path: "ios_2x.png", size: 120},
+			{path: "ios_3x.png", size: 180},
+			// The App Store icon is not allowed to contain
+			// transparent pixels.
+			{path: "ios_store.png", size: 1024, fill: true},
+		},
 	)
 	if err != nil {
 		return "", err
@@ -314,7 +340,11 @@ func iosIcons(bi *buildInfo, tmpDir, appDir, icon string) (string, error) {
 	]
 }`
 	contentFile := filepath.Join(appIcon, "Contents.json")
-	if err := ioutil.WriteFile(contentFile, []byte(contentJson), 0600); err != nil {
+	if err := ioutil.WriteFile(
+		contentFile,
+		[]byte(contentJson),
+		0600,
+	); err != nil {
 		return "", err
 	}
 	assetPlist := filepath.Join(tmpDir, "assets.plist")
@@ -341,7 +371,8 @@ func buildInfoPlist(bi *buildInfo) string {
 	case "tvos":
 		supportPlatform = "AppleTVOS"
 	}
-	return fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
+	return fmt.Sprintf(
+		`<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
@@ -418,7 +449,8 @@ func archiveIOS(tmpDir, target, frameworkRoot string, bi *buildInfo) error {
 	framework := filepath.Base(frameworkRoot)
 	const suf = ".framework"
 	if !strings.HasSuffix(framework, suf) {
-		return fmt.Errorf("the specified output %q does not end in '.framework'",
+		return fmt.Errorf(
+			"the specified output %q does not end in '.framework'",
 			frameworkRoot,
 		)
 	}
@@ -440,7 +472,10 @@ func archiveIOS(tmpDir, target, frameworkRoot string, bi *buildInfo) error {
 		{"A", filepath.Join("Versions", "Current")},
 	}
 	for _, l := range symlinks {
-		if err := os.Symlink(l[0], filepath.Join(frameworkRoot, l[1])); err != nil && !os.IsExist(err) {
+		if err := os.Symlink(
+			l[0],
+			filepath.Join(frameworkRoot, l[1]),
+		); err != nil && !os.IsExist(err) {
 			return err
 		}
 	}
@@ -484,10 +519,11 @@ func archiveIOS(tmpDir, target, frameworkRoot string, bi *buildInfo) error {
 			"CGO_CFLAGS="+cflagsLine,
 			"CGO_LDFLAGS="+cflagsLine,
 		)
-		builds.Go(func() error {
-			_, err := runCmd(cmd)
-			return err
-		},
+		builds.Go(
+			func() error {
+				_, err := runCmd(cmd)
+				return err
+			},
 		)
 	}
 	if err := builds.Wait(); err != nil {
@@ -496,9 +532,11 @@ func archiveIOS(tmpDir, target, frameworkRoot string, bi *buildInfo) error {
 	if _, err := runCmd(lipo); err != nil {
 		return err
 	}
-	appDir, err := runCmd(exec.Command("go", "list", "-f", "{{.Dir}}",
-		"github.com/cybriq/p9/pkg/gel/gio/app/internal/wm",
-	),
+	appDir, err := runCmd(
+		exec.Command(
+			"go", "list", "-f", "{{.Dir}}",
+			"github.com/cybriq/p9/pkg/gel/gio/app/internal/wm",
+		),
 	)
 	if err != nil {
 		return err
@@ -508,7 +546,8 @@ func archiveIOS(tmpDir, target, frameworkRoot string, bi *buildInfo) error {
 	if err := copyFile(headerDst, headerSrc); err != nil {
 		return err
 	}
-	module := fmt.Sprintf(`framework module "%s" {
+	module := fmt.Sprintf(
+		`framework module "%s" {
     header "%[1]s.h"
 
     export *
@@ -526,7 +565,8 @@ func supportsGOOS(wantGoos string) (bool, error) {
 	for _, pair := range strings.Split(geese, "\n") {
 		s := strings.SplitN(pair, "/", 2)
 		if len(s) != 2 {
-			return false, fmt.Errorf("go tool dist list: invalid GOOS/GOARCH pair: %s",
+			return false, fmt.Errorf(
+				"go tool dist list: invalid GOOS/GOARCH pair: %s",
 				pair,
 			)
 		}
@@ -558,16 +598,20 @@ func iosCompilerFor(target, arch string) (string, []string, error) {
 	default:
 		return "", nil, fmt.Errorf("unsupported -arch: %s", arch)
 	}
-	sdkPath, err := runCmd(exec.Command("xcrun", "--sdk", platformSDK,
-		"--show-sdk-path",
-	),
+	sdkPath, err := runCmd(
+		exec.Command(
+			"xcrun", "--sdk", platformSDK,
+			"--show-sdk-path",
+		),
 	)
 	if err != nil {
 		return "", nil, err
 	}
-	clang, err := runCmd(exec.Command("xcrun", "--sdk", platformSDK, "--find",
-		"clang",
-	),
+	clang, err := runCmd(
+		exec.Command(
+			"xcrun", "--sdk", platformSDK, "--find",
+			"clang",
+		),
 	)
 	if err != nil {
 		return "", nil, err
@@ -592,7 +636,8 @@ func zipDir(dst, base, dir string) (err error) {
 		}
 	}()
 	zipf := zip.NewWriter(f)
-	err = filepath.Walk(filepath.Join(base, dir),
+	err = filepath.Walk(
+		filepath.Join(base, dir),
 		func(path string, f os.FileInfo, err error) error {
 			if err != nil {
 				return err

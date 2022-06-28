@@ -15,11 +15,16 @@ type MsgPong struct {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation.
-func (msg *MsgPong) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgPong) BtcDecode(
+	r io.Reader,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	// NOTE: <= is not a mistake here.  The BIP0031 was defined as AFTER the version unlike most others.
 	if pver <= BIP0031Version {
-		str := fmt.Sprintf("pong message invalid for protocol "+
-			"version %d", pver,
+		str := fmt.Sprintf(
+			"pong message invalid for protocol "+
+				"version %d", pver,
 		)
 		return messageError("MsgPong.BtcDecode", str)
 	}
@@ -28,11 +33,16 @@ func (msg *MsgPong) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e 
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgPong) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgPong) BtcEncode(
+	w io.Writer,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	// NOTE: <= is not a mistake here.  The BIP0031 was defined as AFTER the version unlike most others.
 	if pver <= BIP0031Version {
-		str := fmt.Sprintf("pong message invalid for protocol "+
-			"version %d", pver,
+		str := fmt.Sprintf(
+			"pong message invalid for protocol "+
+				"version %d", pver,
 		)
 		return messageError("MsgPong.BtcEncode", str)
 	}

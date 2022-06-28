@@ -59,7 +59,8 @@ func invSummary(invList []*wire.InvVect) string {
 }
 
 // locatorSummary returns a block locator as a human-readable string.
-func locatorSummary(locator []*chainhash.Hash, stopHash *chainhash.Hash,
+func locatorSummary(
+	locator []*chainhash.Hash, stopHash *chainhash.Hash,
 ) string {
 	if len(locator) > 0 {
 		return fmt.Sprintf("locator %s, stop %s", locator[0], stopHash)
@@ -77,12 +78,13 @@ func sanitizeString(str string, maxLength uint) string {
 		"Z01234567890 .,;_/:?@"
 
 	// Strip any characters not in the safeChars string removed.
-	str = strings.Map(func(r rune) rune {
-		if strings.ContainsRune(safeChars, r) {
-			return r
-		}
-		return -1
-	}, str,
+	str = strings.Map(
+		func(r rune) rune {
+			if strings.ContainsRune(safeChars, r) {
+				return r
+			}
+			return -1
+		}, str,
 	)
 
 	// Limit the string to the max allowed length.
@@ -98,7 +100,8 @@ func sanitizeString(str string, maxLength uint) string {
 func messageSummary(msg wire.Message) string {
 	switch msg := msg.(type) {
 	case *wire.MsgVersion:
-		return fmt.Sprintf("agent %s, pver %d, block %d",
+		return fmt.Sprintf(
+			"agent %s, pver %d, block %d",
 			msg.UserAgent, msg.ProtocolVersion, msg.LastBlock,
 		)
 
@@ -124,14 +127,16 @@ func messageSummary(msg wire.Message) string {
 		// No summary.
 
 	case *wire.MsgTx:
-		return fmt.Sprintf("hash %s, %d inputs, %d outputs, lock %s",
+		return fmt.Sprintf(
+			"hash %s, %d inputs, %d outputs, lock %s",
 			msg.TxHash(), len(msg.TxIn), len(msg.TxOut),
 			formatLockTime(msg.LockTime),
 		)
 
 	case *wire.Block:
 		header := &msg.Header
-		return fmt.Sprintf("hash %s, ver %d, %d tx, %s", msg.BlockHash(),
+		return fmt.Sprintf(
+			"hash %s, ver %d, %d tx, %s", msg.BlockHash(),
 			header.Version, len(msg.Transactions), header.Timestamp,
 		)
 
@@ -154,12 +159,14 @@ func messageSummary(msg wire.Message) string {
 		return fmt.Sprintf("num %d", len(msg.Headers))
 
 	case *wire.MsgGetCFHeaders:
-		return fmt.Sprintf("start_height=%d, stop_hash=%v",
+		return fmt.Sprintf(
+			"start_height=%d, stop_hash=%v",
 			msg.StartHeight, msg.StopHash,
 		)
 
 	case *wire.MsgCFHeaders:
-		return fmt.Sprintf("stop_hash=%v, num_filter_hashes=%d",
+		return fmt.Sprintf(
+			"stop_hash=%v, num_filter_hashes=%d",
 			msg.StopHash, len(msg.FilterHashes),
 		)
 
@@ -168,7 +175,8 @@ func messageSummary(msg wire.Message) string {
 		// HTML control characters, etc. Also limit them to sane length for logging.
 		rejCommand := sanitizeString(msg.Cmd, wire.CommandSize)
 		rejReason := sanitizeString(msg.Reason, maxRejectReasonLen)
-		summary := fmt.Sprintf("cmd %v, code %v, reason %v", rejCommand,
+		summary := fmt.Sprintf(
+			"cmd %v, code %v, reason %v", rejCommand,
 			msg.Code, rejReason,
 		)
 		if rejCommand == wire.CmdBlock || rejCommand == wire.CmdTx {

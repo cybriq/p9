@@ -137,7 +137,8 @@ func New(
 	// a wrapper callback which executes both the currently registered callback and the mem wallet's callback.
 	if handlers.OnFilteredBlockConnected != nil {
 		obc := handlers.OnFilteredBlockConnected
-		handlers.OnFilteredBlockConnected = func(height int32,
+		handlers.OnFilteredBlockConnected = func(
+			height int32,
 			header *wire.BlockHeader, filteredTxns []*util.Tx,
 		) {
 			wallet.IngestBlock(height, header, filteredTxns)
@@ -149,7 +150,8 @@ func New(
 	}
 	if handlers.OnFilteredBlockDisconnected != nil {
 		obd := handlers.OnFilteredBlockDisconnected
-		handlers.OnFilteredBlockDisconnected = func(height int32,
+		handlers.OnFilteredBlockDisconnected = func(
+			height int32,
 			header *wire.BlockHeader,
 		) {
 			wallet.UnwindBlock(height, header)
@@ -176,7 +178,8 @@ func New(
 // client and connecting to the started node, and finally: optionally generating and submitting a testchain with a
 // configurable number of mature coinbase outputs coinbase outputs. NOTE: This method and TearDown should always be
 // called from the same goroutine as they are not concurrent safe.
-func (h *Harness) SetUp(createTestChain bool, numMatureOutputs uint32,
+func (h *Harness) SetUp(
+	createTestChain bool, numMatureOutputs uint32,
 ) (e error) {
 	// Start the pod node itself. This spawns a new process which will be managed
 	if e = h.node.start(); E.Chk(e) {

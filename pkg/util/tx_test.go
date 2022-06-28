@@ -2,11 +2,12 @@ package util_test
 
 import (
 	"bytes"
-	"github.com/cybriq/p9/pkg/wire"
 	"io"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/cybriq/p9/pkg/wire"
 
 	"github.com/davecgh/go-spew/spew"
 
@@ -290,7 +291,8 @@ func TestTx(t *testing.T) {
 	tx := util.NewTx(testTx)
 	// Ensure we get the same data back out.
 	if msgTx := tx.MsgTx(); !reflect.DeepEqual(msgTx, testTx) {
-		t.Errorf("MsgTx: mismatched MsgTx - got %v, want %v",
+		t.Errorf(
+			"MsgTx: mismatched MsgTx - got %v, want %v",
 			spew.Sdump(msgTx), spew.Sdump(testTx),
 		)
 	}
@@ -298,7 +300,8 @@ func TestTx(t *testing.T) {
 	wantIndex := 0
 	tx.SetIndex(0)
 	if gotIndex := tx.Index(); gotIndex != wantIndex {
-		t.Errorf("Index: mismatched index - got %v, want %v",
+		t.Errorf(
+			"Index: mismatched index - got %v, want %v",
 			gotIndex, wantIndex,
 		)
 	}
@@ -312,7 +315,8 @@ func TestTx(t *testing.T) {
 	for i := 0; i < 2; i++ {
 		hash := tx.Hash()
 		if !hash.IsEqual(wantHash) {
-			t.Errorf("Hash #%d mismatched hash - got %v, want %v", i,
+			t.Errorf(
+				"Hash #%d mismatched hash - got %v, want %v", i,
 				hash, wantHash,
 			)
 		}
@@ -337,7 +341,8 @@ func TestNewTxFromBytes(t *testing.T) {
 	}
 	// Ensure the generated MsgTx is correct.
 	if msgTx := tx.MsgTx(); !reflect.DeepEqual(msgTx, testTx) {
-		t.Errorf("MsgTx: mismatched MsgTx - got %v, want %v",
+		t.Errorf(
+			"MsgTx: mismatched MsgTx - got %v, want %v",
 			spew.Sdump(msgTx), spew.Sdump(testTx),
 		)
 	}
@@ -357,8 +362,9 @@ func TestTxErrors(t *testing.T) {
 	shortBytes := testTxBytes[:4]
 	_, e = util.NewTxFromBytes(shortBytes)
 	if e != io.EOF {
-		t.Errorf("NewTxFromBytes: did not get expected error - "+
-			"got %v, want %v", e, io.EOF,
+		t.Errorf(
+			"NewTxFromBytes: did not get expected error - "+
+				"got %v, want %v", e, io.EOF,
 		)
 	}
 }

@@ -14,7 +14,7 @@ const defaultInvListAlloc = 1000
 // MsgInv implements the Message interface and represents a bitcoin inv message. It is used to advertise a peer's known
 // data such as blocks and transactions through inventory vectors. It may be sent unsolicited to inform other peers of
 // the data or in response to a getblocks message (MsgGetBlocks). Each message is limited to a maximum number of
-// inventory vectors, which is currently 50,000. Use the AddInvVect function to podbuild up the list of inventory vectors
+// inventory vectors, which is currently 50,000. Use the AddInvVect function to build up the list of inventory vectors
 // when sending an inv message to another peer.
 type MsgInv struct {
 	InvList []*InvVect
@@ -35,7 +35,11 @@ func (msg *MsgInv) AddInvVect(iv *InvVect) (e error) {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation.
-func (msg *MsgInv) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgInv) BtcDecode(
+	r io.Reader,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	var count uint64
 	if count, e = ReadVarInt(r, pver); E.Chk(e) {
 		return
@@ -61,7 +65,11 @@ func (msg *MsgInv) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e e
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgInv) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgInv) BtcEncode(
+	w io.Writer,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	// Limit to max inventory vectors per message.
 	count := len(msg.InvList)
 	if count > MaxInvPerMsg {

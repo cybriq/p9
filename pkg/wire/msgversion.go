@@ -55,12 +55,21 @@ func (msg *MsgVersion) AddService(service ServiceFlag) {
 // protocol version hasn't been negotiated yet. As a result, the pver field is ignored and any fields which are added in
 // new versions are optional. This also mean that r must be a *bytes.Buffer so the number of remaining bytes can be
 // ascertained. This is part of the Message interface implementation.
-func (msg *MsgVersion) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgVersion) BtcDecode(
+	r io.Reader,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	buf, ok := r.(*bytes.Buffer)
 	if !ok {
 		return fmt.Errorf("MsgVersion.BtcDecode reader is not a *bytes.Buffer")
 	}
-	if e = readElements(buf, &msg.ProtocolVersion, &msg.Services, (*int64Time)(&msg.Timestamp)); E.Chk(e) {
+	if e = readElements(
+		buf,
+		&msg.ProtocolVersion,
+		&msg.Services,
+		(*int64Time)(&msg.Timestamp),
+	); E.Chk(e) {
 		return
 	}
 	e = readNetAddress(buf, pver, &msg.AddrYou, false)
@@ -115,7 +124,11 @@ func (msg *MsgVersion) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) 
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgVersion) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgVersion) BtcEncode(
+	w io.Writer,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	if e = validateUserAgent(msg.UserAgent); E.Chk(e) {
 		return
 	}

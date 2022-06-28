@@ -9,7 +9,7 @@ import (
 // as blocks and transactions from another peer. It should be used in response to the inv (MsgInv) message to request
 // the actual data referenced by each inventory vector the receiving peer doesn't already have. Each message is limited
 // to a maximum number of inventory vectors, which is currently 50,000. As a result, multiple messages must be used to
-// request larger amounts of data. Use the AddInvVect function to podbuild up the list of inventory vectors when sending a
+// request larger amounts of data. Use the AddInvVect function to build up the list of inventory vectors when sending a
 // getdata message to another peer.
 type MsgGetData struct {
 	InvList []*InvVect
@@ -30,7 +30,11 @@ func (msg *MsgGetData) AddInvVect(iv *InvVect) (e error) {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation.
-func (msg *MsgGetData) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgGetData) BtcDecode(
+	r io.Reader,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	var count uint64
 	if count, e = ReadVarInt(r, pver); E.Chk(e) {
 		return
@@ -57,7 +61,11 @@ func (msg *MsgGetData) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) 
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgGetData) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgGetData) BtcEncode(
+	w io.Writer,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	// Limit to max inventory vectors per message.
 	count := len(msg.InvList)
 	if count > MaxInvPerMsg {

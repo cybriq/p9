@@ -2,9 +2,10 @@ package blockchain
 
 import (
 	"fmt"
+	"math/big"
+
 	"github.com/cybriq/p9/pkg/bits"
 	"github.com/cybriq/p9/pkg/fork"
-	"math/big"
 )
 
 // CalcNextRequiredDifficultyHalcyon calculates the required difficulty for the block after the passed previous block
@@ -74,17 +75,18 @@ func (b *BlockChain) CalcNextRequiredDifficultyHalcyon(
 		)
 	}
 	if l {
-		T.C(func() string {
-			return fmt.Sprintf(
-				"actual timespan %v, adjusted timespan %v, target timespan %v"+
-					"\nOld %064x\nNew %064x",
-				actualTimespan,
-				adjustedTimespan,
-				b.params.AveragingTargetTimespan,
-				oldTarget,
-				bits.CompactToBig(newTargetBits),
-			)
-		},
+		T.C(
+			func() string {
+				return fmt.Sprintf(
+					"actual timespan %v, adjusted timespan %v, target timespan %v"+
+						"\nOld %064x\nNew %064x",
+					actualTimespan,
+					adjustedTimespan,
+					b.params.AveragingTargetTimespan,
+					oldTarget,
+					bits.CompactToBig(newTargetBits),
+				)
+			},
 		)
 	}
 	return newTargetBits, nil

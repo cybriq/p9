@@ -12,7 +12,7 @@ import (
 // TestBlockHeader tests the BlockHeader API.
 func TestBlockHeader(t *testing.T) {
 	nonce64, e := RandomUint64()
-	if e != nil  {
+	if e != nil {
 		t.Errorf("RandomUint64: Error generating nonce: %v", e)
 	}
 	nonce := uint32(nonce64)
@@ -22,20 +22,28 @@ func TestBlockHeader(t *testing.T) {
 	bh := NewBlockHeader(1, &hash, &merkleHash, bits, nonce)
 	// Ensure we get the same data back out.
 	if !bh.PrevBlock.IsEqual(&hash) {
-		t.Errorf("NewBlockHeader: wrong prev hash - got %v, want %v",
-			spew.Sprint(bh.PrevBlock), spew.Sprint(hash))
+		t.Errorf(
+			"NewBlockHeader: wrong prev hash - got %v, want %v",
+			spew.Sprint(bh.PrevBlock), spew.Sprint(hash),
+		)
 	}
 	if !bh.MerkleRoot.IsEqual(&merkleHash) {
-		t.Errorf("NewBlockHeader: wrong merkle root - got %v, want %v",
-			spew.Sprint(bh.MerkleRoot), spew.Sprint(merkleHash))
+		t.Errorf(
+			"NewBlockHeader: wrong merkle root - got %v, want %v",
+			spew.Sprint(bh.MerkleRoot), spew.Sprint(merkleHash),
+		)
 	}
 	if bh.Bits != bits {
-		t.Errorf("NewBlockHeader: wrong bits - got %v, want %v",
-			bh.Bits, bits)
+		t.Errorf(
+			"NewBlockHeader: wrong bits - got %v, want %v",
+			bh.Bits, bits,
+		)
 	}
 	if bh.Nonce != nonce {
-		t.Errorf("NewBlockHeader: wrong nonce - got %v, want %v",
-			bh.Nonce, nonce)
+		t.Errorf(
+			"NewBlockHeader: wrong nonce - got %v, want %v",
+			bh.Nonce, nonce,
+		)
 	}
 }
 
@@ -121,48 +129,56 @@ func TestBlockHeaderWire(t *testing.T) {
 		// Encode to wire format.
 		var buf bytes.Buffer
 		e := writeBlockHeader(&buf, test.pver, test.in)
-		if e != nil  {
+		if e != nil {
 			t.Errorf("writeBlockHeader #%d error %v", i, e)
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("writeBlockHeader #%d\n got: %s want: %s", i,
-				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf))
+			t.Errorf(
+				"writeBlockHeader #%d\n got: %s want: %s", i,
+				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
+			)
 			continue
 		}
 		buf.Reset()
 		e = test.in.BtcEncode(&buf, pver, 0)
-		if e != nil  {
+		if e != nil {
 			t.Errorf("BtcEncode #%d error %v", i, e)
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("BtcEncode #%d\n got: %s want: %s", i,
-				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf))
+			t.Errorf(
+				"BtcEncode #%d\n got: %s want: %s", i,
+				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
+			)
 			continue
 		}
 		// Decode the block header from wire format.
 		var bh BlockHeader
 		rbuf := bytes.NewReader(test.buf)
 		e = readBlockHeader(rbuf, test.pver, &bh)
-		if e != nil  {
+		if e != nil {
 			t.Errorf("readBlockHeader #%d error %v", i, e)
 			continue
 		}
 		if !reflect.DeepEqual(&bh, test.out) {
-			t.Errorf("readBlockHeader #%d\n got: %s want: %s", i,
-				spew.Sdump(&bh), spew.Sdump(test.out))
+			t.Errorf(
+				"readBlockHeader #%d\n got: %s want: %s", i,
+				spew.Sdump(&bh), spew.Sdump(test.out),
+			)
 			continue
 		}
 		rbuf = bytes.NewReader(test.buf)
 		e = bh.BtcDecode(rbuf, pver, test.enc)
-		if e != nil  {
+		if e != nil {
 			t.Errorf("BtcDecode #%d error %v", i, e)
 			continue
 		}
 		if !reflect.DeepEqual(&bh, test.out) {
-			t.Errorf("BtcDecode #%d\n got: %s want: %s", i,
-				spew.Sdump(&bh), spew.Sdump(test.out))
+			t.Errorf(
+				"BtcDecode #%d\n got: %s want: %s", i,
+				spew.Sdump(&bh), spew.Sdump(test.out),
+			)
 			continue
 		}
 	}
@@ -212,26 +228,30 @@ func TestBlockHeaderSerialize(t *testing.T) {
 		// Serialize the block header.
 		var buf bytes.Buffer
 		e := test.in.Serialize(&buf)
-		if e != nil  {
+		if e != nil {
 			t.Errorf("Serialize #%d error %v", i, e)
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("Serialize #%d\n got: %s want: %s", i,
-				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf))
+			t.Errorf(
+				"Serialize #%d\n got: %s want: %s", i,
+				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
+			)
 			continue
 		}
 		// Deserialize the block header.
 		var bh BlockHeader
 		rbuf := bytes.NewReader(test.buf)
 		e = bh.Deserialize(rbuf)
-		if e != nil  {
+		if e != nil {
 			t.Errorf("Deserialize #%d error %v", i, e)
 			continue
 		}
 		if !reflect.DeepEqual(&bh, test.out) {
-			t.Errorf("Deserialize #%d\n got: %s want: %s", i,
-				spew.Sdump(&bh), spew.Sdump(test.out))
+			t.Errorf(
+				"Deserialize #%d\n got: %s want: %s", i,
+				spew.Sdump(&bh), spew.Sdump(test.out),
+			)
 			continue
 		}
 	}

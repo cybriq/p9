@@ -306,7 +306,8 @@ var Block100000 = wire.Block{
 // }
 
 // assertNumRelevantTxns checks that the set of relevant txns found in a block filterer is of a specific size.
-func assertNumRelevantTxns(t *testing.T, bf *chainclient.BlockFilterer,
+func assertNumRelevantTxns(
+	t *testing.T, bf *chainclient.BlockFilterer,
 	size int,
 ) {
 	count := len(bf.RelevantTxns)
@@ -319,7 +320,8 @@ func assertNumRelevantTxns(t *testing.T, bf *chainclient.BlockFilterer,
 }
 
 // assertRelevantTxnsContains checks that the wantTx is found in the block filterers set of relevant txns.
-func assertRelevantTxnsContains(t *testing.T, bf *chainclient.BlockFilterer,
+func assertRelevantTxnsContains(
+	t *testing.T, bf *chainclient.BlockFilterer,
 	wantTx *wire.MsgTx,
 ) {
 	for _, relevantTx := range bf.RelevantTxns {

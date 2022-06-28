@@ -29,7 +29,8 @@ type SPIRVCross struct {
 func NewSPIRVCross() *SPIRVCross { return &SPIRVCross{Bin: "spirv-cross"} }
 
 // Convert converts compute shader from spirv format to a target format.
-func (spirv *SPIRVCross) Convert(path, variant string, shader []byte,
+func (spirv *SPIRVCross) Convert(
+	path, variant string, shader []byte,
 	target, version string,
 ) (string, error) {
 	base := spirv.WorkDir.Path(filepath.Base(path), variant)
@@ -41,17 +42,20 @@ func (spirv *SPIRVCross) Convert(path, variant string, shader []byte,
 	var cmd *exec.Cmd
 	switch target {
 	case "glsl":
-		cmd = exec.Command(spirv.Bin,
+		cmd = exec.Command(
+			spirv.Bin,
 			"--no-es",
 			"--version", version,
 		)
 	case "es":
-		cmd = exec.Command(spirv.Bin,
+		cmd = exec.Command(
+			spirv.Bin,
 			"--es",
 			"--version", version,
 		)
 	case "hlsl":
-		cmd = exec.Command(spirv.Bin,
+		cmd = exec.Command(
+			spirv.Bin,
 			"--hlsl",
 			"--shader-model", version,
 		)
@@ -74,7 +78,8 @@ func (spirv *SPIRVCross) Convert(path, variant string, shader []byte,
 }
 
 // Metadata extracts metadata for a SPIR-V shader.
-func (spirv *SPIRVCross) Metadata(path, variant string, shader []byte,
+func (spirv *SPIRVCross) Metadata(
+	path, variant string, shader []byte,
 ) (Metadata, error) {
 	base := spirv.WorkDir.Path(filepath.Base(path), variant)
 
@@ -82,7 +87,8 @@ func (spirv *SPIRVCross) Metadata(path, variant string, shader []byte,
 		return Metadata{}, fmt.Errorf("unable to write shader to disk: %w", err)
 	}
 
-	cmd := exec.Command(spirv.Bin,
+	cmd := exec.Command(
+		spirv.Bin,
 		base,
 		"--reflect",
 	)
@@ -94,7 +100,8 @@ func (spirv *SPIRVCross) Metadata(path, variant string, shader []byte,
 
 	meta, err := parseMetadata(out)
 	if err != nil {
-		return Metadata{}, fmt.Errorf("%s\nfailed to parse metadata: %w", out,
+		return Metadata{}, fmt.Errorf(
+			"%s\nfailed to parse metadata: %w", out,
 			err,
 		)
 	}
@@ -132,7 +139,8 @@ func parseMetadata(data []byte) (Metadata, error) {
 		} `json:"ubos"`
 	}
 	if err := json.Unmarshal(data, &reflect); err != nil {
-		return Metadata{}, fmt.Errorf("failed to parse reflection data: %w",
+		return Metadata{}, fmt.Errorf(
+			"failed to parse reflection data: %w",
 			err,
 		)
 	}
@@ -144,28 +152,31 @@ func parseMetadata(data []byte) (Metadata, error) {
 		if err != nil {
 			return Metadata{}, fmt.Errorf("parseReflection: %v", err)
 		}
-		m.Inputs = append(m.Inputs, driver.InputLocation{
-			Name:          input.Name,
-			Location:      input.Location,
-			Semantic:      "TEXCOORD",
-			SemanticIndex: input.Location,
-			Type:          dataType,
-			Size:          dataSize,
-		},
+		m.Inputs = append(
+			m.Inputs, driver.InputLocation{
+				Name:          input.Name,
+				Location:      input.Location,
+				Semantic:      "TEXCOORD",
+				SemanticIndex: input.Location,
+				Type:          dataType,
+				Size:          dataSize,
+			},
 		)
 	}
 
-	sort.Slice(m.Inputs, func(i, j int) bool {
-		return m.Inputs[i].Location < m.Inputs[j].Location
-	},
+	sort.Slice(
+		m.Inputs, func(i, j int) bool {
+			return m.Inputs[i].Location < m.Inputs[j].Location
+		},
 	)
 
 	blockOffset := 0
 	for _, block := range reflect.UBOs {
-		m.Uniforms.Blocks = append(m.Uniforms.Blocks, driver.UniformBlock{
-			Name:    block.Name,
-			Binding: block.Binding,
-		},
+		m.Uniforms.Blocks = append(
+			m.Uniforms.Blocks, driver.UniformBlock{
+				Name:    block.Name,
+				Binding: block.Binding,
+			},
 		)
 		t := reflect.Types[block.Type]
 		// By convention uniform block variables are named by prepending an underscore
@@ -174,11 +185,13 @@ func parseMetadata(data []byte) (Metadata, error) {
 		for _, member := range t.Members {
 			dataType, size, err := parseDataType(member.Type)
 			if err != nil {
-				return Metadata{}, fmt.Errorf("failed to parse reflection data: %v",
+				return Metadata{}, fmt.Errorf(
+					"failed to parse reflection data: %v",
 					err,
 				)
 			}
-			m.Uniforms.Locations = append(m.Uniforms.Locations,
+			m.Uniforms.Locations = append(
+				m.Uniforms.Locations,
 				driver.UniformLocation{
 					Name:   fmt.Sprintf("%s.%s", blockVar, member.Name),
 					Type:   dataType,
@@ -192,10 +205,11 @@ func parseMetadata(data []byte) (Metadata, error) {
 	m.Uniforms.Size = blockOffset
 
 	for _, texture := range reflect.Textures {
-		m.Textures = append(m.Textures, driver.TextureBinding{
-			Name:    texture.Name,
-			Binding: texture.Binding,
-		},
+		m.Textures = append(
+			m.Textures, driver.TextureBinding{
+				Name:    texture.Name,
+				Binding: texture.Binding,
+			},
 		)
 	}
 

@@ -63,7 +63,8 @@ func GetTransactionWeight(tx *util.Tx) int64 {
 // sig op count scaled according to the WitnessScaleFactor, the sig op count for
 // all p2sh inputs scaled by the WitnessScaleFactor, and finally the unscaled
 // sig op count for any inputs spending witness programs.
-func GetSigOpCost(tx *util.Tx, isCoinBaseTx bool, utxoView *UtxoViewpoint,
+func GetSigOpCost(
+	tx *util.Tx, isCoinBaseTx bool, utxoView *UtxoViewpoint,
 	bip16 bool,
 ) (int, error) {
 	numSigOps := CountSigOps(tx) * WitnessScaleFactor

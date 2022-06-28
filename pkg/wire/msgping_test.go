@@ -5,7 +5,7 @@ import (
 	"io"
 	"reflect"
 	"testing"
-	
+
 	"github.com/davecgh/go-spew/spew"
 )
 
@@ -19,14 +19,16 @@ func TestPing(t *testing.T) {
 	}
 	msg := NewMsgPing(nonce)
 	if msg.Nonce != nonce {
-		t.Errorf("NewMsgPing: wrong nonce - got %v, want %v",
+		t.Errorf(
+			"NewMsgPing: wrong nonce - got %v, want %v",
 			msg.Nonce, nonce,
 		)
 	}
 	// Ensure the command is expected value.
 	wantCmd := "ping"
 	if cmd := msg.Command(); cmd != wantCmd {
-		t.Errorf("NewMsgPing: wrong command - got %v want %v",
+		t.Errorf(
+			"NewMsgPing: wrong command - got %v want %v",
 			cmd, wantCmd,
 		)
 	}
@@ -34,8 +36,9 @@ func TestPing(t *testing.T) {
 	wantPayload := uint32(8)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -52,7 +55,8 @@ func TestPingBIP0031(t *testing.T) {
 	}
 	msg := NewMsgPing(nonce)
 	if msg.Nonce != nonce {
-		t.Errorf("NewMsgPing: wrong nonce - got %v, want %v",
+		t.Errorf(
+			"NewMsgPing: wrong nonce - got %v, want %v",
 			msg.Nonce, nonce,
 		)
 	}
@@ -60,8 +64,9 @@ func TestPingBIP0031(t *testing.T) {
 	wantPayload := uint32(0)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -92,7 +97,8 @@ func TestPingCrossProtocol(t *testing.T) {
 	}
 	msg := NewMsgPing(nonce)
 	if msg.Nonce != nonce {
-		t.Errorf("NewMsgPing: wrong nonce - got %v, want %v",
+		t.Errorf(
+			"NewMsgPing: wrong nonce - got %v, want %v",
 			msg.Nonce, nonce,
 		)
 	}
@@ -159,7 +165,8 @@ func TestPingWire(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("BtcEncode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcEncode #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -173,7 +180,8 @@ func TestPingWire(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(msg, test.out) {
-			t.Errorf("BtcDecode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcDecode #%d\n got: %s want: %s", i,
 				spew.Sdump(msg), spew.Sdump(test.out),
 			)
 			continue
@@ -211,7 +219,8 @@ func TestPingWireErrors(t *testing.T) {
 		w := newFixedWriter(test.max)
 		e := test.in.BtcEncode(w, test.pver, test.enc)
 		if e != test.writeErr {
-			t.Errorf("BtcEncode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcEncode #%d wrong error got: %v, want: %v",
 				i, e, test.writeErr,
 			)
 			continue
@@ -221,7 +230,8 @@ func TestPingWireErrors(t *testing.T) {
 		r := newFixedReader(test.max, test.buf)
 		e = msg.BtcDecode(r, test.pver, test.enc)
 		if e != test.readErr {
-			t.Errorf("BtcDecode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcDecode #%d wrong error got: %v, want: %v",
 				i, e, test.readErr,
 			)
 			continue

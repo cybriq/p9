@@ -33,7 +33,11 @@ func TestTransformOffset(t *testing.T) {
 	}
 	i := Affine2D{}.Offset(o).Invert().Transform(r)
 	if !eq(i, p) {
-		t.Errorf("offset transformation inverse mismatch: have %v, want %v", i, p)
+		t.Errorf(
+			"offset transformation inverse mismatch: have %v, want %v",
+			i,
+			p,
+		)
 	}
 }
 
@@ -47,7 +51,11 @@ func TestTransformScale(t *testing.T) {
 	}
 	i := Affine2D{}.Scale(Point{}, s).Invert().Transform(r)
 	if !eq(i, p) {
-		t.Errorf("scale transformation inverse mismatch: have %v, want %v", i, p)
+		t.Errorf(
+			"scale transformation inverse mismatch: have %v, want %v",
+			i,
+			p,
+		)
 	}
 }
 
@@ -61,7 +69,11 @@ func TestTransformRotate(t *testing.T) {
 	}
 	i := Affine2D{}.Rotate(Point{}, a).Invert().Transform(r)
 	if !eq(i, p) {
-		t.Errorf("rotate transformation inverse mismatch: have %v, want %v", i, p)
+		t.Errorf(
+			"rotate transformation inverse mismatch: have %v, want %v",
+			i,
+			p,
+		)
 	}
 }
 
@@ -74,7 +86,11 @@ func TestTransformShear(t *testing.T) {
 	}
 	i := Affine2D{}.Shear(Point{}, math.Pi/4, 0).Invert().Transform(r)
 	if !eq(i, p) {
-		t.Errorf("shear transformation inverse mismatch: have %v, want %v", i, p)
+		t.Errorf(
+			"shear transformation inverse mismatch: have %v, want %v",
+			i,
+			p,
+		)
 	}
 }
 
@@ -84,13 +100,23 @@ func TestTransformMultiply(t *testing.T) {
 	s := Point{X: -1, Y: 2}
 	a := float32(-math.Pi / 2)
 
-	r := Affine2D{}.Offset(o).Scale(Point{}, s).Rotate(Point{}, a).Shear(Point{}, math.Pi/4, 0).Transform(p)
+	r := Affine2D{}.Offset(o).Scale(Point{}, s).Rotate(
+		Point{},
+		a,
+	).Shear(Point{}, math.Pi/4, 0).Transform(p)
 	if !eq(r, Pt(1, 3)) {
 		t.Errorf("complex transformation mismatch: have %v, want {1 3}", r)
 	}
-	i := Affine2D{}.Offset(o).Scale(Point{}, s).Rotate(Point{}, a).Shear(Point{}, math.Pi/4, 0).Invert().Transform(r)
+	i := Affine2D{}.Offset(o).Scale(Point{}, s).Rotate(
+		Point{},
+		a,
+	).Shear(Point{}, math.Pi/4, 0).Invert().Transform(r)
 	if !eq(i, p) {
-		t.Errorf("complex transformation inverse mismatch: have %v, want %v", i, p)
+		t.Errorf(
+			"complex transformation inverse mismatch: have %v, want %v",
+			i,
+			p,
+		)
 	}
 }
 
@@ -113,7 +139,13 @@ func TestPrimes(t *testing.T) {
 	} {
 		got := test.x.Transform(test.p)
 		if !eq(got, test.exp) {
-			t.Errorf("%v.Transform(%v): have %v, want %v", test.x, test.p, got, test.exp)
+			t.Errorf(
+				"%v.Transform(%v): have %v, want %v",
+				test.x,
+				test.p,
+				got,
+				test.exp,
+			)
 		}
 	}
 
@@ -121,8 +153,21 @@ func TestPrimes(t *testing.T) {
 		x   Affine2D
 		exp Affine2D
 	}{
-		{x: xa, exp: NewAffine2D(-1.1875, 0.6875, -0.375, 1.0625, -0.5625, -0.875)},
-		{x: xb, exp: NewAffine2D(1.5666667, -1.0333333, -3.2000008, -1.4333333, 1-0.03333336, 1.7999992)},
+		{
+			x:   xa,
+			exp: NewAffine2D(-1.1875, 0.6875, -0.375, 1.0625, -0.5625, -0.875),
+		},
+		{
+			x: xb,
+			exp: NewAffine2D(
+				1.5666667,
+				-1.0333333,
+				-3.2000008,
+				-1.4333333,
+				1-0.03333336,
+				1.7999992,
+			),
+		},
 	} {
 		got := test.x.Invert()
 		if !eqaff(got, test.exp) {
@@ -215,7 +260,10 @@ func BenchmarkTransformTranslateMultiply(b *testing.B) {
 
 func BenchmarkTransformScaleMultiply(b *testing.B) {
 	a := Affine2D{}.Offset(Point{X: 1, Y: 1}).Rotate(Point{}, math.Pi/3)
-	t := Affine2D{}.Offset(Point{X: 0.5, Y: 0.5}).Scale(Point{}, Point{X: 0.4, Y: -0.5})
+	t := Affine2D{}.Offset(Point{X: 0.5, Y: 0.5}).Scale(
+		Point{},
+		Point{X: 0.4, Y: -0.5},
+	)
 
 	for i := 0; i < b.N; i++ {
 		a = a.Mul(t)

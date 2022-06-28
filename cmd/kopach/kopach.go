@@ -89,7 +89,8 @@ func (w *Worker) Start() {
 	w.clients = []*client.Client{}
 	for i := 0; i < w.cx.Config.GenThreads.V(); i++ {
 		D.Ln("starting worker", i)
-		cmd, _ := pipe.Spawn(w.quit, os.Args[0], "worker", w.id,
+		cmd, _ := pipe.Spawn(
+			w.quit, os.Args[0], "worker", w.id,
 			w.cx.ActiveNet.Name, w.cx.Config.LogLevel.V(),
 		)
 		w.workers = append(w.workers, cmd)
@@ -181,7 +182,8 @@ func Run(cx *state.State) (e error) {
 				since := time.Now().Sub(time.Unix(0, w.lastSent.Load()))
 				wasSending := since > time.Second*6 && w.FirstSender.Load() != 0
 				if wasSending {
-					D.Ln("previous current controller has stopped broadcasting",
+					D.Ln(
+						"previous current controller has stopped broadcasting",
 						since, w.FirstSender.Load(),
 					)
 					// when this string is clear other broadcasts will be listened to
@@ -325,7 +327,8 @@ var handlers = transport.Handlers{
 		np := advt.UUID
 		// np := p.GetControllerListenerPort()
 		// ns := net.JoinHostPort(strings.Split(ni.String(), ":")[0], fmt.Sprint(np))
-		D.Ln("received pause from server at", ni, np, "stopping",
+		D.Ln(
+			"received pause from server at", ni, np, "stopping",
 			len(w.clients), "workers stopping",
 		)
 		if fs == np {

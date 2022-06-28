@@ -58,7 +58,8 @@ func (rp *ReceivePage) SmallList(gtx l.Context) l.Dimensions {
 		rp.RegenerateButton(),
 		rp.AddressbookHeader(),
 	}
-	smallWidgets = append(smallWidgets,
+	smallWidgets = append(
+		smallWidgets,
 		rp.GetAddressbookHistoryCards("DocBg")...,
 	)
 	le := func(gtx l.Context, index int) l.Dimensions {
@@ -93,7 +94,8 @@ func (rp *ReceivePage) MediumList(gtx l.Context) l.Dimensions {
 	}
 	var historyWidget []l.Widget
 
-	historyWidget = append(historyWidget,
+	historyWidget = append(
+		historyWidget,
 		rp.GetAddressbookHistoryCards("DocBg")...,
 	)
 	historyLE := func(gtx l.Context, index int) l.Dimensions {
@@ -132,7 +134,8 @@ func (rp *ReceivePage) MediumList(gtx l.Context) l.Dimensions {
 }
 
 func (rp *ReceivePage) Spacer() l.Widget {
-	return rp.wg.Flex().AlignMiddle().Flexed(1,
+	return rp.wg.Flex().AlignMiddle().Flexed(
+		1,
 		rp.wg.Inset(0.25, gel.EmptySpace(0, 0)).Fn,
 	).Fn
 }
@@ -143,7 +146,8 @@ func (rp *ReceivePage) GetAddressbookHistoryCards(bg string) (widgets []l.Widget
 	req := len(wg.State.receiveAddresses)
 	if req > avail {
 		for i := 0; i < req-avail; i++ {
-			wg.receiveAddressbookClickables = append(wg.receiveAddressbookClickables,
+			wg.receiveAddressbookClickables = append(
+				wg.receiveAddressbookClickables,
 				wg.WidgetPool.GetClickable(),
 			)
 		}

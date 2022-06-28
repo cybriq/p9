@@ -16,18 +16,21 @@ var (
 )
 
 // checkDbError ensures the passed error is a database.DBError with an error code that matches the passed  error code.
-func checkDbError(t *testing.T, testName string, gotErr error,
+func checkDbError(
+	t *testing.T, testName string, gotErr error,
 	wantErrCode database.ErrorCode,
 ) bool {
 	dbErr, ok := gotErr.(database.DBError)
 	if !ok {
-		t.Errorf("%s: unexpected error type - got %T, want %T",
+		t.Errorf(
+			"%s: unexpected error type - got %T, want %T",
 			testName, gotErr, database.DBError{},
 		)
 		return false
 	}
 	if dbErr.ErrorCode != wantErrCode {
-		t.Errorf("%s: unexpected error code - got %s (%s), want %s",
+		t.Errorf(
+			"%s: unexpected error code - got %s (%s), want %s",
 			testName, dbErr.ErrorCode, dbErr.Description,
 			wantErrCode,
 		)
@@ -47,8 +50,9 @@ func TestAddDuplicateDriver(t *testing.T) {
 	// bogusCreateDB is a function which acts as a bogus create and open driver function and intentionally returns a
 	// failure that can be detected if the interface allows a duplicate driver to overwrite an existing one.
 	bogusCreateDB := func(args ...interface{}) (database.DB, error) {
-		return nil, fmt.Errorf("duplicate driver allowed for database "+
-			"type [%v]", dbType,
+		return nil, fmt.Errorf(
+			"duplicate driver allowed for database "+
+				"type [%v]", dbType,
 		)
 	}
 	// Create a driver that tries to replace an existing one. Set its create and open functions to a function that
@@ -70,8 +74,9 @@ func TestCreateOpenFail(t *testing.T) {
 	// bogusCreateDB is a function which acts as a bogus create and open driver function that intentionally returns a
 	// failure which can be detected.
 	dbType := "createopenfail"
-	openError := fmt.Errorf("failed to create or open database for "+
-		"database type [%v]", dbType,
+	openError := fmt.Errorf(
+		"failed to create or open database for "+
+			"database type [%v]", dbType,
 	)
 	bogusCreateDB := func(args ...interface{}) (database.DB, error) {
 		return nil, openError
@@ -90,7 +95,8 @@ func TestCreateOpenFail(t *testing.T) {
 	// Ensure creating a database with the new type fails with the expected error.
 	_, e = database.Create(dbType)
 	if e != openError {
-		t.Errorf("expected error not received - got: %v, want %v", e,
+		t.Errorf(
+			"expected error not received - got: %v, want %v", e,
 			openError,
 		)
 		return
@@ -98,7 +104,8 @@ func TestCreateOpenFail(t *testing.T) {
 	// Ensure opening a database with the new type fails with the expected error.
 	_, e = database.Open(dbType)
 	if e != openError {
-		t.Errorf("expected error not received - got: %v, want %v", e,
+		t.Errorf(
+			"expected error not received - got: %v, want %v", e,
 			openError,
 		)
 		return

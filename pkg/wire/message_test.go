@@ -62,7 +62,8 @@ func TestMessage(t *testing.T) {
 	msgMerkleBlock := NewMsgMerkleBlock(bh)
 	msgReject := NewMsgReject("block", RejectDuplicate, "duplicate block")
 	msgGetCFilters := NewMsgGetCFilters(GCSFilterRegular, 0, &chainhash.Hash{})
-	msgGetCFHeaders := NewMsgGetCFHeaders(GCSFilterRegular, 0,
+	msgGetCFHeaders := NewMsgGetCFHeaders(
+		GCSFilterRegular, 0,
 		&chainhash.Hash{},
 	)
 	msgGetCFCheckpt := NewMsgGetCFCheckpt(GCSFilterRegular, &chainhash.Hash{})
@@ -377,7 +378,8 @@ func TestWriteMessageWireErrors(t *testing.T) {
 	exceedOverallPayloadErrMsg := &fakeMessage{payload: exceedOverallPayload}
 	// Fake message that has payload which exceeds max allowed per message.
 	exceedPayload := make([]byte, 1)
-	exceedPayloadErrMsg := &fakeMessage{payload: exceedPayload,
+	exceedPayloadErrMsg := &fakeMessage{
+		payload:     exceedPayload,
 		forceLenErr: true,
 	}
 	// Fake message that is used to force errors in the header and payload writes.

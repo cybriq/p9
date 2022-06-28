@@ -463,7 +463,8 @@ func TestRegister(t *testing.T) {
 		for _, regTest := range test.register {
 			e := Register(regTest.params)
 			if e != regTest.err {
-				t.Errorf("%s:%s: Registered network with unexpected error: got %v expected %v",
+				t.Errorf(
+					"%s:%s: Registered network with unexpected error: got %v expected %v",
 					test.name, regTest.name, e, regTest.err,
 				)
 			}
@@ -471,7 +472,8 @@ func TestRegister(t *testing.T) {
 		for i, magTest := range test.p2pkhMagics {
 			valid := IsPubKeyHashAddrID(magTest.magic)
 			if valid != magTest.valid {
-				t.Errorf("%s: P2PKH magic %d valid mismatch: got %v expected %v",
+				t.Errorf(
+					"%s: P2PKH magic %d valid mismatch: got %v expected %v",
 					test.name, i, valid, magTest.valid,
 				)
 			}
@@ -479,7 +481,8 @@ func TestRegister(t *testing.T) {
 		for i, magTest := range test.p2shMagics {
 			valid := IsScriptHashAddrID(magTest.magic)
 			if valid != magTest.valid {
-				t.Errorf("%s: P2SH magic %d valid mismatch: got %v expected %v",
+				t.Errorf(
+					"%s: P2SH magic %d valid mismatch: got %v expected %v",
 					test.name, i, valid, magTest.valid,
 				)
 			}
@@ -487,7 +490,8 @@ func TestRegister(t *testing.T) {
 		for i, prxTest := range test.segwitPrefixes {
 			valid := IsBech32SegwitPrefix(prxTest.prefix)
 			if valid != prxTest.valid {
-				t.Errorf("%s: segwit prefix %s (%d) valid mismatch: got %v expected %v",
+				t.Errorf(
+					"%s: segwit prefix %s (%d) valid mismatch: got %v expected %v",
 					test.name, prxTest.prefix, i, valid, prxTest.valid,
 				)
 			}
@@ -495,13 +499,15 @@ func TestRegister(t *testing.T) {
 		for i, magTest := range test.hdMagics {
 			pubKey, e := HDPrivateKeyToPublicKeyID(magTest.priv[:])
 			if !reflect.DeepEqual(e, magTest.err) {
-				t.Errorf("%s: HD magic %d mismatched error: got %v expected %v ",
+				t.Errorf(
+					"%s: HD magic %d mismatched error: got %v expected %v ",
 					test.name, i, e, magTest.err,
 				)
 				continue
 			}
 			if magTest.err == nil && !bytes.Equal(pubKey, magTest.want[:]) {
-				t.Errorf("%s: HD magic %d private and public mismatch: got %v expected %v ",
+				t.Errorf(
+					"%s: HD magic %d private and public mismatch: got %v expected %v ",
 					test.name, i, pubKey, magTest.want[:],
 				)
 			}

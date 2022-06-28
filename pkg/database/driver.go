@@ -52,7 +52,8 @@ func Open(dbType string, args ...interface{}) (DB, error) {
 // database type for the driver has already been registered.
 func RegisterDriver(driver Driver) (e error) {
 	if _, exists := drivers[driver.DbType]; exists {
-		str := fmt.Sprintf("driver %q is already registered",
+		str := fmt.Sprintf(
+			"driver %q is already registered",
 			driver.DbType,
 		)
 		return makeError(ErrDbTypeRegistered, str, nil)

@@ -407,15 +407,17 @@ func (a *AddrManager) deserializePeers(filePath string) (e error) {
 		ka.na, e = a.DeserializeNetAddress(v.Addr)
 		if e != nil {
 			E.Ln(e)
-			return fmt.Errorf("failed to deserialize netaddress "+
-				"%s: %v", v.Addr, e,
+			return fmt.Errorf(
+				"failed to deserialize netaddress "+
+					"%s: %v", v.Addr, e,
 			)
 		}
 		ka.srcAddr, e = a.DeserializeNetAddress(v.Src)
 		if e != nil {
 			E.Ln(e)
-			return fmt.Errorf("failed to deserialize netaddress "+
-				"%s: %v", v.Src, e,
+			return fmt.Errorf(
+				"failed to deserialize netaddress "+
+					"%s: %v", v.Src, e,
 			)
 		}
 		ka.attempts = v.Attempts
@@ -427,8 +429,9 @@ func (a *AddrManager) deserializePeers(filePath string) (e error) {
 		for _, val := range sam.NewBuckets[i] {
 			ka, ok := a.addrIndex[val]
 			if !ok {
-				return fmt.Errorf("newbucket contains %s but "+
-					"none in address list", val,
+				return fmt.Errorf(
+					"newbucket contains %s but "+
+						"none in address list", val,
 				)
 			}
 			if ka.refs == 0 {
@@ -455,12 +458,14 @@ func (a *AddrManager) deserializePeers(filePath string) (e error) {
 	// Sanity checking.
 	for k, v := range a.addrIndex {
 		if v.refs == 0 && !v.tried {
-			return fmt.Errorf("address %s after serialisationwith no references",
+			return fmt.Errorf(
+				"address %s after serialisationwith no references",
 				k,
 			)
 		}
 		if v.refs > 0 && v.tried {
-			return fmt.Errorf("address %s after serialisation which is both new and tried",
+			return fmt.Errorf(
+				"address %s after serialisation which is both new and tried",
 				k,
 			)
 		}
@@ -469,7 +474,8 @@ func (a *AddrManager) deserializePeers(filePath string) (e error) {
 }
 
 // DeserializeNetAddress converts a given address string to a *wire.NetAddress
-func (a *AddrManager) DeserializeNetAddress(addr string) (*wire.NetAddress,
+func (a *AddrManager) DeserializeNetAddress(addr string) (
+	*wire.NetAddress,
 	error,
 ) {
 	host, portStr, e := net.SplitHostPort(addr)
@@ -517,7 +523,8 @@ func (a *AddrManager) Stop() (e error) {
 // It enforces a max number of addresses and silently ignores duplicate addresses.
 //
 // It is safe for concurrent access.
-func (a *AddrManager) AddAddresses(addrs []*wire.NetAddress,
+func (a *AddrManager) AddAddresses(
+	addrs []*wire.NetAddress,
 	srcAddr *wire.NetAddress,
 ) {
 	a.mtx.Lock()
@@ -629,7 +636,8 @@ func (a *AddrManager) reset() {
 // If the address is a Tor .onion address this will be taken care of.
 //
 // Else if the host is not an IP address it will be resolved ( via Tor if required).
-func (a *AddrManager) HostToNetAddress(host string, port uint16,
+func (a *AddrManager) HostToNetAddress(
+	host string, port uint16,
 	services wire.ServiceFlag,
 ) (*wire.NetAddress, error) {
 	// Tor address is 16 char base32 + ".onion"
@@ -706,11 +714,13 @@ func (a *AddrManager) GetAddress() *KnownAddress {
 			ka := e.Value.(*KnownAddress)
 			randval := a.rand.Intn(large)
 			if float64(randval) < (factor * ka.chance() * float64(large)) {
-				T.C(func() string {
-					return fmt.Sprintf("selected %v from tried bucket",
-						NetAddressKey(ka.na),
-					)
-				},
+				T.C(
+					func() string {
+						return fmt.Sprintf(
+							"selected %v from tried bucket",
+							NetAddressKey(ka.na),
+						)
+					},
 				)
 				return ka
 			}
@@ -738,11 +748,13 @@ func (a *AddrManager) GetAddress() *KnownAddress {
 			}
 			randval := a.rand.Intn(large)
 			if float64(randval) < (factor * ka.chance() * float64(large)) {
-				T.C(func() string {
-					return fmt.Sprintf("Selected %v from new bucket",
-						NetAddressKey(ka.na),
-					)
-				},
+				T.C(
+					func() string {
+						return fmt.Sprintf(
+							"Selected %v from new bucket",
+							NetAddressKey(ka.na),
+						)
+					},
 				)
 				return ka
 			}
@@ -857,7 +869,8 @@ func (a *AddrManager) Good(addr *wire.NetAddress) {
 }
 
 // SetServices sets the services for the giiven address to the provided value.
-func (a *AddrManager) SetServices(addr *wire.NetAddress,
+func (a *AddrManager) SetServices(
+	addr *wire.NetAddress,
 	services wire.ServiceFlag,
 ) {
 	a.mtx.Lock()
@@ -876,7 +889,8 @@ func (a *AddrManager) SetServices(addr *wire.NetAddress,
 }
 
 // AddLocalAddress adds na to the list of known local addresses to advertise with the given priority.
-func (a *AddrManager) AddLocalAddress(na *wire.NetAddress,
+func (a *AddrManager) AddLocalAddress(
+	na *wire.NetAddress,
 	priority AddressPriority,
 ) (e error) {
 	if !IsRoutable(na) {
@@ -979,11 +993,13 @@ func (a *AddrManager) GetBestLocalAddress(remoteAddr *wire.NetAddress) *wire.Net
 		}
 	}
 	if bestAddress != nil {
-		T.F("suggesting address %s:%d for %s:%d", bestAddress.IP,
+		T.F(
+			"suggesting address %s:%d for %s:%d", bestAddress.IP,
 			bestAddress.Port, remoteAddr.IP, remoteAddr.Port,
 		)
 	} else {
-		T.F("no worthy address for %s:%d", remoteAddr.IP,
+		T.F(
+			"no worthy address for %s:%d", remoteAddr.IP,
 			remoteAddr.Port,
 		)
 		// Send something unroutable if nothing suitable.
@@ -1000,7 +1016,8 @@ func (a *AddrManager) GetBestLocalAddress(remoteAddr *wire.NetAddress) *wire.Net
 }
 
 // New returns a new bitcoin address manager. Use Start to begin processing asynchronous address updates.
-func New(dataDir string, lookupFunc func(string) ([]net.IP, error),
+func New(
+	dataDir string, lookupFunc func(string) ([]net.IP, error),
 ) *AddrManager {
 	am := AddrManager{
 		PeersFile:      filepath.Join(dataDir, "peers.json"),

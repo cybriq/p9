@@ -162,7 +162,8 @@ func (c *Connection) SendShards(shards [][]byte) (e error) {
 	return
 }
 
-func (c *Connection) SendShardsTo(shards [][]byte, addr *net.UDPAddr,
+func (c *Connection) SendShardsTo(
+	shards [][]byte, addr *net.UDPAddr,
 ) (e error) {
 	var sendConn *net.UDPConn
 	if sendConn, e = net.DialUDP("udp", nil, addr); !E.Chk(e) {
@@ -174,7 +175,8 @@ func (c *Connection) SendShardsTo(shards [][]byte, addr *net.UDPAddr,
 
 // Listen runs a goroutine that collects and attempts to decode the FEC shards
 // once it has enough intact pieces
-func (c *Connection) Listen(handlers HandleFunc, ifc interface{},
+func (c *Connection) Listen(
+	handlers HandleFunc, ifc interface{},
 	lastSent *time.Time, firstSender *string,
 ) (e error) {
 	F.Ln("setting read buffer")
@@ -202,7 +204,12 @@ func (c *Connection) Listen(handlers HandleFunc, ifc interface{},
 				nonce := string(nonceBytes)
 				// decipher
 				var shard []byte
-				if shard, e = c.ciph.Open(nil, nonceBytes, buf[16:], nil); E.Chk(e) {
+				if shard, e = c.ciph.Open(
+					nil,
+					nonceBytes,
+					buf[16:],
+					nil,
+				); E.Chk(e) {
 					// corrupted or irrelevant message
 					continue
 				}

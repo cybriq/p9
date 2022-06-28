@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"errors"
+
 	"github.com/cybriq/p9/pkg/btcaddr"
 
 	"github.com/cybriq/p9/pkg/txscript"
@@ -14,7 +15,8 @@ import (
 // otherwise an error is returned for a missing pubkey.
 //
 // This function only works with pubkeys and P2PKH addresses derived from them.
-func (w *Wallet) MakeMultiSigScript(addrs []btcaddr.Address, nRequired int,
+func (w *Wallet) MakeMultiSigScript(
+	addrs []btcaddr.Address, nRequired int,
 ) ([]byte, error) {
 	pubKeys := make([]*btcaddr.PubKey, len(addrs))
 	var dbtx walletdb.ReadTx
@@ -65,7 +67,8 @@ func (w *Wallet) MakeMultiSigScript(addrs []btcaddr.Address, nRequired int,
 }
 
 // ImportP2SHRedeemScript adds a P2SH redeem script to the wallet.
-func (w *Wallet) ImportP2SHRedeemScript(script []byte) (*btcaddr.ScriptHash,
+func (w *Wallet) ImportP2SHRedeemScript(script []byte) (
+	*btcaddr.ScriptHash,
 	error,
 ) {
 	var p2shAddr *btcaddr.ScriptHash

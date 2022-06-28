@@ -47,10 +47,11 @@ func (s SwitchStyle) Layout(gtx layout.Context) layout.Dimensions {
 	// Draw track.
 	stack := op.Save(gtx.Ops)
 	trackCorner := float32(trackHeight) / 2
-	trackRect := f32.Rectangle{Max: f32.Point{
-		X: float32(trackWidth),
-		Y: float32(trackHeight),
-	},
+	trackRect := f32.Rectangle{
+		Max: f32.Point{
+			X: float32(trackWidth),
+			Y: float32(trackHeight),
+		},
 	}
 	col := s.Color.Disabled
 	if s.Switch.Value {
@@ -76,7 +77,10 @@ func (s SwitchStyle) Layout(gtx layout.Context) layout.Dimensions {
 	}
 	op.Offset(inkOff).Add(gtx.Ops)
 	gtx.Constraints.Min = image.Pt(inkSize, inkSize)
-	clip.UniformRRect(f32.Rectangle{Max: layout.FPt(gtx.Constraints.Min)}, rr).Add(gtx.Ops)
+	clip.UniformRRect(
+		f32.Rectangle{Max: layout.FPt(gtx.Constraints.Min)},
+		rr,
+	).Add(gtx.Ops)
 	for _, p := range s.Switch.History() {
 		drawInk(gtx, p)
 	}
@@ -95,7 +99,8 @@ func (s SwitchStyle) Layout(gtx layout.Context) layout.Dimensions {
 	if s.Switch.Hovered() {
 		r := 1.7 * thumbRadius
 		background := f32color.MulAlpha(s.Color.Enabled, 70)
-		paint.FillShape(gtx.Ops, background,
+		paint.FillShape(
+			gtx.Ops, background,
 			clip.Circle{
 				Center: f32.Point{X: thumbRadius, Y: thumbRadius},
 				Radius: r,
@@ -106,7 +111,8 @@ func (s SwitchStyle) Layout(gtx layout.Context) layout.Dimensions {
 	// Draw thumb shadow, a translucent disc slightly larger than the
 	// thumb itself.
 	// Center shadow horizontally and slightly adjust its Y.
-	paint.FillShape(gtx.Ops, argb(0x55000000),
+	paint.FillShape(
+		gtx.Ops, argb(0x55000000),
 		clip.Circle{
 			Center: f32.Point{X: thumbRadius, Y: thumbRadius + .25},
 			Radius: thumbRadius + 1,
@@ -114,7 +120,8 @@ func (s SwitchStyle) Layout(gtx layout.Context) layout.Dimensions {
 	)
 
 	// Draw thumb.
-	paint.FillShape(gtx.Ops, col,
+	paint.FillShape(
+		gtx.Ops, col,
 		clip.Circle{
 			Center: f32.Point{X: thumbRadius, Y: thumbRadius},
 			Radius: thumbRadius,

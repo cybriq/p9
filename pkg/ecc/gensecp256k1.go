@@ -55,8 +55,17 @@ func (curve *KoblitzCurve) SerializedBytePoints() []byte {
 			px, py, pz := new(fieldVal), new(fieldVal), new(fieldVal)
 			for j := 0; j < 8; j++ {
 				if i>>uint(j)&1 == 1 {
-					curve.addJacobian(px, py, pz, &computingPoints[j][0],
-						&computingPoints[j][1], &computingPoints[j][2], px, py, pz)
+					curve.addJacobian(
+						px,
+						py,
+						pz,
+						&computingPoints[j][0],
+						&computingPoints[j][1],
+						&computingPoints[j][2],
+						px,
+						py,
+						pz,
+					)
 				}
 			}
 			for i := 0; i < 10; i++ {

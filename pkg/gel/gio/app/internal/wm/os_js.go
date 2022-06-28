@@ -71,17 +71,20 @@ func NewWindow(win Callbacks, opts *Options) error {
 	}
 	w.chanAnimation = make(chan struct{}, 1)
 	w.chanRedraw = make(chan struct{}, 1)
-	w.redraw = w.funcOf(func(this js.Value, args []js.Value) interface{} {
-		w.chanAnimation <- struct{}{}
-		return nil
-	},
+	w.redraw = w.funcOf(
+		func(this js.Value, args []js.Value) interface{} {
+			w.chanAnimation <- struct{}{}
+			return nil
+		},
 	)
-	w.clipboardCallback = w.funcOf(func(this js.Value, args []js.Value,
-	) interface{} {
-		content := args[0].String()
-		win.Event(clipboard.Event{Text: content})
-		return nil
-	},
+	w.clipboardCallback = w.funcOf(
+		func(
+			this js.Value, args []js.Value,
+		) interface{} {
+			content := args[0].String()
+			win.Event(clipboard.Event{Text: content})
+			return nil
+		},
 	)
 	w.addEventListeners()
 	w.addHistory()
@@ -151,20 +154,23 @@ func (w *window) cleanup() {
 }
 
 func (w *window) addEventListeners() {
-	w.addEventListener(w.visualViewport, "resize",
+	w.addEventListener(
+		w.visualViewport, "resize",
 		func(this js.Value, args []js.Value) interface{} {
 			w.resize()
 			w.chanRedraw <- struct{}{}
 			return nil
 		},
 	)
-	w.addEventListener(w.window, "contextmenu",
+	w.addEventListener(
+		w.window, "contextmenu",
 		func(this js.Value, args []js.Value) interface{} {
 			args[0].Call("preventDefault")
 			return nil
 		},
 	)
-	w.addEventListener(w.window, "popstate",
+	w.addEventListener(
+		w.window, "popstate",
 		func(this js.Value, args []js.Value) interface{} {
 			ev := &system.CommandEvent{Type: system.CommandBack}
 			w.w.Event(ev)
@@ -175,7 +181,8 @@ func (w *window) addEventListeners() {
 			return w.browserHistory.Call("back")
 		},
 	)
-	w.addEventListener(w.document, "visibilitychange",
+	w.addEventListener(
+		w.document, "visibilitychange",
 		func(this js.Value, args []js.Value) interface{} {
 			ev := system.StageEvent{}
 			switch w.document.Get("visibilityState").String() {
@@ -188,13 +195,15 @@ func (w *window) addEventListeners() {
 			return nil
 		},
 	)
-	w.addEventListener(w.cnv, "mousemove",
+	w.addEventListener(
+		w.cnv, "mousemove",
 		func(this js.Value, args []js.Value) interface{} {
 			w.pointerEvent(pointer.Move, 0, 0, args[0])
 			return nil
 		},
 	)
-	w.addEventListener(w.cnv, "mousedown",
+	w.addEventListener(
+		w.cnv, "mousedown",
 		func(this js.Value, args []js.Value) interface{} {
 			w.pointerEvent(pointer.Press, 0, 0, args[0])
 			if w.requestFocus {
@@ -204,13 +213,15 @@ func (w *window) addEventListeners() {
 			return nil
 		},
 	)
-	w.addEventListener(w.cnv, "mouseup",
+	w.addEventListener(
+		w.cnv, "mouseup",
 		func(this js.Value, args []js.Value) interface{} {
 			w.pointerEvent(pointer.Release, 0, 0, args[0])
 			return nil
 		},
 	)
-	w.addEventListener(w.cnv, "wheel",
+	w.addEventListener(
+		w.cnv, "wheel",
 		func(this js.Value, args []js.Value) interface{} {
 			e := args[0]
 			dx, dy := e.Get("deltaX").Float(), e.Get("deltaY").Float()
@@ -227,7 +238,8 @@ func (w *window) addEventListeners() {
 			return nil
 		},
 	)
-	w.addEventListener(w.cnv, "touchstart",
+	w.addEventListener(
+		w.cnv, "touchstart",
 		func(this js.Value, args []js.Value) interface{} {
 			w.touchEvent(pointer.Press, args[0])
 			if w.requestFocus {
@@ -237,72 +249,83 @@ func (w *window) addEventListeners() {
 			return nil
 		},
 	)
-	w.addEventListener(w.cnv, "touchend",
+	w.addEventListener(
+		w.cnv, "touchend",
 		func(this js.Value, args []js.Value) interface{} {
 			w.touchEvent(pointer.Release, args[0])
 			return nil
 		},
 	)
-	w.addEventListener(w.cnv, "touchmove",
+	w.addEventListener(
+		w.cnv, "touchmove",
 		func(this js.Value, args []js.Value) interface{} {
 			w.touchEvent(pointer.Move, args[0])
 			return nil
 		},
 	)
-	w.addEventListener(w.cnv, "touchcancel",
+	w.addEventListener(
+		w.cnv, "touchcancel",
 		func(this js.Value, args []js.Value) interface{} {
 			// Cancel all touches even if only one touch was cancelled.
 			for i := range w.touches {
 				w.touches[i] = js.Null()
 			}
 			w.touches = w.touches[:0]
-			w.w.Event(pointer.Event{
-				Type:   pointer.Cancel,
-				Source: pointer.Touch,
-			},
+			w.w.Event(
+				pointer.Event{
+					Type:   pointer.Cancel,
+					Source: pointer.Touch,
+				},
 			)
 			return nil
 		},
 	)
-	w.addEventListener(w.tarea, "focus",
+	w.addEventListener(
+		w.tarea, "focus",
 		func(this js.Value, args []js.Value) interface{} {
 			w.w.Event(key.FocusEvent{Focus: true})
 			return nil
 		},
 	)
-	w.addEventListener(w.tarea, "blur",
+	w.addEventListener(
+		w.tarea, "blur",
 		func(this js.Value, args []js.Value) interface{} {
 			w.w.Event(key.FocusEvent{Focus: false})
 			w.blur()
 			return nil
 		},
 	)
-	w.addEventListener(w.tarea, "keydown",
+	w.addEventListener(
+		w.tarea, "keydown",
 		func(this js.Value, args []js.Value) interface{} {
 			w.keyEvent(args[0], key.Press)
 			return nil
 		},
 	)
-	w.addEventListener(w.tarea, "keyup",
+	w.addEventListener(
+		w.tarea, "keyup",
 		func(this js.Value, args []js.Value) interface{} {
 			w.keyEvent(args[0], key.Release)
 			return nil
 		},
 	)
-	w.addEventListener(w.tarea, "compositionstart",
+	w.addEventListener(
+		w.tarea, "compositionstart",
 		func(this js.Value, args []js.Value) interface{} {
 			w.composing = true
 			return nil
 		},
 	)
-	w.addEventListener(w.tarea, "compositionend",
+	w.addEventListener(
+		w.tarea, "compositionend",
 		func(this js.Value, args []js.Value) interface{} {
 			w.composing = false
 			w.flushInput()
 			return nil
 		},
 	)
-	w.addEventListener(w.tarea, "input",
+	w.addEventListener(
+		w.tarea, "input",
 		func(this js.Value, args []js.Value) interface{} {
 			if w.composing {
 				return nil
@@ -311,7 +334,8 @@ func (w *window) addEventListeners() {
 			return nil
 		},
 	)
-	w.addEventListener(w.tarea, "paste",
+	w.addEventListener(
+		w.tarea, "paste",
 		func(this js.Value, args []js.Value) interface{} {
 			if w.clipboard.IsUndefined() {
 				return nil
@@ -324,7 +348,8 @@ func (w *window) addEventListeners() {
 }
 
 func (w *window) addHistory() {
-	w.browserHistory.Call("pushState", nil, nil,
+	w.browserHistory.Call(
+		"pushState", nil, nil,
 		w.window.Get("location").Get("href"),
 	)
 }
@@ -406,14 +431,15 @@ func (w *window) touchEvent(typ pointer.Type, e js.Value) {
 			X: float32(x) * scale,
 			Y: float32(y) * scale,
 		}
-		w.w.Event(pointer.Event{
-			Type:      typ,
-			Source:    pointer.Touch,
-			Position:  pos,
-			PointerID: pid,
-			Time:      t,
-			Modifiers: mods,
-		},
+		w.w.Event(
+			pointer.Event{
+				Type:      typ,
+				Source:    pointer.Touch,
+				Position:  pos,
+				PointerID: pid,
+				Time:      t,
+				Modifiers: mods,
+			},
 		)
 	}
 }
@@ -459,33 +485,38 @@ func (w *window) pointerEvent(typ pointer.Type, dx, dy float32, e js.Value) {
 	if jbtns&4 != 0 {
 		btns |= pointer.ButtonTertiary
 	}
-	w.w.Event(pointer.Event{
-		Type:      typ,
-		Source:    pointer.Mouse,
-		Buttons:   btns,
-		Position:  pos,
-		Scroll:    scroll,
-		Time:      t,
-		Modifiers: modifiersFor(e),
-	},
+	w.w.Event(
+		pointer.Event{
+			Type:      typ,
+			Source:    pointer.Mouse,
+			Buttons:   btns,
+			Position:  pos,
+			Scroll:    scroll,
+			Time:      t,
+			Modifiers: modifiersFor(e),
+		},
 	)
 }
 
-func (w *window) addEventListener(this js.Value, event string,
+func (w *window) addEventListener(
+	this js.Value, event string,
 	f func(this js.Value, args []js.Value) interface{},
 ) {
 	jsf := w.funcOf(f)
 	this.Call("addEventListener", event, jsf)
-	w.cleanfuncs = append(w.cleanfuncs, func() {
-		this.Call("removeEventListener", event, jsf)
-	},
+	w.cleanfuncs = append(
+		w.cleanfuncs, func() {
+			this.Call("removeEventListener", event, jsf)
+		},
 	)
 }
 
 // funcOf is like js.FuncOf but adds the js.Func to a list of
 // functions to be released during cleanup.
-func (w *window) funcOf(f func(this js.Value, args []js.Value,
-) interface{},
+func (w *window) funcOf(
+	f func(
+		this js.Value, args []js.Value,
+	) interface{},
 ) js.Func {
 	jsf := js.FuncOf(f)
 	w.cleanfuncs = append(w.cleanfuncs, jsf.Release)
@@ -590,18 +621,19 @@ func (w *window) draw(sync bool) {
 		return
 	}
 
-	w.w.Event(FrameEvent{
-		FrameEvent: system.FrameEvent{
-			Now: time.Now(),
-			Size: image.Point{
-				X: width,
-				Y: height,
+	w.w.Event(
+		FrameEvent{
+			FrameEvent: system.FrameEvent{
+				Now: time.Now(),
+				Size: image.Point{
+					X: width,
+					Y: height,
+				},
+				Insets: insets,
+				Metric: metric,
 			},
-			Insets: insets,
-			Metric: metric,
+			Sync: sync,
 		},
-		Sync: sync,
-	},
 	)
 }
 

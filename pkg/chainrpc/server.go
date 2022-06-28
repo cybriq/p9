@@ -485,7 +485,8 @@ func (n *Node) Stop() (e error) {
 	if e = n.DB.Update(
 		func(tx database.Tx) (e error) {
 			metadata := tx.Metadata()
-			if e = metadata.Put(mempool.EstimateFeeDatabaseKey,
+			if e = metadata.Put(
+				mempool.EstimateFeeDatabaseKey,
 				n.FeeEstimator.Save(),
 			); E.Chk(e) {
 			}
@@ -717,7 +718,8 @@ func (n *Node) HandleQuery(state *PeerState, querymsg interface{}) {
 				// D.Ln(sp.UserAgent())
 				ua := strings.Split(sp.UserAgent(), "nonce")
 				if len(ua) < 2 {
-					nonce = fmt.Sprintf("%s/%s", sp.Peer.LocalAddr().String(),
+					nonce = fmt.Sprintf(
+						"%s/%s", sp.Peer.LocalAddr().String(),
 						sp.Peer.Addr(),
 					)
 				} else {
@@ -888,7 +890,8 @@ func (n *Node) HandleRelayInvMsg(state *PeerState, msg RelayMsg) {
 				}
 				txD, ok := msg.Data.(*mempool.TxDesc)
 				if !ok {
-					W.F("underlying data for tx inv relay is not a *mempool.TxDesc: %Ter",
+					W.F(
+						"underlying data for tx inv relay is not a *mempool.TxDesc: %Ter",
 						msg.Data,
 					)
 					return
@@ -1400,7 +1403,8 @@ out:
 					E.F("UPnP can't get external address: %v", e)
 					continue out
 				}
-				na := wire.NewNetAddressIPPort(externalip, uint16(listenPort),
+				na := wire.NewNetAddressIPPort(
+					externalip, uint16(listenPort),
 					n.Services,
 				)
 				e = n.AddrManager.AddLocalAddress(na, addrmgr.UpnpPrio)
@@ -1408,7 +1412,8 @@ out:
 					_ = e
 					// XXX DeletePortMapping?
 				}
-				W.F("successfully bound via UPnP to %n",
+				W.F(
+					"successfully bound via UPnP to %n",
 					addrmgr.NetAddressKey(na),
 				)
 				first = false
@@ -1528,7 +1533,8 @@ func (np *NodePeer) OnFilterAdd(
 		return
 	}
 	if !np.Filter.IsLoaded() {
-		D.F("%s sent a filteradd request with no filter loaded -- disconnecting %s",
+		D.F(
+			"%s sent a filteradd request with no filter loaded -- disconnecting %s",
 			np,
 		)
 		np.Disconnect()
@@ -1697,7 +1703,8 @@ func (np *NodePeer) OnGetCFCheckpt(
 				"growing size of checkpoint cache from %v to %v block hashes",
 				len(checkptCache), len(blockHashes),
 			)
-			checkptCache = append(np.Server.CFCheckptCaches[msg.FilterType],
+			checkptCache = append(
+				np.Server.CFCheckptCaches[msg.FilterType],
 				newEntries...,
 			)
 		}
@@ -2053,7 +2060,8 @@ func (np *NodePeer) OnInv(
 	newInv := wire.NewMsgInvSizeHint(uint(len(msg.InvList)))
 	for _, invVect := range msg.InvList {
 		if invVect.Type == wire.InvTypeTx {
-			T.F("ignoring tx %v in inv from %v -- blocksonly enabled",
+			T.F(
+				"ignoring tx %v in inv from %v -- blocksonly enabled",
 				invVect.Hash, np,
 			)
 			if np.ProtocolVersion() >= wire.BIP0037Version {
@@ -2262,7 +2270,8 @@ func (np *NodePeer) OnWrite(
 // AddBanScore increases the persistent and decaying ban score fields by the values passed as parameters. If the
 // resulting score exceeds half of the ban threshold, a warning is logged including the reason provided. Further, if the
 // score is above the ban threshold, the peer will be banned and disconnected.
-func (np *NodePeer) AddBanScore(persistent, transient uint32, reason string,
+func (np *NodePeer) AddBanScore(
+	persistent, transient uint32, reason string,
 ) bool {
 	// No warning is logged and no score is calculated if banning is disabled.
 	if np.Server.Config.DisableBanning.True() {
@@ -2278,7 +2287,8 @@ func (np *NodePeer) AddBanScore(persistent, transient uint32, reason string,
 		// threshold.
 		score := np.BanScore.Int()
 		if int(score) > warnThreshold {
-			W.F("misbehaving peer %s: %s -- ban score is %d, it was not increased this time",
+			W.F(
+				"misbehaving peer %s: %s -- ban score is %d, it was not increased this time",
 				np, reason, score,
 			)
 		}
@@ -2286,7 +2296,8 @@ func (np *NodePeer) AddBanScore(persistent, transient uint32, reason string,
 	}
 	score := np.BanScore.Increase(persistent, transient)
 	if int(score) > warnThreshold {
-		W.F("misbehaving peer %s: %s -- ban score increased to %d", np, reason,
+		W.F(
+			"misbehaving peer %s: %s -- ban score increased to %d", np, reason,
 			score,
 		)
 		if int(score) > np.Server.Config.BanThreshold.V() {
@@ -2412,7 +2423,8 @@ func (a SimpleAddr) String() string {
 //  this function needs to be split to separate the address manager from the
 //  listening address processing, and configuration of listening IP addresses is
 //  unnecessary (for the controller's unicast elements)
-func AddLocalAddress(addrMgr *addrmgr.AddrManager, addr string,
+func AddLocalAddress(
+	addrMgr *addrmgr.AddrManager, addr string,
 	services wire.ServiceFlag,
 ) (e error) {
 	host, portStr, e := net.SplitHostPort(addr)
@@ -2463,7 +2475,8 @@ func AddLocalAddress(addrMgr *addrmgr.AddrManager, addr string,
 // AddrStringToNetAddr takes an address in the form of 'host:port' and returns a net.Addr which maps to the original
 // address with any host names resolved to IP addresses. It also handles tor addresses properly by returning a net.Addr
 // that encapsulates the address.
-func AddrStringToNetAddr(config *config.Config, stateCfg *active.Config,
+func AddrStringToNetAddr(
+	config *config.Config, stateCfg *active.Config,
 	addr string,
 ) (net.Addr, error) {
 	host, strPort, e := net.SplitHostPort(addr)
@@ -2582,7 +2595,8 @@ func InitListeners(
 	if len(config.ExternalIPs.S()) != 0 {
 		defaultPort, e := strconv.ParseUint(activeNet.DefaultPort, 10, 16)
 		if e != nil {
-			E.F("can not parse default port %s for active chain: %v",
+			E.F(
+				"can not parse default port %s for active chain: %v",
 				activeNet.DefaultPort, e,
 			)
 			return nil, nil, e
@@ -2755,7 +2769,8 @@ type Context struct {
 // Use start to begin accepting connections from peers.
 //
 // TODO: simplify/modularise this
-func NewNode(listenAddrs []string, db database.DB, interruptChan qu.C,
+func NewNode(
+	listenAddrs []string, db database.DB, interruptChan qu.C,
 	cx *Context, mempoolUpdateHook func(),
 ) (
 	*Node,
@@ -2769,14 +2784,16 @@ func NewNode(listenAddrs []string, db database.DB, interruptChan qu.C,
 	if cx.Config.NoCFilters.True() {
 		services &^= wire.SFNodeCF
 	}
-	aMgr := addrmgr.New(cx.Config.DataDir.V()+string(os.PathSeparator)+cx.ActiveNet.Name,
+	aMgr := addrmgr.New(
+		cx.Config.DataDir.V()+string(os.PathSeparator)+cx.ActiveNet.Name,
 		Lookup(cx.StateCfg),
 	)
 	var lstn []net.Listener
 	var nat upnp.NAT
 	if cx.Config.DisableListen.False() {
 		var e error
-		if lstn, nat, e = InitListeners(cx.Config, cx.ActiveNet, aMgr,
+		if lstn, nat, e = InitListeners(
+			cx.Config, cx.ActiveNet, aMgr,
 			listenAddrs, services,
 		); E.Chk(e) {
 			return nil, e
@@ -2827,7 +2844,8 @@ func NewNode(listenAddrs []string, db database.DB, interruptChan qu.C,
 	//
 	// If the addrindex is run first, it may not have the transactions from the current block indexed.
 	var indexes []indexers.Indexer
-	D.Ln("txindex", cx.Config.TxIndex.True(), "addrindex",
+	D.Ln(
+		"txindex", cx.Config.TxIndex.True(), "addrindex",
 		cx.Config.AddrIndex.True(),
 	)
 	if cx.Config.TxIndex.True() || cx.Config.AddrIndex.True() {
@@ -3244,7 +3262,8 @@ func RandomUint16Number(max uint16) uint16 {
 
 // SetupRPCListeners returns a slice of listeners that are configured for use with the RPC server depending on the
 // configuration settings for listen addresses and TLS.
-func SetupRPCListeners(config *config.Config, urls []string) ([]net.Listener,
+func SetupRPCListeners(config *config.Config, urls []string) (
+	[]net.Listener,
 	error,
 ) {
 	// Setup TLS if not disabled.
@@ -3297,7 +3316,8 @@ func FileExists(name string) bool {
 	return true
 }
 
-func GetBlkTemplateGenerator(node *Node, cfg *config.Config,
+func GetBlkTemplateGenerator(
+	node *Node, cfg *config.Config,
 	stateCfg *active.Config,
 ) *mining.BlkTmplGenerator {
 	D.Ln("getting a block template generator")

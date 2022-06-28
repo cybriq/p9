@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"reflect"
 	"testing"
-	
+
 	"github.com/davecgh/go-spew/spew"
 )
 
@@ -16,14 +16,16 @@ func TestFeeFilterLatest(t *testing.T) {
 	minfee := rand.Int63()
 	msg := NewMsgFeeFilter(minfee)
 	if msg.MinFee != minfee {
-		t.Errorf("NewMsgFeeFilter: wrong minfee - got %v, want %v",
+		t.Errorf(
+			"NewMsgFeeFilter: wrong minfee - got %v, want %v",
 			msg.MinFee, minfee,
 		)
 	}
 	// Ensure the command is expected value.
 	wantCmd := "feefilter"
 	if cmd := msg.Command(); cmd != wantCmd {
-		t.Errorf("NewMsgFeeFilter: wrong command - got %v want %v",
+		t.Errorf(
+			"NewMsgFeeFilter: wrong command - got %v want %v",
 			cmd, wantCmd,
 		)
 	}
@@ -31,8 +33,9 @@ func TestFeeFilterLatest(t *testing.T) {
 	wantPayload := uint32(8)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -87,7 +90,8 @@ func TestFeeFilterWire(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("BtcEncode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcEncode #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -101,7 +105,8 @@ func TestFeeFilterWire(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(msg, test.out) {
-			t.Errorf("BtcDecode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcDecode #%d\n got: %s want: %s", i,
 				spew.Sdump(msg), spew.Sdump(test.out),
 			)
 			continue
@@ -128,9 +133,23 @@ func TestFeeFilterWireErrors(t *testing.T) {
 		readErr  error         // Expected read error
 	}{
 		// Latest protocol version with intentional read/write errors. Force error in minfee.
-		{baseFeeFilter, baseFeeFilterEncoded, pver, 0, io.ErrShortWrite, io.EOF},
+		{
+			baseFeeFilter,
+			baseFeeFilterEncoded,
+			pver,
+			0,
+			io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error due to unsupported protocol version.
-		{baseFeeFilter, baseFeeFilterEncoded, pverNoFeeFilter, 4, wireErr, wireErr},
+		{
+			baseFeeFilter,
+			baseFeeFilterEncoded,
+			pverNoFeeFilter,
+			4,
+			wireErr,
+			wireErr,
+		},
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
@@ -138,7 +157,8 @@ func TestFeeFilterWireErrors(t *testing.T) {
 		w := newFixedWriter(test.max)
 		e := test.in.BtcEncode(w, test.pver, BaseEncoding)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.writeErr) {
-			t.Errorf("BtcEncode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcEncode #%d wrong error got: %v, want: %v",
 				i, e, test.writeErr,
 			)
 			continue
@@ -146,8 +166,9 @@ func TestFeeFilterWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.writeErr {
-				t.Errorf("BtcEncode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.writeErr,
+				t.Errorf(
+					"BtcEncode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.writeErr,
 				)
 				continue
 			}
@@ -157,7 +178,8 @@ func TestFeeFilterWireErrors(t *testing.T) {
 		r := newFixedReader(test.max, test.buf)
 		e = msg.BtcDecode(r, test.pver, BaseEncoding)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.readErr) {
-			t.Errorf("BtcDecode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcDecode #%d wrong error got: %v, want: %v",
 				i, e, test.readErr,
 			)
 			continue
@@ -165,8 +187,9 @@ func TestFeeFilterWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.readErr {
-				t.Errorf("BtcDecode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.readErr,
+				t.Errorf(
+					"BtcDecode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.readErr,
 				)
 				continue
 			}

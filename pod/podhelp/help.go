@@ -22,14 +22,16 @@ func HelpFunction(ifc interface{}) error {
 	c := ps.Config
 	var o string
 	o += fmt.Sprintf("Parallelcoin Pod All-in-One Suite\n\n")
-	o += fmt.Sprintf("Usage:\n\t%s [options] [commands] [command parameters]\n\n",
+	o += fmt.Sprintf(
+		"Usage:\n\t%s [options] [commands] [command parameters]\n\n",
 		os.Args[0],
 	)
 	o += fmt.Sprintf("Commands:\n")
 	for i := range c.Commands {
 		oo := fmt.Sprintf("\t%s", c.Commands[i].Name)
 		nrunes := utf8.RuneCountInString(oo)
-		o += oo + fmt.Sprintf(strings.Repeat(" ", 9-nrunes)+"%s\n",
+		o += oo + fmt.Sprintf(
+			strings.Repeat(" ", 9-nrunes)+"%s\n",
 			c.Commands[i].Title,
 		)
 	}
@@ -41,29 +43,33 @@ func HelpFunction(ifc interface{}) error {
 	o += fmt.Sprintf("\tinstances of the option or separate the items with (only) commas as the above example\n\n")
 	// items := make(map[string][]opt.Option)
 	descs := make(map[string]string)
-	c.ForEach(func(ifc opt.Option) bool {
-		meta := ifc.GetMetadata()
-		oo := fmt.Sprintf("\t%s %v", meta.Option, meta.Aliases)
-		nrunes := utf8.RuneCountInString(oo)
-		var def string
-		switch ii := ifc.(type) {
-		case *binary.Opt:
-			def = fmt.Sprint(ii.Def)
-		case *list.Opt:
-			def = fmt.Sprint(ii.Def)
-		case *float.Opt:
-			def = fmt.Sprint(ii.Def)
-		case *integer.Opt:
-			def = fmt.Sprint(ii.Def)
-		case *text.Opt:
-			def = fmt.Sprint(ii.Def)
-		case *duration.Opt:
-			def = fmt.Sprint(ii.Def)
-		}
-		descs[meta.Group] += oo + fmt.Sprintf(strings.Repeat(" ", 32-nrunes)+"%s, default: %s\n", meta.Description, def,
-		)
-		return true
-	},
+	c.ForEach(
+		func(ifc opt.Option) bool {
+			meta := ifc.GetMetadata()
+			oo := fmt.Sprintf("\t%s %v", meta.Option, meta.Aliases)
+			nrunes := utf8.RuneCountInString(oo)
+			var def string
+			switch ii := ifc.(type) {
+			case *binary.Opt:
+				def = fmt.Sprint(ii.Def)
+			case *list.Opt:
+				def = fmt.Sprint(ii.Def)
+			case *float.Opt:
+				def = fmt.Sprint(ii.Def)
+			case *integer.Opt:
+				def = fmt.Sprint(ii.Def)
+			case *text.Opt:
+				def = fmt.Sprint(ii.Def)
+			case *duration.Opt:
+				def = fmt.Sprint(ii.Def)
+			}
+			descs[meta.Group] += oo + fmt.Sprintf(
+				strings.Repeat(" ", 32-nrunes)+"%s, default: %s\n",
+				meta.Description,
+				def,
+			)
+			return true
+		},
 	)
 	var cats []string
 	for i := range descs {
@@ -79,8 +85,9 @@ func HelpFunction(ifc interface{}) error {
 	}
 	// for i := range cats {
 	// }
-	o += fmt.Sprintf("\nadd the name of the command or option after 'help' or append it after "+
-		"'help' in the commandline to get more detail - eg: %s help upnp\n\n",
+	o += fmt.Sprintf(
+		"\nadd the name of the command or option after 'help' or append it after "+
+			"'help' in the commandline to get more detail - eg: %s help upnp\n\n",
 		os.Args[0],
 	)
 	fmt.Fprintf(os.Stderr, o)

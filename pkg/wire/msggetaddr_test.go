@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"reflect"
 	"testing"
-	
+
 	"github.com/davecgh/go-spew/spew"
 )
 
@@ -15,7 +15,8 @@ func TestGetAddr(t *testing.T) {
 	wantCmd := "getaddr"
 	msg := NewMsgGetAddr()
 	if cmd := msg.Command(); cmd != wantCmd {
-		t.Errorf("NewMsgGetAddr: wrong command - got %v want %v",
+		t.Errorf(
+			"NewMsgGetAddr: wrong command - got %v want %v",
 			cmd, wantCmd,
 		)
 	}
@@ -23,8 +24,9 @@ func TestGetAddr(t *testing.T) {
 	wantPayload := uint32(0)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -92,7 +94,8 @@ func TestGetAddrWire(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("BtcEncode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcEncode #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -106,7 +109,8 @@ func TestGetAddrWire(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(&msg, test.out) {
-			t.Errorf("BtcDecode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcDecode #%d\n got: %s want: %s", i,
 				spew.Sdump(msg), spew.Sdump(test.out),
 			)
 			continue

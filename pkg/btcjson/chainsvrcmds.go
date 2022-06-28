@@ -48,7 +48,8 @@ type CreateRawTransactionCmd struct {
 
 // NewCreateRawTransactionCmd returns a new instance which can be used to issue a createrawtransaction JSON-RPC command.
 // Amounts are in DUO.
-func NewCreateRawTransactionCmd(inputs []TransactionInput,
+func NewCreateRawTransactionCmd(
+	inputs []TransactionInput,
 	amounts map[string]float64,
 	lockTime *int64,
 ) *CreateRawTransactionCmd {
@@ -185,7 +186,8 @@ type TemplateRequest struct {
 }
 
 // convertTemplateRequestField potentially converts the provided value as needed.
-func convertTemplateRequestField(fieldName string, iface interface{},
+func convertTemplateRequestField(
+	fieldName string, iface interface{},
 ) (interface{}, error) {
 	switch val := iface.(type) {
 	case nil:
@@ -197,8 +199,9 @@ func convertTemplateRequestField(fieldName string, iface interface{},
 			return int64(val), nil
 		}
 	}
-	str := fmt.Sprintf("the %s field must be unspecified, a boolean, or "+
-		"a 64-bit integer", fieldName,
+	str := fmt.Sprintf(
+		"the %s field must be unspecified, a boolean, or "+
+			"a 64-bit integer", fieldName,
 	)
 	return nil, makeError(ErrInvalidType, str)
 }
@@ -264,7 +267,8 @@ type GetCFilterHeaderCmd struct {
 }
 
 // NewGetCFilterHeaderCmd returns a new instance which can be used to issue a getcfilterheader JSON-RPC command.
-func NewGetCFilterHeaderCmd(hash string,
+func NewGetCFilterHeaderCmd(
+	hash string,
 	filterType wire.FilterType,
 ) *GetCFilterHeaderCmd {
 	return &GetCFilterHeaderCmd{
@@ -410,7 +414,8 @@ type GetRawTransactionCmd struct {
 }
 
 // NewGetRawTransactionCmd returns a new instance which can be used to issue a getrawtransaction JSON-RPC command. The parameters which are pointers indicate they are optional.  Passing nil for optional parameters will use the default value.
-func NewGetRawTransactionCmd(txHash string, verbose *int,
+func NewGetRawTransactionCmd(
+	txHash string, verbose *int,
 ) *GetRawTransactionCmd {
 	return &GetRawTransactionCmd{
 		Txid:    txHash,
@@ -426,7 +431,8 @@ type GetTxOutCmd struct {
 }
 
 // NewGetTxOutCmd returns a new instance which can be used to issue a gettxout JSON-RPC command. The parameters which are pointers indicate they are optional.  Passing nil for optional parameters will use the default value.
-func NewGetTxOutCmd(txHash string, vout uint32, includeMempool *bool,
+func NewGetTxOutCmd(
+	txHash string, vout uint32, includeMempool *bool,
 ) *GetTxOutCmd {
 	return &GetTxOutCmd{
 		Txid:           txHash,
@@ -537,7 +543,8 @@ type SearchRawTransactionsCmd struct {
 }
 
 // NewSearchRawTransactionsCmd returns a new instance which can be used to issue a sendrawtransaction JSON-RPC command. The parameters which are pointers indicate they are optional.  Passing nil for optional parameters will use the default value.
-func NewSearchRawTransactionsCmd(address string, verbose, skip, count *int,
+func NewSearchRawTransactionsCmd(
+	address string, verbose, skip, count *int,
 	vinExtra *int, reverse *bool,
 	filterAddrs *[]string,
 ) *SearchRawTransactionsCmd {
@@ -561,7 +568,8 @@ type SendRawTransactionCmd struct {
 // NewSendRawTransactionCmd returns a new instance which can be used to issue a sendrawtransaction JSON-RPC command. The
 // parameters which are pointers indicate they are optional. Passing nil for optional parameters will use the default
 // value.
-func NewSendRawTransactionCmd(hexTx string, allowHighFees *bool,
+func NewSendRawTransactionCmd(
+	hexTx string, allowHighFees *bool,
 ) *SendRawTransactionCmd {
 	return &SendRawTransactionCmd{
 		HexTx:         hexTx,
@@ -622,7 +630,8 @@ type SubmitBlockCmd struct {
 
 // NewSubmitBlockCmd returns a new instance which can be used to issue a submitblock JSON-RPC command. The parameters
 // which are pointers indicate they are optional. Passing nil for optional parameters will use the default value.
-func NewSubmitBlockCmd(hexBlock string, options *SubmitBlockOptions,
+func NewSubmitBlockCmd(
+	hexBlock string, options *SubmitBlockOptions,
 ) *SubmitBlockCmd {
 	return &SubmitBlockCmd{
 		HexBlock: hexBlock,
@@ -696,10 +705,12 @@ func init() {
 	// No special flags for commands in this file.
 	flags := UsageFlag(0)
 	MustRegisterCmd("addnode", (*AddNodeCmd)(nil), flags)
-	MustRegisterCmd("createrawtransaction", (*CreateRawTransactionCmd)(nil),
+	MustRegisterCmd(
+		"createrawtransaction", (*CreateRawTransactionCmd)(nil),
 		flags,
 	)
-	MustRegisterCmd("decoderawtransaction", (*DecodeRawTransactionCmd)(nil),
+	MustRegisterCmd(
+		"decoderawtransaction", (*DecodeRawTransactionCmd)(nil),
 		flags,
 	)
 	MustRegisterCmd("decodescript", (*DecodeScriptCmd)(nil), flags)
@@ -738,7 +749,8 @@ func init() {
 	MustRegisterCmd("preciousblock", (*PreciousBlockCmd)(nil), flags)
 	MustRegisterCmd("reconsiderblock", (*ReconsiderBlockCmd)(nil), flags)
 	MustRegisterCmd("resetchain", (*ResetChainCmd)(nil), flags)
-	MustRegisterCmd("searchrawtransactions", (*SearchRawTransactionsCmd)(nil),
+	MustRegisterCmd(
+		"searchrawtransactions", (*SearchRawTransactionsCmd)(nil),
 		flags,
 	)
 	MustRegisterCmd("sendrawtransaction", (*SendRawTransactionCmd)(nil), flags)

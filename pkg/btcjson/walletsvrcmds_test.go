@@ -26,7 +26,8 @@ func TestWalletSvrCmds(t *testing.T) {
 		{
 			name: "addmultisigaddress",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("addmultisigaddress", 2,
+				return btcjson.NewCmd(
+					"addmultisigaddress", 2,
 					[]string{"031234", "035678"},
 				)
 			},
@@ -44,13 +45,15 @@ func TestWalletSvrCmds(t *testing.T) {
 		{
 			name: "addmultisigaddress optional",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("addmultisigaddress", 2,
+				return btcjson.NewCmd(
+					"addmultisigaddress", 2,
 					[]string{"031234", "035678"}, "test",
 				)
 			},
 			staticCmd: func() interface{} {
 				keys := []string{"031234", "035678"}
-				return btcjson.NewAddMultisigAddressCmd(2, keys,
+				return btcjson.NewAddMultisigAddressCmd(
+					2, keys,
 					btcjson.String("test"),
 				)
 			},
@@ -77,7 +80,8 @@ func TestWalletSvrCmds(t *testing.T) {
 		{
 			name: "createmultisig",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("createmultisig", 2,
+				return btcjson.NewCmd(
+					"createmultisig", 2,
 					[]string{"031234", "035678"},
 				)
 			},
@@ -216,7 +220,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("getbalance", "acct", 6)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewGetBalanceCmd(btcjson.String("acct"),
+				return btcjson.NewGetBalanceCmd(
+					btcjson.String("acct"),
 					btcjson.Int(6),
 				)
 			},
@@ -298,7 +303,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("getreceivedbyaccount", "acct", 6)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewGetReceivedByAccountCmd("acct",
+				return btcjson.NewGetReceivedByAccountCmd(
+					"acct",
 					btcjson.Int(6),
 				)
 			},
@@ -328,7 +334,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("getreceivedbyaddress", "1Address", 6)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewGetReceivedByAddressCmd("1Address",
+				return btcjson.NewGetReceivedByAddressCmd(
+					"1Address",
 					btcjson.Int(6),
 				)
 			},
@@ -398,7 +405,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("importprivkey", "abc", "label")
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewImportPrivKeyCmd("abc",
+				return btcjson.NewImportPrivKeyCmd(
+					"abc",
 					btcjson.String("label"), nil,
 				)
 			},
@@ -415,7 +423,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("importprivkey", "abc", "label", false)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewImportPrivKeyCmd("abc",
+				return btcjson.NewImportPrivKeyCmd(
+					"abc",
 					btcjson.String("label"), btcjson.Bool(false),
 				)
 			},
@@ -521,7 +530,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listreceivedbyaccount", 6)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListReceivedByAccountCmd(btcjson.Int(6), nil,
+				return btcjson.NewListReceivedByAccountCmd(
+					btcjson.Int(6), nil,
 					nil,
 				)
 			},
@@ -538,7 +548,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listreceivedbyaccount", 6, true)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListReceivedByAccountCmd(btcjson.Int(6),
+				return btcjson.NewListReceivedByAccountCmd(
+					btcjson.Int(6),
 					btcjson.Bool(true), nil,
 				)
 			},
@@ -555,7 +566,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listreceivedbyaccount", 6, true, false)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListReceivedByAccountCmd(btcjson.Int(6),
+				return btcjson.NewListReceivedByAccountCmd(
+					btcjson.Int(6),
 					btcjson.Bool(true), btcjson.Bool(false),
 				)
 			},
@@ -587,7 +599,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listreceivedbyaddress", 6)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListReceivedByAddressCmd(btcjson.Int(6), nil,
+				return btcjson.NewListReceivedByAddressCmd(
+					btcjson.Int(6), nil,
 					nil,
 				)
 			},
@@ -604,7 +617,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listreceivedbyaddress", 6, true)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListReceivedByAddressCmd(btcjson.Int(6),
+				return btcjson.NewListReceivedByAddressCmd(
+					btcjson.Int(6),
 					btcjson.Bool(true), nil,
 				)
 			},
@@ -621,7 +635,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listreceivedbyaddress", 6, true, false)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListReceivedByAddressCmd(btcjson.Int(6),
+				return btcjson.NewListReceivedByAddressCmd(
+					btcjson.Int(6),
 					btcjson.Bool(true), btcjson.Bool(false),
 				)
 			},
@@ -653,7 +668,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listsinceblock", "123")
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListSinceBlockCmd(btcjson.String("123"), nil,
+				return btcjson.NewListSinceBlockCmd(
+					btcjson.String("123"), nil,
 					nil,
 				)
 			},
@@ -670,7 +686,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listsinceblock", "123", 6)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListSinceBlockCmd(btcjson.String("123"),
+				return btcjson.NewListSinceBlockCmd(
+					btcjson.String("123"),
 					btcjson.Int(6), nil,
 				)
 			},
@@ -687,7 +704,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listsinceblock", "123", 6, true)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListSinceBlockCmd(btcjson.String("123"),
+				return btcjson.NewListSinceBlockCmd(
+					btcjson.String("123"),
 					btcjson.Int(6), btcjson.Bool(true),
 				)
 			},
@@ -720,7 +738,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listtransactions", "acct")
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListTransactionsCmd(btcjson.String("acct"),
+				return btcjson.NewListTransactionsCmd(
+					btcjson.String("acct"),
 					nil, nil, nil,
 				)
 			},
@@ -738,7 +757,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listtransactions", "acct", 20)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListTransactionsCmd(btcjson.String("acct"),
+				return btcjson.NewListTransactionsCmd(
+					btcjson.String("acct"),
 					btcjson.Int(20), nil, nil,
 				)
 			},
@@ -756,7 +776,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listtransactions", "acct", 20, 1)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListTransactionsCmd(btcjson.String("acct"),
+				return btcjson.NewListTransactionsCmd(
+					btcjson.String("acct"),
 					btcjson.Int(20),
 					btcjson.Int(1), nil,
 				)
@@ -775,7 +796,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listtransactions", "acct", 20, 1, true)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListTransactionsCmd(btcjson.String("acct"),
+				return btcjson.NewListTransactionsCmd(
+					btcjson.String("acct"),
 					btcjson.Int(20),
 					btcjson.Int(1), btcjson.Bool(true),
 				)
@@ -824,7 +846,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("listunspent", 6, 100)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListUnspentCmd(btcjson.Int(6),
+				return btcjson.NewListUnspentCmd(
+					btcjson.Int(6),
 					btcjson.Int(100), nil,
 				)
 			},
@@ -838,12 +861,14 @@ func TestWalletSvrCmds(t *testing.T) {
 		{
 			name: "listunspent optional3",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("listunspent", 6, 100,
+				return btcjson.NewCmd(
+					"listunspent", 6, 100,
 					[]string{"1Address", "1Address2"},
 				)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewListUnspentCmd(btcjson.Int(6),
+				return btcjson.NewListUnspentCmd(
+					btcjson.Int(6),
 					btcjson.Int(100),
 					&[]string{"1Address", "1Address2"},
 				)
@@ -858,7 +883,8 @@ func TestWalletSvrCmds(t *testing.T) {
 		{
 			name: "lockunspent",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("lockunspent", true,
+				return btcjson.NewCmd(
+					"lockunspent", true,
 					`[{"txid":"123","vout":1}]`,
 				)
 			},
@@ -899,7 +925,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("move", "from", "to", 0.5, 6)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewMoveCmd("from", "to", 0.5, btcjson.Int(6),
+				return btcjson.NewMoveCmd(
+					"from", "to", 0.5, btcjson.Int(6),
 					nil,
 				)
 			},
@@ -918,7 +945,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("move", "from", "to", 0.5, 6, "comment")
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewMoveCmd("from", "to", 0.5, btcjson.Int(6),
+				return btcjson.NewMoveCmd(
+					"from", "to", 0.5, btcjson.Int(6),
 					btcjson.String("comment"),
 				)
 			},
@@ -937,7 +965,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("sendfrom", "from", "1Address", 0.5)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewSendFromCmd("from", "1Address", 0.5, nil, nil,
+				return btcjson.NewSendFromCmd(
+					"from", "1Address", 0.5, nil, nil,
 					nil,
 				)
 			},
@@ -957,7 +986,8 @@ func TestWalletSvrCmds(t *testing.T) {
 				return btcjson.NewCmd("sendfrom", "from", "1Address", 0.5, 6)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewSendFromCmd("from", "1Address", 0.5,
+				return btcjson.NewSendFromCmd(
+					"from", "1Address", 0.5,
 					btcjson.Int(6), nil, nil,
 				)
 			},
@@ -974,12 +1004,14 @@ func TestWalletSvrCmds(t *testing.T) {
 		{
 			name: "sendfrom optional2",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("sendfrom", "from", "1Address", 0.5, 6,
+				return btcjson.NewCmd(
+					"sendfrom", "from", "1Address", 0.5, 6,
 					"comment",
 				)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewSendFromCmd("from", "1Address", 0.5,
+				return btcjson.NewSendFromCmd(
+					"from", "1Address", 0.5,
 					btcjson.Int(6),
 					btcjson.String("comment"), nil,
 				)
@@ -997,12 +1029,14 @@ func TestWalletSvrCmds(t *testing.T) {
 		{
 			name: "sendfrom optional3",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("sendfrom", "from", "1Address", 0.5, 6,
+				return btcjson.NewCmd(
+					"sendfrom", "from", "1Address", 0.5, 6,
 					"comment", "commentto",
 				)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewSendFromCmd("from", "1Address", 0.5,
+				return btcjson.NewSendFromCmd(
+					"from", "1Address", 0.5,
 					btcjson.Int(6),
 					btcjson.String("comment"), btcjson.String("commentto"),
 				)
@@ -1041,7 +1075,8 @@ func TestWalletSvrCmds(t *testing.T) {
 			},
 			staticCmd: func() interface{} {
 				amounts := map[string]float64{"1Address": 0.5}
-				return btcjson.NewSendManyCmd("from", amounts, btcjson.Int(6),
+				return btcjson.NewSendManyCmd(
+					"from", amounts, btcjson.Int(6),
 					nil,
 				)
 			},
@@ -1056,13 +1091,15 @@ func TestWalletSvrCmds(t *testing.T) {
 		{
 			name: "sendmany optional2",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("sendmany", "from", `{"1Address":0.5}`, 6,
+				return btcjson.NewCmd(
+					"sendmany", "from", `{"1Address":0.5}`, 6,
 					"comment",
 				)
 			},
 			staticCmd: func() interface{} {
 				amounts := map[string]float64{"1Address": 0.5}
-				return btcjson.NewSendManyCmd("from", amounts, btcjson.Int(6),
+				return btcjson.NewSendManyCmd(
+					"from", amounts, btcjson.Int(6),
 					btcjson.String("comment"),
 				)
 			},
@@ -1093,12 +1130,14 @@ func TestWalletSvrCmds(t *testing.T) {
 		{
 			name: "sendtoaddress optional1",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("sendtoaddress", "1Address", 0.5,
+				return btcjson.NewCmd(
+					"sendtoaddress", "1Address", 0.5,
 					"comment", "commentto",
 				)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewSendToAddressCmd("1Address", 0.5,
+				return btcjson.NewSendToAddressCmd(
+					"1Address", 0.5,
 					btcjson.String("comment"),
 					btcjson.String("commentto"),
 				)
@@ -1171,7 +1210,9 @@ func TestWalletSvrCmds(t *testing.T) {
 		{
 			name: "signrawtransaction optional1",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("signrawtransaction", "001122",
+				return btcjson.NewCmd(
+					"signrawtransaction",
+					"001122",
 					`[{"txid":"123","vout":1,"scriptPubKey":"00","redeemScript":"01"}]`,
 				)
 			},
@@ -1184,7 +1225,8 @@ func TestWalletSvrCmds(t *testing.T) {
 						RedeemScript: "01",
 					},
 				}
-				return btcjson.NewSignRawTransactionCmd("001122", &txInputs,
+				return btcjson.NewSignRawTransactionCmd(
+					"001122", &txInputs,
 					nil, nil,
 				)
 			},
@@ -1206,14 +1248,16 @@ func TestWalletSvrCmds(t *testing.T) {
 		{
 			name: "signrawtransaction optional2",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("signrawtransaction", "001122", `[]`,
+				return btcjson.NewCmd(
+					"signrawtransaction", "001122", `[]`,
 					`["abc"]`,
 				)
 			},
 			staticCmd: func() interface{} {
 				txInputs := []btcjson.RawTxInput{}
 				privKeys := []string{"abc"}
-				return btcjson.NewSignRawTransactionCmd("001122", &txInputs,
+				return btcjson.NewSignRawTransactionCmd(
+					"001122", &txInputs,
 					&privKeys, nil,
 				)
 			},
@@ -1228,14 +1272,16 @@ func TestWalletSvrCmds(t *testing.T) {
 		{
 			name: "signrawtransaction optional3",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("signrawtransaction", "001122", `[]`,
+				return btcjson.NewCmd(
+					"signrawtransaction", "001122", `[]`,
 					`[]`, "ALL",
 				)
 			},
 			staticCmd: func() interface{} {
 				txInputs := []btcjson.RawTxInput{}
 				privKeys := []string{}
-				return btcjson.NewSignRawTransactionCmd("001122", &txInputs,
+				return btcjson.NewSignRawTransactionCmd(
+					"001122", &txInputs,
 					&privKeys,
 					btcjson.String("ALL"),
 				)
@@ -1293,14 +1339,16 @@ func TestWalletSvrCmds(t *testing.T) {
 		// Marshal the command as created by the new static command creation function.
 		marshalled, e := btcjson.MarshalCmd(testID, test.staticCmd())
 		if e != nil {
-			t.Errorf("MarshalCmd #%d (%s) unexpected error: %v", i, test.name,
+			t.Errorf(
+				"MarshalCmd #%d (%s) unexpected error: %v", i, test.name,
 				e,
 			)
 			continue
 		}
 		if !bytes.Equal(marshalled, []byte(test.marshalled)) {
-			t.Errorf("Test #%d (%s) unexpected marshalled data - "+
-				"got %s, want %s", i, test.name, marshalled,
+			t.Errorf(
+				"Test #%d (%s) unexpected marshalled data - "+
+					"got %s, want %s", i, test.name, marshalled,
 				test.marshalled,
 			)
 			continue
@@ -1308,43 +1356,49 @@ func TestWalletSvrCmds(t *testing.T) {
 		// Ensure the command is created without error via the generic new command creation function.
 		cmd, e := test.newCmd()
 		if e != nil {
-			t.Errorf("Test #%d (%s) unexpected NewCmd error: %v ",
+			t.Errorf(
+				"Test #%d (%s) unexpected NewCmd error: %v ",
 				i, test.name, e,
 			)
 		}
 		// Marshal the command as created by the generic new command creation function.
 		marshalled, e = btcjson.MarshalCmd(testID, cmd)
 		if e != nil {
-			t.Errorf("MarshalCmd #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"MarshalCmd #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		if !bytes.Equal(marshalled, []byte(test.marshalled)) {
-			t.Errorf("Test #%d (%s) unexpected marshalled data - "+
-				"got %s, want %s", i, test.name, marshalled,
+			t.Errorf(
+				"Test #%d (%s) unexpected marshalled data - "+
+					"got %s, want %s", i, test.name, marshalled,
 				test.marshalled,
 			)
 			continue
 		}
 		var request btcjson.Request
 		if e = json.Unmarshal(marshalled, &request); E.Chk(e) {
-			t.Errorf("Test #%d (%s) unexpected error while "+
-				"unmarshalling JSON-RPC request: %v", i,
+			t.Errorf(
+				"Test #%d (%s) unexpected error while "+
+					"unmarshalling JSON-RPC request: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		cmd, e = btcjson.UnmarshalCmd(&request)
 		if e != nil {
-			t.Errorf("UnmarshalCmd #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"UnmarshalCmd #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		if !reflect.DeepEqual(cmd, test.unmarshalled) {
-			t.Errorf("Test #%d (%s) unexpected unmarshalled command "+
-				"- got %s, want %s", i, test.name,
+			t.Errorf(
+				"Test #%d (%s) unexpected unmarshalled command "+
+					"- got %s, want %s", i, test.name,
 				fmt.Sprintf("(%T) %+[1]v", cmd),
 				fmt.Sprintf("(%T) %+[1]v\n", test.unmarshalled),
 			)

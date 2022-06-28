@@ -1347,7 +1347,8 @@ func (w *Wallet) CalculateAccountBalances(
 					output.PkScript, w.chainParams,
 				)
 				if e == nil && len(addrs) > 0 {
-					_, outputAcct, e = w.Manager.AddrAccount(addrmgrNs,
+					_, outputAcct, e = w.Manager.AddrAccount(
+						addrmgrNs,
 						addrs[0],
 					)
 				}
@@ -2162,11 +2163,13 @@ func (w *Wallet) Accounts(scope waddrmgr.KeyScope) (*AccountsResult, error) {
 				output := unspent[i]
 				var outputAcct uint32
 				var addrs []btcaddr.Address
-				_, addrs, _, e = txscript.ExtractPkScriptAddrs(output.PkScript,
+				_, addrs, _, e = txscript.ExtractPkScriptAddrs(
+					output.PkScript,
 					w.chainParams,
 				)
 				if e == nil && len(addrs) > 0 {
-					_, outputAcct, e = w.Manager.AddrAccount(addrmgrNs,
+					_, outputAcct, e = w.Manager.AddrAccount(
+						addrmgrNs,
 						addrs[0],
 					)
 				}
@@ -2246,7 +2249,8 @@ func (w *Wallet) AccountBalances(
 					continue
 				}
 				var addrs []btcaddr.Address
-				_, addrs, _, e = txscript.ExtractPkScriptAddrs(output.PkScript,
+				_, addrs, _, e = txscript.ExtractPkScriptAddrs(
+					output.PkScript,
 					w.chainParams,
 				)
 				if e != nil || len(addrs) == 0 {
@@ -2746,7 +2750,11 @@ func (w *Wallet) newAddress(
 	}
 	// Get next address from wallet.
 	var addrs []waddrmgr.ManagedAddress
-	if addrs, e = manager.NextExternalAddresses(addrmgrNs, account, 1); E.Chk(e) {
+	if addrs, e = manager.NextExternalAddresses(
+		addrmgrNs,
+		account,
+		1,
+	); E.Chk(e) {
 		return nil, nil, e
 	}
 	var props *waddrmgr.AccountProperties
@@ -2880,11 +2888,13 @@ func (w *Wallet) TotalReceivedForAccounts(
 						pkScript := detail.MsgTx.TxOut[cred.Index].PkScript
 						var outputAcct uint32
 						var addrs []btcaddr.Address
-						_, addrs, _, e = txscript.ExtractPkScriptAddrs(pkScript,
+						_, addrs, _, e = txscript.ExtractPkScriptAddrs(
+							pkScript,
 							w.chainParams,
 						)
 						if e == nil && len(addrs) > 0 {
-							_, outputAcct, e = w.Manager.AddrAccount(addrmgrNs,
+							_, outputAcct, e = w.Manager.AddrAccount(
+								addrmgrNs,
 								addrs[0],
 							)
 						}

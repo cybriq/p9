@@ -22,22 +22,70 @@ import (
 )
 
 var (
-	target        = flag.String("target", "", "specify target (ios, tvos, android, js).\n")
-	archNames     = flag.String("arch", "", "specify architecture(s) to include (arm, arm64, amd64).")
-	minsdk        = flag.Int("minsdk", 0, "specify the minimum supported operating system level")
-	buildMode     = flag.String("buildmode", "exe", "specify buildmode (archive, exe)")
-	destPath      = flag.String("o", "", "output file or directory.\nFor -target ios or tvos, use the .app suffix to target simulators.")
-	appID         = flag.String("appid", "", "app identifier (for -buildmode=exe)")
+	target = flag.String(
+		"target",
+		"",
+		"specify target (ios, tvos, android, js).\n",
+	)
+	archNames = flag.String(
+		"arch",
+		"",
+		"specify architecture(s) to include (arm, arm64, amd64).",
+	)
+	minsdk = flag.Int(
+		"minsdk",
+		0,
+		"specify the minimum supported operating system level",
+	)
+	buildMode = flag.String(
+		"buildmode",
+		"exe",
+		"specify buildmode (archive, exe)",
+	)
+	destPath = flag.String(
+		"o",
+		"",
+		"output file or directory.\nFor -target ios or tvos, use the .app suffix to target simulators.",
+	)
+	appID = flag.String(
+		"appid",
+		"",
+		"app identifier (for -buildmode=exe)",
+	)
 	version       = flag.Int("version", 1, "app version (for -buildmode=exe)")
 	printCommands = flag.Bool("x", false, "print the commands")
-	keepWorkdir   = flag.Bool("work", false, "print the name of the temporary work directory and do not delete it when exiting.")
-	linkMode      = flag.String("linkmode", "", "set the -linkmode flag of the go tool")
-	extraLdflags  = flag.String("ldflags", "", "extra flags to the Go linker")
-	extraTags     = flag.String("tags", "", "extra tags to the Go tool")
-	iconPath      = flag.String("icon", "", "specify an icon for iOS and Android")
-	signKey       = flag.String("signkey", "", "specify the path of the keystore to be used to sign Android apk files.")
-	signPass      = flag.String("signpass", "", "specify the password to decrypt the signkey.")
-	noStrip       = flag.Bool("nostrip", false, "leave debugging symbols in produced .so files")
+	keepWorkdir   = flag.Bool(
+		"work",
+		false,
+		"print the name of the temporary work directory and do not delete it when exiting.",
+	)
+	linkMode = flag.String(
+		"linkmode",
+		"",
+		"set the -linkmode flag of the go tool",
+	)
+	extraLdflags = flag.String("ldflags", "", "extra flags to the Go linker")
+	extraTags    = flag.String("tags", "", "extra tags to the Go tool")
+	iconPath     = flag.String(
+		"icon",
+		"",
+		"specify an icon for iOS and Android",
+	)
+	signKey = flag.String(
+		"signkey",
+		"",
+		"specify the path of the keystore to be used to sign Android apk files.",
+	)
+	signPass = flag.String(
+		"signpass",
+		"",
+		"specify the password to decrypt the signkey.",
+	)
+	noStrip = flag.Bool(
+		"nostrip",
+		false,
+		"leave debugging symbols in produced .so files",
+	)
 )
 
 func main() {
@@ -115,7 +163,12 @@ func runCmdRaw(cmd *exec.Cmd) ([]byte, error) {
 		return out, nil
 	}
 	if err, ok := err.(*exec.ExitError); ok {
-		return nil, fmt.Errorf("%s failed: %s%s", strings.Join(cmd.Args, " "), out, err.Stderr)
+		return nil, fmt.Errorf(
+			"%s failed: %s%s",
+			strings.Join(cmd.Args, " "),
+			out,
+			err.Stderr,
+		)
 	}
 	return nil, err
 }
@@ -192,32 +245,47 @@ func buildIcons(baseDir, icon string, variants []iconVariant) error {
 	var resizes errgroup.Group
 	for _, v := range variants {
 		v := v
-		resizes.Go(func() (err error) {
-			path := filepath.Join(baseDir, v.path)
-			if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
-				return err
-			}
-			f, err := os.Create(path)
-			if err != nil {
-				return err
-			}
-			defer func() {
-				if cerr := f.Close(); err == nil {
-					err = cerr
+		resizes.Go(
+			func() (err error) {
+				path := filepath.Join(baseDir, v.path)
+				if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
+					return err
 				}
-			}()
-			return png.Encode(f, resizeIcon(v, img))
-		})
+				f, err := os.Create(path)
+				if err != nil {
+					return err
+				}
+				defer func() {
+					if cerr := f.Close(); err == nil {
+						err = cerr
+					}
+				}()
+				return png.Encode(f, resizeIcon(v, img))
+			},
+		)
 	}
 	return resizes.Wait()
 }
 
 func resizeIcon(v iconVariant, img image.Image) *image.NRGBA {
-	scaled := image.NewNRGBA(image.Rectangle{Max: image.Point{X: v.size, Y: v.size}})
+	scaled := image.NewNRGBA(
+		image.Rectangle{
+			Max: image.Point{
+				X: v.size,
+				Y: v.size,
+			},
+		},
+	)
 	op := draw.Src
 	if v.fill {
 		op = draw.Over
-		draw.Draw(scaled, scaled.Bounds(), &image.Uniform{color.White}, image.Point{}, draw.Src)
+		draw.Draw(
+			scaled,
+			scaled.Bounds(),
+			&image.Uniform{color.White},
+			image.Point{},
+			draw.Src,
+		)
 	}
 	draw.CatmullRom.Scale(scaled, scaled.Bounds(), img, img.Bounds(), op, nil)
 

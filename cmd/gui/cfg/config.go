@@ -567,7 +567,8 @@ func (c *Config) RenderRadio(item *Item) []l.Widget {
 						Rigid(
 							func(gtx l.Context) l.Dimensions {
 								gtx.Constraints.Max.X = int(c.Theme.TextSize.Scale(10).V)
-								return c.lists[item.slug].DisableScroll(true).Slice(gtx,
+								return c.lists[item.slug].DisableScroll(true).Slice(
+									gtx,
 									options...,
 								)(gtx)
 								// 	// return c.lists[item.slug].Length(len(options)).Vertical().ListElement(func(gtx l.Context, index int) l.Dimensions {

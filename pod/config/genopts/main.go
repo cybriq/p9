@@ -40,7 +40,11 @@ func main() {
 		// panic(e)
 	}
 	T.Ln("cwd", wd)
-	if e = ioutil.WriteFile(filepath.Join(wd, "struct.go"), out, 0660); E.Chk(e) {
+	if e = ioutil.WriteFile(
+		filepath.Join(wd, "struct.go"),
+		out,
+		0660,
+	); E.Chk(e) {
 		// panic(e)
 	}
 }

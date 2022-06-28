@@ -122,7 +122,8 @@ func (w *Window) update(frame *op.Ops) {
 	<-w.frameAck
 }
 
-func (w *Window) validateAndProcess(frameStart time.Time, size image.Point,
+func (w *Window) validateAndProcess(
+	frameStart time.Time, size image.Point,
 	sync bool, frame *op.Ops,
 ) error {
 	for {
@@ -161,7 +162,8 @@ func (w *Window) validateAndProcess(frameStart time.Time, size image.Point,
 	}
 }
 
-func (w *Window) processFrame(frameStart time.Time, size image.Point,
+func (w *Window) processFrame(
+	frameStart time.Time, size image.Point,
 	frame *op.Ops,
 ) {
 	sync := w.loop.Draw(size, frame)
@@ -182,7 +184,8 @@ func (w *Window) processFrame(frameStart time.Time, size image.Point,
 		frameDur := time.Since(frameStart)
 		frameDur = frameDur.Truncate(100 * time.Microsecond)
 		q := 100 * time.Microsecond
-		timings := fmt.Sprintf("tot:%7s %s", frameDur.Round(q),
+		timings := fmt.Sprintf(
+			"tot:%7s %s", frameDur.Round(q),
 			w.loop.Summary(),
 		)
 		w.queue.q.Queue(profile.Event{Timings: timings})
@@ -219,13 +222,14 @@ func (w *Window) Invalidate() {
 
 // Option applies the options to the window.
 func (w *Window) Option(opts ...Option) {
-	go w.driverDo(func() {
-		o := new(wm.Options)
-		for _, opt := range opts {
-			opt(o)
-		}
-		w.driver.Option(o)
-	},
+	go w.driverDo(
+		func() {
+			o := new(wm.Options)
+			for _, opt := range opts {
+				opt(o)
+			}
+			w.driver.Option(o)
+		},
 	)
 }
 
@@ -233,25 +237,28 @@ func (w *Window) Option(opts ...Option) {
 // of a clipboard.Event. Multiple reads may be coalesced
 // to a single event.
 func (w *Window) ReadClipboard() {
-	go w.driverDo(func() {
-		w.driver.ReadClipboard()
-	},
+	go w.driverDo(
+		func() {
+			w.driver.ReadClipboard()
+		},
 	)
 }
 
 // WriteClipboard writes a string to the clipboard.
 func (w *Window) WriteClipboard(s string) {
-	go w.driverDo(func() {
-		w.driver.WriteClipboard(s)
-	},
+	go w.driverDo(
+		func() {
+			w.driver.WriteClipboard(s)
+		},
 	)
 }
 
 // SetCursorName changes the current window cursor to name.
 func (w *Window) SetCursorName(name pointer.CursorName) {
-	go w.driverDo(func() {
-		w.driver.SetCursor(name)
-	},
+	go w.driverDo(
+		func() {
+			w.driver.SetCursor(name)
+		},
 	)
 }
 
@@ -261,9 +268,10 @@ func (w *Window) SetCursorName(name pointer.CursorName) {
 // Currently, only macOS, Windows and X11 drivers implement this functionality,
 // all others are stubbed.
 func (w *Window) Close() {
-	go w.driverDo(func() {
-		w.driver.Close()
-	},
+	go w.driverDo(
+		func() {
+			w.driver.Close()
+		},
 	)
 }
 

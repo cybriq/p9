@@ -20,50 +20,75 @@ func TestCreateOpenFail(t *testing.T) {
 	// Ensure that attempting to open a database that doesn't exist returns the expected error.
 	wantErr := walletdb.ErrDbDoesNotExist
 	if _, e = walletdb.Open(dbType, "noexist.db"); e != wantErr {
-		t.Errorf("Open: did not receive expected error - got %v, "+
-			"want %v", e, wantErr,
+		t.Errorf(
+			"Open: did not receive expected error - got %v, "+
+				"want %v", e, wantErr,
 		)
 		return
 	}
 	// Ensure that attempting to open a database with the wrong number of parameters returns the expected error.
-	wantErr = fmt.Errorf("invalid arguments to %s.Open -- expected "+
-		"database path", dbType,
+	wantErr = fmt.Errorf(
+		"invalid arguments to %s.Open -- expected "+
+			"database path", dbType,
 	)
-	if _, e = walletdb.Open(dbType, 1, 2, 3); e != nil && e.Error() != wantErr.Error() {
-		t.Errorf("Open: did not receive expected error - got %v, "+
-			"want %v", e, wantErr,
+	if _, e = walletdb.Open(
+		dbType,
+		1,
+		2,
+		3,
+	); e != nil && e.Error() != wantErr.Error() {
+		t.Errorf(
+			"Open: did not receive expected error - got %v, "+
+				"want %v", e, wantErr,
 		)
 		return
 	}
 	// Ensure that attempting to open a database with an invalid type for the first parameter returns the expected
 	// error.
-	wantErr = fmt.Errorf("first argument to %s.Open is invalid -- "+
-		"expected database path string", dbType,
+	wantErr = fmt.Errorf(
+		"first argument to %s.Open is invalid -- "+
+			"expected database path string", dbType,
 	)
-	if _, e = walletdb.Open(dbType, 1); e != nil && e.Error() != wantErr.Error() {
-		t.Errorf("Open: did not receive expected error - got %v, "+
-			"want %v", e, wantErr,
+	if _, e = walletdb.Open(
+		dbType,
+		1,
+	); e != nil && e.Error() != wantErr.Error() {
+		t.Errorf(
+			"Open: did not receive expected error - got %v, "+
+				"want %v", e, wantErr,
 		)
 		return
 	}
 	// Ensure that attempting to create a database with the wrong number of parameters returns the expected error.
-	wantErr = fmt.Errorf("invalid arguments to %s.Create -- expected "+
-		"database path", dbType,
+	wantErr = fmt.Errorf(
+		"invalid arguments to %s.Create -- expected "+
+			"database path", dbType,
 	)
-	if _, e = walletdb.Create(dbType, 1, 2, 3); e != nil && e.Error() != wantErr.Error() {
-		t.Errorf("Create: did not receive expected error - got %v, "+
-			"want %v", e, wantErr,
+	if _, e = walletdb.Create(
+		dbType,
+		1,
+		2,
+		3,
+	); e != nil && e.Error() != wantErr.Error() {
+		t.Errorf(
+			"Create: did not receive expected error - got %v, "+
+				"want %v", e, wantErr,
 		)
 		return
 	}
 	// Ensure that attempting to open a database with an invalid type for the first parameter returns the expected
 	// error.
-	wantErr = fmt.Errorf("first argument to %s.Create is invalid -- "+
-		"expected database path string", dbType,
+	wantErr = fmt.Errorf(
+		"first argument to %s.Create is invalid -- "+
+			"expected database path string", dbType,
 	)
-	if _, e = walletdb.Create(dbType, 1); e != nil && e.Error() != wantErr.Error() {
-		t.Errorf("Create: did not receive expected error - got %v, "+
-			"want %v", e, wantErr,
+	if _, e = walletdb.Create(
+		dbType,
+		1,
+	); e != nil && e.Error() != wantErr.Error() {
+		t.Errorf(
+			"Create: did not receive expected error - got %v, "+
+				"want %v", e, wantErr,
 		)
 		return
 	}
@@ -82,8 +107,9 @@ func TestCreateOpenFail(t *testing.T) {
 	}
 	wantErr = walletdb.ErrDbNotOpen
 	if _, e = db.BeginReadTx(); e != wantErr {
-		t.Errorf("Namespace: did not receive expected error - got %v, "+
-			"want %v", e, wantErr,
+		t.Errorf(
+			"Namespace: did not receive expected error - got %v, "+
+				"want %v", e, wantErr,
 		)
 		return
 	}
@@ -113,18 +139,19 @@ func TestPersistence(t *testing.T) {
 		"ns1key3": "foo3",
 	}
 	ns1Key := []byte("ns1")
-	e = walletdb.Update(db, func(tx walletdb.ReadWriteTx) (e error) {
-		ns1, e := tx.CreateTopLevelBucket(ns1Key)
-		if e != nil {
-			return e
-		}
-		for k, v := range storeValues {
-			if e := ns1.Put([]byte(k), []byte(v)); E.Chk(e) {
-				return fmt.Errorf("put: unexpected error: %v", e)
+	e = walletdb.Update(
+		db, func(tx walletdb.ReadWriteTx) (e error) {
+			ns1, e := tx.CreateTopLevelBucket(ns1Key)
+			if e != nil {
+				return e
 			}
-		}
-		return nil
-	},
+			for k, v := range storeValues {
+				if e := ns1.Put([]byte(k), []byte(v)); E.Chk(e) {
+					return fmt.Errorf("put: unexpected error: %v", e)
+				}
+			}
+			return nil
+		},
 	)
 	if e != nil {
 		t.Errorf("ns1 Update: unexpected error: %v", e)
@@ -143,21 +170,23 @@ func TestPersistence(t *testing.T) {
 		}
 	}()
 	// Ensure the values previously stored in the 3rd namespace still exist and are correct.
-	e = walletdb.View(db, func(tx walletdb.ReadTx) (e error) {
-		ns1 := tx.ReadBucket(ns1Key)
-		if ns1 == nil {
-			return fmt.Errorf("ReadTx.ReadBucket: unexpected nil root bucket")
-		}
-		for k, v := range storeValues {
-			gotVal := ns1.Get([]byte(k))
-			if !reflect.DeepEqual(gotVal, []byte(v)) {
-				return fmt.Errorf("get: key '%s' does not match expected value - got %s, want %s",
-					k, gotVal, v,
-				)
+	e = walletdb.View(
+		db, func(tx walletdb.ReadTx) (e error) {
+			ns1 := tx.ReadBucket(ns1Key)
+			if ns1 == nil {
+				return fmt.Errorf("ReadTx.ReadBucket: unexpected nil root bucket")
 			}
-		}
-		return nil
-	},
+			for k, v := range storeValues {
+				gotVal := ns1.Get([]byte(k))
+				if !reflect.DeepEqual(gotVal, []byte(v)) {
+					return fmt.Errorf(
+						"get: key '%s' does not match expected value - got %s, want %s",
+						k, gotVal, v,
+					)
+				}
+			}
+			return nil
+		},
 	)
 	if e != nil {
 		t.Errorf("ns1 View: unexpected error: %v", e)

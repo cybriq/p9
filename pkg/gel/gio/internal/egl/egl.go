@@ -204,7 +204,8 @@ func createContext(disp _EGLDisplay) (*eglContext, error) {
 	}
 	// sRGB framebuffer support on EGL 1.5 or if EGL_KHR_gl_colorspace is supported.
 	exts := strings.Split(eglQueryString(disp, _EGL_EXTENSIONS), " ")
-	srgb := major > 1 || minor >= 5 || hasExtension(exts,
+	srgb := major > 1 || minor >= 5 || hasExtension(
+		exts,
 		"EGL_KHR_gl_colorspace",
 	)
 	attribs := []_EGLint{
@@ -258,7 +259,8 @@ func createContext(disp _EGLDisplay) (*eglContext, error) {
 		}
 		eglCtx = eglCreateContext(disp, eglCfg, nilEGLContext, ctxAttribs)
 		if eglCtx == nilEGLContext {
-			return nil, fmt.Errorf("eglCreateContext failed: 0x%x",
+			return nil, fmt.Errorf(
+				"eglCreateContext failed: 0x%x",
 				eglGetError(),
 			)
 		}
@@ -272,11 +274,13 @@ func createContext(disp _EGLDisplay) (*eglContext, error) {
 	}, nil
 }
 
-func createSurface(disp _EGLDisplay, eglCtx *eglContext, win NativeWindowType,
+func createSurface(
+	disp _EGLDisplay, eglCtx *eglContext, win NativeWindowType,
 ) (_EGLSurface, error) {
 	var surfAttribs []_EGLint
 	if eglCtx.srgb {
-		surfAttribs = append(surfAttribs, _EGL_GL_COLORSPACE_KHR,
+		surfAttribs = append(
+			surfAttribs, _EGL_GL_COLORSPACE_KHR,
 			_EGL_GL_COLORSPACE_SRGB_KHR,
 		)
 	}
@@ -289,7 +293,8 @@ func createSurface(disp _EGLDisplay, eglCtx *eglContext, win NativeWindowType,
 		eglSurf = eglCreateWindowSurface(disp, eglCtx.config, win, surfAttribs)
 	}
 	if eglSurf == nilEGLSurface {
-		return nilEGLSurface, fmt.Errorf("newContext: eglCreateWindowSurface failed 0x%x (sRGB=%v)",
+		return nilEGLSurface, fmt.Errorf(
+			"newContext: eglCreateWindowSurface failed 0x%x (sRGB=%v)",
 			eglGetError(), eglCtx.srgb,
 		)
 	}

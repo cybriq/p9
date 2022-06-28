@@ -22,7 +22,8 @@ var stringTests = []struct {
 	{"abc", "ZiCa"},
 	{"1234598760", "3mJr7AoUXx2Wqd"},
 	{"abcdefghijklmnopqrstuvwxyz", "3yxU3u1igY8WkgtjK92fbJQCd4BZiiT1v25f"},
-	{"00000000000000000000000000000000000000000000000000000000000000",
+	{
+		"00000000000000000000000000000000000000000000000000000000000000",
 		"3sN2THZeE9Eh9eYrwkvZqNstbHGvrxSAM7gXUXvyFQP8XvQLUqNCS27icwUeDT7ckHm4FUHM2mTVh1vbLmk7y",
 	},
 }
@@ -48,8 +49,12 @@ var hexTests = []struct {
 	{"61", "2g"},
 	{"626262", "a3gV"},
 	{"636363", "aPEr"},
-	{"73696d706c792061206c6f6e6720737472696e67", "2cFupjhnEsSn59qHXstmK2ffpLv2"},
-	{"00eb15231dfceb60925886b67d065299925915aeb172c06647",
+	{
+		"73696d706c792061206c6f6e6720737472696e67",
+		"2cFupjhnEsSn59qHXstmK2ffpLv2",
+	},
+	{
+		"00eb15231dfceb60925886b67d065299925915aeb172c06647",
 		"1NS17iag9jJgTHD1VXjvLCEnZuQ3rJDE9L",
 	},
 	{"516b6fcd0f", "ABnLTmg"},
@@ -65,7 +70,8 @@ func TestBase58(t *testing.T) {
 	for x, test := range stringTests {
 		tmp := []byte(test.in)
 		if res := base58.Encode(tmp); res != test.out {
-			t.Errorf("Encode test #%d failed: got: %s want: %s",
+			t.Errorf(
+				"Encode test #%d failed: got: %s want: %s",
 				x, res, test.out,
 			)
 			continue
@@ -79,7 +85,8 @@ func TestBase58(t *testing.T) {
 			continue
 		}
 		if res := base58.Decode(test.out); !bytes.Equal(res, b) {
-			t.Errorf("Decode test #%d failed: got: %q want: %q",
+			t.Errorf(
+				"Decode test #%d failed: got: %q want: %q",
 				x, res, test.in,
 			)
 			continue
@@ -88,7 +95,8 @@ func TestBase58(t *testing.T) {
 	// Decode with invalid input
 	for x, test := range invalidStringTests {
 		if res := base58.Decode(test.in); string(res) != test.out {
-			t.Errorf("Decode invalidString test #%d failed: got: %q want: %q",
+			t.Errorf(
+				"Decode invalidString test #%d failed: got: %q want: %q",
 				x, res, test.out,
 			)
 			continue

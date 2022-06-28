@@ -2,10 +2,11 @@ package mempool
 
 import (
 	"bytes"
-	"github.com/cybriq/p9/pkg/amt"
-	block2 "github.com/cybriq/p9/pkg/block"
 	"math/rand"
 	"testing"
+
+	"github.com/cybriq/p9/pkg/amt"
+	block2 "github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/mining"
@@ -166,9 +167,11 @@ func TestDatabase(t *testing.T) {
 	binSize := uint32(6)
 	maxReplacements := uint32(4)
 	rounds := 8
-	eft := estimateFeeTester{ef: newTestFeeEstimator(binSize, maxReplacements,
-		uint32(rounds)+1,
-	), t: t,
+	eft := estimateFeeTester{
+		ef: newTestFeeEstimator(
+			binSize, maxReplacements,
+			uint32(rounds)+1,
+		), t: t,
 	}
 	var txHistory [][]*TxDesc
 	estimateHistory := [][estimateFeeDepth]DUOPerKilobyte{eft.estimates()}
@@ -337,7 +340,8 @@ func TestEstimateFee(t *testing.T) {
 			expected = expectedFeePerKilobyte(txA)
 		}
 		if estimated != expected {
-			t.Errorf("Estimate fee error: expected %f on round %d; got %f",
+			t.Errorf(
+				"Estimate fee error: expected %f on round %d; got %f",
 				expected, i, estimated,
 			)
 		}

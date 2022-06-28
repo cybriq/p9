@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"reflect"
 	"testing"
-	
+
 	"github.com/davecgh/go-spew/spew"
 )
 
@@ -163,7 +163,10 @@ func TestFilterClearWireErrors(t *testing.T) {
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.writeErr {
 				t.Errorf(
-					"BtcEncode #%d wrong error got: %v, want: %v", i, e, test.writeErr,
+					"BtcEncode #%d wrong error got: %v, want: %v",
+					i,
+					e,
+					test.writeErr,
 				)
 				continue
 			}
@@ -183,7 +186,10 @@ func TestFilterClearWireErrors(t *testing.T) {
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.readErr {
 				t.Errorf(
-					"BtcDecode #%d wrong error got: %v, want: %v", i, e, test.readErr,
+					"BtcDecode #%d wrong error got: %v, want: %v",
+					i,
+					e,
+					test.readErr,
 				)
 				continue
 			}

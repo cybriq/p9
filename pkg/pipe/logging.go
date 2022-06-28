@@ -128,7 +128,8 @@ func LogServe(quit qu.C, appName string) {
 					D.Ln("setting level", log.Levels[b[4]])
 					log.SetLogLevel(log.Levels[b[4]])
 				case "kill":
-					D.Ln("received kill signal from pipe, shutting down",
+					D.Ln(
+						"received kill signal from pipe, shutting down",
 						appName,
 					)
 					interrupt.Request()

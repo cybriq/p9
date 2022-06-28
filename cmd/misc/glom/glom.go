@@ -30,7 +30,8 @@ func main() {
 		Size(48, 32).
 		Title("glom, the visual code editor").
 		Open().
-		Run(func(gtx l.Context) l.Dimensions { return folderView.Fn(gtx) },
+		Run(
+			func(gtx l.Context) l.Dimensions { return folderView.Fn(gtx) },
 			func() {
 				interrupt.Request()
 				quit.Q()

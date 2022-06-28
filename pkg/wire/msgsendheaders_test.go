@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"reflect"
 	"testing"
-	
+
 	"github.com/davecgh/go-spew/spew"
 )
 
@@ -16,7 +16,8 @@ func TestSendHeaders(t *testing.T) {
 	wantCmd := "sendheaders"
 	msg := NewMsgSendHeaders()
 	if cmd := msg.Command(); cmd != wantCmd {
-		t.Errorf("NewMsgSendHeaders: wrong command - got %v want %v",
+		t.Errorf(
+			"NewMsgSendHeaders: wrong command - got %v want %v",
 			cmd, wantCmd,
 		)
 	}
@@ -24,8 +25,9 @@ func TestSendHeaders(t *testing.T) {
 	wantPayload := uint32(0)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -33,7 +35,8 @@ func TestSendHeaders(t *testing.T) {
 	var buf bytes.Buffer
 	e := msg.BtcEncode(&buf, pver, enc)
 	if e != nil {
-		t.Errorf("encode of MsgSendHeaders failed %v e <%v>", msg,
+		t.Errorf(
+			"encode of MsgSendHeaders failed %v e <%v>", msg,
 			e,
 		)
 	}
@@ -49,7 +52,8 @@ func TestSendHeaders(t *testing.T) {
 	readmsg := NewMsgSendHeaders()
 	e = readmsg.BtcDecode(&buf, pver, enc)
 	if e != nil {
-		t.Errorf("decode of MsgSendHeaders failed [%v] e <%v>", buf,
+		t.Errorf(
+			"decode of MsgSendHeaders failed [%v] e <%v>", buf,
 			e,
 		)
 	}
@@ -71,21 +75,23 @@ func TestSendHeadersBIP0130(t *testing.T) {
 	// Test encode with old protocol version.
 	var buf bytes.Buffer
 	e := msg.BtcEncode(&buf, pver, enc)
-	
+
 	if e == nil {
-		
-		t.Errorf("encode of MsgSendHeaders succeeded when it should " +
-			"have failed",
+
+		t.Errorf(
+			"encode of MsgSendHeaders succeeded when it should " +
+				"have failed",
 		)
 	}
 	// Test decode with old protocol version.
 	readmsg := NewMsgSendHeaders()
 	e = readmsg.BtcDecode(&buf, pver, enc)
-	
+
 	if e == nil {
-		
-		t.Errorf("decode of MsgSendHeaders succeeded when it should " +
-			"have failed",
+
+		t.Errorf(
+			"decode of MsgSendHeaders succeeded when it should " +
+				"have failed",
 		)
 	}
 }
@@ -154,7 +160,8 @@ func TestSendHeadersWire(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("BtcEncode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcEncode #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -168,7 +175,8 @@ func TestSendHeadersWire(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(&msg, test.out) {
-			t.Errorf("BtcDecode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcDecode #%d\n got: %s want: %s", i,
 				spew.Sdump(msg), spew.Sdump(test.out),
 			)
 			continue

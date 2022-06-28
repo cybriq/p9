@@ -129,7 +129,8 @@ func assertClipboardReadOp(t *testing.T, router *Router, expected int) {
 	}
 }
 
-func assertClipboardReadOpDuplicated(t *testing.T, router *Router, expected int,
+func assertClipboardReadOpDuplicated(
+	t *testing.T, router *Router, expected int,
 ) {
 	t.Helper()
 	if len(router.cqueue.receivers) != expected {

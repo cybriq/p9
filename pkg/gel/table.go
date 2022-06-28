@@ -237,19 +237,21 @@ func (t *Table) Fn(gtx l.Context) l.Dimensions {
 		oie := oi
 		txi := t.X[i]
 		tyi := t.Y[0]
-		header.Rigid(func(gtx l.Context) l.Dimensions {
-			cs := gtx.Constraints
-			cs.Max.X = txi
-			cs.Min.X = gtx.Constraints.Max.X
-			cs.Max.Y = tyi
-			cs.Min.Y = gtx.Constraints.Max.Y
-			// gtx.Constraints.Constrain(image.Point{X: txi, Y: tyi})
-			dims := t.Fill(t.headerBackground, l.Center, t.TextSize.V, 0,
-				EmptySpace(txi, tyi),
-			).Fn(gtx)
-			oie.Widget(gtx)
-			return dims
-		},
+		header.Rigid(
+			func(gtx l.Context) l.Dimensions {
+				cs := gtx.Constraints
+				cs.Max.X = txi
+				cs.Min.X = gtx.Constraints.Max.X
+				cs.Max.Y = tyi
+				cs.Min.Y = gtx.Constraints.Max.Y
+				// gtx.Constraints.Constrain(image.Point{X: txi, Y: tyi})
+				dims := t.Fill(
+					t.headerBackground, l.Center, t.TextSize.V, 0,
+					EmptySpace(txi, tyi),
+				).Fn(gtx)
+				oie.Widget(gtx)
+				return dims
+			},
 		)
 	}
 
@@ -279,41 +281,47 @@ func (t *Table) Fn(gtx l.Context) l.Dimensions {
 				oie := oiee
 				txi := t.X[i]
 				tyi := t.Y[index]
-				f.Rigid(t.Fill(t.cellBackground, l.Center, t.TextSize.V, 0,
-					func(gtx l.Context) l.Dimensions {
-						cs := gtx.Constraints
-						cs.Max.X = txi
-						cs.Min.X = gtx.Constraints.Max.X
-						cs.Max.Y = tyi
-						cs.Min.Y = gtx.Constraints.Max.Y // gtx.Constraints.Constrain(image.Point{
-						// 	X: t.X[i],
-						// 	Y: t.Y[index],
-						// })
-						gtx.Constraints.Max.X = txi
-						// gtx.Constraints.Min.X = gtx.Constraints.Max.X
-						gtx.Constraints.Max.Y = tyi
-						// gtx.Constraints.Min.Y = gtx.Constraints.Max.Y
-						dims := EmptySpace(txi, tyi)(gtx)
-						// dims
-						oie.Widget(gtx)
-						return dims
-					},
-				).Fn,
+				f.Rigid(
+					t.Fill(
+						t.cellBackground, l.Center, t.TextSize.V, 0,
+						func(gtx l.Context) l.Dimensions {
+							cs := gtx.Constraints
+							cs.Max.X = txi
+							cs.Min.X = gtx.Constraints.Max.X
+							cs.Max.Y = tyi
+							cs.Min.Y = gtx.Constraints.Max.Y // gtx.Constraints.Constrain(image.Point{
+							// 	X: t.X[i],
+							// 	Y: t.Y[index],
+							// })
+							gtx.Constraints.Max.X = txi
+							// gtx.Constraints.Min.X = gtx.Constraints.Max.X
+							gtx.Constraints.Max.Y = tyi
+							// gtx.Constraints.Min.Y = gtx.Constraints.Max.Y
+							dims := EmptySpace(txi, tyi)(gtx)
+							// dims
+							oie.Widget(gtx)
+							return dims
+						},
+					).Fn,
 				)
 			}
 		}
 		return f.Fn(gtx)
 	}
 	return t.Theme.VFlex().
-		Rigid(func(gtx l.Context) l.Dimensions {
-			// header is fixed to the top of the widget
-			return t.Fill(t.headerBackground, l.Center, t.TextSize.V, 0,
-				header.Fn,
-			).Fn(gtx)
-		},
+		Rigid(
+			func(gtx l.Context) l.Dimensions {
+				// header is fixed to the top of the widget
+				return t.Fill(
+					t.headerBackground, l.Center, t.TextSize.V, 0,
+					header.Fn,
+				).Fn(gtx)
+			},
 		).
-		Flexed(1,
-			t.Fill(t.cellBackground, l.Center, t.TextSize.V, 0,
+		Flexed(
+			1,
+			t.Fill(
+				t.cellBackground, l.Center, t.TextSize.V, 0,
 				func(gtx l.Context) l.Dimensions {
 					return t.list.Vertical().
 						Length(len(out)).

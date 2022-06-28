@@ -13,7 +13,8 @@ func TestNotifications(t *testing.T) {
 		t.Fatalf("Error loading file: %v\n", e)
 	}
 	// Create a new database and chain instance to run tests against.
-	chain, teardownFunc, e := chainSetup("notifications",
+	chain, teardownFunc, e := chainSetup(
+		"notifications",
 		&chaincfg.MainNetParams,
 	)
 	if e != nil {
@@ -36,8 +37,9 @@ func TestNotifications(t *testing.T) {
 		t.Fatalf("ProcessBlock fail on block 1: %v\n", e)
 	}
 	if notificationCount != numSubscribers {
-		t.Fatalf("Expected notification callback to be executed %d "+
-			"times, found %d", numSubscribers, notificationCount,
+		t.Fatalf(
+			"Expected notification callback to be executed %d "+
+				"times, found %d", numSubscribers, notificationCount,
 		)
 	}
 }

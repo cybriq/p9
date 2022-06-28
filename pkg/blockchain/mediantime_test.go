@@ -28,9 +28,18 @@ func TestMedianTime(t *testing.T) {
 		{in: []int64{-5, -4, -3, -2, -1}, wantOffset: -3, useDupID: true},
 		// The offset stops being updated once the max number of entries has been reached. This is actually a bug from
 		// Bitcoin Core, but since the time is ultimately used as a part of the consensus rules, it must be mirrored.
-		{in: []int64{-67, 67, -50, 24, 63, 17, 58, -14, 5, -32, -52}, wantOffset: 17},
-		{in: []int64{-67, 67, -50, 24, 63, 17, 58, -14, 5, -32, -52, 45}, wantOffset: 17},
-		{in: []int64{-67, 67, -50, 24, 63, 17, 58, -14, 5, -32, -52, 45, 4}, wantOffset: 17},
+		{
+			in:         []int64{-67, 67, -50, 24, 63, 17, 58, -14, 5, -32, -52},
+			wantOffset: 17,
+		},
+		{
+			in:         []int64{-67, 67, -50, 24, 63, 17, 58, -14, 5, -32, -52, 45},
+			wantOffset: 17,
+		},
+		{
+			in:         []int64{-67, 67, -50, 24, 63, 17, 58, -14, 5, -32, -52, 45, 4},
+			wantOffset: 17,
+		},
 		// Offsets that are too far away from the local time should be ignored.
 		{in: []int64{-4201, 4202, -4203, 4204, -4205}, wantOffset: 0},
 		// Exercise the condition where the median offset is greater than the max allowed adjustment, but there is at
@@ -53,8 +62,9 @@ func TestMedianTime(t *testing.T) {
 			// Ensure the duplicate IDs are ignored.
 			if test.useDupID {
 				// Modify the offsets to ensure the final median would be different if the duplicate is added.
-				tOffset = tOffset.Add(time.Duration(offset) *
-					time.Second,
+				tOffset = tOffset.Add(
+					time.Duration(offset) *
+						time.Second,
 				)
 				filter.AddTimeSample(id, tOffset)
 			}
@@ -65,8 +75,9 @@ func TestMedianTime(t *testing.T) {
 		wantOffset := time.Duration(test.wantOffset) * time.Second
 		wantOffset2 := time.Duration(test.wantOffset-1) * time.Second
 		if gotOffset != wantOffset && gotOffset != wantOffset2 {
-			t.Errorf("Offset #%d: unexpected offset -- got %v, "+
-				"want %v or %v", i, gotOffset, wantOffset,
+			t.Errorf(
+				"Offset #%d: unexpected offset -- got %v, "+
+					"want %v or %v", i, gotOffset, wantOffset,
 				wantOffset2,
 			)
 			continue
@@ -78,8 +89,9 @@ func TestMedianTime(t *testing.T) {
 		wantTime := now.Add(filter.Offset())
 		wantTime2 := now.Add(filter.Offset() - time.Second)
 		if !adjustedTime.Equal(wantTime) && !adjustedTime.Equal(wantTime2) {
-			t.Errorf("AdjustedTime #%d: unexpected result -- got %v, "+
-				"want %v or %v", i, adjustedTime, wantTime,
+			t.Errorf(
+				"AdjustedTime #%d: unexpected result -- got %v, "+
+					"want %v or %v", i, adjustedTime, wantTime,
 				wantTime2,
 			)
 			continue

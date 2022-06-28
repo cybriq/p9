@@ -90,7 +90,8 @@ func nsstringToString(str C.CFTypeRef) string {
 		return ""
 	}
 	chars := make([]uint16, n)
-	C.gio_nsstringGetCharacters(str, (*C.unichar)(unsafe.Pointer(&chars[0])), 0,
+	C.gio_nsstringGetCharacters(
+		str, (*C.unichar)(unsafe.Pointer(&chars[0])), 0,
 		n,
 	)
 	utf8 := utf16.Decode(chars)
@@ -211,18 +212,20 @@ func windowSetCursor(from, to pointer.CursorName) pointer.CursorName {
 	case pointer.CursorGrab:
 		curID = 7
 	case pointer.CursorNone:
-		runOnMain(func() {
-			C.gio_hideCursor()
-		},
+		runOnMain(
+			func() {
+				C.gio_hideCursor()
+			},
 		)
 		return to
 	}
-	runOnMain(func() {
-		if from == pointer.CursorNone {
-			C.gio_showCursor()
-		}
-		C.gio_setCursor(C.NSUInteger(curID))
-	},
+	runOnMain(
+		func() {
+			if from == pointer.CursorNone {
+				C.gio_showCursor()
+			}
+			C.gio_setCursor(C.NSUInteger(curID))
+		},
 	)
 	return to
 }

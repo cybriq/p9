@@ -23,7 +23,8 @@ var (
 	op1, op2, op3 op.Ops
 )
 
-func setupBenchmark(b *testing.B) (layout.Context, *headless.Window,
+func setupBenchmark(b *testing.B) (
+	layout.Context, *headless.Window,
 	*material.Theme,
 ) {
 	sz := image.Point{X: 1024, Y: 1200}
@@ -108,7 +109,8 @@ func BenchmarkDrawUITransformed(b *testing.B) {
 
 		p := op.Save(gtx.Ops)
 		angle := float32(math.Mod(float64(i)/1000, 0.05))
-		a := f32.Affine2D{}.Shear(f32.Point{}, angle, angle).Rotate(f32.Point{},
+		a := f32.Affine2D{}.Shear(f32.Point{}, angle, angle).Rotate(
+			f32.Point{},
 			angle,
 		)
 		op.Affine(a).Add(gtx.Ops)
@@ -160,11 +162,14 @@ func draw1000Circles(gtx layout.Context) {
 		p := op.Save(ops)
 		op.Offset(f32.Pt(float32(x*10), 0)).Add(ops)
 		for y := 0; y < 10; y++ {
-			paint.FillShape(ops,
-				color.NRGBA{R: 100 + uint8(x), G: 100 + uint8(y), B: 100,
+			paint.FillShape(
+				ops,
+				color.NRGBA{
+					R: 100 + uint8(x), G: 100 + uint8(y), B: 100,
 					A: 120,
 				},
-				clip.RRect{Rect: f32.Rect(0, 0, 10, 10), NE: 5, SE: 5, SW: 5,
+				clip.RRect{
+					Rect: f32.Rect(0, 0, 10, 10), NE: 5, SE: 5, SW: 5,
 					NW: 5,
 				}.Op(ops),
 			)
@@ -178,7 +183,13 @@ func draw1000CirclesInstanced(gtx layout.Context) {
 	ops := gtx.Ops
 
 	r := op.Record(ops)
-	clip.RRect{Rect: f32.Rect(0, 0, 10, 10), NE: 5, SE: 5, SW: 5, NW: 5}.Add(ops)
+	clip.RRect{
+		Rect: f32.Rect(0, 0, 10, 10),
+		NE:   5,
+		SE:   5,
+		SW:   5,
+		NW:   5,
+	}.Add(ops)
 	paint.PaintOp{}.Add(ops)
 	c := r.Stop()
 
@@ -187,9 +198,11 @@ func draw1000CirclesInstanced(gtx layout.Context) {
 		op.Offset(f32.Pt(float32(x*10), 0)).Add(ops)
 		for y := 0; y < 10; y++ {
 			pi := op.Save(ops)
-			paint.ColorOp{Color: color.NRGBA{R: 100 + uint8(x),
-				G: 100 + uint8(y), B: 100, A: 120,
-			},
+			paint.ColorOp{
+				Color: color.NRGBA{
+					R: 100 + uint8(x),
+					G: 100 + uint8(y), B: 100, A: 120,
+				},
 			}.Add(ops)
 			c.Add(ops)
 			pi.Load()
@@ -209,7 +222,8 @@ func drawCore(gtx layout.Context, th *material.Theme) {
 	(<-c3).Add(gtx.Ops)
 }
 
-func drawIndividualShapes(gtx layout.Context, th *material.Theme,
+func drawIndividualShapes(
+	gtx layout.Context, th *material.Theme,
 ) chan op.CallOp {
 	// draw 81 rounded rectangles of different solid colors - each one individually
 	go func() {
@@ -219,11 +233,14 @@ func drawIndividualShapes(gtx layout.Context, th *material.Theme,
 			p := op.Save(ops)
 			op.Offset(f32.Pt(float32(x*50), 0)).Add(ops)
 			for y := 0; y < 9; y++ {
-				paint.FillShape(ops,
-					color.NRGBA{R: 100 + uint8(x), G: 100 + uint8(y), B: 100,
+				paint.FillShape(
+					ops,
+					color.NRGBA{
+						R: 100 + uint8(x), G: 100 + uint8(y), B: 100,
 						A: 120,
 					},
-					clip.RRect{Rect: f32.Rect(0, 0, 25, 25), NE: 10, SE: 10,
+					clip.RRect{
+						Rect: f32.Rect(0, 0, 25, 25), NE: 10, SE: 10,
 						SW: 10, NW: 10,
 					}.Op(ops),
 				)
@@ -243,7 +260,13 @@ func drawShapeInstances(gtx layout.Context, th *material.Theme) chan op.CallOp {
 		co := op.Record(ops)
 
 		r := op.Record(ops)
-		clip.RRect{Rect: f32.Rect(0, 0, 25, 25), NE: 10, SE: 10, SW: 10, NW: 10}.Add(ops)
+		clip.RRect{
+			Rect: f32.Rect(0, 0, 25, 25),
+			NE:   10,
+			SE:   10,
+			SW:   10,
+			NW:   10,
+		}.Add(ops)
 		paint.PaintOp{}.Add(ops)
 		c := r.Stop()
 

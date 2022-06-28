@@ -3,9 +3,10 @@ package txscript
 import (
 	"errors"
 	"fmt"
+	"testing"
+
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chaincfg"
-	"testing"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	ec "github.com/cybriq/p9/pkg/ecc"
@@ -59,7 +60,8 @@ func mkGetScript(scripts map[string][]byte) ScriptDB {
 		},
 	)
 }
-func checkScripts(msg string, tx *wire.MsgTx, idx int, inputAmt int64,
+func checkScripts(
+	msg string, tx *wire.MsgTx, idx int, inputAmt int64,
 	sigScript, pkScript []byte,
 ) (e error) {
 	tx.TxIn[idx].SignatureScript = sigScript
@@ -1747,7 +1749,8 @@ var sigScriptTests = []tstSigScript{
 		name: "one input uncompressed",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal,
+				txout: wire.NewTxOut(
+					coinbaseVal,
 					uncompressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1763,7 +1766,8 @@ var sigScriptTests = []tstSigScript{
 		name: "two inputs uncompressed",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal,
+				txout: wire.NewTxOut(
+					coinbaseVal,
 					uncompressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1771,7 +1775,8 @@ var sigScriptTests = []tstSigScript{
 				indexOutOfRange:    false,
 			},
 			{
-				txout:              wire.NewTxOut(coinbaseVal+fee,
+				txout: wire.NewTxOut(
+					coinbaseVal+fee,
 					uncompressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1787,7 +1792,8 @@ var sigScriptTests = []tstSigScript{
 		name: "one input compressed",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal,
+				txout: wire.NewTxOut(
+					coinbaseVal,
 					compressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1803,7 +1809,8 @@ var sigScriptTests = []tstSigScript{
 		name: "two inputs compressed",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal,
+				txout: wire.NewTxOut(
+					coinbaseVal,
 					compressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1811,7 +1818,8 @@ var sigScriptTests = []tstSigScript{
 				indexOutOfRange:    false,
 			},
 			{
-				txout:              wire.NewTxOut(coinbaseVal+fee,
+				txout: wire.NewTxOut(
+					coinbaseVal+fee,
 					compressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1827,7 +1835,8 @@ var sigScriptTests = []tstSigScript{
 		name: "hashType SigHashNone",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal,
+				txout: wire.NewTxOut(
+					coinbaseVal,
 					uncompressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1843,7 +1852,8 @@ var sigScriptTests = []tstSigScript{
 		name: "hashType SigHashSingle",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal,
+				txout: wire.NewTxOut(
+					coinbaseVal,
 					uncompressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1859,7 +1869,8 @@ var sigScriptTests = []tstSigScript{
 		name: "hashType SigHashAnyoneCanPay",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal,
+				txout: wire.NewTxOut(
+					coinbaseVal,
 					uncompressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1875,7 +1886,8 @@ var sigScriptTests = []tstSigScript{
 		name: "hashType non-standard",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal,
+				txout: wire.NewTxOut(
+					coinbaseVal,
 					uncompressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1891,7 +1903,8 @@ var sigScriptTests = []tstSigScript{
 		name: "invalid compression",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal,
+				txout: wire.NewTxOut(
+					coinbaseVal,
 					uncompressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1920,7 +1933,8 @@ var sigScriptTests = []tstSigScript{
 		name: "valid script at wrong index",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal,
+				txout: wire.NewTxOut(
+					coinbaseVal,
 					uncompressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1928,7 +1942,8 @@ var sigScriptTests = []tstSigScript{
 				indexOutOfRange:    false,
 			},
 			{
-				txout:              wire.NewTxOut(coinbaseVal+fee,
+				txout: wire.NewTxOut(
+					coinbaseVal+fee,
 					uncompressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1944,7 +1959,8 @@ var sigScriptTests = []tstSigScript{
 		name: "index out of range",
 		inputs: []tstInput{
 			{
-				txout:              wire.NewTxOut(coinbaseVal,
+				txout: wire.NewTxOut(
+					coinbaseVal,
 					uncompressedPkScript,
 				),
 				sigscriptGenerates: true,
@@ -1952,7 +1968,8 @@ var sigScriptTests = []tstSigScript{
 				indexOutOfRange:    false,
 			},
 			{
-				txout:              wire.NewTxOut(coinbaseVal+fee,
+				txout: wire.NewTxOut(
+					coinbaseVal+fee,
 					uncompressedPkScript,
 				),
 				sigscriptGenerates: true,

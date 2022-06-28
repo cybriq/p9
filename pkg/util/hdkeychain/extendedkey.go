@@ -10,8 +10,9 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/cybriq/p9/pkg/btcaddr"
 	"math/big"
+
+	"github.com/cybriq/p9/pkg/btcaddr"
 
 	"github.com/cybriq/p9/pkg/base58"
 	"github.com/cybriq/p9/pkg/chaincfg"
@@ -331,7 +332,8 @@ func (k *ExtendedKey) ECPrivKey() (*ec.PrivateKey, error) {
 }
 
 // Address converts the extended key to a standard bitcoin pay-to-pubkey-hash address for the passed network.
-func (k *ExtendedKey) Address(net *chaincfg.Params) (*btcaddr.PubKeyHash, error,
+func (k *ExtendedKey) Address(net *chaincfg.Params) (
+	*btcaddr.PubKeyHash, error,
 ) {
 	pkHash := btcaddr.Hash160(k.pubKeyBytes())
 	return btcaddr.NewPubKeyHash(pkHash, net)

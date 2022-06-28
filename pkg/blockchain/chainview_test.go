@@ -126,7 +126,8 @@ func TestChainView(t *testing.T) {
 			equal:      newChainView(tip(branch1Nodes)),
 			unequal:    newChainView(tip(branch2Nodes)),
 			locator: zipLocators(
-				locatorHashes(branch1Nodes, 24, 23, 22, 21, 20,
+				locatorHashes(
+					branch1Nodes, 24, 23, 22, 21, 20,
 					19, 18, 17, 16, 15, 14, 13, 11, 7,
 				),
 				locatorHashes(branch0Nodes, 1, 0),
@@ -156,29 +157,33 @@ testLoop:
 	for _, test := range tests {
 		// Ensure the active and side chain heights are the expected values.
 		if test.view.Height() != test.tip.height {
-			t.Errorf("%s: unexpected active view height -- got "+
-				"%d, want %d", test.name, test.view.Height(),
+			t.Errorf(
+				"%s: unexpected active view height -- got "+
+					"%d, want %d", test.name, test.view.Height(),
 				test.tip.height,
 			)
 			continue
 		}
 		if test.side.Height() != test.sideTip.height {
-			t.Errorf("%s: unexpected side view height -- got %d, "+
-				"want %d", test.name, test.side.Height(),
+			t.Errorf(
+				"%s: unexpected side view height -- got %d, "+
+					"want %d", test.name, test.side.Height(),
 				test.sideTip.height,
 			)
 			continue
 		}
 		// Ensure the active and side chain genesis block is the expected value.
 		if test.view.Genesis() != test.genesis {
-			t.Errorf("%s: unexpected active view genesis -- got "+
-				"%v, want %v", test.name, test.view.Genesis(),
+			t.Errorf(
+				"%s: unexpected active view genesis -- got "+
+					"%v, want %v", test.name, test.view.Genesis(),
 				test.genesis,
 			)
 			continue
 		}
 		if test.side.Genesis() != test.genesis {
-			t.Errorf("%s: unexpected side view genesis -- got %v, want %v",
+			t.Errorf(
+				"%s: unexpected side view genesis -- got %v, want %v",
 				test.name, test.view.Genesis(),
 				test.genesis,
 			)
@@ -186,14 +191,16 @@ testLoop:
 		}
 		// Ensure the active and side chain tips are the expected nodes.
 		if test.view.Tip() != test.tip {
-			t.Errorf("%s: unexpected active view tip -- got %v, "+
-				"want %v", test.name, test.view.Tip(), test.tip,
+			t.Errorf(
+				"%s: unexpected active view tip -- got %v, "+
+					"want %v", test.name, test.view.Tip(), test.tip,
 			)
 			continue
 		}
 		if test.side.Tip() != test.sideTip {
-			t.Errorf("%s: unexpected active view tip -- got %v, "+
-				"want %v", test.name, test.side.Tip(),
+			t.Errorf(
+				"%s: unexpected active view tip -- got %v, "+
+					"want %v", test.name, test.side.Tip(),
 				test.sideTip,
 			)
 			continue
@@ -201,16 +208,18 @@ testLoop:
 		// Ensure that regardless of the order the two chains are compared they both return the expected fork point.
 		forkNode := test.view.FindFork(test.side.Tip())
 		if forkNode != test.fork {
-			t.Errorf("%s: unexpected fork node (view, side) -- "+
-				"got %v, want %v", test.name, forkNode,
+			t.Errorf(
+				"%s: unexpected fork node (view, side) -- "+
+					"got %v, want %v", test.name, forkNode,
 				test.fork,
 			)
 			continue
 		}
 		forkNode = test.side.FindFork(test.view.Tip())
 		if forkNode != test.fork {
-			t.Errorf("%s: unexpected fork node (side, view) -- "+
-				"got %v, want %v", test.name, forkNode,
+			t.Errorf(
+				"%s: unexpected fork node (side, view) -- "+
+					"got %v, want %v", test.name, forkNode,
 				test.fork,
 			)
 			continue
@@ -218,8 +227,9 @@ testLoop:
 		// Ensure that the fork point for a node that is already part of the chain view is the node itself.
 		forkNode = test.view.FindFork(test.view.Tip())
 		if forkNode != test.view.Tip() {
-			t.Errorf("%s: unexpected fork node (view, tip) -- "+
-				"got %v, want %v", test.name, forkNode,
+			t.Errorf(
+				"%s: unexpected fork node (view, tip) -- "+
+					"got %v, want %v", test.name, forkNode,
 				test.view.Tip(),
 			)
 			continue
@@ -227,7 +237,8 @@ testLoop:
 		// Ensure all expected nodes are contained in the active view.
 		for _, node := range test.contains {
 			if !test.view.Contains(node) {
-				t.Errorf("%s: expected %v in active view",
+				t.Errorf(
+					"%s: expected %v in active view",
 					test.name, node,
 				)
 				continue testLoop
@@ -236,7 +247,8 @@ testLoop:
 		// Ensure all nodes from side chain view are NOT contained in the active view.
 		for _, node := range test.noContains {
 			if test.view.Contains(node) {
-				t.Errorf("%s: unexpected %v in active view",
+				t.Errorf(
+					"%s: unexpected %v in active view",
 					test.name, node,
 				)
 				continue testLoop
@@ -259,8 +271,9 @@ testLoop:
 				expected = test.contains[i+1]
 			}
 			if next := test.view.Next(node); next != expected {
-				t.Errorf("%s: unexpected next node -- got %v, "+
-					"want %v", test.name, next, expected,
+				t.Errorf(
+					"%s: unexpected next node -- got %v, "+
+						"want %v", test.name, next, expected,
 				)
 				continue testLoop
 			}
@@ -268,8 +281,9 @@ testLoop:
 		// Ensure nodes that are not contained in the view do not produce a successor node.
 		for _, node := range test.noContains {
 			if next := test.view.Next(node); next != nil {
-				t.Errorf("%s: unexpected next node -- got %v, "+
-					"want nil", test.name, next,
+				t.Errorf(
+					"%s: unexpected next node -- got %v, "+
+						"want nil", test.name, next,
 				)
 				continue testLoop
 			}
@@ -278,8 +292,9 @@ testLoop:
 		for _, wantNode := range test.contains {
 			node := test.view.NodeByHeight(wantNode.height)
 			if node != wantNode {
-				t.Errorf("%s: unexpected node for height %d -- "+
-					"got %v, want %v", test.name,
+				t.Errorf(
+					"%s: unexpected node for height %d -- "+
+						"got %v, want %v", test.name,
 					wantNode.height, node, wantNode,
 				)
 				continue testLoop
@@ -288,7 +303,8 @@ testLoop:
 		// Ensure the block locator for the tip of the active view consists of the expected hashes.
 		locator := test.view.BlockLocator(test.view.tip())
 		if !reflect.DeepEqual(locator, test.locator) {
-			t.Errorf("%s: unexpected locator -- got %v, want %v",
+			t.Errorf(
+				"%s: unexpected locator -- got %v, want %v",
 				test.name, locator, test.locator,
 			)
 			continue
@@ -312,14 +328,16 @@ func TestChainViewForkCorners(t *testing.T) {
 	// Ensure attempting to find a fork point in two chain views with totally unrelated histories doesn't produce a node.
 	for _, node := range branchNodes {
 		if fork := view2.FindFork(node); fork != nil {
-			t.Fatalf("FindFork: unexpected fork -- got %v, want nil",
+			t.Fatalf(
+				"FindFork: unexpected fork -- got %v, want nil",
 				fork,
 			)
 		}
 	}
 	for _, node := range unrelatedBranchNodes {
 		if fork := view1.FindFork(node); fork != nil {
-			t.Fatalf("FindFork: unexpected fork -- got %v, want nil",
+			t.Fatalf(
+				"FindFork: unexpected fork -- got %v, want nil",
 				fork,
 			)
 		}
@@ -378,8 +396,9 @@ testLoop:
 			// Ensure the view tip is the expected node.
 			test.view.SetTip(tip)
 			if test.view.Tip() != tip {
-				t.Errorf("%s: unexpected view tip -- got %v, "+
-					"want %v", test.name, test.view.Tip(),
+				t.Errorf(
+					"%s: unexpected view tip -- got %v, "+
+						"want %v", test.name, test.view.Tip(),
 					tip,
 				)
 				continue testLoop
@@ -387,7 +406,8 @@ testLoop:
 			// Ensure all expected nodes are contained in the view.
 			for _, node := range test.contains[i] {
 				if !test.view.Contains(node) {
-					t.Errorf("%s: expected %v in active view",
+					t.Errorf(
+						"%s: expected %v in active view",
 						test.name, node,
 					)
 					continue testLoop
@@ -406,7 +426,8 @@ func TestChainViewNil(t *testing.T) {
 	}
 	// Ensure the genesis of an uninitialized view does not produce a node.
 	if genesis := view.Genesis(); genesis != nil {
-		t.Fatalf("Genesis: unexpected genesis -- got %v, want nil",
+		t.Fatalf(
+			"Genesis: unexpected genesis -- got %v, want nil",
 			genesis,
 		)
 	}
@@ -441,18 +462,21 @@ func TestChainViewNil(t *testing.T) {
 	}
 	// Ensure attempting to get a block locator for the tip doesn't produce one since the tip is nil.
 	if locator := view.BlockLocator(nil); locator != nil {
-		t.Fatalf("BlockLocator: unexpected locator -- got %v, want nil",
+		t.Fatalf(
+			"BlockLocator: unexpected locator -- got %v, want nil",
 			locator,
 		)
 	}
 	// Ensure attempting to get a block locator for a node that exists still works as intended.
 	branchNodes := chainedNodes(nil, 50)
-	wantLocator := locatorHashes(branchNodes, 49, 48, 47, 46, 45, 44, 43,
+	wantLocator := locatorHashes(
+		branchNodes, 49, 48, 47, 46, 45, 44, 43,
 		42, 41, 40, 39, 38, 36, 32, 24, 8, 0,
 	)
 	locator := view.BlockLocator(tstTip(branchNodes))
 	if !reflect.DeepEqual(locator, wantLocator) {
-		t.Fatalf("BlockLocator: unexpected locator -- got %v, want %v",
+		t.Fatalf(
+			"BlockLocator: unexpected locator -- got %v, want %v",
 			locator, wantLocator,
 		)
 	}

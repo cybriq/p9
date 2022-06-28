@@ -17,7 +17,8 @@ func main() {
 	quit := qu.T()
 	// splitted := strings.Split(command, " ")
 	splitted := os.Args[1:]
-	w := pipe.LogConsume(quit, pipe.SimpleLog(splitted[len(splitted)-1]),
+	w := pipe.LogConsume(
+		quit, pipe.SimpleLog(splitted[len(splitted)-1]),
 		pipe.FilterNone, splitted...,
 	)
 	D.Ln("\n\n>>> >>> >>> >>> >>> >>> >>> >>> >>> starting")

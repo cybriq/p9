@@ -152,7 +152,17 @@ func (e *editBuffer) prepend(caret int, s string) {
 
 func (e *editBuffer) dump() {
 	if bufferDebug {
-		fmt.Printf("len(e.text) %d e.len() %d e.gapstart %d e.gapend %d e.caret %d txt:\n'%+x'<-%d->'%+x'\n", len(e.text), e.len(), e.gapstart, e.gapend, e.caret, e.text[:e.gapstart], e.gapLen(), e.text[e.gapend:])
+		fmt.Printf(
+			"len(e.text) %d e.len() %d e.gapstart %d e.gapend %d e.caret %d txt:\n'%+x'<-%d->'%+x'\n",
+			len(e.text),
+			e.len(),
+			e.gapstart,
+			e.gapend,
+			e.caret,
+			e.text[:e.gapstart],
+			e.gapLen(),
+			e.text[e.gapend:],
+		)
 	}
 }
 

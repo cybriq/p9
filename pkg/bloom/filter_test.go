@@ -3,9 +3,10 @@ package bloom_test
 import (
 	"bytes"
 	"encoding/hex"
+	"testing"
+
 	block2 "github.com/cybriq/p9/pkg/block"
 	"github.com/cybriq/p9/pkg/btcaddr"
-	"testing"
 
 	"github.com/cybriq/p9/pkg/bloom"
 	"github.com/cybriq/p9/pkg/chainhash"
@@ -17,7 +18,8 @@ import (
 func TestFilterLarge(t *testing.T) {
 	f := bloom.NewFilter(100000000, 0, 0.01, wire.BloomUpdateNone)
 	if len(f.MsgFilterLoad().Filter) > wire.MaxFilterLoadFilterSize {
-		t.Errorf("TestFilterLarge test failed: %d > %d",
+		t.Errorf(
+			"TestFilterLarge test failed: %d > %d",
 			len(f.MsgFilterLoad().Filter), wire.MaxFilterLoadFilterSize,
 		)
 	}
@@ -28,14 +30,16 @@ func TestFilterLoad(t *testing.T) {
 	merkle := wire.MsgFilterLoad{}
 	f := bloom.LoadFilter(&merkle)
 	if !f.IsLoaded() {
-		t.Errorf("TestFilterLoad IsLoaded test failed: want %v got %v",
+		t.Errorf(
+			"TestFilterLoad IsLoaded test failed: want %v got %v",
 			true, !f.IsLoaded(),
 		)
 		return
 	}
 	f.Unload()
 	if f.IsLoaded() {
-		t.Errorf("TestFilterLoad IsLoaded test failed: want %v got %v",
+		t.Errorf(
+			"TestFilterLoad IsLoaded test failed: want %v got %v",
 			f.IsLoaded(), false,
 		)
 		return
@@ -66,7 +70,8 @@ func TestFilterInsert(t *testing.T) {
 		}
 		result := f.Matches(data)
 		if test.insert != result {
-			t.Errorf("TestFilterInsert Matches test #%d failure: got %v want %v\n",
+			t.Errorf(
+				"TestFilterInsert Matches test #%d failure: got %v want %v\n",
 				i, result, test.insert,
 			)
 			return
@@ -78,7 +83,8 @@ func TestFilterInsert(t *testing.T) {
 		return
 	}
 	got := bytes.NewBuffer(nil)
-	e = f.MsgFilterLoad().BtcEncode(got, wire.ProtocolVersion,
+	e = f.MsgFilterLoad().BtcEncode(
+		got, wire.ProtocolVersion,
 		wire.LatestEncoding,
 	)
 	if e != nil {
@@ -86,7 +92,8 @@ func TestFilterInsert(t *testing.T) {
 		return
 	}
 	if !bytes.Equal(got.Bytes(), want) {
-		t.Errorf("TestFilterInsert failure: got %v want %v\n",
+		t.Errorf(
+			"TestFilterInsert failure: got %v want %v\n",
 			got.Bytes(), want,
 		)
 		return
@@ -138,7 +145,8 @@ func TestFilterFPRange(t *testing.T) {
 		f := test.filter
 		f.AddHash(hash)
 		got := bytes.NewBuffer(nil)
-		e = f.MsgFilterLoad().BtcEncode(got, wire.ProtocolVersion,
+		e = f.MsgFilterLoad().BtcEncode(
+			got, wire.ProtocolVersion,
 			wire.LatestEncoding,
 		)
 		if e != nil {
@@ -146,7 +154,8 @@ func TestFilterFPRange(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(got.Bytes(), want) {
-			t.Errorf("serialized filter mismatch: got %x want %x\n",
+			t.Errorf(
+				"serialized filter mismatch: got %x want %x\n",
 				got.Bytes(), want,
 			)
 			continue
@@ -178,7 +187,8 @@ func TestFilterInsertWithTweak(t *testing.T) {
 		}
 		result := f.Matches(data)
 		if test.insert != result {
-			t.Errorf("TestFilterInsertWithTweak Matches test #%d failure: got %v want %v\n",
+			t.Errorf(
+				"TestFilterInsertWithTweak Matches test #%d failure: got %v want %v\n",
 				i, result, test.insert,
 			)
 			return
@@ -190,7 +200,8 @@ func TestFilterInsertWithTweak(t *testing.T) {
 		return
 	}
 	got := bytes.NewBuffer(nil)
-	e = f.MsgFilterLoad().BtcEncode(got, wire.ProtocolVersion,
+	e = f.MsgFilterLoad().BtcEncode(
+		got, wire.ProtocolVersion,
 		wire.LatestEncoding,
 	)
 	if e != nil {
@@ -198,7 +209,8 @@ func TestFilterInsertWithTweak(t *testing.T) {
 		return
 	}
 	if !bytes.Equal(got.Bytes(), want) {
-		t.Errorf("TestFilterInsertWithTweak failure: got %v want %v\n",
+		t.Errorf(
+			"TestFilterInsertWithTweak failure: got %v want %v\n",
 			got.Bytes(), want,
 		)
 		return
@@ -222,7 +234,8 @@ func TestFilterInsertKey(t *testing.T) {
 		return
 	}
 	got := bytes.NewBuffer(nil)
-	e = f.MsgFilterLoad().BtcEncode(got, wire.ProtocolVersion,
+	e = f.MsgFilterLoad().BtcEncode(
+		got, wire.ProtocolVersion,
 		wire.LatestEncoding,
 	)
 	if e != nil {
@@ -230,7 +243,8 @@ func TestFilterInsertKey(t *testing.T) {
 		return
 	}
 	if !bytes.Equal(got.Bytes(), want) {
-		t.Errorf("TestFilterInsertWithTweak failure: got %v want %v\n",
+		t.Errorf(
+			"TestFilterInsertWithTweak failure: got %v want %v\n",
 			got.Bytes(), want,
 		)
 		return
@@ -256,7 +270,8 @@ func TestFilterBloomMatch(t *testing.T) {
 		t.Errorf("TestFilterBloomMatch NewTxFromBytes failure: %v", e)
 		return
 	}
-	spendingTxBytes := []byte{0x01, 0x00, 0x00, 0x00, 0x01, 0x6b, 0xff, 0x7f,
+	spendingTxBytes := []byte{
+		0x01, 0x00, 0x00, 0x00, 0x01, 0x6b, 0xff, 0x7f,
 		0xcd, 0x4f, 0x85, 0x65, 0xef, 0x40, 0x6d, 0xd5, 0xd6,
 		0x3d, 0x4f, 0xf9, 0x4f, 0x31, 0x8f, 0xe8, 0x20, 0x27,
 		0xfd, 0x4d, 0xc4, 0x51, 0xb0, 0x44, 0x74, 0x01, 0x9f,
@@ -324,7 +339,8 @@ func TestFilterBloomMatch(t *testing.T) {
 	}
 	f.Add(hashBytes)
 	if !f.MatchTxAndUpdate(tx) {
-		t.Errorf("TestFilterBloomMatch didn't match input signature %s",
+		t.Errorf(
+			"TestFilterBloomMatch didn't match input signature %s",
 			inputStr,
 		)
 	}
@@ -350,12 +366,14 @@ func TestFilterBloomMatch(t *testing.T) {
 	}
 	f.Add(hashBytes)
 	if !f.MatchTxAndUpdate(tx) {
-		t.Errorf("TestFilterBloomMatch didn't match output address %s",
+		t.Errorf(
+			"TestFilterBloomMatch didn't match output address %s",
 			inputStr,
 		)
 	}
 	if !f.MatchTxAndUpdate(spendingTx) {
-		t.Errorf("TestFilterBloomMatch spendingTx didn't match output address %s",
+		t.Errorf(
+			"TestFilterBloomMatch spendingTx didn't match output address %s",
 			inputStr,
 		)
 	}
@@ -368,7 +386,8 @@ func TestFilterBloomMatch(t *testing.T) {
 	}
 	f.Add(hashBytes)
 	if !f.MatchTxAndUpdate(tx) {
-		t.Errorf("TestFilterBloomMatch didn't match output address %s",
+		t.Errorf(
+			"TestFilterBloomMatch didn't match output address %s",
 			inputStr,
 		)
 	}
@@ -602,8 +621,9 @@ func TestFilterInsertP2PubKeyOnly(t *testing.T) {
 	}
 	outpoint := wire.NewOutPoint(hash, 0)
 	if !f.MatchesOutPoint(outpoint) {
-		t.Errorf("TestMerkleBlockP2PubKeyOnly didn't match the generation "+
-			"outpoint %s", inputStr,
+		t.Errorf(
+			"TestMerkleBlockP2PubKeyOnly didn't match the generation "+
+				"outpoint %s", inputStr,
 		)
 		return
 	}

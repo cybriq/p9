@@ -12,7 +12,8 @@ func TestMemPool(t *testing.T) {
 	wantCmd := "mempool"
 	msg := NewMsgMemPool()
 	if cmd := msg.Command(); cmd != wantCmd {
-		t.Errorf("NewMsgMemPool: wrong command - got %v want %v",
+		t.Errorf(
+			"NewMsgMemPool: wrong command - got %v want %v",
 			cmd, wantCmd,
 		)
 	}
@@ -20,8 +21,9 @@ func TestMemPool(t *testing.T) {
 	wantPayload := uint32(0)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}

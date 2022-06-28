@@ -102,7 +102,7 @@ func newColors() (c *Colors) {
 		"halfdim":               "33000000",
 		"halfbright":            "02ffffff",
 	}
-	
+
 	c.m["Black"] = c.m["black"]
 	c.m["ButtonBg"] = c.m["blue-lite-blue"]
 	c.m["ButtonBgDim"] = "ff30809a"
@@ -146,16 +146,16 @@ func newColors() (c *Colors) {
 	c.m["Warning"] = c.m["light-orange"]
 	c.m["White"] = c.m["white"]
 	c.m["scrim"] = c.m["halfbright"]
-	
+
 	c.m["Primary"] = c.m["PrimaryLight"]
 	c.m["Secondary"] = c.m["SecondaryLight"]
-	
+
 	c.m["DocText"] = c.m["dark"]
 	c.m["DocBg"] = c.m["light"]
-	
+
 	c.m["PanelText"] = c.m["dark"]
 	c.m["PanelBg"] = c.m["light"]
-	
+
 	c.m["PanelTextDim"] = c.m["dark-grayii"]
 	c.m["PanelBgDim"] = c.m["dark-grayi"]
 	c.m["DocTextDim"] = c.m["light-grayi"]
@@ -175,13 +175,13 @@ func (c *Colors) SetDarkTheme(dark bool) {
 	if !dark {
 		c.m["Primary"] = c.m["PrimaryLight"]
 		c.m["Secondary"] = c.m["SecondaryLight"]
-		
+
 		c.m["DocText"] = c.m["dark"]
 		c.m["DocBg"] = c.m["light"]
-		
+
 		c.m["PanelText"] = c.m["dark"]
 		c.m["PanelBg"] = c.m["white"]
-		
+
 		c.m["PanelTextDim"] = c.m["dark-grayii"]
 		c.m["PanelBgDim"] = c.m["dark-grayi"]
 		c.m["DocTextDim"] = c.m["light-grayi"]
@@ -196,13 +196,13 @@ func (c *Colors) SetDarkTheme(dark bool) {
 	} else {
 		c.m["Primary"] = c.m["PrimaryDim"]
 		c.m["Secondary"] = c.m["SecondaryDim"]
-		
+
 		c.m["DocText"] = c.m["light"]
 		c.m["DocBg"] = c.m["dark"]
-		
+
 		c.m["PanelText"] = c.m["light"]
 		c.m["PanelBg"] = c.m["black"]
-		
+
 		c.m["PanelTextDim"] = c.m["light-grayii"]
 		c.m["PanelBgDim"] = c.m["light-gray"]
 		c.m["DocTextDim"] = c.m["dark-gray"]

@@ -122,15 +122,17 @@ func (q *pointerQueue) collectHandlers(r *ops.Reader, events *handlerEvents) {
 		case opconst.TypeArea:
 			var op areaOp
 			op.Decode(encOp.Data)
-			q.areas = append(q.areas,
+			q.areas = append(
+				q.areas,
 				areaNode{trans: state.t, next: state.area, area: op},
 			)
 			state.area = len(q.areas) - 1
-			q.hitTree = append(q.hitTree, hitNode{
-				next: state.node,
-				area: state.area,
-				pass: state.pass,
-			},
+			q.hitTree = append(
+				q.hitTree, hitNode{
+					next: state.node,
+					area: state.area,
+					pass: state.pass,
+				},
 			)
 			state.node = len(q.hitTree) - 1
 		case opconst.TypeTransform:
@@ -142,12 +144,13 @@ func (q *pointerQueue) collectHandlers(r *ops.Reader, events *handlerEvents) {
 				Grab:  encOp.Data[1] != 0,
 				Types: pointer.Type(encOp.Data[2]),
 			}
-			q.hitTree = append(q.hitTree, hitNode{
-				next: state.node,
-				area: state.area,
-				pass: state.pass,
-				tag:  op.Tag,
-			},
+			q.hitTree = append(
+				q.hitTree, hitNode{
+					next: state.node,
+					area: state.area,
+					pass: state.pass,
+					tag:  op.Tag,
+				},
 			)
 			state.node = len(q.hitTree) - 1
 			h, ok := q.handlers[op.Tag]
@@ -174,10 +177,11 @@ func (q *pointerQueue) collectHandlers(r *ops.Reader, events *handlerEvents) {
 				},
 			}
 		case opconst.TypeCursor:
-			q.cursors = append(q.cursors, cursorNode{
-				name: encOp.Refs[0].(pointer.CursorName),
-				area: len(q.areas) - 1,
-			},
+			q.cursors = append(
+				q.cursors, cursorNode{
+					name: encOp.Refs[0].(pointer.CursorName),
+					area: len(q.areas) - 1,
+				},
 			)
 		}
 	}
@@ -352,7 +356,8 @@ func (q *pointerQueue) Push(e pointer.Event, events *handlerEvents) {
 	}
 }
 
-func (q *pointerQueue) deliverEvent(p *pointerInfo, events *handlerEvents,
+func (q *pointerQueue) deliverEvent(
+	p *pointerInfo, events *handlerEvents,
 	e pointer.Event,
 ) {
 	foremost := true
@@ -375,7 +380,8 @@ func (q *pointerQueue) deliverEvent(p *pointerInfo, events *handlerEvents,
 	}
 }
 
-func (q *pointerQueue) deliverScrollEvent(p *pointerInfo, events *handlerEvents,
+func (q *pointerQueue) deliverScrollEvent(
+	p *pointerInfo, events *handlerEvents,
 	e pointer.Event,
 ) {
 	foremost := true
@@ -390,10 +396,12 @@ func (q *pointerQueue) deliverScrollEvent(p *pointerInfo, events *handlerEvents,
 		}
 		h := q.handlers[k]
 		// Distribute the scroll to the handler based on its ScrollRange.
-		sx, e.Scroll.X = setScrollEvent(sx, h.scrollRange.Min.X,
+		sx, e.Scroll.X = setScrollEvent(
+			sx, h.scrollRange.Min.X,
 			h.scrollRange.Max.X,
 		)
-		sy, e.Scroll.Y = setScrollEvent(sy, h.scrollRange.Min.Y,
+		sy, e.Scroll.Y = setScrollEvent(
+			sy, h.scrollRange.Min.Y,
 			h.scrollRange.Max.Y,
 		)
 		e := e
@@ -406,7 +414,8 @@ func (q *pointerQueue) deliverScrollEvent(p *pointerInfo, events *handlerEvents,
 	}
 }
 
-func (q *pointerQueue) deliverEnterLeaveEvents(p *pointerInfo,
+func (q *pointerQueue) deliverEnterLeaveEvents(
+	p *pointerInfo,
 	events *handlerEvents, e pointer.Event,
 ) {
 	q.scratch = q.scratch[:0]

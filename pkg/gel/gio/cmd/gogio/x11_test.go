@@ -82,7 +82,12 @@ func (d *X11TestDriver) startServer(wg *sync.WaitGroup, width, height int) {
 	}
 	if *headless {
 		xprog = "Xvfb" // virtual X server
-		xflags = append(xflags, "-screen", "0", fmt.Sprintf("%dx%dx24", width, height))
+		xflags = append(
+			xflags,
+			"-screen",
+			"0",
+			fmt.Sprintf("%dx%dx24", width, height),
+		)
 	} else {
 		xprog = "Xephyr" // nested X server as a window
 		xflags = append(xflags, "-screen", fmt.Sprintf("%dx%d", width, height))
@@ -103,21 +108,25 @@ func (d *X11TestDriver) startServer(wg *sync.WaitGroup, width, height int) {
 		d.Fatal(err)
 	}
 	d.Cleanup(cancel)
-	d.Cleanup(func() {
-		// Give it a chance to exit gracefully, cleaning up
-		// after itself. After 10ms, the deferred cancel above
-		// will signal an os.Kill.
-		cmd.Process.Signal(os.Interrupt)
-		time.Sleep(10 * time.Millisecond)
-	})
+	d.Cleanup(
+		func() {
+			// Give it a chance to exit gracefully, cleaning up
+			// after itself. After 10ms, the deferred cancel above
+			// will signal an os.Kill.
+			cmd.Process.Signal(os.Interrupt)
+			time.Sleep(10 * time.Millisecond)
+		},
+	)
 
 	// Wait for the X server to be ready. The socket path isn't
 	// terribly portable, but that's okay for now.
-	withRetries(d.T, time.Second, func() error {
-		socket := fmt.Sprintf("/tmp/.X11-unix/X%s", d.display[1:])
-		_, err := os.Stat(socket)
-		return err
-	})
+	withRetries(
+		d.T, time.Second, func() error {
+			socket := fmt.Sprintf("/tmp/.X11-unix/X%s", d.display[1:])
+			_, err := os.Stat(socket)
+			return err
+		},
+	)
 
 	wg.Add(1)
 	go func() {

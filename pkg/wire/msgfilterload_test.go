@@ -16,7 +16,8 @@ func TestFilterLoadLatest(t *testing.T) {
 	// Ensure the command is expected value.
 	wantCmd := "filterload"
 	if cmd := msg.Command(); cmd != wantCmd {
-		t.Errorf("NewMsgFilterLoad: wrong command - got %v want %v",
+		t.Errorf(
+			"NewMsgFilterLoad: wrong command - got %v want %v",
 			cmd, wantCmd,
 		)
 	}
@@ -24,8 +25,9 @@ func TestFilterLoadLatest(t *testing.T) {
 	wantPayload := uint32(36012)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayLoadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayLoadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -52,7 +54,8 @@ func TestFilterLoadCrossProtocol(t *testing.T) {
 	var buf bytes.Buffer
 	e := msg.BtcEncode(&buf, ProtocolVersion, BaseEncoding)
 	if e != nil {
-		t.Errorf("encode of NewMsgFilterLoad failed %v e <%v>", msg,
+		t.Errorf(
+			"encode of NewMsgFilterLoad failed %v e <%v>", msg,
 			e,
 		)
 	}
@@ -60,7 +63,8 @@ func TestFilterLoadCrossProtocol(t *testing.T) {
 	var readmsg MsgFilterLoad
 	e = readmsg.BtcDecode(&buf, BIP0031Version, BaseEncoding)
 	if e == nil {
-		t.Errorf("decode of MsgFilterLoad succeeded when it shouldn't have %v",
+		t.Errorf(
+			"decode of MsgFilterLoad succeeded when it shouldn't have %v",
 			msg,
 		)
 	}
@@ -74,16 +78,18 @@ func TestFilterLoadMaxFilterSize(t *testing.T) {
 	var buf bytes.Buffer
 	e := msg.BtcEncode(&buf, ProtocolVersion, BaseEncoding)
 	if e == nil {
-		t.Errorf("encode of MsgFilterLoad succeeded when it shouldn't "+
-			"have %v", msg,
+		t.Errorf(
+			"encode of MsgFilterLoad succeeded when it shouldn't "+
+				"have %v", msg,
 		)
 	}
 	// Decode with latest protocol version.
 	readbuf := bytes.NewReader(data)
 	e = msg.BtcDecode(readbuf, ProtocolVersion, BaseEncoding)
 	if e == nil {
-		t.Errorf("decode of MsgFilterLoad succeeded when it shouldn't "+
-			"have %v", msg,
+		t.Errorf(
+			"decode of MsgFilterLoad succeeded when it shouldn't "+
+				"have %v", msg,
 		)
 	}
 }
@@ -96,7 +102,8 @@ func TestFilterLoadMaxHashFuncsSize(t *testing.T) {
 	var buf bytes.Buffer
 	e := msg.BtcEncode(&buf, ProtocolVersion, BaseEncoding)
 	if e == nil {
-		t.Errorf("encode of MsgFilterLoad succeeded when it shouldn't have %v",
+		t.Errorf(
+			"encode of MsgFilterLoad succeeded when it shouldn't have %v",
 			msg,
 		)
 	}
@@ -111,7 +118,8 @@ func TestFilterLoadMaxHashFuncsSize(t *testing.T) {
 	readbuf := bytes.NewReader(newBuf)
 	e = msg.BtcDecode(readbuf, ProtocolVersion, BaseEncoding)
 	if e == nil {
-		t.Errorf("decode of MsgFilterLoad succeeded when it shouldn't have %v",
+		t.Errorf(
+			"decode of MsgFilterLoad succeeded when it shouldn't have %v",
 			msg,
 		)
 	}
@@ -126,7 +134,8 @@ func TestFilterLoadWireErrors(t *testing.T) {
 	baseFilter := []byte{0x01, 0x02, 0x03, 0x04}
 	baseFilterLoad := NewMsgFilterLoad(baseFilter, 10, 0, BloomUpdateNone)
 	baseFilterLoadEncoded := append([]byte{0x04}, baseFilter...)
-	baseFilterLoadEncoded = append(baseFilterLoadEncoded,
+	baseFilterLoadEncoded = append(
+		baseFilterLoadEncoded,
 		0x00, 0x00, 0x00, 0x0a, // HashFuncs
 		0x00, 0x00, 0x00, 0x00, // Tweak
 		0x00,
@@ -167,8 +176,13 @@ func TestFilterLoadWireErrors(t *testing.T) {
 		},
 		// Force error due to unsupported protocol version.
 		{
-			baseFilterLoad, baseFilterLoadEncoded, pverNoFilterLoad, BaseEncoding,
-			10, wireErr, wireErr,
+			baseFilterLoad,
+			baseFilterLoadEncoded,
+			pverNoFilterLoad,
+			BaseEncoding,
+			10,
+			wireErr,
+			wireErr,
 		},
 	}
 	t.Logf("Running %d tests", len(tests))
@@ -177,7 +191,8 @@ func TestFilterLoadWireErrors(t *testing.T) {
 		w := newFixedWriter(test.max)
 		e := test.in.BtcEncode(w, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.writeErr) {
-			t.Errorf("BtcEncode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcEncode #%d wrong error got: %v, want: %v",
 				i, e, test.writeErr,
 			)
 			continue
@@ -185,8 +200,9 @@ func TestFilterLoadWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.writeErr {
-				t.Errorf("BtcEncode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.writeErr,
+				t.Errorf(
+					"BtcEncode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.writeErr,
 				)
 				continue
 			}
@@ -196,7 +212,8 @@ func TestFilterLoadWireErrors(t *testing.T) {
 		r := newFixedReader(test.max, test.buf)
 		e = msg.BtcDecode(r, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.readErr) {
-			t.Errorf("BtcDecode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcDecode #%d wrong error got: %v, want: %v",
 				i, e, test.readErr,
 			)
 			continue
@@ -204,8 +221,9 @@ func TestFilterLoadWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.readErr {
-				t.Errorf("BtcDecode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.readErr,
+				t.Errorf(
+					"BtcDecode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.readErr,
 				)
 				continue
 			}

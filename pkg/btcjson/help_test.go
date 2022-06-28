@@ -203,7 +203,8 @@ func TestHelpReflectInternals(t *testing.T) {
 			name:        "map",
 			reflectType: reflect.TypeOf(map[string]string{}),
 			key:         "json-type-object",
-			examples: []string{"{",
+			examples: []string{
+				"{",
 				" \"fdk--key\": fdk--value, (json-type-object) fdk--desc",
 				" ...", "}",
 			},
@@ -230,33 +231,38 @@ func TestHelpReflectInternals(t *testing.T) {
 		// Ensure the description key is the expected value.
 		key := btcjson.TstReflectTypeToJSONType(xT, test.reflectType)
 		if key != test.key {
-			t.Errorf("Test #%d (%s) unexpected key - got: %v, "+
-				"want: %v", i, test.name, key, test.key,
+			t.Errorf(
+				"Test #%d (%s) unexpected key - got: %v, "+
+					"want: %v", i, test.name, key, test.key,
 			)
 			continue
 		}
 		// Ensure the generated example is as expected.
-		examples, isComplex := btcjson.TstReflectTypeToJSONExample(xT,
+		examples, isComplex := btcjson.TstReflectTypeToJSONExample(
+			xT,
 			test.reflectType, test.indentLevel, "fdk",
 		)
 		if isComplex != test.isComplex {
-			t.Errorf("Test #%d (%s) unexpected isComplex - got: %v, "+
-				"want: %v", i, test.name, isComplex,
+			t.Errorf(
+				"Test #%d (%s) unexpected isComplex - got: %v, "+
+					"want: %v", i, test.name, isComplex,
 				test.isComplex,
 			)
 			continue
 		}
 		if len(examples) != len(test.examples) {
-			t.Errorf("Test #%d (%s) unexpected result length - "+
-				"got: %v, want: %v", i, test.name, len(examples),
+			t.Errorf(
+				"Test #%d (%s) unexpected result length - "+
+					"got: %v, want: %v", i, test.name, len(examples),
 				len(test.examples),
 			)
 			continue
 		}
 		for j, example := range examples {
 			if example != test.examples[j] {
-				t.Errorf("Test #%d (%s) example #%d unexpected "+
-					"example - got: %v, want: %v", i,
+				t.Errorf(
+					"Test #%d (%s) example #%d unexpected "+
+						"example - got: %v, want: %v", i,
 					test.name, j, example, test.examples[j],
 				)
 				continue
@@ -265,16 +271,18 @@ func TestHelpReflectInternals(t *testing.T) {
 		// Ensure the generated result type help is as expected.
 		helpText := btcjson.TstResultTypeHelp(xT, test.reflectType, "fdk")
 		if helpText != test.help {
-			t.Errorf("Test #%d (%s) unexpected result help - "+
-				"got: %v, want: %v", i, test.name, helpText,
+			t.Errorf(
+				"Test #%d (%s) unexpected result help - "+
+					"got: %v, want: %v", i, test.name, helpText,
 				test.help,
 			)
 			continue
 		}
 		isValid := btcjson.TstIsValidResultType(test.reflectType.Kind())
 		if isValid != !test.isInvalid {
-			t.Errorf("Test #%d (%s) unexpected result type validity "+
-				"- got: %v", i, test.name, isValid,
+			t.Errorf(
+				"Test #%d (%s) unexpected result type validity "+
+					"- got: %v", i, test.name, isValid,
 			)
 			continue
 		}
@@ -391,16 +399,18 @@ func TestResultStructHelp(t *testing.T) {
 	for i, test := range tests {
 		results := btcjson.TstResultStructHelp(xT, test.reflectType, 0)
 		if len(results) != len(test.expected) {
-			t.Errorf("Test #%d (%s) unexpected result length - "+
-				"got: %v, want: %v", i, test.name, len(results),
+			t.Errorf(
+				"Test #%d (%s) unexpected result length - "+
+					"got: %v, want: %v", i, test.name, len(results),
 				len(test.expected),
 			)
 			continue
 		}
 		for j, result := range results {
 			if result != test.expected[j] {
-				t.Errorf("Test #%d (%s) result #%d unexpected "+
-					"result - got: %v, want: %v", i,
+				t.Errorf(
+					"Test #%d (%s) result #%d unexpected "+
+						"result - got: %v, want: %v", i,
 					test.name, j, result, test.expected[j],
 				)
 				continue
@@ -540,12 +550,14 @@ func TestHelpArgInternals(t *testing.T) {
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
-		help := btcjson.TstArgHelp(xT, test.reflectType, test.defaults,
+		help := btcjson.TstArgHelp(
+			xT, test.reflectType, test.defaults,
 			test.method,
 		)
 		if help != test.help {
-			t.Errorf("Test #%d (%s) unexpected help - got:\n%v\n"+
-				"want:\n%v", i, test.name, help, test.help,
+			t.Errorf(
+				"Test #%d (%s) unexpected help - got:\n%v\n"+
+					"want:\n%v", i, test.name, help, test.help,
 			)
 			continue
 		}
@@ -631,12 +643,14 @@ func TestMethodHelp(t *testing.T) {
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
-		help := btcjson.TestMethodHelp(xT, test.reflectType,
+		help := btcjson.TestMethodHelp(
+			xT, test.reflectType,
 			test.defaults, test.method, test.resultTypes,
 		)
 		if help != test.help {
-			t.Errorf("Test #%d (%s) unexpected help - got:\n%v\n"+
-				"want:\n%v", i, test.name, help, test.help,
+			t.Errorf(
+				"Test #%d (%s) unexpected help - got:\n%v\n"+
+					"want:\n%v", i, test.name, help, test.help,
 			)
 			continue
 		}
@@ -678,19 +692,22 @@ func TestGenerateHelpErrors(t *testing.T) {
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
-		_, e := btcjson.GenerateHelp(test.method, nil,
+		_, e := btcjson.GenerateHelp(
+			test.method, nil,
 			test.resultTypes...,
 		)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("Test #%d (%s) wrong error - got %T (%v), "+
-				"want %T", i, test.name, e, e, test.e,
+			t.Errorf(
+				"Test #%d (%s) wrong error - got %T (%v), "+
+					"want %T", i, test.name, e, e, test.e,
 			)
 			continue
 		}
 		gotErrorCode := e.(btcjson.GeneralError).ErrorCode
 		if gotErrorCode != test.e.ErrorCode {
-			t.Errorf("Test #%d (%s) mismatched error code - got "+
-				"%v (%v), want %v", i, test.name, gotErrorCode,
+			t.Errorf(
+				"Test #%d (%s) mismatched error code - got "+
+					"%v (%v), want %v", i, test.name, gotErrorCode,
 				e, test.e.ErrorCode,
 			)
 			continue
@@ -713,7 +730,8 @@ func TestGenerateHelp(t *testing.T) {
 		"test\n\nArguments:\n1. command (string, optional) test\n" +
 		"Result:\nNothing\n"
 	if help != wantHelp {
-		t.Fatalf("GenerateHelp: unexpected help - got\n%v\nwant\n%v",
+		t.Fatalf(
+			"GenerateHelp: unexpected help - got\n%v\nwant\n%v",
 			help, wantHelp,
 		)
 	}

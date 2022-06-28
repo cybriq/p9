@@ -43,10 +43,12 @@ func TestEstimateSerializeSize(t *testing.T) {
 		// 0xfd is discriminant for 16-bit compact ints, compact int
 		// total size increases from 1 byte to 3.
 		12: {1, makeInts(p2pkhScriptSize, 0xfc), false, 8727},
-		13: {1, makeInts(p2pkhScriptSize, 0xfd), false,
+		13: {
+			1, makeInts(p2pkhScriptSize, 0xfd), false,
 			8727 + P2PKHOutputSize + 2,
 		},
-		14: {1, makeInts(p2pkhScriptSize, 0xfc), true,
+		14: {
+			1, makeInts(p2pkhScriptSize, 0xfc), true,
 			8727 + P2PKHOutputSize + 2,
 		},
 		15: {0xfc, []int{}, false, 37558},
@@ -57,11 +59,13 @@ func TestEstimateSerializeSize(t *testing.T) {
 		for _, l := range test.OutputScriptLengths {
 			outputs = append(outputs, &wire.TxOut{PkScript: make([]byte, l)})
 		}
-		actualEstimate := EstimateSerializeSize(test.InputCount, outputs,
+		actualEstimate := EstimateSerializeSize(
+			test.InputCount, outputs,
 			test.AddChangeOutput,
 		)
 		if actualEstimate != test.ExpectedSizeEstimate {
-			t.Errorf("Test %d: Got %v: Expected %v", i, actualEstimate,
+			t.Errorf(
+				"Test %d: Got %v: Expected %v", i, actualEstimate,
 				test.ExpectedSizeEstimate,
 			)
 		}
@@ -160,12 +164,14 @@ func TestEstimateVirtualSize(t *testing.T) {
 		if e != nil {
 			t.Fatalf("unable to get test tx: %v", e)
 		}
-		est := EstimateVirtualSize(test.p2pkhIns, test.p2wpkhIns,
+		est := EstimateVirtualSize(
+			test.p2pkhIns, test.p2wpkhIns,
 			test.nestedp2wpkhIns, tx.TxOut, test.change,
 		)
 		if est != test.result {
-			t.Fatalf("expected estimated vsize to be %d, "+
-				"instead got %d", test.result, est,
+			t.Fatalf(
+				"expected estimated vsize to be %d, "+
+					"instead got %d", test.result, est,
 			)
 		}
 	}

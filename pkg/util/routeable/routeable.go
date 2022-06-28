@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net"
 	"strings"
-	
+
 	"github.com/jackpal/gateway"
 )
 
@@ -23,6 +23,7 @@ var IPNet *net.IPNet
 
 // Interface is the net.Interface of the Address above
 var Interface *net.Interface
+
 //
 // // SecondaryAddresses are all the other addresses that can be reached from
 // // somewhere (including localhost) but not necessarily the internet
@@ -34,7 +35,10 @@ var Interface *net.Interface
 
 // GetAddressesAndInterfaces returns all of the addresses and interfaces that
 // would be resolved from an automatic addresses that can connect two processes at all
-func GetAddressesAndInterfaces() (Interfaces []*net.Interface, Addresses map[string]struct{}) {
+func GetAddressesAndInterfaces() (
+	Interfaces []*net.Interface,
+	Addresses map[string]struct{},
+) {
 	if Address == nil || Interface == nil {
 		if Discover() != nil {
 			E.Ln("no routeable address found")
@@ -91,16 +95,27 @@ func Discover() (e error) {
 					continue
 				}
 				if Gateway != nil && in.Contains(gw) {
-					Address = net.ParseIP(strings.Split(addrs[j].String(), "/")[0])
+					Address = net.ParseIP(
+						strings.Split(
+							addrs[j].String(),
+							"/",
+						)[0],
+					)
 					Interface = &nif[i]
 					IPNet = in
 					continue
 				}
 				ip, _, _ := net.ParseCIDR(addrs[j].String())
-				if strings.HasPrefix(ip.String(), "169.") || strings.HasPrefix(ip.String(), "fe80:") {
+				if strings.HasPrefix(
+					ip.String(),
+					"169.",
+				) || strings.HasPrefix(ip.String(), "fe80:") {
 					continue
 				}
-				if strings.HasPrefix(ip.String(), "127.") || strings.HasPrefix(ip.String(), "::1") {
+				if strings.HasPrefix(
+					ip.String(),
+					"127.",
+				) || strings.HasPrefix(ip.String(), "::1") {
 					continue
 				}
 				secondaryAddresses = append(secondaryAddresses, ip)
@@ -142,7 +157,10 @@ func GetListenable() net.IP {
 	return Address
 }
 
-func GetAllInterfacesAndAddresses() (interfaces []*net.Interface, udpAddrs []*net.UDPAddr) {
+func GetAllInterfacesAndAddresses() (
+	interfaces []*net.Interface,
+	udpAddrs []*net.UDPAddr,
+) {
 	if Discover() != nil {
 		E.Ln("no routeable address found")
 		return
@@ -156,7 +174,10 @@ func GetAllInterfacesAndAddresses() (interfaces []*net.Interface, udpAddrs []*ne
 	var e error
 	for i := range addrs {
 		var udpAddr *net.UDPAddr
-		if udpAddr, e = net.ResolveUDPAddr("udp", addrs[i].String()+":0"); !E.Chk(e) {
+		if udpAddr, e = net.ResolveUDPAddr(
+			"udp",
+			addrs[i].String()+":0",
+		); !E.Chk(e) {
 			udpAddrs = append(udpAddrs, udpAddr)
 		}
 	}

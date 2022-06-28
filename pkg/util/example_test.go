@@ -2,8 +2,9 @@ package util_test
 
 import (
 	"fmt"
-	"github.com/cybriq/p9/pkg/amt"
 	"math"
+
+	"github.com/cybriq/p9/pkg/amt"
 )
 
 func ExampleAmount() {

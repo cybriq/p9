@@ -26,13 +26,15 @@ type Theme struct {
 }
 
 // NewTheme creates a new theme to use for rendering a user interface
-func NewTheme(dark *binary.Opt, fontCollection []text.FontFace, quit qu.C,
+func NewTheme(
+	dark *binary.Opt, fontCollection []text.FontFace, quit qu.C,
 ) (th *Theme) {
 	textSize := unit.Sp(16)
 	if runtime.GOOS == "linux" {
 		var e error
 		var b []byte
-		runner := exec.Command("gsettings", "get",
+		runner := exec.Command(
+			"gsettings", "get",
 			"org.gnome.desktop.interface", "text-scaling-factor",
 		)
 		if b, e = runner.CombinedOutput(); D.Chk(e) {

@@ -32,7 +32,11 @@ type ImportAddressCmd struct {
 }
 
 // NewImportAddressCmd returns a new instance which can be used to issue an importaddress JSON-RPC command.
-func NewImportAddressCmd(address string, account string, rescan *bool) *ImportAddressCmd {
+func NewImportAddressCmd(
+	address string,
+	account string,
+	rescan *bool,
+) *ImportAddressCmd {
 	return &ImportAddressCmd{
 		Address: address,
 		Account: account,
@@ -80,7 +84,7 @@ func NewRenameAccountCmd(oldAccount, newAccount string) *RenameAccountCmd {
 	}
 }
 func init() {
-	
+
 	// The commands in this file are only usable with a wallet server.
 	flags := UFWalletOnly
 	MustRegisterCmd("createnewaccount", (*CreateNewAccountCmd)(nil), flags)
@@ -89,5 +93,5 @@ func init() {
 	MustRegisterCmd("importpubkey", (*ImportPubKeyCmd)(nil), flags)
 	MustRegisterCmd("importwallet", (*ImportWalletCmd)(nil), flags)
 	MustRegisterCmd("renameaccount", (*RenameAccountCmd)(nil), flags)
-	
+
 }

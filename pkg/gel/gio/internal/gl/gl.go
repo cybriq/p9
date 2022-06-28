@@ -108,12 +108,23 @@ var _ interface {
 	BindBuffer(target Enum, b Buffer)
 	BindBufferBase(target Enum, index int, buffer Buffer)
 	BindFramebuffer(target Enum, fb Framebuffer)
-	BindImageTexture(unit int, t Texture, level int, layered bool, layer int, access, format Enum)
+	BindImageTexture(
+		unit int,
+		t Texture,
+		level int,
+		layered bool,
+		layer int,
+		access, format Enum,
+	)
 	BindRenderbuffer(target Enum, fb Renderbuffer)
 	BindTexture(target Enum, t Texture)
 	BlendEquation(mode Enum)
 	BlendFunc(sfactor, dfactor Enum)
-	BlitFramebuffer(sx0, sy0, sx1, sy1, dx0, dy0, dx1, dy1 int, mask Enum, filter Enum)
+	BlitFramebuffer(
+		sx0, sy0, sx1, sy1, dx0, dy0, dx1, dy1 int,
+		mask Enum,
+		filter Enum,
+	)
 	BufferData(target Enum, size int, usage Enum)
 	BufferSubData(target Enum, offset int, src []byte)
 	CheckFramebufferStatus(target Enum) Enum
@@ -145,8 +156,15 @@ var _ interface {
 	Enable(cap Enum)
 	EnableVertexAttribArray(a Attrib)
 	EndQuery(target Enum)
-	FramebufferTexture2D(target, attachment, texTarget Enum, t Texture, level int)
-	FramebufferRenderbuffer(target, attachment, renderbuffertarget Enum, renderbuffer Renderbuffer)
+	FramebufferTexture2D(
+		target, attachment, texTarget Enum,
+		t Texture,
+		level int,
+	)
+	FramebufferRenderbuffer(
+		target, attachment, renderbuffertarget Enum,
+		renderbuffer Renderbuffer,
+	)
 	GetBinding(pname Enum) Object
 	GetError() Enum
 	GetInteger(pname Enum) int
@@ -165,11 +183,32 @@ var _ interface {
 	ReadPixels(x, y, width, height int, format, ty Enum, data []byte)
 	RenderbufferStorage(target, internalformat Enum, width, height int)
 	ShaderSource(s Shader, src string)
-	TexImage2D(target Enum, level int, internalFormat Enum, width, height int, format, ty Enum)
+	TexImage2D(
+		target Enum,
+		level int,
+		internalFormat Enum,
+		width, height int,
+		format, ty Enum,
+	)
 	TexParameteri(target, pname Enum, param int)
-	TexStorage2D(target Enum, levels int, internalFormat Enum, width, height int)
-	TexSubImage2D(target Enum, level, xoff, yoff int, width, height int, format, ty Enum, data []byte)
-	UniformBlockBinding(p Program, uniformBlockIndex uint, uniformBlockBinding uint)
+	TexStorage2D(
+		target Enum,
+		levels int,
+		internalFormat Enum,
+		width, height int,
+	)
+	TexSubImage2D(
+		target Enum,
+		level, xoff, yoff int,
+		width, height int,
+		format, ty Enum,
+		data []byte,
+	)
+	UniformBlockBinding(
+		p Program,
+		uniformBlockIndex uint,
+		uniformBlockBinding uint,
+	)
 	Uniform1f(dst Uniform, v float32)
 	Uniform1i(dst Uniform, v int)
 	Uniform2f(dst Uniform, v0, v1 float32)
@@ -177,6 +216,12 @@ var _ interface {
 	Uniform4f(dst Uniform, v0, v1, v2, v3 float32)
 	UseProgram(p Program)
 	UnmapBuffer(target Enum) bool
-	VertexAttribPointer(dst Attrib, size int, ty Enum, normalized bool, stride, offset int)
+	VertexAttribPointer(
+		dst Attrib,
+		size int,
+		ty Enum,
+		normalized bool,
+		stride, offset int,
+	)
 	Viewport(x, y, width, height int)
 } = (*Functions)(nil)

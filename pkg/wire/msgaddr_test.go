@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 	"time"
-	
+
 	"github.com/davecgh/go-spew/spew"
 )
 
@@ -18,7 +18,8 @@ func TestAddr(t *testing.T) {
 	wantCmd := "addr"
 	msg := NewMsgAddr()
 	if cmd := msg.Command(); cmd != wantCmd {
-		t.Errorf("NewMsgAddr: wrong command - got %v want %v",
+		t.Errorf(
+			"NewMsgAddr: wrong command - got %v want %v",
 			cmd, wantCmd,
 		)
 	}
@@ -26,8 +27,9 @@ func TestAddr(t *testing.T) {
 	wantPayload := uint32(30009)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -39,15 +41,17 @@ func TestAddr(t *testing.T) {
 		t.Errorf("AddAddress: %v", e)
 	}
 	if msg.AddrList[0] != na {
-		t.Errorf("AddAddress: wrong address added - got %v, want %v",
+		t.Errorf(
+			"AddAddress: wrong address added - got %v, want %v",
 			spew.Sprint(msg.AddrList[0]), spew.Sprint(na),
 		)
 	}
 	// Ensure the address list is cleared properly.
 	msg.ClearAddresses()
 	if len(msg.AddrList) != 0 {
-		t.Errorf("ClearAddresses: address list is not empty - "+
-			"got %v [%v], want %v", len(msg.AddrList),
+		t.Errorf(
+			"ClearAddresses: address list is not empty - "+
+				"got %v [%v], want %v", len(msg.AddrList),
 			spew.Sprint(msg.AddrList[0]), 0,
 		)
 	}
@@ -56,14 +60,16 @@ func TestAddr(t *testing.T) {
 		e = msg.AddAddress(na)
 	}
 	if e == nil {
-		t.Errorf("AddAddress: expected error on too many addresses " +
-			"not received",
+		t.Errorf(
+			"AddAddress: expected error on too many addresses " +
+				"not received",
 		)
 	}
 	e = msg.AddAddresses(na)
 	if e == nil {
-		t.Errorf("AddAddresses: expected error on too many addresses " +
-			"not received",
+		t.Errorf(
+			"AddAddresses: expected error on too many addresses " +
+				"not received",
 		)
 	}
 	// Ensure max payload is expected value for protocol versions before timestamp was added to NetAddress. Num
@@ -72,8 +78,9 @@ func TestAddr(t *testing.T) {
 	wantPayload = uint32(26009)
 	maxPayload = msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -83,8 +90,9 @@ func TestAddr(t *testing.T) {
 	wantPayload = uint32(35)
 	maxPayload = msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -168,7 +176,8 @@ func TestAddrWire(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("BtcEncode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcEncode #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -182,7 +191,8 @@ func TestAddrWire(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(&msg, test.out) {
-			t.Errorf("BtcDecode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcDecode #%d\n got: %s want: %s", i,
 				spew.Sdump(msg), spew.Sdump(test.out),
 			)
 			continue
@@ -250,14 +260,38 @@ func TestAddrWireErrors(t *testing.T) {
 	}{
 		// Latest protocol version with intentional read/write errors.
 		// Force error in addresses count
-		{baseAddr, baseAddrEncoded, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{
+			baseAddr,
+			baseAddrEncoded,
+			pver,
+			BaseEncoding,
+			0,
+			io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in address list.
-		{baseAddr, baseAddrEncoded, pver, BaseEncoding, 1, io.ErrShortWrite, io.EOF},
+		{
+			baseAddr,
+			baseAddrEncoded,
+			pver,
+			BaseEncoding,
+			1,
+			io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error with greater than max inventory vectors.
 		{maxAddr, maxAddrEncoded, pver, BaseEncoding, 3, wireErr, wireErr},
 		// Force error with greater than max inventory vectors for protocol versions before multiple addresses were
 		// allowed.
-		{maxAddr, maxAddrEncoded, pverMA - 1, BaseEncoding, 3, wireErr, wireErr},
+		{
+			maxAddr,
+			maxAddrEncoded,
+			pverMA - 1,
+			BaseEncoding,
+			3,
+			wireErr,
+			wireErr,
+		},
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
@@ -265,7 +299,8 @@ func TestAddrWireErrors(t *testing.T) {
 		w := newFixedWriter(test.max)
 		e := test.in.BtcEncode(w, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.writeErr) {
-			t.Errorf("BtcEncode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcEncode #%d wrong error got: %v, want: %v",
 				i, e, test.writeErr,
 			)
 			continue
@@ -273,8 +308,9 @@ func TestAddrWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.writeErr {
-				t.Errorf("BtcEncode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.writeErr,
+				t.Errorf(
+					"BtcEncode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.writeErr,
 				)
 				continue
 			}
@@ -284,7 +320,8 @@ func TestAddrWireErrors(t *testing.T) {
 		r := newFixedReader(test.max, test.buf)
 		e = msg.BtcDecode(r, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.readErr) {
-			t.Errorf("BtcDecode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcDecode #%d wrong error got: %v, want: %v",
 				i, e, test.readErr,
 			)
 			continue
@@ -292,8 +329,9 @@ func TestAddrWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.readErr {
-				t.Errorf("BtcDecode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.readErr,
+				t.Errorf(
+					"BtcDecode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.readErr,
 				)
 				continue
 			}

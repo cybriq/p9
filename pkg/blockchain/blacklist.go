@@ -8,7 +8,8 @@ import (
 )
 
 // ContainsBlacklisted returns true if one of the given addresses is found in the transaction
-func ContainsBlacklisted(b *BlockChain, tx *util.Tx,
+func ContainsBlacklisted(
+	b *BlockChain, tx *util.Tx,
 	blacklist []btcaddr.Address,
 ) (hasBlacklisted bool) {
 	// in tests this function is not relevant
@@ -37,7 +38,8 @@ func ContainsBlacklisted(b *BlockChain, tx *util.Tx,
 				txitxo := txs[j].TxOut
 				for k := range txitxo {
 					script := txitxo[k].PkScript
-					_, a, _, _ := txscript.ExtractPkScriptAddrs(script,
+					_, a, _, _ := txscript.ExtractPkScriptAddrs(
+						script,
 						b.params,
 					)
 					addrs = append(addrs, a...)

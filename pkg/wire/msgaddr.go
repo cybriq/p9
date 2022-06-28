@@ -12,7 +12,7 @@ const MaxAddrPerMsg = 1000
 // active peers on the network. An active peer is considered one that has transmitted a message within the last 3 hours.
 // Nodes which have not transmitted in that time frame should be forgotten. Each message is limited to a maximum number
 // of addresses, which is currently 1000. As a result, multiple messages must be used to relay the full list. Use the
-// AddAddress function to podbuild up the list of known addresses when sending an addr message to another peer.
+// AddAddress function to build up the list of known addresses when sending an addr message to another peer.
 type MsgAddr struct {
 	AddrList []*NetAddress
 }
@@ -48,7 +48,11 @@ func (msg *MsgAddr) ClearAddresses() {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation.
-func (msg *MsgAddr) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgAddr) BtcDecode(
+	r io.Reader,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	var count uint64
 	if count, e = ReadVarInt(r, pver); E.Chk(e) {
 		return
@@ -76,7 +80,11 @@ func (msg *MsgAddr) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e 
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgAddr) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgAddr) BtcEncode(
+	w io.Writer,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	// Protocol versions before MultipleAddressVersion only allowed 1 address per message.
 	count := len(msg.AddrList)
 	if pver < MultipleAddressVersion && count > 1 {

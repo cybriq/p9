@@ -291,7 +291,8 @@ see [btcwallet](https://github.com/btcsuite/btcwallet) for more information.
     - [btcrpcclient](https://github.com/cybriq/p9/tree/master/rpcclient) - Implements a robust and easy to use
       Websocket-enabled Bitcoin JSON-RPC client
 
-    - [btcjson](https://github.com/cybriq/p9/tree/master/btcjson) - Provides an extensive API for the underlying JSON-RPC
+    - [btcjson](https://github.com/cybriq/p9/tree/master/btcjson) - Provides an extensive API for the underlying
+      JSON-RPC
       command and return values
 
     - [wire](https://github.com/cybriq/p9/tree/master/wire) - Implements the Bitcoin wire protocol
@@ -302,7 +303,8 @@ see [btcwallet](https://github.com/btcsuite/btcwallet) for more information.
     - [blockchain](https://github.com/cybriq/p9/tree/master/blockchain) - Implements Bitcoin block handling and chain
       selection rules
 
-    - [blockchain/fullblocktests](https://github.com/cybriq/p9/tree/master/blockchain/fullblocktests) - Provides a set of
+    - [blockchain/fullblocktests](https://github.com/cybriq/p9/tree/master/blockchain/fullblocktests) - Provides a set
+      of
       block tests for testing the consensus validation rules
 
     - [txscript](https://github.com/cybriq/p9/tree/master/txscript) - Implements the Bitcoin transaction scripting
@@ -311,7 +313,8 @@ see [btcwallet](https://github.com/btcsuite/btcwallet) for more information.
     - [btcec](https://github.com/cybriq/p9/tree/master/btcec) - Implements support for the elliptic curve cryptographic
       functions needed for the Bitcoin scripts
 
-    - [database](https://github.com/cybriq/p9/tree/master/database) - Provides a database interface for the Bitcoin block
+    - [database](https://github.com/cybriq/p9/tree/master/database) - Provides a database interface for the Bitcoin
+      block
       chain
 
     - [mempool](https://github.com/cybriq/p9/tree/master/mempool) - Package mempool provides a policy-enforced pool of

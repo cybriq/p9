@@ -59,7 +59,10 @@ func MarshalCmd(id interface{}, cmd interface{}) ([]byte, error) {
 }
 
 // MarshalRequest marshals the passed command to a btcjson.Request
-func MarshalRequest(id interface{}, cmd interface{}) (rawCmd *Request, e error) {
+func MarshalRequest(id interface{}, cmd interface{}) (
+	rawCmd *Request,
+	e error,
+) {
 	// Look up the cmd type and error out if not registered.
 	rt := reflect.TypeOf(cmd)
 	registerLock.RLock()

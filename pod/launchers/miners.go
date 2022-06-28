@@ -57,7 +57,8 @@ func Worker(ifc interface{}) (e error) {
 		log.SetLogLevel(os.Args[4])
 	}
 	D.Ln("miner worker starting")
-	w, conn := worker.New(cx.Config.ExtraArgs[0], cx.KillAll,
+	w, conn := worker.New(
+		cx.Config.ExtraArgs[0], cx.KillAll,
 		uint64(cx.Config.UUID.V()),
 	)
 	e = rpc.Register(w)

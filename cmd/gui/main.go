@@ -3,13 +3,14 @@ package gui
 import (
 	"crypto/rand"
 	"fmt"
-	"github.com/tyler-smith/go-bip39"
 	"net"
 	"os"
 	"runtime"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/tyler-smith/go-bip39"
 
 	"github.com/cybriq/gotiny"
 	"github.com/cybriq/p9/pkg/chainrpc/p2padvt"
@@ -345,7 +346,8 @@ func (wg *WalletGUI) ShuffleSeed() {
 func (wg *WalletGUI) GetInputs() Inputs {
 	wg.ShuffleSeed()
 	return Inputs{
-		"receiveAmount": wg.Input("", "Amount", "DocText", "PanelBg", "DocBg",
+		"receiveAmount": wg.Input(
+			"", "Amount", "DocText", "PanelBg", "DocBg",
 			func(amt string) {}, func(string) {},
 		),
 		"receiveMessage": wg.Input(
@@ -367,7 +369,8 @@ func (wg *WalletGUI) GetInputs() Inputs {
 			func(amt string) {},
 			func(string) {},
 		),
-		"sendAmount": wg.Input("", "Amount", "DocText", "PanelBg", "DocBg",
+		"sendAmount": wg.Input(
+			"", "Amount", "DocText", "PanelBg", "DocBg",
 			func(amt string) {}, func(string) {},
 		),
 		"sendMessage": wg.Input(
@@ -514,7 +517,8 @@ func (wg *WalletGUI) GetRunUnit(
 	// we have to copy the args otherwise further mutations affect this one
 	argsCopy := make([]string, len(args))
 	copy(argsCopy, args)
-	return rununit.New(name, before, after, pipe.SimpleLog(name),
+	return rununit.New(
+		name, before, after, pipe.SimpleLog(name),
 		pipe.FilterNone, wg.quit, argsCopy...,
 	)
 }
@@ -715,7 +719,10 @@ func processAdvtMsg(
 		tn := time.Now()
 		if tn.Sub(wg.otherNodes[i].Time) > time.Second*6 {
 			// also remove from connection manager
-			if e = wg.ChainClient.AddNode(wg.otherNodes[i].addr, "remove"); E.Chk(e) {
+			if e = wg.ChainClient.AddNode(
+				wg.otherNodes[i].addr,
+				"remove",
+			); E.Chk(e) {
 			}
 			D.Ln("deleting", tn, wg.otherNodes[i], i)
 			delete(wg.otherNodes, i)

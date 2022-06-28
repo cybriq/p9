@@ -23,11 +23,11 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	
+
 	"github.com/cybriq/p9/pkg/chain/config/netparams"
-	
-	"github.com/cybriq/p9/pkg/util"
+
 	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/util"
 )
 
 var testnet = flag.Bool("testnet", false,

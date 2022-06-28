@@ -40,8 +40,9 @@ func checkMinimalDataEncoding(v []byte) (e error) {
 		// is set it would conflict with the sign bit. An example of this case is +-255, which encode to 0xff00 and
 		// 0xff80 respectively. (big-endian).
 		if len(v) == 1 || v[len(v)-2]&0x80 == 0 {
-			str := fmt.Sprintf("numeric value encoded as %x is "+
-				"not minimally encoded", v,
+			str := fmt.Sprintf(
+				"numeric value encoded as %x is "+
+					"not minimally encoded", v,
 			)
 			return scriptError(ErrMinimalData, str)
 		}
@@ -126,11 +127,15 @@ func (sn scriptNum) Int32() int32 {
 // number of bytes the encoded value can be before an ErrStackNumberTooBig is returned. This effectively limits the
 // range of allowed values. WARNING: Great care should be taken if passing a value larger than defaultScriptNumLen,
 // which could lead to addition and multiplication overflows. See the Hash function documentation for example encodings.
-func makeScriptNum(v []byte, requireMinimal bool, scriptNumLen int) (scriptNum, error) {
+func makeScriptNum(v []byte, requireMinimal bool, scriptNumLen int) (
+	scriptNum,
+	error,
+) {
 	// Interpreting data requires that it is not larger than the the passed scriptNumLen value.
 	if len(v) > scriptNumLen {
-		str := fmt.Sprintf("numeric value encoded as %x is %d bytes "+
-			"which exceeds the max allowed of %d", v, len(v),
+		str := fmt.Sprintf(
+			"numeric value encoded as %x is %d bytes "+
+				"which exceeds the max allowed of %d", v, len(v),
 			scriptNumLen,
 		)
 		return 0, scriptError(ErrNumberTooBig, str)

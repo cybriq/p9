@@ -158,11 +158,12 @@ func (r *Reader) Decode() (EncodedOp, bool) {
 			retPC := r.pc
 			retPC.data += n
 			retPC.refs += nrefs
-			r.stack = append(r.stack, macro{
-				ops:   r.ops,
-				retPC: retPC,
-				endPC: opDef.endpc,
-			},
+			r.stack = append(
+				r.stack, macro{
+					ops:   r.ops,
+					retPC: retPC,
+					endPC: opDef.endpc,
+				},
 			)
 			r.ops = op.ops
 			r.pc = op.pc

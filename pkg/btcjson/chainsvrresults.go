@@ -402,7 +402,7 @@ type (
 	// 		Status bool `json:"status"`
 	// 	} `json:"reject"`
 	// }
-	
+
 	// TxRawDecodeResult models the data from the decoderawtransaction command.
 	TxRawDecodeResult struct {
 		Txid     string `json:"txid"`

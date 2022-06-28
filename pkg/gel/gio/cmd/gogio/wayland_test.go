@@ -28,11 +28,15 @@ type WaylandTestDriver struct {
 }
 
 // No bars or anything fancy. Just a white background with our dimensions.
-var tmplSwayConfig = template.Must(template.New("").Parse(`
+var tmplSwayConfig = template.Must(
+	template.New("").Parse(
+		`
 output * bg #FFFFFF solid_color
 output * mode {{.Width}}x{{.Height}}
 default_border none
-`))
+`,
+	),
+)
 
 var rxSwayReady = regexp.MustCompile(`Running compositor on wayland display '(.*)'`)
 
@@ -70,9 +74,11 @@ func (d *WaylandTestDriver) Start(path string) {
 		d.Fatal(err)
 	}
 	defer f.Close()
-	if err := tmplSwayConfig.Execute(f, struct{ Width, Height int }{
-		d.width, d.height,
-	}); err != nil {
+	if err := tmplSwayConfig.Execute(
+		f, struct{ Width, Height int }{
+			d.width, d.height,
+		},
+	); err != nil {
 		d.Fatal(err)
 	}
 
@@ -97,13 +103,15 @@ func (d *WaylandTestDriver) Start(path string) {
 			d.Fatal(err)
 		}
 		d.Cleanup(cancel)
-		d.Cleanup(func() {
-			// Give it a chance to exit gracefully, cleaning up
-			// after itself. After 10ms, the deferred cancel above
-			// will signal an os.Kill.
-			cmd.Process.Signal(os.Interrupt)
-			time.Sleep(10 * time.Millisecond)
-		})
+		d.Cleanup(
+			func() {
+				// Give it a chance to exit gracefully, cleaning up
+				// after itself. After 10ms, the deferred cancel above
+				// will signal an os.Kill.
+				cmd.Process.Signal(os.Interrupt)
+				time.Sleep(10 * time.Millisecond)
+			},
+		)
 
 		// Wait for sway to be ready. We probably don't need a deadline
 		// here.
@@ -121,7 +129,10 @@ func (d *WaylandTestDriver) Start(path string) {
 
 		wg.Add(1)
 		go func() {
-			if err := cmd.Wait(); err != nil && ctx.Err() == nil && !strings.Contains(err.Error(), "interrupt") {
+			if err := cmd.Wait(); err != nil && ctx.Err() == nil && !strings.Contains(
+				err.Error(),
+				"interrupt",
+			) {
 				// Don't print all stderr, since we use --verbose.
 				// TODO(mvdan): if it's useful, probably filter
 				// errors and show them.
@@ -135,7 +146,10 @@ func (d *WaylandTestDriver) Start(path string) {
 	{
 		ctx, cancel := context.WithCancel(context.Background())
 		cmd := exec.CommandContext(ctx, bin)
-		cmd.Env = []string{"XDG_RUNTIME_DIR=" + d.runtimeDir, "WAYLAND_DISPLAY=" + d.display}
+		cmd.Env = []string{
+			"XDG_RUNTIME_DIR=" + d.runtimeDir,
+			"WAYLAND_DISPLAY=" + d.display,
+		}
 		output, err := cmd.StdoutPipe()
 		if err != nil {
 			d.Fatal(err)
@@ -161,7 +175,10 @@ func (d *WaylandTestDriver) Start(path string) {
 
 func (d *WaylandTestDriver) Screenshot() image.Image {
 	cmd := exec.Command("grim", "/dev/stdout")
-	cmd.Env = []string{"XDG_RUNTIME_DIR=" + d.runtimeDir, "WAYLAND_DISPLAY=" + d.display}
+	cmd.Env = []string{
+		"XDG_RUNTIME_DIR=" + d.runtimeDir,
+		"WAYLAND_DISPLAY=" + d.display,
+	}
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		d.Errorf("%s", out)

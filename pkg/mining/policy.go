@@ -53,7 +53,8 @@ func minInt(a, b int) int {
 // the sum of this value for each txin. Any inputs to the transaction which are
 // currently in the mempool and hence not mined into a block yet, contribute no
 // additional input age to the transaction.
-func calcInputValueAge(tx *wire.MsgTx, utxoView *blockchain.UtxoViewpoint,
+func calcInputValueAge(
+	tx *wire.MsgTx, utxoView *blockchain.UtxoViewpoint,
 	nextBlockHeight int32,
 ) float64 {
 	var totalInputAge float64
@@ -84,7 +85,8 @@ func calcInputValueAge(tx *wire.MsgTx, utxoView *blockchain.UtxoViewpoint,
 // of each of its input values multiplied by their age (# of confirmations).
 // Thus, the final formula for the priority is: sum(inputValue * inputAge) /
 // adjustedTxSize
-func CalcPriority(tx *wire.MsgTx, utxoView *blockchain.UtxoViewpoint,
+func CalcPriority(
+	tx *wire.MsgTx, utxoView *blockchain.UtxoViewpoint,
 	nextBlockHeight int32,
 ) float64 {
 	// In order to encourage spending multiple old unspent transaction outputs

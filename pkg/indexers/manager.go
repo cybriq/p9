@@ -2,6 +2,7 @@ package indexers
 
 import (
 	"fmt"
+
 	"github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/blockchain"
@@ -25,7 +26,8 @@ var (
 
 // dbPutIndexerTip uses an existing database transaction to update or add the current tip for the given index to the
 // provided values.
-func dbPutIndexerTip(dbTx database.Tx, idxKey []byte, hash *chainhash.Hash,
+func dbPutIndexerTip(
+	dbTx database.Tx, idxKey []byte, hash *chainhash.Hash,
 	height int32,
 ) (e error) {
 	serialized := make([]byte, chainhash.HashSize+4)
@@ -37,7 +39,8 @@ func dbPutIndexerTip(dbTx database.Tx, idxKey []byte, hash *chainhash.Hash,
 
 // dbFetchIndexerTip uses an existing database transaction to retrieve the hash and height of the current tip for the
 // provided index.
-func dbFetchIndexerTip(dbTx database.Tx, idxKey []byte) (*chainhash.Hash, int32,
+func dbFetchIndexerTip(dbTx database.Tx, idxKey []byte) (
+	*chainhash.Hash, int32,
 	error,
 ) {
 	indexesBucket := dbTx.Metadata().Bucket(indexTipsBucketName)
@@ -177,7 +180,12 @@ func (m *Manager) maybeFinishDrops(interrupt <-chan struct{}) (e error) {
 				return fmt.Sprintf("Resuming %s drop", indexer.Name())
 			},
 		)
-		if e = dropIndex(m.db, indexer.Key(), indexer.Name(), interrupt); E.Chk(e) {
+		if e = dropIndex(
+			m.db,
+			indexer.Key(),
+			indexer.Name(),
+			interrupt,
+		); E.Chk(e) {
 			return e
 		}
 	}
@@ -211,7 +219,8 @@ func (m *Manager) maybeCreateIndexes(dbTx database.Tx) (e error) {
 // up all indexes to the current best chain tip. This is necessary since each index can be disabled and re-enabled at
 // any time and attempting to catch-up indexes at the same time new blocks are being downloaded would lead to an overall
 // longer time to catch up due to the I/O contention. This is part of the blockchain.IndexManager interface.
-func (m *Manager) Init(chain *blockchain.BlockChain, interrupt <-chan struct{},
+func (m *Manager) Init(
+	chain *blockchain.BlockChain, interrupt <-chan struct{},
 ) (e error) {
 	// Nothing to do when no indexes are enabled.
 	if len(m.enabledIndexes) == 0 {
@@ -504,7 +513,8 @@ func NewManager(db database.DB, enabledIndexes []Indexer) *Manager {
 // dropIndex drops the passed index from the database. Since indexes can be massive, it deletes the index in multiple
 // database transactions in order to keep memory usage to reasonable levels. It also marks the drop in progress so the
 // drop can be resumed if it is stopped before it is done before the index can be used again.
-func dropIndex(db database.DB, idxKey []byte, idxName string,
+func dropIndex(
+	db database.DB, idxKey []byte, idxName string,
 	interrupt <-chan struct{},
 ) (e error) {
 	// Nothing to do if the index doesn't already exist.

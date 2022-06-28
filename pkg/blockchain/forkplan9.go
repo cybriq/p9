@@ -2,10 +2,11 @@ package blockchain
 
 import (
 	"fmt"
-	bits2 "github.com/cybriq/p9/pkg/bits"
-	"github.com/cybriq/p9/pkg/fork"
 	"math/big"
 	"strings"
+
+	bits2 "github.com/cybriq/p9/pkg/bits"
+	"github.com/cybriq/p9/pkg/fork"
 
 	"github.com/VividCortex/ewma"
 
@@ -13,8 +14,10 @@ import (
 )
 
 // GetAlgStamps ...
-func GetAlgStamps(algoName string, startHeight int32, lastNode *BlockNode,
-) (last *BlockNode,
+func GetAlgStamps(
+	algoName string, startHeight int32, lastNode *BlockNode,
+) (
+	last *BlockNode,
 	found bool, algStamps []int64, version int32,
 ) {
 
@@ -82,7 +85,8 @@ func GetAll(allStamps []int64) (allAv, allAdj float64) {
 	return
 }
 
-func GetAlg(algStamps []int64, targetTimePerBlock float64,
+func GetAlg(
+	algStamps []int64, targetTimePerBlock float64,
 ) (algAv, algAdj float64) {
 	// calculate intervals
 	algIntervals := make([]int64, len(algStamps)-1)
@@ -106,7 +110,8 @@ func GetAlg(algStamps []int64, targetTimePerBlock float64,
 }
 
 // CalcNextRequiredDifficultyPlan9 returns the consensus difficulty adjustment by processing recent past blocks
-func (b *BlockChain) CalcNextRequiredDifficultyPlan9(lastNodeP *BlockNode,
+func (b *BlockChain) CalcNextRequiredDifficultyPlan9(
+	lastNodeP *BlockNode,
 	algoName string,
 	l bool,
 ) (newTargetBits uint32, adjustment float64, e error) {
@@ -171,37 +176,39 @@ func (b *BlockChain) CalcNextRequiredDifficultyPlan9(lastNodeP *BlockNode,
 	}
 	// if l {
 	// if lastNode.version == algoVer {
-	I.Ln(func() string {
-		an := fork.List[1].AlgoVers[algoVer]
-		pad := 8 - len(an)
-		if pad > 0 {
-			an += strings.Repeat(" ", pad)
-		}
-		factor := 1 / adjustment
-		symbol := ">"
-		if factor < 1 {
-			factor = adjustment
-			symbol = "<"
-		}
-		if factor == 1 {
-			symbol = "-"
-		}
-		isNewest := ""
-		if lastNode.version == algoVer {
-			isNewest = "*"
-		}
-		return fmt.Sprintf("%s %s av %s/%2.2f %s %s %08x %08x%s",
-			an,
-			RightJustify(fmt.Sprintf("%4.2f", algAv), 8),
-			RightJustify(fmt.Sprintf("%4.2f", allAv), 7),
-			fork.P9Average,
-			RightJustify(fmt.Sprintf("%4.2f", factor), 7),
-			symbol,
-			bits,
-			newTargetBits,
-			isNewest,
-		)
-	}(),
+	I.Ln(
+		func() string {
+			an := fork.List[1].AlgoVers[algoVer]
+			pad := 8 - len(an)
+			if pad > 0 {
+				an += strings.Repeat(" ", pad)
+			}
+			factor := 1 / adjustment
+			symbol := ">"
+			if factor < 1 {
+				factor = adjustment
+				symbol = "<"
+			}
+			if factor == 1 {
+				symbol = "-"
+			}
+			isNewest := ""
+			if lastNode.version == algoVer {
+				isNewest = "*"
+			}
+			return fmt.Sprintf(
+				"%s %s av %s/%2.2f %s %s %08x %08x%s",
+				an,
+				RightJustify(fmt.Sprintf("%4.2f", algAv), 8),
+				RightJustify(fmt.Sprintf("%4.2f", allAv), 7),
+				fork.P9Average,
+				RightJustify(fmt.Sprintf("%4.2f", factor), 7),
+				symbol,
+				bits,
+				newTargetBits,
+				isNewest,
+			)
+		}(),
 	)
 	// }
 	// }
@@ -212,7 +219,8 @@ func (b *BlockChain) CalcNextRequiredDifficultyPlan9(lastNodeP *BlockNode,
 // based on the difficulty retarget rules. This function differs from the exported CalcNextRequiredDifficulty in that
 // the exported version uses the current best chain as the previous block node while this function accepts any block
 // node.
-func (b *BlockChain) CalcNextRequiredDifficultyPlan9old(lastNode *BlockNode,
+func (b *BlockChain) CalcNextRequiredDifficultyPlan9old(
+	lastNode *BlockNode,
 	algoName string, l bool,
 ) (newTargetBits uint32, adjustment float64, e error) {
 
@@ -225,7 +233,8 @@ func (b *BlockChain) CalcNextRequiredDifficultyPlan9old(lastNode *BlockNode,
 	allTimeAv, allTimeDiv, qhourDiv, hourDiv,
 		dayDiv := b.GetCommonP9Averages(lastNode, nH)
 	algoVer := fork.GetAlgoVer(algoName, nH)
-	since, ttpb, timeSinceAlgo, startHeight, last := b.GetP9Since(lastNode,
+	since, ttpb, timeSinceAlgo, startHeight, last := b.GetP9Since(
+		lastNode,
 		algoVer,
 	)
 	if last == nil {
@@ -252,27 +261,31 @@ func (b *BlockChain) CalcNextRequiredDifficultyPlan9old(lastNode *BlockNode,
 		if pad > 0 {
 			an += strings.Repeat(" ", pad)
 		}
-		D.C(func() string {
-			return fmt.Sprintf("hght: %d %08x %s %s %s %s %s %s %s"+
-				" %s %s %08x",
-				lastNode.height+1,
-				last.bits,
-				an,
-				RightJustify(fmt.Sprintf("%3.2f", allTimeAv), 5),
-				RightJustify(fmt.Sprintf("%3.2fa", allTimeDiv*ttpb), 7),
-				RightJustify(fmt.Sprintf("%3.2fd", dayDiv*ttpb), 7),
-				RightJustify(fmt.Sprintf("%3.2fh", hourDiv*ttpb), 7),
-				RightJustify(fmt.Sprintf("%3.2fq", qhourDiv*ttpb), 7),
-				RightJustify(fmt.Sprintf("%3.2fA", algDiv*ttpb), 7),
-				RightJustify(fmt.Sprintf("%3.0f %3.3fD",
-					since-ttpb*float64(len(fork.List[1].Algos)),
-					timeSinceAlgo*ttpb,
-				), 13,
-				),
-				RightJustify(fmt.Sprintf("%4.4fx", 1/adjustment), 11),
-				newTargetBits,
-			)
-		},
+		D.C(
+			func() string {
+				return fmt.Sprintf(
+					"hght: %d %08x %s %s %s %s %s %s %s"+
+						" %s %s %08x",
+					lastNode.height+1,
+					last.bits,
+					an,
+					RightJustify(fmt.Sprintf("%3.2f", allTimeAv), 5),
+					RightJustify(fmt.Sprintf("%3.2fa", allTimeDiv*ttpb), 7),
+					RightJustify(fmt.Sprintf("%3.2fd", dayDiv*ttpb), 7),
+					RightJustify(fmt.Sprintf("%3.2fh", hourDiv*ttpb), 7),
+					RightJustify(fmt.Sprintf("%3.2fq", qhourDiv*ttpb), 7),
+					RightJustify(fmt.Sprintf("%3.2fA", algDiv*ttpb), 7),
+					RightJustify(
+						fmt.Sprintf(
+							"%3.0f %3.3fD",
+							since-ttpb*float64(len(fork.List[1].Algos)),
+							timeSinceAlgo*ttpb,
+						), 13,
+					),
+					RightJustify(fmt.Sprintf("%4.4fx", 1/adjustment), 11),
+					newTargetBits,
+				)
+			},
 		)
 	}
 	return

@@ -4,8 +4,6 @@ import (
 	"container/list"
 	"errors"
 	"fmt"
-	"github.com/cybriq/p9/pkg/chaincfg"
-	"github.com/cybriq/p9/pkg/log"
 	"io"
 	"math/rand"
 	"net"
@@ -13,6 +11,9 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/log"
 
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -208,7 +209,8 @@ func minUint32(a, b uint32) uint32 {
 
 // newNetAddress attempts to extract the IP address and port from the passed net.Addr interface and create a bitcoin
 // NetAddress structure using that information.
-func newNetAddress(addr net.Addr, services wire.ServiceFlag) (*wire.NetAddress,
+func newNetAddress(addr net.Addr, services wire.ServiceFlag) (
+	*wire.NetAddress,
 	error,
 ) {
 	// addr will be a net.TCPAddr when not using a proxy.
@@ -695,7 +697,8 @@ func (p *Peer) WantsHeaders() bool {
 //
 // It returns the addresses that were actually sent and no message will be sent if there are no entries in the provided
 // addresses slice. This function is safe for concurrent access.
-func (p *Peer) PushAddrMsg(addresses []*wire.NetAddress) ([]*wire.NetAddress,
+func (p *Peer) PushAddrMsg(addresses []*wire.NetAddress) (
+	[]*wire.NetAddress,
 	error,
 ) {
 	addressCount := len(addresses)
@@ -724,7 +727,8 @@ func (p *Peer) PushAddrMsg(addresses []*wire.NetAddress) ([]*wire.NetAddress,
 // duplicate requests.
 //
 // This function is safe for concurrent access.
-func (p *Peer) PushGetBlocksMsg(locator blockchain.BlockLocator,
+func (p *Peer) PushGetBlocksMsg(
+	locator blockchain.BlockLocator,
 	stopHash *chainhash.Hash,
 ) (e error) {
 	// Extract the begin hash from the block locator, if one was specified, to use for filtering duplicate getblocks
@@ -740,7 +744,8 @@ func (p *Peer) PushGetBlocksMsg(locator blockchain.BlockLocator,
 		beginHash.IsEqual(p.prevGetBlocksBegin)
 	p.prevGetBlocksMtx.Unlock()
 	if isDuplicate {
-		T.F("filtering duplicate [getblocks] with begin hash %v, stop hash %v",
+		T.F(
+			"filtering duplicate [getblocks] with begin hash %v, stop hash %v",
 			beginHash, stopHash,
 		)
 		return nil
@@ -766,7 +771,8 @@ func (p *Peer) PushGetBlocksMsg(locator blockchain.BlockLocator,
 // duplicate requests.
 //
 // This function is safe for concurrent access.
-func (p *Peer) PushGetHeadersMsg(locator blockchain.BlockLocator,
+func (p *Peer) PushGetHeadersMsg(
+	locator blockchain.BlockLocator,
 	stopHash *chainhash.Hash,
 ) (e error) {
 	// Extract the begin hash from the block locator, if one was specified, to use for filtering duplicate getheaders
@@ -812,7 +818,8 @@ func (p *Peer) PushGetHeadersMsg(locator blockchain.BlockLocator,
 //
 // The wait parameter will cause the function to block until the reject message has actually been sent. This function is
 // safe for concurrent access.
-func (p *Peer) PushRejectMsg(command string, code wire.RejectCode,
+func (p *Peer) PushRejectMsg(
+	command string, code wire.RejectCode,
 	reason string, hash *chainhash.Hash, wait bool,
 ) {
 	// Don't bother sending the reject message if the protocol version is too
@@ -877,7 +884,8 @@ func (p *Peer) handlePongMsg(msg *wire.MsgPong) {
 }
 
 // readMessage reads the next bitcoin message from the peer with logging.
-func (p *Peer) readMessage(encoding wire.MessageEncoding) (wire.Message, []byte,
+func (p *Peer) readMessage(encoding wire.MessageEncoding) (
+	wire.Message, []byte,
 	error,
 ) {
 	n, msg, buf, e := wire.ReadMessageWithEncodingN(
@@ -913,7 +921,8 @@ func (p *Peer) readMessage(encoding wire.MessageEncoding) (wire.Message, []byte,
 }
 
 // writeMessage sends a bitcoin message to the peer with logging.
-func (p *Peer) writeMessage(msg wire.Message, enc wire.MessageEncoding,
+func (p *Peer) writeMessage(
+	msg wire.Message, enc wire.MessageEncoding,
 ) (e error) {
 	// Don't do anything if we're disconnecting.
 	if atomic.LoadInt32(&p.disconnect) != 0 {
@@ -953,7 +962,8 @@ func (p *Peer) writeMessage(msg wire.Message, enc wire.MessageEncoding,
 				if len(summary) > 0 {
 					summary = " (" + summary + ")"
 				}
-				o := fmt.Sprintf("Sending %v%s to %s", msg.Command(), summary,
+				o := fmt.Sprintf(
+					"Sending %v%s to %s", msg.Command(), summary,
 					p,
 				)
 				// o += spew.Sdump(msg)
@@ -1021,7 +1031,8 @@ func (p *Peer) shouldHandleReadError(e error) bool {
 
 // maybeAddDeadline potentially adds a deadline for the appropriate expected response for the passed wire protocol
 // command to the pending responses map.
-func (p *Peer) maybeAddDeadline(pendingResponses map[string]time.Time,
+func (p *Peer) maybeAddDeadline(
+	pendingResponses map[string]time.Time,
 	msgCmd string,
 ) {
 	// Setup a deadline for each message being sent that expects a response.
@@ -1225,7 +1236,8 @@ out:
 				//
 				// NOTE: Ideally this would include the command in the header if at least that much of the message was
 				// valid, but that is not currently exposed by wire, so just used malformed for the command.
-				p.PushRejectMsg("malformed", wire.RejectMalformed, errMsg, nil,
+				p.PushRejectMsg(
+					"malformed", wire.RejectMalformed, errMsg, nil,
 					true,
 				)
 			}
@@ -1961,7 +1973,8 @@ func (p *Peer) AssociateConnection(conn net.Conn) (msgChan chan *wire.MsgVersion
 		}
 		I.Ln("finished starting peer", conn.RemoteAddr(), conn.LocalAddr())
 	}()
-	I.Ln("returning meanwhile starting peer", conn.RemoteAddr(),
+	I.Ln(
+		"returning meanwhile starting peer", conn.RemoteAddr(),
 		conn.LocalAddr(),
 	)
 	return

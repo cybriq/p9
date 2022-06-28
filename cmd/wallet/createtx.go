@@ -3,10 +3,11 @@ package wallet
 
 import (
 	"fmt"
+	"sort"
+
 	"github.com/cybriq/p9/pkg/amt"
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chainclient"
-	"sort"
 
 	ec "github.com/cybriq/p9/pkg/ecc"
 	"github.com/cybriq/p9/pkg/txauthor"
@@ -58,7 +59,8 @@ type secretSource struct {
 }
 
 // GetKey gets the private key for an address if it is available
-func (s secretSource) GetKey(addr btcaddr.Address) (privKey *ec.PrivateKey,
+func (s secretSource) GetKey(addr btcaddr.Address) (
+	privKey *ec.PrivateKey,
 	cmpr bool, e error,
 ) {
 	var ma waddrmgr.ManagedAddress
@@ -121,7 +123,12 @@ func (w *Wallet) txToOutputs(
 				return
 			}
 			var eligible []wtxmgr.Credit
-			if eligible, e = w.findEligibleOutputs(dbtx, account, minconf, bs); E.Chk(e) {
+			if eligible, e = w.findEligibleOutputs(
+				dbtx,
+				account,
+				minconf,
+				bs,
+			); E.Chk(e) {
 				return
 			}
 			inputSource := makeInputSource(eligible)
@@ -139,7 +146,8 @@ func (w *Wallet) txToOutputs(
 				}
 				return txscript.PayToAddrScript(changeAddr)
 			}
-			if tx, e = txauthor.NewUnsignedTransaction(outputs, feeSatPerKb,
+			if tx, e = txauthor.NewUnsignedTransaction(
+				outputs, feeSatPerKb,
 				inputSource, changeSource,
 			); E.Chk(e) {
 				return
@@ -214,7 +222,10 @@ func (w *Wallet) findEligibleOutputs(
 			continue
 		}
 		var addrAcct uint32
-		if _, addrAcct, e = w.Manager.AddrAccount(addrmgrNs, addrs[0]); E.Chk(e) ||
+		if _, addrAcct, e = w.Manager.AddrAccount(
+			addrmgrNs,
+			addrs[0],
+		); E.Chk(e) ||
 			addrAcct != account {
 			continue
 		}
@@ -226,7 +237,8 @@ func (w *Wallet) findEligibleOutputs(
 // validateMsgTx verifies transaction input scripts for tx. All previous output
 // scripts from outputs redeemed by the transaction, in the same order they are
 // spent, must be passed in the prevScripts slice.
-func validateMsgTx(tx *wire.MsgTx, prevScripts [][]byte,
+func validateMsgTx(
+	tx *wire.MsgTx, prevScripts [][]byte,
 	inputValues []amt.Amount,
 ) (e error) {
 	hashCache := txscript.NewTxSigHashes(tx)

@@ -31,7 +31,8 @@ type MsgCFilter struct {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver.
 // This is part of the Message interface implementation.
-func (msg *MsgCFilter) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding,
+func (msg *MsgCFilter) BtcDecode(
+	r io.Reader, pver uint32, _ MessageEncoding,
 ) (e error) {
 	// Read filter type
 	if e = readElement(r, &msg.FilterType); E.Chk(e) {
@@ -48,7 +49,8 @@ func (msg *MsgCFilter) BtcDecode(r io.Reader, pver uint32, _ MessageEncoding,
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This
 // is part of the Message interface implementation.
-func (msg *MsgCFilter) BtcEncode(w io.Writer, pver uint32, _ MessageEncoding,
+func (msg *MsgCFilter) BtcEncode(
+	w io.Writer, pver uint32, _ MessageEncoding,
 ) (e error) {
 	size := len(msg.Data)
 	if size > MaxCFilterDataSize {

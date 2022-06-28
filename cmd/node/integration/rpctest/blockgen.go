@@ -80,7 +80,8 @@ func solveBlock(header *wire.BlockHeader, targetDifficulty *big.Int) bool {
 
 // standardCoinbaseScript returns a standard script suitable for use as the signature script of the coinbase transaction
 // of a new block. In particular, it starts with the block height that is required by version 2 blocks.
-func standardCoinbaseScript(nextBlockHeight int32, extraNonce uint64) ([]byte,
+func standardCoinbaseScript(nextBlockHeight int32, extraNonce uint64) (
+	[]byte,
 	error,
 ) {
 	return txscript.NewScriptBuilder().AddInt64(int64(nextBlockHeight)).
@@ -117,7 +118,8 @@ func createCoinbaseTx(
 	if len(mineTo) == 0 {
 		tx.AddTxOut(
 			&wire.TxOut{
-				Value: blockchain.CalcBlockSubsidy(nextBlockHeight, net,
+				Value: blockchain.CalcBlockSubsidy(
+					nextBlockHeight, net,
 					version,
 				),
 				PkScript: pkScript,

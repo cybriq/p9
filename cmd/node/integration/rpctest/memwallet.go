@@ -152,7 +152,8 @@ func (m *memWallet) SetRPCClient(rpcClient *rpcclient.Client) {
 
 // IngestBlock is a call-back which is to be triggered each time a new block is connected to the main chain. It queues
 // the update for the chain syncer, calling the private version in sequential order.
-func (m *memWallet) IngestBlock(height int32, header *wire.BlockHeader,
+func (m *memWallet) IngestBlock(
+	height int32, header *wire.BlockHeader,
 	filteredTxns []*util.Tx,
 ) {
 	// Append this new chain update to the end of the queue of new chain
@@ -490,7 +491,8 @@ func (m *memWallet) ConfirmedBalance() amt.Amount {
 }
 
 // keyToAddr maps the passed private to corresponding p2pkh address.
-func keyToAddr(key *ec.PrivateKey, net *chaincfg.Params) (btcaddr.Address,
+func keyToAddr(key *ec.PrivateKey, net *chaincfg.Params) (
+	btcaddr.Address,
 	error,
 ) {
 	serializedKey := key.PubKey().SerializeCompressed()

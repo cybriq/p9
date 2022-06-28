@@ -12,17 +12,18 @@ type glContext struct {
 }
 
 func init() {
-	drivers = append(drivers, gpuAPI{
-		priority: 2,
-		initializer: func(w *window) (Context, error) {
-			disp := egl.NativeDisplayType(w.HDC())
-			ctx, err := egl.NewContext(disp)
-			if err != nil {
-				return nil, err
-			}
-			return &glContext{win: w, Context: ctx}, nil
+	drivers = append(
+		drivers, gpuAPI{
+			priority: 2,
+			initializer: func(w *window) (Context, error) {
+				disp := egl.NativeDisplayType(w.HDC())
+				ctx, err := egl.NewContext(disp)
+				if err != nil {
+					return nil, err
+				}
+				return &glContext{win: w, Context: ctx}, nil
+			},
 		},
-	},
 	)
 }
 

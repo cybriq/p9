@@ -3,11 +3,12 @@ package connmgr
 import (
 	"errors"
 	"fmt"
-	"github.com/cybriq/p9/pkg/log"
 	"net"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/cybriq/p9/pkg/log"
 
 	"github.com/cybriq/p9/pkg/qu"
 )
@@ -384,7 +385,8 @@ func (cm *ConnManager) Connect(c *ConnReq) {
 	}
 	T.Ln("response received")
 	if len(cm.Cfg.Listeners) > 0 {
-		T.F("%s attempting to connect to '%s'", cm.Cfg.Listeners[0].Addr(),
+		T.F(
+			"%s attempting to connect to '%s'", cm.Cfg.Listeners[0].Addr(),
 			c.Addr,
 		)
 	}

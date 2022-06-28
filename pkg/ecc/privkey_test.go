@@ -48,8 +48,10 @@ func TestPrivKeys(t *testing.T) {
 
 		serializedKey := priv.Serialize()
 		if !bytes.Equal(serializedKey, test.key) {
-			t.Errorf("%s unexpected serialized bytes - got: %x, "+
-				"want: %x", test.name, serializedKey, test.key)
+			t.Errorf(
+				"%s unexpected serialized bytes - got: %x, "+
+					"want: %x", test.name, serializedKey, test.key,
+			)
 		}
 	}
 }

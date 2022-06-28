@@ -5,9 +5,10 @@ package base58
 
 const (
 	// alphabet is the modified base58 alphabet used by Bitcoin.
-	alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+	alphabet     = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 	alphabetIdx0 = '1'
 )
+
 var b58 = [256]byte{
 	255, 255, 255, 255, 255, 255, 255, 255,
 	255, 255, 255, 255, 255, 255, 255, 255,

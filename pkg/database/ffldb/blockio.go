@@ -426,7 +426,8 @@ func (s *blockStore) writeBlock(rawBlock []byte) (blockLocation, error) {
 //
 // Returns ErrDriverSpecific if the data fails to read for any reason and ErrCorruption if the checksum of the read data
 // doesn't match the checksum read from the file. Format: <network><block length><serialized block><checksum>
-func (s *blockStore) readBlock(hash *chainhash.Hash, loc blockLocation) ([]byte,
+func (s *blockStore) readBlock(hash *chainhash.Hash, loc blockLocation) (
+	[]byte,
 	error,
 ) {
 	// Get the referenced block file handle opening the file as needed. The function also handles closing files as
@@ -481,7 +482,8 @@ func (s *blockStore) readBlock(hash *chainhash.Hash, loc blockLocation) ([]byte,
 // the maximum allowed open files limit.
 //
 // Returns ErrDriverSpecific if the data fails to read for any reason.
-func (s *blockStore) readBlockRegion(loc blockLocation, offset, numBytes uint32,
+func (s *blockStore) readBlockRegion(
+	loc blockLocation, offset, numBytes uint32,
 ) ([]byte, error) {
 	// Get the referenced block file handle opening the file as needed. The function also handles closing files as
 	// needed to avoid going over the max allowed open files.

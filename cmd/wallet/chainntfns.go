@@ -2,8 +2,9 @@ package wallet
 
 import (
 	"bytes"
-	"github.com/cybriq/p9/pkg/btcaddr"
 	"strings"
+
+	"github.com/cybriq/p9/pkg/btcaddr"
 
 	"github.com/cybriq/p9/pkg/chainclient"
 	"github.com/cybriq/p9/pkg/txscript"
@@ -177,7 +178,8 @@ func (w *Wallet) handleChainNotifications() {
 
 // connectBlock handles a chain server notification by marking a wallet that's currently in-sync with the chain server
 // as being synced up to the passed block.
-func (w *Wallet) connectBlock(dbtx walletdb.ReadWriteTx, b tm.BlockMeta,
+func (w *Wallet) connectBlock(
+	dbtx walletdb.ReadWriteTx, b tm.BlockMeta,
 ) (e error) {
 	addrmgrNs := dbtx.ReadWriteBucket(waddrmgrNamespaceKey)
 	bs := wm.BlockStamp{
@@ -198,7 +200,8 @@ func (w *Wallet) connectBlock(dbtx walletdb.ReadWriteTx, b tm.BlockMeta,
 
 // disconnectBlock handles a chain server reorganize by rolling back all block history from the reorged block for a
 // wallet in-sync with the chain server.
-func (w *Wallet) disconnectBlock(dbtx walletdb.ReadWriteTx, b tm.BlockMeta,
+func (w *Wallet) disconnectBlock(
+	dbtx walletdb.ReadWriteTx, b tm.BlockMeta,
 ) (e error) {
 	addrmgrNs := dbtx.ReadWriteBucket(waddrmgrNamespaceKey)
 	txmgrNs := dbtx.ReadWriteBucket(wtxmgrNamespaceKey)
@@ -241,7 +244,8 @@ func (w *Wallet) disconnectBlock(dbtx walletdb.ReadWriteTx, b tm.BlockMeta,
 	w.NtfnServer.notifyDetachedBlock(&b.Hash)
 	return nil
 }
-func (w *Wallet) addRelevantTx(dbtx walletdb.ReadWriteTx, rec *tm.TxRecord,
+func (w *Wallet) addRelevantTx(
+	dbtx walletdb.ReadWriteTx, rec *tm.TxRecord,
 	block *tm.BlockMeta,
 ) (e error) {
 	addrmgrNs := dbtx.ReadWriteBucket(waddrmgrNamespaceKey)
@@ -306,7 +310,8 @@ func (w *Wallet) addRelevantTx(dbtx walletdb.ReadWriteTx, rec *tm.TxRecord,
 			w.NtfnServer.notifyUnminedTransaction(dbtx, details)
 		}
 	} else {
-		details, e := w.TxStore.UniqueTxDetails(txmgrNs, &rec.Hash,
+		details, e := w.TxStore.UniqueTxDetails(
+			txmgrNs, &rec.Hash,
 			&block.Block,
 		)
 		if e != nil {

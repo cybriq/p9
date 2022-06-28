@@ -108,7 +108,8 @@ func (m *medianTime) AddTimeSample(sourceID string, timeVal time.Time) {
 	copy(sortedOffsets, m.offsets)
 	sort.Sort(int64Sorter(sortedOffsets))
 	offsetDuration := time.Duration(offsetSecs) * time.Second
-	T.F("Added time sample of %v (total: %v)", offsetDuration,
+	T.F(
+		"Added time sample of %v (total: %v)", offsetDuration,
 		numOffsets,
 	)
 	T.Ln("samples:", sortedOffsets)
@@ -143,8 +144,9 @@ func (m *medianTime) AddTimeSample(sourceID string, timeVal time.Time) {
 			}
 			// Warn if none of the time samples are close.
 			if !remoteHasCloseTime {
-				W.Ln("Please check your date and time are correct!  pod " +
-					"will not work properly with an invalid time",
+				W.Ln(
+					"Please check your date and time are correct!  pod " +
+						"will not work properly with an invalid time",
 				)
 			}
 		}

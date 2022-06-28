@@ -163,11 +163,12 @@ func (c *Click) Events(q event.Queue) []ClickEvent {
 					c.clicks = 1
 				}
 				c.clickedAt = e.Time
-				events = append(events, ClickEvent{
-					Type: TypeClick, Position: e.Position, Source: e.Source,
-					Modifiers: e.Modifiers,
-					Button:    e.Buttons, NumClicks: c.clicks,
-				},
+				events = append(
+					events, ClickEvent{
+						Type: TypeClick, Position: e.Position, Source: e.Source,
+						Modifiers: e.Modifiers,
+						Button:    e.Buttons, NumClicks: c.clicks,
+					},
 				)
 			} else {
 				events = append(events, ClickEvent{Type: TypeCancel})
@@ -193,10 +194,11 @@ func (c *Click) Events(q event.Queue) []ClickEvent {
 				break
 			}
 			c.pressed = true
-			events = append(events, ClickEvent{
-				Type: TypePress, Position: e.Position, Source: e.Source,
-				Modifiers: e.Modifiers, Button: e.Buttons,
-			},
+			events = append(
+				events, ClickEvent{
+					Type: TypePress, Position: e.Position, Source: e.Source,
+					Modifiers: e.Modifiers, Button: e.Buttons,
+				},
 			)
 		case pointer.Leave:
 			if !c.pressed {
@@ -240,7 +242,8 @@ func (s *Scroll) Stop() {
 
 // Scroll detects the scrolling distance from the available events and
 // ongoing fling gestures.
-func (s *Scroll) Scroll(cfg unit.Metric, q event.Queue, t time.Time, axis Axis,
+func (s *Scroll) Scroll(
+	cfg unit.Metric, q event.Queue, t time.Time, axis Axis,
 ) int {
 	if s.axis != axis {
 		s.axis = axis
@@ -345,7 +348,8 @@ func (d *Drag) Add(ops *op.Ops) {
 }
 
 // Events returns the next drag events, if any.
-func (d *Drag) Events(cfg unit.Metric, q event.Queue, axis Axis,
+func (d *Drag) Events(
+	cfg unit.Metric, q event.Queue, axis Axis,
 ) []pointer.Event {
 	var events []pointer.Event
 	for _, e := range q.Events(d) {

@@ -111,7 +111,11 @@ func (c *context) MakeCurrent() error {
 	}
 	currentRB := gl.Renderbuffer{uint(c.c.GetInteger(gl.RENDERBUFFER_BINDING))}
 	c.c.BindRenderbuffer(gl.RENDERBUFFER, c.colorBuffer)
-	if C.gio_renderbufferStorage(c.ctx, c.layer, C.GLenum(gl.RENDERBUFFER)) == 0 {
+	if C.gio_renderbufferStorage(
+		c.ctx,
+		c.layer,
+		C.GLenum(gl.RENDERBUFFER),
+	) == 0 {
 		return errors.New("renderbufferStorage failed")
 	}
 	w := c.c.GetRenderbufferParameteri(gl.RENDERBUFFER, gl.RENDERBUFFER_WIDTH)
@@ -120,10 +124,12 @@ func (c *context) MakeCurrent() error {
 	c.c.RenderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, w, h)
 	c.c.BindRenderbuffer(gl.RENDERBUFFER, currentRB)
 	c.c.BindFramebuffer(gl.FRAMEBUFFER, c.frameBuffer)
-	c.c.FramebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+	c.c.FramebufferRenderbuffer(
+		gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
 		gl.RENDERBUFFER, c.colorBuffer,
 	)
-	c.c.FramebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT,
+	c.c.FramebufferRenderbuffer(
+		gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT,
 		gl.RENDERBUFFER, c.depthBuffer,
 	)
 	if st := c.c.CheckFramebufferStatus(gl.FRAMEBUFFER); st != gl.FRAMEBUFFER_COMPLETE {

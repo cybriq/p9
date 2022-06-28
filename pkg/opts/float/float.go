@@ -57,7 +57,8 @@ func (x *Opt) GetMetadata() *meta.Data {
 // ReadInput sets the value from a string
 func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 	if input == "" {
-		e = fmt.Errorf("floating point number opt %s %v may not be empty",
+		e = fmt.Errorf(
+			"floating point number opt %s %v may not be empty",
 			x.Name(), x.Data.Aliases,
 		)
 		return

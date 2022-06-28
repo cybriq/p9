@@ -16,7 +16,8 @@ func TstAppDataDir(goos, appName string, roaming bool) string {
 }
 
 // TstAddressPubKeyHash makes an PubKeyHash, setting the unexported fields with the parameters hash and netID.
-func TstAddressPubKeyHash(hash [ripemd160.Size]byte,
+func TstAddressPubKeyHash(
+	hash [ripemd160.Size]byte,
 	netID byte,
 ) *btcaddr.PubKeyHash {
 	return &btcaddr.PubKeyHash{
@@ -26,7 +27,8 @@ func TstAddressPubKeyHash(hash [ripemd160.Size]byte,
 }
 
 // TstAddressScriptHash makes an ScriptHash, setting the unexported fields with the parameters hash and netID.
-func TstAddressScriptHash(hash [ripemd160.Size]byte,
+func TstAddressScriptHash(
+	hash [ripemd160.Size]byte,
 	netID byte,
 ) *btcaddr.ScriptHash {
 	return &btcaddr.ScriptHash{
@@ -58,7 +60,8 @@ func TstAddressScriptHash(hash [ripemd160.Size]byte,
 // }
 
 // TstAddressPubKey makes an PubKey, setting the unexported fields with the parameters.
-func TstAddressPubKey(serializedPubKey []byte,
+func TstAddressPubKey(
+	serializedPubKey []byte,
 	pubKeyFormat btcaddr.PubKeyFormat,
 	netID byte,
 ) *btcaddr.PubKey {

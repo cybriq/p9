@@ -3,12 +3,12 @@ package blockchain
 import (
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/cybriq/p9/pkg/bits"
 	"github.com/cybriq/p9/pkg/block"
 	"github.com/cybriq/p9/pkg/fork"
 	"github.com/cybriq/p9/pkg/log"
-
-	"time"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/database"
@@ -78,8 +78,10 @@ func (b *BlockChain) ProcessBlock(
 		return false, false, e
 	}
 	if exists {
-		str := ruleError(ErrDuplicateBlock,
-			fmt.Sprintf("already have candidateBlock %v",
+		str := ruleError(
+			ErrDuplicateBlock,
+			fmt.Sprintf(
+				"already have candidateBlock %v",
 				bhwa(blockHeight).String(),
 			),
 		)
@@ -88,7 +90,8 @@ func (b *BlockChain) ProcessBlock(
 	}
 	// The candidateBlock must not already exist as an orphan.
 	if _, exists := b.orphans[*blockHash]; exists {
-		str := ruleError(ErrDuplicateBlock,
+		str := ruleError(
+			ErrDuplicateBlock,
 			fmt.Sprintf("already have candidateBlock (orphan)"),
 		)
 		E.Ln(str)
@@ -97,7 +100,8 @@ func (b *BlockChain) ProcessBlock(
 	// Perform preliminary sanity checks on the candidateBlock and its transactions.
 	var DoNotCheckPow bool
 	pl := fork.GetMinDiff(fork.GetAlgoName(algo, blockHeight), blockHeight)
-	T.F("powLimit %d %s %d %064x", algo, fork.GetAlgoName(algo, blockHeight),
+	T.F(
+		"powLimit %d %s %d %064x", algo, fork.GetAlgoName(algo, blockHeight),
 		blockHeight, pl,
 	)
 	ph := &candidateBlock.WireBlock().Header.PrevBlock
@@ -110,7 +114,8 @@ func (b *BlockChain) ProcessBlock(
 	if pb == nil {
 		DoNotCheckPow = true
 	}
-	T.F("checkBlockSanity powLimit %d %s %d %064x ts %v", algo,
+	T.F(
+		"checkBlockSanity powLimit %d %s %d %064x ts %v", algo,
 		fork.GetAlgoName(algo, blockHeight), blockHeight, pl,
 		pn.Header().Timestamp,
 	)
@@ -196,7 +201,11 @@ func (b *BlockChain) ProcessBlock(
 	// to potentially accept it into the candidateBlock chain.
 	T.Ln("maybe accept candidateBlock")
 	var isMainChain bool
-	if isMainChain, e = b.maybeAcceptBlock(workerNumber, candidateBlock, flags); E.Chk(e) {
+	if isMainChain, e = b.maybeAcceptBlock(
+		workerNumber,
+		candidateBlock,
+		flags,
+	); E.Chk(e) {
 		return false, false, e
 	}
 	// Accept any orphan blocks that depend on this candidateBlock (they are no longer
@@ -296,7 +305,11 @@ func (b *BlockChain) processOrphans(
 			i--
 			// Potentially accept the block into the block chain.
 			var e error
-			if _, e = b.maybeAcceptBlock(workerNumber, orphan.block, flags); E.Chk(e) {
+			if _, e = b.maybeAcceptBlock(
+				workerNumber,
+				orphan.block,
+				flags,
+			); E.Chk(e) {
 				return e
 			}
 			// Add this block to the list of blocks to process so any orphan blocks that

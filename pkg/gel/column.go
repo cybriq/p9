@@ -20,10 +20,12 @@ type Column struct {
 	list              *List
 }
 
-func (w *Window) Column(rows Rows, font string, scale float32, color string,
+func (w *Window) Column(
+	rows Rows, font string, scale float32, color string,
 	background string,
 ) *Column {
-	return &Column{Window: w, rows: rows, font: font, scale: scale,
+	return &Column{
+		Window: w, rows: rows, font: font, scale: scale,
 		color:      color,
 		background: background, list: w.List(),
 	}
@@ -53,48 +55,52 @@ func (c *Column) List(gtx l.Context) (max int, out []l.Widget) {
 	for x := range c.rows {
 		i := x
 		_ = i
-		out = append(out, func(gtx l.Context) l.Dimensions {
-			return c.Flex(). // AlignEnd().SpaceStart().
-						Rigid(
-					c.Fill("red", l.Center, c.TextSize.V, 0,
-						EmptySpace(max-dims[i].Size.X, dims[i].Size.Y),
-					).Fn,
-				).
-				Rigid(
-					c.Inset(0.5, func(gtx l.Context) l.Dimensions {
-						// D.Ln("max!", m)
-						// // gtx.Constraints.Max.X = max
-						// gtx.Constraints.Max.Y = dims[i].Size.Y
-						// gtx.Constraints.Min.Y = dims[i].Size.Y
-						// gtx.Constraints.Min.X = max
-						// gtx.Constraints.Constrain(image.Point{X: max, Y: dims[i].Size.Y})
-						// gtx.Constraints.Max.X = max
-						// gtx.Constraints.Min.Y = 0
-						// gtx.Constraints.Max.Y = dims[i].Size.Y
-						// gtx.Constraints.Constrain(dims[i].Size)
-						dms := c.Label().
-							Text(c.rows[i].Label).
-							Font(c.font).
-							TextScale(c.scale).
-							Color(c.color).
-							Fn(gtx)
-						return dms
-					},
-					).Fn,
-				).
-				Rigid(
-					c.Inset(0.5,
-						c.rows[i].W,
-					).Fn,
-				).
-				Fn(gtx)
-			// return c.Theme.Fill("Primary",
-			// 	c.Theme.Flex().AlignEnd().SpaceBetween().
-			// 		Rigid(
-			// 		).Fn,
-			// ).
-			// Fn(gtx)
-		},
+		out = append(
+			out, func(gtx l.Context) l.Dimensions {
+				return c.Flex(). // AlignEnd().SpaceStart().
+							Rigid(
+						c.Fill(
+							"red", l.Center, c.TextSize.V, 0,
+							EmptySpace(max-dims[i].Size.X, dims[i].Size.Y),
+						).Fn,
+					).
+					Rigid(
+						c.Inset(
+							0.5, func(gtx l.Context) l.Dimensions {
+								// D.Ln("max!", m)
+								// // gtx.Constraints.Max.X = max
+								// gtx.Constraints.Max.Y = dims[i].Size.Y
+								// gtx.Constraints.Min.Y = dims[i].Size.Y
+								// gtx.Constraints.Min.X = max
+								// gtx.Constraints.Constrain(image.Point{X: max, Y: dims[i].Size.Y})
+								// gtx.Constraints.Max.X = max
+								// gtx.Constraints.Min.Y = 0
+								// gtx.Constraints.Max.Y = dims[i].Size.Y
+								// gtx.Constraints.Constrain(dims[i].Size)
+								dms := c.Label().
+									Text(c.rows[i].Label).
+									Font(c.font).
+									TextScale(c.scale).
+									Color(c.color).
+									Fn(gtx)
+								return dms
+							},
+						).Fn,
+					).
+					Rigid(
+						c.Inset(
+							0.5,
+							c.rows[i].W,
+						).Fn,
+					).
+					Fn(gtx)
+				// return c.Theme.Fill("Primary",
+				// 	c.Theme.Flex().AlignEnd().SpaceBetween().
+				// 		Rigid(
+				// 		).Fn,
+				// ).
+				// Fn(gtx)
+			},
 		)
 	}
 	// le = func(gtx l.Context, index int) l.Dimensions {

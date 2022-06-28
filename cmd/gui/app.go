@@ -262,7 +262,8 @@ func (wg *WalletGUI) GetAppWidget() (a *gel.App) {
 	return
 }
 
-func (wg *WalletGUI) Page(title string, widget gel.Widgets,
+func (wg *WalletGUI) Page(
+	title string, widget gel.Widgets,
 ) func(gtx l.Context) l.Dimensions {
 	return func(gtx l.Context) l.Dimensions {
 		return wg.VFlex().
@@ -291,7 +292,8 @@ func (wg *WalletGUI) Page(title string, widget gel.Widgets,
 	}
 }
 
-func (wg *WalletGUI) SideBarButton(title, page string, index int,
+func (wg *WalletGUI) SideBarButton(
+	title, page string, index int,
 ) func(gtx l.Context) l.Dimensions {
 	return func(gtx l.Context) l.Dimensions {
 		var scale float32
@@ -505,7 +507,8 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 					SetClick(
 						func() {
 							go func() {
-								D.Ln("clicked node run control button",
+								D.Ln(
+									"clicked node run control button",
 									wg.node.Running(),
 								)
 								// wg.toggleNode()
@@ -532,7 +535,8 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 			Rigid(
 				wg.Inset(
 					0.33,
-					wg.Body1(fmt.Sprintf("%d", wg.State.bestBlockHeight.Load()),
+					wg.Body1(
+						fmt.Sprintf("%d", wg.State.bestBlockHeight.Load()),
 					).
 						Font("go regular").TextScale(gel.Scales["Caption"]).
 						Color("DocText").
@@ -558,7 +562,8 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 							go func() {
 								wg.cx.Config.Discovery.Flip()
 								_ = wg.cx.Config.WriteToFile(wg.cx.Config.ConfigFile.V())
-								I.Ln("discover enabled:",
+								I.Ln(
+									"discover enabled:",
 									wg.cx.Config.Discovery.True(),
 								)
 							}()
@@ -569,9 +574,11 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 			Rigid(
 				wg.Inset(
 					0.33,
-					wg.Caption(fmt.Sprintf("%d LAN %d", len(wg.otherNodes),
-						wg.peerCount.Load(),
-					),
+					wg.Caption(
+						fmt.Sprintf(
+							"%d LAN %d", len(wg.otherNodes),
+							wg.peerCount.Load(),
+						),
 					).
 						Font("go regular").
 						Color("DocText").
@@ -596,7 +603,8 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 						func() {
 							if wg.ChainClient != nil && !wg.ChainClient.Disconnected() {
 								wg.cx.Config.Controller.Flip()
-								I.Ln("controller running:",
+								I.Ln(
+									"controller running:",
 									wg.cx.Config.Controller.True(),
 								)
 								var e error
@@ -695,7 +703,8 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 												"wallet",
 												"drophistory",
 											}
-											runner := exec.Command(args[0],
+											runner := exec.Command(
+												args[0],
 												args[1:]...,
 											)
 											runner.Stderr = os.Stderr
@@ -720,7 +729,8 @@ func (wg *WalletGUI) RunStatusPanel(gtx l.Context) l.Dimensions {
 
 func (wg *WalletGUI) writeWalletCookie() (e error) {
 	// for security with apps launching the wallet, the public password can be set with a file that is deleted after
-	walletPassPath := filepath.Join(wg.cx.Config.DataDir.V(),
+	walletPassPath := filepath.Join(
+		wg.cx.Config.DataDir.V(),
 		wg.cx.ActiveNet.Name, "wp.txt",
 	)
 	D.Ln("runner", walletPassPath)

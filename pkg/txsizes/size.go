@@ -100,7 +100,8 @@ const (
 // EstimateSerializeSize returns a worst case serialize size estimate for a signed transaction that spends inputCount
 // number of compressed P2PKH outputs and contains each transaction output from txOuts. The estimated size is
 // incremented for an additional P2PKH change output if addChangeOutput is true.
-func EstimateSerializeSize(inputCount int, txOuts []*wire.TxOut,
+func EstimateSerializeSize(
+	inputCount int, txOuts []*wire.TxOut,
 	addChangeOutput bool,
 ) int {
 	changeSize := 0
@@ -120,7 +121,8 @@ func EstimateSerializeSize(inputCount int, txOuts []*wire.TxOut,
 // EstimateVirtualSize returns a worst case virtual size estimate for a signed transaction that spends the given number
 // of P2PKH, P2WPKH and (nested) P2SH-P2WPKH outputs, and contains each transaction output from txOuts. The estimate is
 // incremented for an additional P2PKH change output if addChangeOutput is true.
-func EstimateVirtualSize(numP2PKHIns, numP2WPKHIns, numNestedP2WPKHIns int,
+func EstimateVirtualSize(
+	numP2PKHIns, numP2WPKHIns, numNestedP2WPKHIns int,
 	txOuts []*wire.TxOut, addChangeOutput bool,
 ) int {
 	changeSize := 0

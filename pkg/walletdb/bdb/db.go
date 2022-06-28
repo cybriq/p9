@@ -59,7 +59,8 @@ func (tx *transaction) ReadWriteBucket(key []byte) walletdb.ReadWriteBucket {
 	}
 	return (*bucket)(boltBucket)
 }
-func (tx *transaction) CreateTopLevelBucket(key []byte) (rwb walletdb.ReadWriteBucket,
+func (tx *transaction) CreateTopLevelBucket(key []byte) (
+	rwb walletdb.ReadWriteBucket,
 	e error,
 ) {
 	var boltBucket *bolt.Bucket
@@ -118,7 +119,8 @@ func (b *bucket) NestedReadBucket(key []byte) walletdb.ReadBucket {
 // ErrIncompatibleValue if the key value is otherwise invalid.
 //
 // This function is part of the walletdb.Bucket interface implementation.
-func (b *bucket) CreateBucket(key []byte) (rwb walletdb.ReadWriteBucket,
+func (b *bucket) CreateBucket(key []byte) (
+	rwb walletdb.ReadWriteBucket,
 	e error,
 ) {
 	var boltBucket *bolt.Bucket
@@ -133,7 +135,8 @@ func (b *bucket) CreateBucket(key []byte) (rwb walletdb.ReadWriteBucket,
 // Returns ErrBucketNameRequired if the key is empty or ErrIncompatibleValue if the key value is otherwise invalid.
 //
 // This function is part of the walletdb.Bucket interface implementation.
-func (b *bucket) CreateBucketIfNotExists(key []byte) (rwb walletdb.ReadWriteBucket,
+func (b *bucket) CreateBucketIfNotExists(key []byte) (
+	rwb walletdb.ReadWriteBucket,
 	e error,
 ) {
 	var boltBucket *bolt.Bucket

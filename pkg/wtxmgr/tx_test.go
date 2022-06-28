@@ -3,12 +3,13 @@ package wtxmgr
 import (
 	"bytes"
 	"encoding/hex"
-	"github.com/cybriq/p9/pkg/amt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
 	"time"
+
+	"github.com/cybriq/p9/pkg/amt"
 
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/chainhash"
@@ -36,7 +37,8 @@ var (
 	TstSpendingTxBlockHeight   = int32(279143)
 	TstSignedTxBlockHash, _    = chainhash.NewHashFromStr("00000000000000017188b968a371bab95aa43522665353b646e41865abae02a4")
 	TstSignedTxBlockDetails    = &BlockMeta{
-		Block: Block{Hash: *TstSignedTxBlockHash,
+		Block: Block{
+			Hash:   *TstSignedTxBlockHash,
 			Height: TstSpendingTxBlockHeight,
 		},
 		Time: time.Unix(1389114091, 0),
@@ -80,18 +82,19 @@ func testStore() (*Store, walletdb.DB, func(), error) {
 		}
 	}
 	var s *Store
-	e = walletdb.Update(db, func(tx walletdb.ReadWriteTx) (e error) {
-		ns, e := tx.CreateTopLevelBucket(namespaceKey)
-		if e != nil {
+	e = walletdb.Update(
+		db, func(tx walletdb.ReadWriteTx) (e error) {
+			ns, e := tx.CreateTopLevelBucket(namespaceKey)
+			if e != nil {
+				return e
+			}
+			e = Create(ns)
+			if e != nil {
+				return e
+			}
+			s, e = Open(ns, &chaincfg.TestNet3Params)
 			return e
-		}
-		e = Create(ns)
-		if e != nil {
-			return e
-		}
-		s, e = Open(ns, &chaincfg.TestNet3Params)
-		return e
-	},
+		},
 	)
 	return s, db, teardown, e
 }
@@ -116,7 +119,8 @@ func TestInsertsCreditsDebitsRollbacks(t *testing.T) {
 	TstDoubleSpendSerializedTx := serializeTx(TstDoubleSpendTx)
 	// Create a "signed" (with invalid sigs) tx that spends output 0 of the double spend.
 	spendingTx := wire.NewMsgTx(wire.TxVersion)
-	spendingTxIn := wire.NewTxIn(wire.NewOutPoint(TstDoubleSpendTx.Hash(), 0),
+	spendingTxIn := wire.NewTxIn(
+		wire.NewOutPoint(TstDoubleSpendTx.Hash(), 0),
 		[]byte{0, 1, 2, 3, 4}, nil,
 	)
 	spendingTx.AddTxIn(spendingTxIn)
@@ -487,69 +491,82 @@ func TestInsertsCreditsDebitsRollbacks(t *testing.T) {
 	}
 	defer teardown()
 	for _, test := range tests {
-		e := walletdb.Update(db, func(tx walletdb.ReadWriteTx) (e error) {
-			ns := tx.ReadWriteBucket(namespaceKey)
-			tmpStore, e := test.f(s, ns)
-			if e != nil {
-				t.Fatalf("%s: got error: %v", test.name, e)
-			}
-			s = tmpStore
-			bal, e := s.Balance(ns, 1, TstRecvCurrentHeight)
-			if e != nil {
-				t.Fatalf("%s: Confirmed Balance failed: %v", test.name, e)
-			}
-			if bal != test.bal {
-				t.Fatalf("%s: balance mismatch: expected: %d, got: %d",
-					test.name, test.bal, bal,
-				)
-			}
-			unc, e := s.Balance(ns, 0, TstRecvCurrentHeight)
-			if e != nil {
-				t.Fatalf("%s: Unconfirmed Balance failed: %v", test.name, e)
-			}
-			unc -= bal
-			if unc != test.unc {
-				t.Fatalf("%s: unconfirmed balance mismatch: expected %d, got %d",
-					test.name, test.unc, unc,
-				)
-			}
-			// Chk that unspent outputs match expected.
-			unspent, e := s.UnspentOutputs(ns)
-			if e != nil {
-				t.Fatalf("%s: failed to fetch unspent outputs: %v", test.name,
-					e,
-				)
-			}
-			for _, cred := range unspent {
-				if _, ok := test.unspents[cred.OutPoint]; !ok {
-					t.Errorf("%s: unexpected unspent output: %v", test.name,
-						cred.OutPoint,
+		e := walletdb.Update(
+			db, func(tx walletdb.ReadWriteTx) (e error) {
+				ns := tx.ReadWriteBucket(namespaceKey)
+				tmpStore, e := test.f(s, ns)
+				if e != nil {
+					t.Fatalf("%s: got error: %v", test.name, e)
+				}
+				s = tmpStore
+				bal, e := s.Balance(ns, 1, TstRecvCurrentHeight)
+				if e != nil {
+					t.Fatalf("%s: Confirmed Balance failed: %v", test.name, e)
+				}
+				if bal != test.bal {
+					t.Fatalf(
+						"%s: balance mismatch: expected: %d, got: %d",
+						test.name, test.bal, bal,
 					)
 				}
-				delete(test.unspents, cred.OutPoint)
-			}
-			if len(test.unspents) != 0 {
-				t.Fatalf("%s: missing expected unspent output(s)", test.name)
-			}
-			// Chk that unmined txs match expected.
-			unmined, e := s.UnminedTxs(ns)
-			if e != nil {
-				t.Fatalf("%s: cannot load unmined transactions: %v", test.name,
-					e,
-				)
-			}
-			for _, tx := range unmined {
-				txHash := tx.TxHash()
-				if _, ok := test.unmined[txHash]; !ok {
-					t.Fatalf("%s: unexpected unmined tx: %v", test.name, txHash)
+				unc, e := s.Balance(ns, 0, TstRecvCurrentHeight)
+				if e != nil {
+					t.Fatalf("%s: Unconfirmed Balance failed: %v", test.name, e)
 				}
-				delete(test.unmined, txHash)
-			}
-			if len(test.unmined) != 0 {
-				t.Fatalf("%s: missing expected unmined tx(s)", test.name)
-			}
-			return nil
-		},
+				unc -= bal
+				if unc != test.unc {
+					t.Fatalf(
+						"%s: unconfirmed balance mismatch: expected %d, got %d",
+						test.name, test.unc, unc,
+					)
+				}
+				// Chk that unspent outputs match expected.
+				unspent, e := s.UnspentOutputs(ns)
+				if e != nil {
+					t.Fatalf(
+						"%s: failed to fetch unspent outputs: %v", test.name,
+						e,
+					)
+				}
+				for _, cred := range unspent {
+					if _, ok := test.unspents[cred.OutPoint]; !ok {
+						t.Errorf(
+							"%s: unexpected unspent output: %v", test.name,
+							cred.OutPoint,
+						)
+					}
+					delete(test.unspents, cred.OutPoint)
+				}
+				if len(test.unspents) != 0 {
+					t.Fatalf(
+						"%s: missing expected unspent output(s)",
+						test.name,
+					)
+				}
+				// Chk that unmined txs match expected.
+				unmined, e := s.UnminedTxs(ns)
+				if e != nil {
+					t.Fatalf(
+						"%s: cannot load unmined transactions: %v", test.name,
+						e,
+					)
+				}
+				for _, tx := range unmined {
+					txHash := tx.TxHash()
+					if _, ok := test.unmined[txHash]; !ok {
+						t.Fatalf(
+							"%s: unexpected unmined tx: %v",
+							test.name,
+							txHash,
+						)
+					}
+					delete(test.unmined, txHash)
+				}
+				if len(test.unmined) != 0 {
+					t.Fatalf("%s: missing expected unmined tx(s)", test.name)
+				}
+				return nil
+			},
 		)
 		if e != nil {
 			t.Fatal(e)
@@ -633,7 +650,8 @@ func newCoinBase(outputValues ...int64) *wire.MsgTx {
 	}
 	return &tx
 }
-func spendOutput(txHash *chainhash.Hash, index uint32, outputValues ...int64,
+func spendOutput(
+	txHash *chainhash.Hash, index uint32, outputValues ...int64,
 ) *wire.MsgTx {
 	tx := wire.MsgTx{
 		TxIn: []*wire.TxIn{
@@ -1047,7 +1065,8 @@ func TestCoinbases(t *testing.T) {
 		t.Fatal(e)
 	}
 	if len(unminedTxs) != 0 {
-		t.Fatalf("Should have no unmined transactions after coinbase reorg, found %d",
+		t.Fatalf(
+			"Should have no unmined transactions after coinbase reorg, found %d",
 			len(unminedTxs),
 		)
 	}
@@ -1219,7 +1238,8 @@ func TestMoveMultipleToSameBlock(t *testing.T) {
 		t.Fatal(e)
 	}
 	if len(unminedTxs) != 0 {
-		t.Fatalf("Should have no unmined transactions mining both, found %d",
+		t.Fatalf(
+			"Should have no unmined transactions mining both, found %d",
 			len(unminedTxs),
 		)
 	}
@@ -1316,22 +1336,24 @@ func TestRemoveUnminedTx(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e = store.InsertTx(ns, cbRec, b100); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e = store.AddCredit(ns, cbRec, b100, 0, false)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e = store.InsertTx(ns, cbRec, b100); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e = store.AddCredit(ns, cbRec, b100, 0, false)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	// Determine the maturity height for the coinbase output created.
 	coinbaseMaturity := int32(chaincfg.TestNet3Params.CoinbaseMaturity)
 	maturityHeight := b100.Block.Height + coinbaseMaturity
 	// checkBalance is a helper function that compares the balance of the store with the expected value. The
 	// includeUnconfirmed boolean can be used to include the unconfirmed balance as a part of the total balance.
-	checkBalance := func(expectedBalance amt.Amount,
+	checkBalance := func(
+		expectedBalance amt.Amount,
 		includeUnconfirmed bool,
 	) {
 		t.Helper()
@@ -1339,19 +1361,21 @@ func TestRemoveUnminedTx(t *testing.T) {
 		if includeUnconfirmed {
 			minConfs = 0
 		}
-		commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-			t.Helper()
-			var b amt.Amount
-			b, e = store.Balance(ns, minConfs, maturityHeight)
-			if e != nil {
-				t.Fatalf("unable to retrieve balance: %v", e)
-			}
-			if b != expectedBalance {
-				t.Fatalf("expected balance of %d, got %d",
-					expectedBalance, b,
-				)
-			}
-		},
+		commitDBTx(
+			t, store, db, func(ns walletdb.ReadWriteBucket) {
+				t.Helper()
+				var b amt.Amount
+				b, e = store.Balance(ns, minConfs, maturityHeight)
+				if e != nil {
+					t.Fatalf("unable to retrieve balance: %v", e)
+				}
+				if b != expectedBalance {
+					t.Fatalf(
+						"expected balance of %d, got %d",
+						expectedBalance, b,
+					)
+				}
+			},
 		)
 	}
 	// Since we don't have any unconfirmed transactions within the store, the total balance reflecting confirmed and
@@ -1369,61 +1393,68 @@ func TestRemoveUnminedTx(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e := store.InsertTx(ns, spendTxRec, nil); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e := store.AddCredit(ns, spendTxRec, nil, 1, true)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e := store.InsertTx(ns, spendTxRec, nil); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e := store.AddCredit(ns, spendTxRec, nil, 1, true)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	// With the unconfirmed spend inserted into the store, we'll query it for its unconfirmed tranasctions to ensure it
 	// was properly added.
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		unminedTxs, e := store.UnminedTxs(ns)
-		if e != nil {
-			t.Fatalf("unable to query for unmined txs: %v", e)
-		}
-		if len(unminedTxs) != 1 {
-			t.Fatalf("expected 1 mined tx, instead got %v",
-				len(unminedTxs),
-			)
-		}
-		unminedTxHash := unminedTxs[0].TxHash()
-		spendTxHash := spendTx.TxHash()
-		if !unminedTxHash.IsEqual(&spendTxHash) {
-			t.Fatalf("mismatch tx hashes: expected %v, got %v",
-				spendTxHash, unminedTxHash,
-			)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			unminedTxs, e := store.UnminedTxs(ns)
+			if e != nil {
+				t.Fatalf("unable to query for unmined txs: %v", e)
+			}
+			if len(unminedTxs) != 1 {
+				t.Fatalf(
+					"expected 1 mined tx, instead got %v",
+					len(unminedTxs),
+				)
+			}
+			unminedTxHash := unminedTxs[0].TxHash()
+			spendTxHash := spendTx.TxHash()
+			if !unminedTxHash.IsEqual(&spendTxHash) {
+				t.Fatalf(
+					"mismatch tx hashes: expected %v, got %v",
+					spendTxHash, unminedTxHash,
+				)
+			}
+		},
 	)
 	// Now that an unconfirmed spend exists, there should no longer be any confirmed balance. The total balance should
 	// now all be unconfirmed and it should match the change amount of the unconfirmed spend tranasction.
 	checkBalance(0, false)
 	checkBalance(amt.Amount(changeAmount), true)
 	// Now, we'll remove the unconfirmed spend tranaction from the store.
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e := store.RemoveUnminedTx(ns, spendTxRec); E.Chk(e) {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e := store.RemoveUnminedTx(ns, spendTxRec); E.Chk(e) {
+				t.Fatal(e)
+			}
+		},
 	)
 	// We'll query the store one last time for its unconfirmed transactions to ensure the unconfirmed spend was properly
 	// removed above.
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		unminedTxs, e := store.UnminedTxs(ns)
-		if e != nil {
-			t.Fatalf("unable to query for unmined txs: %v", e)
-		}
-		if len(unminedTxs) != 0 {
-			t.Fatalf("expected 0 mined txs, instead got %v",
-				len(unminedTxs),
-			)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			unminedTxs, e := store.UnminedTxs(ns)
+			if e != nil {
+				t.Fatalf("unable to query for unmined txs: %v", e)
+			}
+			if len(unminedTxs) != 0 {
+				t.Fatalf(
+					"expected 0 mined txs, instead got %v",
+					len(unminedTxs),
+				)
+			}
+		},
 	)
 	// Finally, the total balance (including confirmed and unconfirmed) should once again match the initial balance, as
 	// the uncofirmed spend has already been removed.
@@ -1433,7 +1464,8 @@ func TestRemoveUnminedTx(t *testing.T) {
 
 // commitDBTx is a helper function that allows us to perform multiple operations on a specific database's bucket as a
 // single atomic operation.
-func commitDBTx(t *testing.T, store *Store, db walletdb.DB,
+func commitDBTx(
+	t *testing.T, store *Store, db walletdb.DB,
 	f func(walletdb.ReadWriteBucket),
 ) {
 	t.Helper()
@@ -1474,15 +1506,16 @@ func testInsertMempoolDoubleSpendTx(t *testing.T, first bool) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e = store.InsertTx(ns, cbRec, &b100); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e = store.AddCredit(ns, cbRec, &b100, 0, false)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e = store.InsertTx(ns, cbRec, &b100); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e = store.AddCredit(ns, cbRec, &b100, 0, false)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	// Then, we'll create two spends from the same coinbase output, in order to replicate a double spend scenario.
 	firstSpend := spendOutput(&cbRec.Hash, 0, 5e7, 5e7)
@@ -1496,38 +1529,42 @@ func testInsertMempoolDoubleSpendTx(t *testing.T, first bool) {
 		t.Fatal(e)
 	}
 	// We'll insert both of them into the store without confirming them.
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e := store.InsertTx(ns, firstSpendRec, nil); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e := store.AddCredit(ns, firstSpendRec, nil, 0, false)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e := store.InsertTx(ns, firstSpendRec, nil); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e := store.AddCredit(ns, firstSpendRec, nil, 0, false)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e := store.InsertTx(ns, secondSpendRec, nil); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e := store.AddCredit(ns, secondSpendRec, nil, 0, false)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e := store.InsertTx(ns, secondSpendRec, nil); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e := store.AddCredit(ns, secondSpendRec, nil, 0, false)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	// Ensure that both spends are found within the unconfirmed transactions in the wallet's store.
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		unminedTxs, e := store.UnminedTxs(ns)
-		if e != nil {
-			t.Fatal(e)
-		}
-		if len(unminedTxs) != 2 {
-			t.Fatalf("expected 2 unmined txs, got %v",
-				len(unminedTxs),
-			)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			unminedTxs, e := store.UnminedTxs(ns)
+			if e != nil {
+				t.Fatal(e)
+			}
+			if len(unminedTxs) != 2 {
+				t.Fatalf(
+					"expected 2 unmined txs, got %v",
+					len(unminedTxs),
+				)
+			}
+		},
 	)
 	// Then, we'll confirm either the first or second spend, depending on the boolean passed, with a height deep enough
 	// that allows us to succesfully spend the coinbase output.
@@ -1542,45 +1579,49 @@ func testInsertMempoolDoubleSpendTx(t *testing.T, first bool) {
 	} else {
 		confirmedSpendRec = secondSpendRec
 	}
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		e := store.InsertTx(ns, confirmedSpendRec, &bMaturity)
-		if e != nil {
-			t.Fatal(e)
-		}
-		e = store.AddCredit(
-			ns, confirmedSpendRec, &bMaturity, 0, false,
-		)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			e := store.InsertTx(ns, confirmedSpendRec, &bMaturity)
+			if e != nil {
+				t.Fatal(e)
+			}
+			e = store.AddCredit(
+				ns, confirmedSpendRec, &bMaturity, 0, false,
+			)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	// This should now trigger the store to remove any other pending double spends for this coinbase output, as we've
 	// already seen the confirmed one. Therefore, we shouldn't see any other unconfirmed transactions within it. We also
 	// ensure that the transaction that confirmed and is now listed as a UTXO within the wallet is the correct one.
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		unminedTxs, e := store.UnminedTxs(ns)
-		if e != nil {
-			t.Fatal(e)
-		}
-		if len(unminedTxs) != 0 {
-			t.Fatalf("expected 0 unmined txs, got %v",
-				len(unminedTxs),
-			)
-		}
-		minedTxs, e := store.UnspentOutputs(ns)
-		if e != nil {
-			t.Fatal(e)
-		}
-		if len(minedTxs) != 1 {
-			t.Fatalf("expected 1 mined tx, got %v", len(minedTxs))
-		}
-		if !minedTxs[0].Hash.IsEqual(&confirmedSpendRec.Hash) {
-			t.Fatalf("expected confirmed tx hash %v, got %v",
-				confirmedSpendRec.Hash, minedTxs[0].Hash,
-			)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			unminedTxs, e := store.UnminedTxs(ns)
+			if e != nil {
+				t.Fatal(e)
+			}
+			if len(unminedTxs) != 0 {
+				t.Fatalf(
+					"expected 0 unmined txs, got %v",
+					len(unminedTxs),
+				)
+			}
+			minedTxs, e := store.UnspentOutputs(ns)
+			if e != nil {
+				t.Fatal(e)
+			}
+			if len(minedTxs) != 1 {
+				t.Fatalf("expected 1 mined tx, got %v", len(minedTxs))
+			}
+			if !minedTxs[0].Hash.IsEqual(&confirmedSpendRec.Hash) {
+				t.Fatalf(
+					"expected confirmed tx hash %v, got %v",
+					confirmedSpendRec.Hash, minedTxs[0].Hash,
+				)
+			}
+		},
 	)
 }
 
@@ -1623,15 +1664,16 @@ func TestInsertConfirmedDoubleSpendTx(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e = store.InsertTx(ns, cbRec1, &b100); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e = store.AddCredit(ns, cbRec1, &b100, 0, false)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e = store.InsertTx(ns, cbRec1, &b100); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e = store.AddCredit(ns, cbRec1, &b100, 0, false)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	// Then, we'll create three spends from the same coinbase output. The first two will remain unconfirmed, while the
 	// last should confirm and remove the remaining unconfirmed from the wallet's store.
@@ -1640,30 +1682,32 @@ func TestInsertConfirmedDoubleSpendTx(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e = store.InsertTx(ns, firstSpendRec1, nil); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e = store.AddCredit(ns, firstSpendRec1, nil, 0, false)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e = store.InsertTx(ns, firstSpendRec1, nil); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e = store.AddCredit(ns, firstSpendRec1, nil, 0, false)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	secondSpend1 := spendOutput(&cbRec1.Hash, 0, 4e7)
 	secondSpendRec1, e := NewTxRecordFromMsgTx(secondSpend1, time.Now())
 	if e != nil {
 		t.Fatal(e)
 	}
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e = store.InsertTx(ns, secondSpendRec1, nil); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e = store.AddCredit(ns, secondSpendRec1, nil, 0, false)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e = store.InsertTx(ns, secondSpendRec1, nil); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e = store.AddCredit(ns, secondSpendRec1, nil, 0, false)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	// We'll also create another output and have one unconfirmed and one confirmed spending transaction also spend it.
 	cb2 := newCoinBase(2e8)
@@ -1671,44 +1715,48 @@ func TestInsertConfirmedDoubleSpendTx(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e = store.InsertTx(ns, cbRec2, &b100); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e = store.AddCredit(ns, cbRec2, &b100, 0, false)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e = store.InsertTx(ns, cbRec2, &b100); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e = store.AddCredit(ns, cbRec2, &b100, 0, false)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	firstSpend2 := spendOutput(&cbRec2.Hash, 0, 5e7)
 	firstSpendRec2, e := NewTxRecordFromMsgTx(firstSpend2, time.Now())
 	if e != nil {
 		t.Fatal(e)
 	}
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e = store.InsertTx(ns, firstSpendRec2, nil); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e = store.AddCredit(ns, firstSpendRec2, nil, 0, false)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e = store.InsertTx(ns, firstSpendRec2, nil); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e = store.AddCredit(ns, firstSpendRec2, nil, 0, false)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	// At this point, we should see all unconfirmed transactions within the store.
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		var unminedTxs []*wire.MsgTx
-		unminedTxs, e = store.UnminedTxs(ns)
-		if e != nil {
-			t.Fatal(e)
-		}
-		if len(unminedTxs) != 3 {
-			t.Fatalf("expected 3 unmined txs, got %d",
-				len(unminedTxs),
-			)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			var unminedTxs []*wire.MsgTx
+			unminedTxs, e = store.UnminedTxs(ns)
+			if e != nil {
+				t.Fatal(e)
+			}
+			if len(unminedTxs) != 3 {
+				t.Fatalf(
+					"expected 3 unmined txs, got %d",
+					len(unminedTxs),
+				)
+			}
+		},
 	)
 	// Then, we'll insert the confirmed spend at a height deep enough that allows us to successfully spend the coinbase
 	// outputs.
@@ -1728,45 +1776,49 @@ func TestInsertConfirmedDoubleSpendTx(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		e := store.InsertTx(ns, confirmedSpendRec, &bMaturity)
-		if e != nil {
-			t.Fatal(e)
-		}
-		e = store.AddCredit(
-			ns, confirmedSpendRec, &bMaturity, 0, false,
-		)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			e := store.InsertTx(ns, confirmedSpendRec, &bMaturity)
+			if e != nil {
+				t.Fatal(e)
+			}
+			e = store.AddCredit(
+				ns, confirmedSpendRec, &bMaturity, 0, false,
+			)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	// Now that the confirmed spend exists within the store, we should no longer see the unconfirmed spends within it.
 	// We also ensure that the transaction that confirmed and is now listed as a UTXO within the wallet is the correct
 	// one.
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		unminedTxs, e := store.UnminedTxs(ns)
-		if e != nil {
-			t.Fatal(e)
-		}
-		if len(unminedTxs) != 0 {
-			t.Fatalf("expected 0 unmined txs, got %v",
-				len(unminedTxs),
-			)
-		}
-		minedTxs, e := store.UnspentOutputs(ns)
-		if e != nil {
-			t.Fatal(e)
-		}
-		if len(minedTxs) != 1 {
-			t.Fatalf("expected 1 mined tx, got %v", len(minedTxs))
-		}
-		if !minedTxs[0].Hash.IsEqual(&confirmedSpendRec.Hash) {
-			t.Fatalf("expected confirmed tx hash %v, got %v",
-				confirmedSpend, minedTxs[0].Hash,
-			)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			unminedTxs, e := store.UnminedTxs(ns)
+			if e != nil {
+				t.Fatal(e)
+			}
+			if len(unminedTxs) != 0 {
+				t.Fatalf(
+					"expected 0 unmined txs, got %v",
+					len(unminedTxs),
+				)
+			}
+			minedTxs, e := store.UnspentOutputs(ns)
+			if e != nil {
+				t.Fatal(e)
+			}
+			if len(minedTxs) != 1 {
+				t.Fatalf("expected 1 mined tx, got %v", len(minedTxs))
+			}
+			if !minedTxs[0].Hash.IsEqual(&confirmedSpendRec.Hash) {
+				t.Fatalf(
+					"expected confirmed tx hash %v, got %v",
+					confirmedSpend, minedTxs[0].Hash,
+				)
+			}
+		},
 	)
 }
 
@@ -1793,32 +1845,35 @@ func TestAddDuplicateCreditAfterConfirm(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e = store.InsertTx(ns, cbRec, b100); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e = store.AddCredit(ns, cbRec, b100, 0, false)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e = store.InsertTx(ns, cbRec, b100); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e = store.AddCredit(ns, cbRec, b100, 0, false)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	// We'll confirm that there is one unspent output in the store, which should be the coinbase output created above.
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		var minedTxs []Credit
-		minedTxs, e = store.UnspentOutputs(ns)
-		if e != nil {
-			t.Fatal(e)
-		}
-		if len(minedTxs) != 1 {
-			t.Fatalf("expected 1 mined tx, got %v", len(minedTxs))
-		}
-		if !minedTxs[0].Hash.IsEqual(&cbRec.Hash) {
-			t.Fatalf("expected tx hash %v, got %v", cbRec.Hash,
-				minedTxs[0].Hash,
-			)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			var minedTxs []Credit
+			minedTxs, e = store.UnspentOutputs(ns)
+			if e != nil {
+				t.Fatal(e)
+			}
+			if len(minedTxs) != 1 {
+				t.Fatalf("expected 1 mined tx, got %v", len(minedTxs))
+			}
+			if !minedTxs[0].Hash.IsEqual(&cbRec.Hash) {
+				t.Fatalf(
+					"expected tx hash %v, got %v", cbRec.Hash,
+					minedTxs[0].Hash,
+				)
+			}
+		},
 	)
 	// Then, we'll create an unconfirmed spend for the coinbase output.
 	b101 := &BlockMeta{
@@ -1830,73 +1885,80 @@ func TestAddDuplicateCreditAfterConfirm(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e := store.InsertTx(ns, spendTxRec, nil); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e := store.AddCredit(ns, spendTxRec, nil, 1, true)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e := store.InsertTx(ns, spendTxRec, nil); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e := store.AddCredit(ns, spendTxRec, nil, 1, true)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	// Confirm the spending transaction at the next height.
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e := store.InsertTx(ns, spendTxRec, b101); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e := store.AddCredit(ns, spendTxRec, b101, 1, true)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e := store.InsertTx(ns, spendTxRec, b101); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e := store.AddCredit(ns, spendTxRec, b101, 1, true)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	// We should see one unspent output within the store once again, this time being the change output of the spending
 	// transaction.
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		minedTxs, e := store.UnspentOutputs(ns)
-		if e != nil {
-			t.Fatal(e)
-		}
-		if len(minedTxs) != 1 {
-			t.Fatalf("expected 1 mined txs, got %v", len(minedTxs))
-		}
-		if !minedTxs[0].Hash.IsEqual(&spendTxRec.Hash) {
-			t.Fatalf("expected tx hash %v, got %v", spendTxRec.Hash,
-				minedTxs[0].Hash,
-			)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			minedTxs, e := store.UnspentOutputs(ns)
+			if e != nil {
+				t.Fatal(e)
+			}
+			if len(minedTxs) != 1 {
+				t.Fatalf("expected 1 mined txs, got %v", len(minedTxs))
+			}
+			if !minedTxs[0].Hash.IsEqual(&spendTxRec.Hash) {
+				t.Fatalf(
+					"expected tx hash %v, got %v", spendTxRec.Hash,
+					minedTxs[0].Hash,
+				)
+			}
+		},
 	)
 	// Now, we'll insert the spending transaction once again, this time as unconfirmed. This can happen if the backend
 	// happens to forward an unconfirmed chain.RelevantTx notification to the client even after it has confirmed, which
 	// results in us adding it to the store once again.
 	//
 	// TODO(wilmer): ideally this shouldn't happen, so we should identify the real reason for this.
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		if e := store.InsertTx(ns, spendTxRec, nil); E.Chk(e) {
-			t.Fatal(e)
-		}
-		e := store.AddCredit(ns, spendTxRec, nil, 1, true)
-		if e != nil {
-			t.Fatal(e)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			if e := store.InsertTx(ns, spendTxRec, nil); E.Chk(e) {
+				t.Fatal(e)
+			}
+			e := store.AddCredit(ns, spendTxRec, nil, 1, true)
+			if e != nil {
+				t.Fatal(e)
+			}
+		},
 	)
 	// Finally, we'll ensure the change output is still the only unspent output within the store.
-	commitDBTx(t, store, db, func(ns walletdb.ReadWriteBucket) {
-		minedTxs, e := store.UnspentOutputs(ns)
-		if e != nil {
-			t.Fatal(e)
-		}
-		if len(minedTxs) != 1 {
-			t.Fatalf("expected 1 mined txs, got %v", len(minedTxs))
-		}
-		if !minedTxs[0].Hash.IsEqual(&spendTxRec.Hash) {
-			t.Fatalf("expected tx hash %v, got %v", spendTxRec.Hash,
-				minedTxs[0].Hash,
-			)
-		}
-	},
+	commitDBTx(
+		t, store, db, func(ns walletdb.ReadWriteBucket) {
+			minedTxs, e := store.UnspentOutputs(ns)
+			if e != nil {
+				t.Fatal(e)
+			}
+			if len(minedTxs) != 1 {
+				t.Fatalf("expected 1 mined txs, got %v", len(minedTxs))
+			}
+			if !minedTxs[0].Hash.IsEqual(&spendTxRec.Hash) {
+				t.Fatalf(
+					"expected tx hash %v, got %v", spendTxRec.Hash,
+					minedTxs[0].Hash,
+				)
+			}
+		},
 	)
 }

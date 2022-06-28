@@ -26,7 +26,8 @@ type Opt struct {
 type Hook func(d time.Duration) error
 
 // New creates a new Opt with a given default value set
-func New(m meta.Data, def time.Duration, min, max time.Duration, hook ...Hook,
+func New(
+	m meta.Data, def time.Duration, min, max time.Duration, hook ...Hook,
 ) *Opt {
 	return &Opt{
 		Value: uberatomic.NewDuration(def),
@@ -58,7 +59,8 @@ func (x *Opt) GetMetadata() *meta.Data {
 // ReadInput sets the value from a string
 func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 	if input == "" {
-		e = fmt.Errorf("duration opt %s %v may not be empty", x.Name(),
+		e = fmt.Errorf(
+			"duration opt %s %v may not be empty", x.Name(),
 			x.Data.Aliases,
 		)
 		return

@@ -1,9 +1,10 @@
 package atom
 
 import (
+	"time"
+
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chaincfg"
-	"time"
 
 	"go.uber.org/atomic"
 

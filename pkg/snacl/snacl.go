@@ -103,7 +103,8 @@ type SecretKey struct {
 
 // deriveKey fills out the Key field.
 func (sk *SecretKey) deriveKey(password *[]byte) (e error) {
-	key, e := scrypt.Key(*password, sk.Parameters.Salt[:],
+	key, e := scrypt.Key(
+		*password, sk.Parameters.Salt[:],
 		sk.Parameters.N,
 		sk.Parameters.R,
 		sk.Parameters.P,

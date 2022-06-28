@@ -130,7 +130,8 @@ func (f Flex) Layout(gtx Context, children ...FlexChild) Dimensions {
 			}
 		}
 		macro := op.Record(gtx.Ops)
-		cgtx.Constraints = f.Axis.constraints(flexSize, flexSize, crossMin,
+		cgtx.Constraints = f.Axis.constraints(
+			flexSize, flexSize, crossMin,
 			crossMax,
 		)
 		dims := child.widget(cgtx)

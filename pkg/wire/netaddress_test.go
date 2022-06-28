@@ -16,12 +16,14 @@ func TestNetAddress(t *testing.T) {
 		t.Errorf("NetNetAddress: wrong ip - got %v, want %v", na.IP, ip)
 	}
 	if na.Port != uint16(port) {
-		t.Errorf("NetNetAddress: wrong port - got %v, want %v", na.Port,
+		t.Errorf(
+			"NetNetAddress: wrong port - got %v, want %v", na.Port,
 			port,
 		)
 	}
 	if na.Services != 0 {
-		t.Errorf("NetNetAddress: wrong services - got %v, want %v",
+		t.Errorf(
+			"NetNetAddress: wrong services - got %v, want %v",
 			na.Services, 0,
 		)
 	}
@@ -31,7 +33,8 @@ func TestNetAddress(t *testing.T) {
 	// Ensure adding the full service node flag works.
 	na.AddService(SFNodeNetwork)
 	if na.Services != SFNodeNetwork {
-		t.Errorf("AddService: wrong services - got %v, want %v",
+		t.Errorf(
+			"AddService: wrong services - got %v, want %v",
 			na.Services, SFNodeNetwork,
 		)
 	}
@@ -43,8 +46,9 @@ func TestNetAddress(t *testing.T) {
 	wantPayload := uint32(30)
 	maxPayload := maxNetAddressPayload(ProtocolVersion)
 	if maxPayload != wantPayload {
-		t.Errorf("maxNetAddressPayload: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"maxNetAddressPayload: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -54,8 +58,9 @@ func TestNetAddress(t *testing.T) {
 	wantPayload = 26
 	maxPayload = maxNetAddressPayload(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("maxNetAddressPayload: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"maxNetAddressPayload: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}

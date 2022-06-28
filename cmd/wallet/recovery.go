@@ -1,9 +1,10 @@
 package wallet
 
 import (
+	"time"
+
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chaincfg"
-	"time"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/txscript"

@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/cybriq/p9/pkg/rpchelp"
 	"os"
 	"strings"
+
+	"github.com/cybriq/p9/pkg/rpchelp"
 
 	"github.com/cybriq/p9/pkg/btcjson"
 )

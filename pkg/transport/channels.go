@@ -75,7 +75,13 @@ func (c *Channel) Send(magic []byte, nonce []byte, data []byte) (
 		return
 	}
 	var msg []byte
-	if msg, e = EncryptMessage(c.Creator, c.sendCiph, magic, nonce, data); E.Chk(e) {
+	if msg, e = EncryptMessage(
+		c.Creator,
+		c.sendCiph,
+		magic,
+		nonce,
+		data,
+	); E.Chk(e) {
 	}
 	n, e = c.Sender.Write(msg)
 	// D.Ln(msg)
@@ -145,13 +151,15 @@ func NewUnicastChannel(
 		bytes[i] = 0
 		key[i] = 0
 	}
-	if channel.Receiver, e = Listen(receiver, channel, maxDatagramSize,
+	if channel.Receiver, e = Listen(
+		receiver, channel, maxDatagramSize,
 		handlers, quit,
 	); E.Chk(e) {
 	}
 	if channel.Sender, e = NewSender(sender, maxDatagramSize); E.Chk(e) {
 	}
-	D.Ln("starting unicast multicast:", channel.Creator, sender, receiver,
+	D.Ln(
+		"starting unicast multicast:", channel.Creator, sender, receiver,
 		magics,
 	)
 	return
@@ -224,7 +232,8 @@ func NewBroadcastChannel(
 		key[i] = 0
 		bytes[i] = 0
 	}
-	if channel.Receiver, e = ListenBroadcast(port, channel, maxDatagramSize,
+	if channel.Receiver, e = ListenBroadcast(
+		port, channel, maxDatagramSize,
 		handlers, quit,
 	); E.Chk(e) {
 	}
@@ -326,7 +335,8 @@ out:
 			nonceBytes := msg[4 : 4+nL]
 			nonce := string(nonceBytes)
 			var shard []byte
-			if shard, e = channel.receiveCiph.Open(nil, nonceBytes,
+			if shard, e = channel.receiveCiph.Open(
+				nil, nonceBytes,
 				msg[4+len(nonceBytes):], nil,
 			); e != nil {
 				continue
@@ -343,7 +353,8 @@ out:
 						}
 						// D.F("received packet with magic %s from %s len %d bytes", magic, src.String(), len(cipherText))
 						bn.Decoded = true
-						if e = handler(channel.context, src, address,
+						if e = handler(
+							channel.context, src, address,
 							cipherText,
 						); E.Chk(e) {
 							continue

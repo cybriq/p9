@@ -52,7 +52,8 @@ func buildSquares(size int) paint.ImageOp {
 	for r := 0; r < 4; r++ {
 		for c := 0; c < 4; c++ {
 			c1, c2 = c2, c1
-			draw.Draw(im, image.Rect(r*sub, c*sub, r*sub+sub, c*sub+sub), c1,
+			draw.Draw(
+				im, image.Rect(r*sub, c*sub, r*sub+sub, c*sub+sub), c1,
 				image.Point{}, draw.Over,
 			)
 		}
@@ -61,7 +62,8 @@ func buildSquares(size int) paint.ImageOp {
 	return paint.NewImageOp(im)
 }
 
-func drawImage(t *testing.T, size int, ops *op.Ops, draw func(o *op.Ops),
+func drawImage(
+	t *testing.T, size int, ops *op.Ops, draw func(o *op.Ops),
 ) (im *image.RGBA, err error) {
 	sz := image.Point{X: size, Y: size}
 	w := newWindow(t, sz.X, sz.Y)
@@ -184,7 +186,8 @@ func verifyRef(t *testing.T, img *image.RGBA, frame int) (ok bool) {
 			}
 		}
 	default:
-		t.Fatalf("reference image is a %T, expected *image.NRGBA or *image.RGBA",
+		t.Fatalf(
+			"reference image is a %T, expected *image.NRGBA or *image.RGBA",
 			r,
 		)
 	}

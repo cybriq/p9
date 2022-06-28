@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	js "encoding/json"
+
 	"github.com/cybriq/p9/pkg/amt"
 	"github.com/cybriq/p9/pkg/btcaddr"
 
@@ -95,7 +96,8 @@ func (c *Client) GetRawTransaction(txHash *chainhash.Hash) (*util.Tx, error) {
 type FutureGetRawTransactionVerboseResult chan *response
 
 // Receive waits for the response promised by the future and returns information about a transaction given its hash.
-func (r FutureGetRawTransactionVerboseResult) Receive() (*btcjson.TxRawResult,
+func (r FutureGetRawTransactionVerboseResult) Receive() (
+	*btcjson.TxRawResult,
 	error,
 ) {
 	res, e := receiveFuture(r)
@@ -126,7 +128,8 @@ func (c *Client) GetRawTransactionVerboseAsync(txHash *chainhash.Hash) FutureGet
 
 // GetRawTransactionVerbose returns information about a transaction given its hash. See GetRawTransaction to obtain only
 // the transaction already deserialized.
-func (c *Client) GetRawTransactionVerbose(txHash *chainhash.Hash) (*btcjson.TxRawResult,
+func (c *Client) GetRawTransactionVerbose(txHash *chainhash.Hash) (
+	*btcjson.TxRawResult,
 	error,
 ) {
 	return c.GetRawTransactionVerboseAsync(txHash).Receive()
@@ -138,7 +141,8 @@ type FutureDecodeRawTransactionResult chan *response
 
 // Receive waits for the response promised by the future and returns information about a transaction given its
 // serialized bytes.
-func (r FutureDecodeRawTransactionResult) Receive() (*btcjson.TxRawResult,
+func (r FutureDecodeRawTransactionResult) Receive() (
+	*btcjson.TxRawResult,
 	error,
 ) {
 	res, e := receiveFuture(r)
@@ -164,7 +168,8 @@ func (c *Client) DecodeRawTransactionAsync(serializedTx []byte) FutureDecodeRawT
 }
 
 // DecodeRawTransaction returns information about a transaction given its serialized bytes.
-func (c *Client) DecodeRawTransaction(serializedTx []byte) (*btcjson.TxRawResult,
+func (c *Client) DecodeRawTransaction(serializedTx []byte) (
+	*btcjson.TxRawResult,
 	error,
 ) {
 	return c.DecodeRawTransactionAsync(serializedTx).Receive()
@@ -247,7 +252,8 @@ func (r FutureSendRawTransactionResult) Receive() (*chainhash.Hash, error) {
 // time by invoking the Receive function on the returned instance.
 //
 // See SendRawTransaction for the blocking version and more details.
-func (c *Client) SendRawTransactionAsync(tx *wire.MsgTx, allowHighFees bool,
+func (c *Client) SendRawTransactionAsync(
+	tx *wire.MsgTx, allowHighFees bool,
 ) FutureSendRawTransactionResult {
 	txHex := ""
 	if tx != nil {
@@ -263,7 +269,8 @@ func (c *Client) SendRawTransactionAsync(tx *wire.MsgTx, allowHighFees bool,
 }
 
 // SendRawTransaction submits the encoded transaction to the server which will then relay it to the network.
-func (c *Client) SendRawTransaction(tx *wire.MsgTx, allowHighFees bool,
+func (c *Client) SendRawTransaction(
+	tx *wire.MsgTx, allowHighFees bool,
 ) (*chainhash.Hash, error) {
 	return c.SendRawTransactionAsync(tx, allowHighFees).Receive()
 }
@@ -329,7 +336,8 @@ func (c *Client) SignRawTransaction(tx *wire.MsgTx) (*wire.MsgTx, bool, error) {
 // time by invoking the Receive on the returned instance.
 //
 // See SignRawTransaction2 for the blocking version and more details.
-func (c *Client) SignRawTransaction2Async(tx *wire.MsgTx,
+func (c *Client) SignRawTransaction2Async(
+	tx *wire.MsgTx,
 	inputs []btcjson.RawTxInput,
 ) FutureSignRawTransactionResult {
 	txHex := ""
@@ -352,7 +360,8 @@ func (c *Client) SignRawTransaction2Async(tx *wire.MsgTx,
 // input transactions will be merged with the specified transactions.
 //
 // See SignRawTransaction if the RPC server already knows the input transactions.
-func (c *Client) SignRawTransaction2(tx *wire.MsgTx,
+func (c *Client) SignRawTransaction2(
+	tx *wire.MsgTx,
 	inputs []btcjson.RawTxInput,
 ) (*wire.MsgTx, bool, error) {
 	return c.SignRawTransaction2Async(tx, inputs).Receive()
@@ -519,7 +528,8 @@ func (c *Client) SearchRawTransactions(
 	reverse bool,
 	filterAddrs []string,
 ) ([]*wire.MsgTx, error) {
-	return c.SearchRawTransactionsAsync(address, skip, count, reverse,
+	return c.SearchRawTransactionsAsync(
+		address, skip, count, reverse,
 		filterAddrs,
 	).Receive()
 }
@@ -529,7 +539,8 @@ func (c *Client) SearchRawTransactions(
 type FutureSearchRawTransactionsVerboseResult chan *response
 
 // Receive waits for the response promised by the future and returns the found raw transactions.
-func (r FutureSearchRawTransactionsVerboseResult) Receive() ([]*btcjson.SearchRawTransactionsResult,
+func (r FutureSearchRawTransactionsVerboseResult) Receive() (
+	[]*btcjson.SearchRawTransactionsResult,
 	error,
 ) {
 	res, e := receiveFuture(r)
@@ -586,7 +597,8 @@ type FutureDecodeScriptResult chan *response
 
 // Receive waits for the response promised by the future and returns information about a script given its serialized
 // bytes.
-func (r FutureDecodeScriptResult) Receive() (*btcjson.DecodeScriptResult, error,
+func (r FutureDecodeScriptResult) Receive() (
+	*btcjson.DecodeScriptResult, error,
 ) {
 	res, e := receiveFuture(r)
 	if e != nil {
@@ -612,7 +624,8 @@ func (c *Client) DecodeScriptAsync(serializedScript []byte) FutureDecodeScriptRe
 }
 
 // DecodeScript returns information about a script given its serialized bytes.
-func (c *Client) DecodeScript(serializedScript []byte) (*btcjson.DecodeScriptResult,
+func (c *Client) DecodeScript(serializedScript []byte) (
+	*btcjson.DecodeScriptResult,
 	error,
 ) {
 	return c.DecodeScriptAsync(serializedScript).Receive()

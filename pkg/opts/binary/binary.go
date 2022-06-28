@@ -61,7 +61,8 @@ func (x *Opt) ReadInput(input string) (o opt.Option, e error) {
 	case "f", "false", "-":
 		e = x.Set(false)
 	default:
-		e = fmt.Errorf("input on opt %s: '%s' is not valid for a boolean flag",
+		e = fmt.Errorf(
+			"input on opt %s: '%s' is not valid for a boolean flag",
 			x.Name(), input,
 		)
 	}

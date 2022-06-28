@@ -3,8 +3,9 @@ package waddrmgr
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/cybriq/p9/pkg/btcaddr"
 	"sync"
+
+	"github.com/cybriq/p9/pkg/btcaddr"
 
 	ec "github.com/cybriq/p9/pkg/ecc"
 	"github.com/cybriq/p9/pkg/util"
@@ -128,7 +129,8 @@ func (a *managedAddress) unlock(key EncryptorDecryptor) ([]byte, error) {
 		var e error
 		var privKey []byte
 		if privKey, e = key.Decrypt(a.privKeyEncrypted); E.Chk(e) {
-			str := fmt.Sprintf("failed to decrypt private key for %s",
+			str := fmt.Sprintf(
+				"failed to decrypt private key for %s",
 				a.address,
 			)
 			return nil, managerError(ErrCrypto, str, e)
@@ -465,7 +467,8 @@ var _ ManagedScriptAddress = (*scriptAddress)(nil)
 // invalid or the encrypted script is not available. The returned clear text
 // script will always be a copy that may be safely used by the caller without
 // worrying about it being zeroed during an address lock.
-func (a *scriptAddress) unlock(key EncryptorDecryptor) (scriptCopy []byte,
+func (a *scriptAddress) unlock(key EncryptorDecryptor) (
+	scriptCopy []byte,
 	e error,
 ) {
 	// Protect concurrent access to clear text script.

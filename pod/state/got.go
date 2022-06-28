@@ -90,7 +90,8 @@ func GetNew(
 	); E.Chk(e) {
 	}
 	D.Ln("enable log file writing")
-	if e = log.SetLogWriteToFile(s.Config.LogDir.V(),
+	if e = log.SetLogWriteToFile(
+		s.Config.LogDir.V(),
 		s.Config.RunningCommand.Name,
 	); E.Chk(e) {
 	}
@@ -191,8 +192,9 @@ func GetNew(
 	T.Ln("checking relay/reject nonstandard policy settings")
 	switch {
 	case s.Config.RelayNonStd.True() && s.Config.RejectNonStd.True():
-		e = fmt.Errorf("rejectnonstd and relaynonstd cannot be used together" +
-			" -- choose only one",
+		e = fmt.Errorf(
+			"rejectnonstd and relaynonstd cannot be used together" +
+				" -- choose only one",
 		)
 		E.Ln(e)
 		return
@@ -243,7 +245,8 @@ func GetNew(
 		_, allAddresses := routeable.GetAddressesAndInterfaces()
 		p2pAddresses := []string{}
 		for addr := range allAddresses {
-			p2pAddresses = append(p2pAddresses,
+			p2pAddresses = append(
+				p2pAddresses,
 				net.JoinHostPort(addr, s.ActiveNet.DefaultPort),
 			)
 		}
@@ -386,7 +389,8 @@ func GetNew(
 	T.Ln("setting up tor proxy if enabled")
 	if !s.Config.OnionProxyAddress.Empty() {
 		if _, _, e = net.SplitHostPort(s.Config.OnionProxyAddress.V()); E.Chk(e) {
-			e = fmt.Errorf("onion proxy address '%s' is invalid: %v",
+			e = fmt.Errorf(
+				"onion proxy address '%s' is invalid: %v",
 				s.Config.OnionProxyAddress.V(), e,
 			)
 			// _, _ = fmt.Fprintln(os.Stderr, e)

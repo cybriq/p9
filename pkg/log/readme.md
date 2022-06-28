@@ -1,8 +1,8 @@
 # logg
 
-This is a very simple, but practical library for 
+This is a very simple, but practical library for
 logging in applications. Currenty in process of
-superseding the logi library, once the pipe logger 
+superseding the logi library, once the pipe logger
 is converted, as it is integrated into the block
 sync progress logger.
 

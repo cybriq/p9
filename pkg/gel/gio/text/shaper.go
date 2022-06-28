@@ -14,7 +14,8 @@ import (
 // Shaper implements layout and shaping of text.
 type Shaper interface {
 	// Layout a text according to a set of options.
-	Layout(font Font, size fixed.Int26_6, maxWidth int, txt io.Reader) ([]Line,
+	Layout(font Font, size fixed.Int26_6, maxWidth int, txt io.Reader) (
+		[]Line,
 		error,
 	)
 	// LayoutString is Layout for strings.
@@ -92,7 +93,8 @@ func NewCache(collection []FontFace) *Cache {
 }
 
 // Layout implements the Shaper interface.
-func (s *Cache) Layout(font Font, size fixed.Int26_6, maxWidth int,
+func (s *Cache) Layout(
+	font Font, size fixed.Int26_6, maxWidth int,
 	txt io.Reader,
 ) ([]Line, error) {
 	cache := s.lookup(font)
@@ -100,7 +102,8 @@ func (s *Cache) Layout(font Font, size fixed.Int26_6, maxWidth int,
 }
 
 // LayoutString is a caching implementation of the Shaper interface.
-func (s *Cache) LayoutString(font Font, size fixed.Int26_6, maxWidth int,
+func (s *Cache) LayoutString(
+	font Font, size fixed.Int26_6, maxWidth int,
 	str string,
 ) []Line {
 	cache := s.lookup(font)
@@ -114,7 +117,8 @@ func (s *Cache) Shape(font Font, size fixed.Int26_6, layout Layout) op.CallOp {
 	return cache.shape(size, layout)
 }
 
-func (f *faceCache) layout(ppem fixed.Int26_6, maxWidth int, str string,
+func (f *faceCache) layout(
+	ppem fixed.Int26_6, maxWidth int, str string,
 ) []Line {
 	if f == nil {
 		return nil

@@ -50,30 +50,39 @@ func TestCollectionAsFace(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed shaping valid glyph with font 2: %v", err)
 	}
-	shapeInvalid2, err := shapeRune(font2, '3') // Same invalid glyph as before to test replacement glyph difference
+	shapeInvalid2, err := shapeRune(
+		font2,
+		'3',
+	) // Same invalid glyph as before to test replacement glyph difference
 	if err != nil {
 		t.Fatalf("failed shaping invalid glyph with font 2: %v", err)
 	}
 	shapeCollValid1, err := shapeRune(coll, '1')
 	if err != nil {
-		t.Fatalf("failed shaping valid glyph for font 1 with font collection: %v",
+		t.Fatalf(
+			"failed shaping valid glyph for font 1 with font collection: %v",
 			err,
 		)
 	}
 	shapeCollValid2, err := shapeRune(coll, '2')
 	if err != nil {
-		t.Fatalf("failed shaping valid glyph for font 2 with font collection: %v",
+		t.Fatalf(
+			"failed shaping valid glyph for font 2 with font collection: %v",
 			err,
 		)
 	}
-	shapeCollInvalid, err := shapeRune(coll, '4') // Different invalid glyph to confirm use of the replacement glyph
+	shapeCollInvalid, err := shapeRune(
+		coll,
+		'4',
+	) // Different invalid glyph to confirm use of the replacement glyph
 	if err != nil {
 		t.Fatalf("failed shaping invalid glyph with font collection: %v", err)
 	}
 
 	// All shapes from the original fonts should be distinct because the glyphs are distinct, including the replacement
 	// glyphs.
-	distinctShapes := []op.CallOp{shapeValid1, shapeInvalid1, shapeValid2,
+	distinctShapes := []op.CallOp{
+		shapeValid1, shapeInvalid1, shapeValid2,
 		shapeInvalid2,
 	}
 	for i := 0; i < len(distinctShapes); i++ {
@@ -125,14 +134,16 @@ func TestEmptyString(t *testing.T) {
 func decompressFontFile(name string) (*Font, []byte, error) {
 	f, err := os.Open(name)
 	if err != nil {
-		return nil, nil, fmt.Errorf("could not open file for reading: %s: %v",
+		return nil, nil, fmt.Errorf(
+			"could not open file for reading: %s: %v",
 			name, err,
 		)
 	}
 	defer f.Close()
 	gz, err := gzip.NewReader(f)
 	if err != nil {
-		return nil, nil, fmt.Errorf("font file contains invalid gzip data: %v",
+		return nil, nil, fmt.Errorf(
+			"font file contains invalid gzip data: %v",
 			err,
 		)
 	}
@@ -142,7 +153,8 @@ func decompressFontFile(name string) (*Font, []byte, error) {
 	}
 	fnt, err := Parse(src)
 	if err != nil {
-		return nil, nil, fmt.Errorf("file did not contain a valid font: %v",
+		return nil, nil, fmt.Errorf(
+			"file did not contain a valid font: %v",
 			err,
 		)
 	}
@@ -192,7 +204,8 @@ func shapeRune(f text.Face, r rune) (op.CallOp, error) {
 		return op.CallOp{}, err
 	}
 	if len(lines) != 1 {
-		return op.CallOp{}, fmt.Errorf("unexpected rendering for \"U+%08X\": got %d lines (expected: 1)",
+		return op.CallOp{}, fmt.Errorf(
+			"unexpected rendering for \"U+%08X\": got %d lines (expected: 1)",
 			r, len(lines),
 		)
 	}

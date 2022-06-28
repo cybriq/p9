@@ -67,12 +67,14 @@ func TestPodExtCmds(t *testing.T) {
 		{
 			name: "node",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("node", btcjson.NConnect, "1.1.1.1",
+				return btcjson.NewCmd(
+					"node", btcjson.NConnect, "1.1.1.1",
 					"perm",
 				)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewNodeCmd("connect", "1.1.1.1",
+				return btcjson.NewNodeCmd(
+					"connect", "1.1.1.1",
 					btcjson.String("perm"),
 				)
 			},
@@ -86,12 +88,14 @@ func TestPodExtCmds(t *testing.T) {
 		{
 			name: "node",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("node", btcjson.NConnect, "1.1.1.1",
+				return btcjson.NewCmd(
+					"node", btcjson.NConnect, "1.1.1.1",
 					"temp",
 				)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewNodeCmd("connect", "1.1.1.1",
+				return btcjson.NewNodeCmd(
+					"connect", "1.1.1.1",
 					btcjson.String("temp"),
 				)
 			},
@@ -157,10 +161,12 @@ func TestPodExtCmds(t *testing.T) {
 		{
 			name: "getheaders - with arguments",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("getheaders", []string{
-					"000000000000000001f1739002418e2f9a84c47a4fd2a0eb7a787a6b7dc12f16",
-					"0000000000000000026f4b7f56eef057b32167eb5ad9ff62006f1807b7336d10",
-				},
+				return btcjson.NewCmd(
+					"getheaders",
+					[]string{
+						"000000000000000001f1739002418e2f9a84c47a4fd2a0eb7a787a6b7dc12f16",
+						"0000000000000000026f4b7f56eef057b32167eb5ad9ff62006f1807b7336d10",
+					},
 					"000000000000000000ba33b33e1fad70b69e234fc24414dd47113bff38f523f7",
 				)
 			},
@@ -200,14 +206,16 @@ func TestPodExtCmds(t *testing.T) {
 		// Marshal the command as created by the new static command creation function.
 		marshalled, e := btcjson.MarshalCmd(testID, test.staticCmd())
 		if e != nil {
-			t.Errorf("MarshalCmd #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"MarshalCmd #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		if !bytes.Equal(marshalled, []byte(test.marshalled)) {
-			t.Errorf("Test #%d (%s) unexpected marshalled data - "+
-				"got %s, want %s", i, test.name, marshalled,
+			t.Errorf(
+				"Test #%d (%s) unexpected marshalled data - "+
+					"got %s, want %s", i, test.name, marshalled,
 				test.marshalled,
 			)
 			continue
@@ -215,43 +223,49 @@ func TestPodExtCmds(t *testing.T) {
 		// Ensure the command is created without error via the generic new command creation function.
 		cmd, e := test.newCmd()
 		if e != nil {
-			t.Errorf("Test #%d (%s) unexpected NewCmd error: %v ",
+			t.Errorf(
+				"Test #%d (%s) unexpected NewCmd error: %v ",
 				i, test.name, e,
 			)
 		}
 		// Marshal the command as created by the generic new command creation function.
 		marshalled, e = btcjson.MarshalCmd(testID, cmd)
 		if e != nil {
-			t.Errorf("MarshalCmd #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"MarshalCmd #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		if !bytes.Equal(marshalled, []byte(test.marshalled)) {
-			t.Errorf("Test #%d (%s) unexpected marshalled data - "+
-				"got %s, want %s", i, test.name, marshalled,
+			t.Errorf(
+				"Test #%d (%s) unexpected marshalled data - "+
+					"got %s, want %s", i, test.name, marshalled,
 				test.marshalled,
 			)
 			continue
 		}
 		var request btcjson.Request
 		if e = json.Unmarshal(marshalled, &request); E.Chk(e) {
-			t.Errorf("Test #%d (%s) unexpected error while "+
-				"unmarshalling JSON-RPC request: %v", i,
+			t.Errorf(
+				"Test #%d (%s) unexpected error while "+
+					"unmarshalling JSON-RPC request: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		cmd, e = btcjson.UnmarshalCmd(&request)
 		if e != nil {
-			t.Errorf("UnmarshalCmd #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"UnmarshalCmd #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		if !reflect.DeepEqual(cmd, test.unmarshalled) {
-			t.Errorf("Test #%d (%s) unexpected unmarshalled command "+
-				"- got %s, want %s", i, test.name,
+			t.Errorf(
+				"Test #%d (%s) unexpected unmarshalled command "+
+					"- got %s, want %s", i, test.name,
 				fmt.Sprintf("(%T) %+[1]v", cmd),
 				fmt.Sprintf("(%T) %+[1]v\n", test.unmarshalled),
 			)

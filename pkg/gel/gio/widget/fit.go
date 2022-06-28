@@ -35,7 +35,8 @@ const (
 // scale adds clip and scale operations to fit dims to the constraints.
 // It positions the widget to the appropriate position.
 // It returns dimensions modified accordingly.
-func (fit Fit) scale(gtx layout.Context, pos layout.Direction,
+func (fit Fit) scale(
+	gtx layout.Context, pos layout.Direction,
 	dims layout.Dimensions,
 ) layout.Dimensions {
 	widgetSize := dims.Size
@@ -97,9 +98,10 @@ func (fit Fit) scale(gtx layout.Context, pos layout.Direction,
 	clip.Rect{Max: dims.Size}.Add(gtx.Ops)
 
 	offset := pos.Position(scaledSize, dims.Size)
-	op.Affine(f32.Affine2D{}.
-		Scale(f32.Point{}, scale).
-		Offset(layout.FPt(offset)),
+	op.Affine(
+		f32.Affine2D{}.
+			Scale(f32.Point{}, scale).
+			Offset(layout.FPt(offset)),
 	).Add(gtx.Ops)
 
 	dims.Baseline += offset.Y

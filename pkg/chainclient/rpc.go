@@ -2,11 +2,12 @@ package chainclient
 
 import (
 	"errors"
+	"sync"
+	"time"
+
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/txscript"
-	"sync"
-	"time"
 
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -211,7 +212,8 @@ func buildFilterBlocksWatchList(req *FilterBlocksRequest) ([][]byte, error) {
 // anything. If the filter returns a positive match, the full block will be fetched and filtered. This method returns a
 // FilterBlocksResponse for the first block containing a matching address. If no matches are found in the range of
 // blocks requested, the returned response will be nil.
-func (c *RPCClient) FilterBlocks(req *FilterBlocksRequest) (*FilterBlocksResponse,
+func (c *RPCClient) FilterBlocks(req *FilterBlocksRequest) (
+	*FilterBlocksResponse,
 	error,
 ) {
 	blockFilterer := NewBlockFilterer(c.chainParams, req)
@@ -302,7 +304,8 @@ func (c *RPCClient) onClientConnect() {
 	case <-c.quit.Wait():
 	}
 }
-func (c *RPCClient) onBlockConnected(hash *chainhash.Hash, height int32,
+func (c *RPCClient) onBlockConnected(
+	hash *chainhash.Hash, height int32,
 	time time.Time,
 ) {
 	select {
@@ -316,7 +319,8 @@ func (c *RPCClient) onBlockConnected(hash *chainhash.Hash, height int32,
 	case <-c.quit.Wait():
 	}
 }
-func (c *RPCClient) onBlockDisconnected(hash *chainhash.Hash, height int32,
+func (c *RPCClient) onBlockDisconnected(
+	hash *chainhash.Hash, height int32,
 	time time.Time,
 ) {
 	select {
@@ -353,7 +357,8 @@ func (c *RPCClient) onRedeemingTx(tx *util.Tx, block *btcjson.BlockDetails) {
 	// Handled exactly like recvtx notifications.
 	c.onRecvTx(tx, block)
 }
-func (c *RPCClient) onRescanProgress(hash *chainhash.Hash, height int32,
+func (c *RPCClient) onRescanProgress(
+	hash *chainhash.Hash, height int32,
 	blkTime time.Time,
 ) {
 	select {
@@ -361,7 +366,8 @@ func (c *RPCClient) onRescanProgress(hash *chainhash.Hash, height int32,
 	case <-c.quit.Wait():
 	}
 }
-func (c *RPCClient) onRescanFinished(hash *chainhash.Hash, height int32,
+func (c *RPCClient) onRescanFinished(
+	hash *chainhash.Hash, height int32,
 	blkTime time.Time,
 ) {
 	select {

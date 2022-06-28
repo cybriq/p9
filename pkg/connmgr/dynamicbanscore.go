@@ -26,7 +26,7 @@ var precomputedFactor [precomputedLen]float64
 
 // init precomputes decay factors.
 func init() {
-	
+
 	for i := range precomputedFactor {
 		precomputedFactor[i] = math.Exp(-1.0 * float64(i) * lambda)
 	}
@@ -60,7 +60,8 @@ type DynamicBanScore struct {
 // String returns the ban score as a human-readable string.
 func (s *DynamicBanScore) String() string {
 	s.mtx.Lock()
-	r := fmt.Sprintf("persistent %v + transient %v at %v = %v as of now",
+	r := fmt.Sprintf(
+		"persistent %v + transient %v at %v = %v as of now",
 		s.persistent, s.transient, s.lastUnix, s.Int(),
 	)
 	s.mtx.Unlock()
@@ -107,7 +108,10 @@ func (s *DynamicBanScore) int(t time.Time) uint32 {
 // increase increases the persistent, the decaying or both scores by the values passed as parameters. The resulting
 // score is calculated as if the action was carried out at the point time represented by the third parameter. The
 // resulting score is returned. This function is not safe for concurrent access.
-func (s *DynamicBanScore) increase(persistent, transient uint32, t time.Time) uint32 {
+func (s *DynamicBanScore) increase(
+	persistent, transient uint32,
+	t time.Time,
+) uint32 {
 	s.persistent += persistent
 	tu := t.Unix()
 	dt := tu - s.lastUnix

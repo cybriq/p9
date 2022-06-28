@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build android || (darwin && ios)
 // +build android darwin,ios
 
 package wm
@@ -20,10 +21,12 @@ func mainMain()
 var runMainOnce sync.Once
 
 func runMain() {
-	runMainOnce.Do(func() {
-		// Indirect call, since the linker does not know the address of main when
-		// laying down this package.
-		fn := mainMain
-		fn()
-	})
+	runMainOnce.Do(
+		func() {
+			// Indirect call, since the linker does not know the address of main when
+			// laying down this package.
+			fn := mainMain
+			fn()
+		},
+	)
 }

@@ -19,10 +19,12 @@ func TestUsageFlagStringer(t *testing.T) {
 		{btcjson.UFWalletOnly, "UFWalletOnly"},
 		{btcjson.UFWebsocketOnly, "UFWebsocketOnly"},
 		{btcjson.UFNotification, "UFNotification"},
-		{btcjson.UFWalletOnly | btcjson.UFWebsocketOnly,
+		{
+			btcjson.UFWalletOnly | btcjson.UFWebsocketOnly,
 			"UFWalletOnly|UFWebsocketOnly",
 		},
-		{btcjson.UFWalletOnly | btcjson.UFWebsocketOnly | (1 << 31),
+		{
+			btcjson.UFWalletOnly | btcjson.UFWebsocketOnly | (1 << 31),
 			"UFWalletOnly|UFWebsocketOnly|0x80000000",
 		},
 	}
@@ -34,15 +36,17 @@ func TestUsageFlagStringer(t *testing.T) {
 		highestUsageFlagBit >>= 1
 	}
 	if len(tests)-3 != numUsageFlags {
-		t.Errorf("It appears a usage flag was added without adding " +
-			"an associated stringer test",
+		t.Errorf(
+			"It appears a usage flag was added without adding " +
+				"an associated stringer test",
 		)
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
 		result := test.in.String()
 		if result != test.want {
-			t.Errorf("String #%d\n got: %s want: %s", i, result,
+			t.Errorf(
+				"String #%d\n got: %s want: %s", i, result,
 				test.want,
 			)
 			continue
@@ -202,19 +206,22 @@ func TestRegisterCmdErrors(t *testing.T) {
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
-		e := btcjson.RegisterCmd(test.method, test.cmdFunc(),
+		e := btcjson.RegisterCmd(
+			test.method, test.cmdFunc(),
 			test.flags,
 		)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("Test #%d (%s) wrong error - got %T, "+
-				"want %T", i, test.name, e, test.e,
+			t.Errorf(
+				"Test #%d (%s) wrong error - got %T, "+
+					"want %T", i, test.name, e, test.e,
 			)
 			continue
 		}
 		gotErrorCode := e.(btcjson.GeneralError).ErrorCode
 		if gotErrorCode != test.e.ErrorCode {
-			t.Errorf("Test #%d (%s) mismatched error code - got "+
-				"%v, want %v", i, test.name, gotErrorCode,
+			t.Errorf(
+				"Test #%d (%s) mismatched error code - got "+
+					"%v, want %v", i, test.name, gotErrorCode,
 				test.e.ErrorCode,
 			)
 			continue

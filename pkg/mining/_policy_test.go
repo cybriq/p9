@@ -29,7 +29,8 @@ func hexToBytes(s string) []byte {
 }
 
 // newUtxoViewpoint returns a new utxo view populated with outputs of the provided source transactions as if there were available at the respective block height specified in the heights slice.  The length of the source txns and source tx heights must match or it will panic.
-func newUtxoViewpoint(sourceTxns []*wire.MsgTx, sourceTxHeights []int32,
+func newUtxoViewpoint(
+	sourceTxns []*wire.MsgTx, sourceTxHeights []int32,
 ) *blockchain.UtxoViewpoint {
 	if len(sourceTxns) != len(sourceTxHeights) {
 		panic("each transaction must have its block height specified")
@@ -48,23 +49,26 @@ func TestCalcPriority(t *testing.T) {
 	// tx 0437cd7f8525ceed2324359c2d0ba26006d92d856a9c20fa0241106ee5a597c9
 	commonSourceTx1 := &wire.MsgTx{
 		Version: 1,
-		TxIn: []*wire.TxIn{{
-			PreviousOutPoint: wire.OutPoint{
-				Hash:  chainhash.Hash{},
-				Index: wire.MaxPrevOutIndex,
+		TxIn: []*wire.TxIn{
+			{
+				PreviousOutPoint: wire.OutPoint{
+					Hash:  chainhash.Hash{},
+					Index: wire.MaxPrevOutIndex,
+				},
+				SignatureScript: hexToBytes("04ffff001d0134"),
+				Sequence:        0xffffffff,
 			},
-			SignatureScript: hexToBytes("04ffff001d0134"),
-			Sequence:        0xffffffff,
 		},
-		},
-		TxOut: []*wire.TxOut{{
-			Value: 5000000000,
-			PkScript: hexToBytes("410411db93e1dcdb8a016b49840f8c5" +
-				"3bc1eb68a382e97b1482ecad7b148a6909a5cb2e0ead" +
-				"dfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8" +
-				"643f656b412a3ac",
-			),
-		},
+		TxOut: []*wire.TxOut{
+			{
+				Value: 5000000000,
+				PkScript: hexToBytes(
+					"410411db93e1dcdb8a016b49840f8c5" +
+						"3bc1eb68a382e97b1482ecad7b148a6909a5cb2e0ead" +
+						"dfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8" +
+						"643f656b412a3ac",
+				),
+			},
 		},
 		LockTime: 0,
 	}
@@ -72,37 +76,43 @@ func TestCalcPriority(t *testing.T) {
 	// It originally came from block 170 in main blockchain.
 	commonRedeemTx1 := &wire.MsgTx{
 		Version: 1,
-		TxIn: []*wire.TxIn{{
-			PreviousOutPoint: wire.OutPoint{
-				Hash: *newHashFromStr("0437cd7f8525ceed232435" +
-					"9c2d0ba26006d92d856a9c20fa0241106ee5" +
-					"a597c9",
+		TxIn: []*wire.TxIn{
+			{
+				PreviousOutPoint: wire.OutPoint{
+					Hash: *newHashFromStr(
+						"0437cd7f8525ceed232435" +
+							"9c2d0ba26006d92d856a9c20fa0241106ee5" +
+							"a597c9",
+					),
+					Index: 0,
+				},
+				SignatureScript: hexToBytes(
+					"47304402204e45e16932b8af" +
+						"514961a1d3a1a25fdf3f4f7732e9d624c6c61548ab5f" +
+						"b8cd410220181522ec8eca07de4860a4acdd12909d83" +
+						"1cc56cbbac4622082221a8768d1d0901",
 				),
-				Index: 0,
+				Sequence: 0xffffffff,
 			},
-			SignatureScript: hexToBytes("47304402204e45e16932b8af" +
-				"514961a1d3a1a25fdf3f4f7732e9d624c6c61548ab5f" +
-				"b8cd410220181522ec8eca07de4860a4acdd12909d83" +
-				"1cc56cbbac4622082221a8768d1d0901",
-			),
-			Sequence: 0xffffffff,
 		},
-		},
-		TxOut: []*wire.TxOut{{
-			Value: 1000000000,
-			PkScript: hexToBytes("4104ae1a62fe09c5f51b13905f07f06" +
-				"b99a2f7159b2225f374cd378d71302fa28414e7aab37" +
-				"397f554a7df5f142c21c1b7303b8a0626f1baded5c72" +
-				"a704f7e6cd84cac",
-			),
-		}, {
-			Value: 4000000000,
-			PkScript: hexToBytes("410411db93e1dcdb8a016b49840f8c5" +
-				"3bc1eb68a382e97b1482ecad7b148a6909a5cb2e0ead" +
-				"dfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8" +
-				"643f656b412a3ac",
-			),
-		},
+		TxOut: []*wire.TxOut{
+			{
+				Value: 1000000000,
+				PkScript: hexToBytes(
+					"4104ae1a62fe09c5f51b13905f07f06" +
+						"b99a2f7159b2225f374cd378d71302fa28414e7aab37" +
+						"397f554a7df5f142c21c1b7303b8a0626f1baded5c72" +
+						"a704f7e6cd84cac",
+				),
+			}, {
+				Value: 4000000000,
+				PkScript: hexToBytes(
+					"410411db93e1dcdb8a016b49840f8c5" +
+						"3bc1eb68a382e97b1482ecad7b148a6909a5cb2e0ead" +
+						"dfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8" +
+						"643f656b412a3ac",
+				),
+			},
 		},
 		LockTime: 0,
 	}
@@ -116,7 +126,8 @@ func TestCalcPriority(t *testing.T) {
 		{
 			name: "one height 7 input, prio tx height 169",
 			tx:   commonRedeemTx1,
-			utxoView: newUtxoViewpoint([]*wire.MsgTx{commonSourceTx1},
+			utxoView: newUtxoViewpoint(
+				[]*wire.MsgTx{commonSourceTx1},
 				[]int32{7},
 			),
 			nextHeight: 169,
@@ -125,7 +136,8 @@ func TestCalcPriority(t *testing.T) {
 		{
 			name: "one height 100 input, prio tx height 169",
 			tx:   commonRedeemTx1,
-			utxoView: newUtxoViewpoint([]*wire.MsgTx{commonSourceTx1},
+			utxoView: newUtxoViewpoint(
+				[]*wire.MsgTx{commonSourceTx1},
 				[]int32{100},
 			),
 			nextHeight: 169,
@@ -134,7 +146,8 @@ func TestCalcPriority(t *testing.T) {
 		{
 			name: "one height 7 input, prio tx height 100000",
 			tx:   commonRedeemTx1,
-			utxoView: newUtxoViewpoint([]*wire.MsgTx{commonSourceTx1},
+			utxoView: newUtxoViewpoint(
+				[]*wire.MsgTx{commonSourceTx1},
 				[]int32{7},
 			),
 			nextHeight: 100000,
@@ -143,7 +156,8 @@ func TestCalcPriority(t *testing.T) {
 		{
 			name: "one height 100 input, prio tx height 100000",
 			tx:   commonRedeemTx1,
-			utxoView: newUtxoViewpoint([]*wire.MsgTx{commonSourceTx1},
+			utxoView: newUtxoViewpoint(
+				[]*wire.MsgTx{commonSourceTx1},
 				[]int32{100},
 			),
 			nextHeight: 100000,
@@ -153,8 +167,9 @@ func TestCalcPriority(t *testing.T) {
 	for i, test := range tests {
 		got := CalcPriority(test.tx, test.utxoView, test.nextHeight)
 		if got != test.want {
-			t.Errorf("CalcPriority #%d (%q): unexpected priority "+
-				"got %v want %v", i, test.name, got, test.want,
+			t.Errorf(
+				"CalcPriority #%d (%q): unexpected priority "+
+					"got %v want %v", i, test.name, got, test.want,
 			)
 			continue
 		}

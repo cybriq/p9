@@ -19,7 +19,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	
+
 	"golang.org/x/exp/shiny/iconvg"
 	"golang.org/x/image/math/f32"
 )
@@ -31,7 +31,7 @@ var (
 	out      = new(bytes.Buffer)
 	failures = []string{}
 	varNames = []string{}
-	
+
 	totalFiles    int
 	totalIVGBytes int
 	totalSVGBytes int
@@ -83,7 +83,11 @@ func main() {
 		log.Fatalf("gofmt failed: %v\n\nGenerated code:\n%s", e, raw)
 	}
 	// formatted := raw
-	if e := ioutil.WriteFile(filepath.Join(*outDir, "data.go"), formatted, 0644); E.Chk(e) {
+	if e := ioutil.WriteFile(
+		filepath.Join(*outDir, "data.go"),
+		formatted,
+		0644,
+	); E.Chk(e) {
 		log.Fatalf("WriteFile failed: %s\n", e)
 	}
 	{
@@ -101,7 +105,11 @@ func main() {
 		if e != nil {
 			log.Fatalf("gofmt failed: %v\n\nGenerated code:\n%s", e, raw)
 		}
-		if e := ioutil.WriteFile(filepath.Join(*outDir, "data_test.go"), formatted, 0644); E.Chk(e) {
+		if e := ioutil.WriteFile(
+			filepath.Join(*outDir, "data_test.go"),
+			formatted,
+			0644,
+		); E.Chk(e) {
 			log.Fatalf("WriteFile failed: %s\n", e)
 		}
 	}
@@ -117,7 +125,7 @@ func genDir(dirName string) (e error) {
 		if e = f.Close(); E.Chk(e) {
 		}
 	}()
-	
+
 	var infos []os.FileInfo
 	infos, e = f.Readdir(-1)
 	if e != nil {
@@ -126,14 +134,18 @@ func genDir(dirName string) (e error) {
 	baseNames, fileNames, sizes := []string{}, map[string]string{}, map[string]int{}
 	for _, info := range infos {
 		name := info.Name()
-		
+
 		nameParts := strings.Split(name, "_")
 		if len(nameParts) != 3 || nameParts[0] != "ic" {
 			continue
 		}
 		baseName := nameParts[1]
 		var size int
-		if n, e := fmt.Sscanf(nameParts[2], "%dpx.svg", &size); e != nil || n != 1 {
+		if n, e := fmt.Sscanf(
+			nameParts[2],
+			"%dpx.svg",
+			&size,
+		); e != nil || n != 1 {
 			continue
 		}
 		if prevSize, ok := sizes[baseName]; ok {
@@ -147,7 +159,7 @@ func genDir(dirName string) (e error) {
 			baseNames = append(baseNames, baseName)
 		}
 	}
-	
+
 	sort.Strings(baseNames)
 	for _, baseName := range baseNames {
 		fileName := fileNames[baseName]
@@ -185,7 +197,7 @@ type Path struct {
 	Fill        string   `xml:"fill,attr"`
 	FillOpacity *float32 `xml:"fill-opacity,attr"`
 	Opacity     *float32 `xml:"opacity,attr"`
-	
+
 	creg uint8
 }
 
@@ -205,12 +217,12 @@ func genFile(svgData []byte, baseName string, outSize float32) (e error) {
 		_, _ = fmt.Fprintf(out, "\n}\n\n")
 	}()
 	varNames = append(varNames, varName)
-	
+
 	g := &SVG{}
 	if e = xml.Unmarshal(svgData, g); E.Chk(e) {
 		return e
 	}
-	
+
 	var vbx, vby, vbx2, vby2 float32
 	for i, v := range strings.Split(g.ViewBox, " ") {
 		var f float64
@@ -272,29 +284,45 @@ func genFile(svgData []byte, baseName string, outSize float32) (e error) {
 			Palette: palette,
 		},
 	)
-	
+
 	offset := f32.Vec2{
 		vbx * outSize / size,
 		vby * outSize / size,
 	}
-	
+
 	// adjs maps from opacity to a cReg adj value.
 	adjs := map[float32]uint8{}
-	
+
 	for _, p := range g.Paths {
-		if e = genPath(&enc, p, adjs, outSize, size, offset, g.Circles); E.Chk(e) {
+		if e = genPath(
+			&enc,
+			p,
+			adjs,
+			outSize,
+			size,
+			offset,
+			g.Circles,
+		); E.Chk(e) {
 			return e
 		}
 		g.Circles = nil
 	}
-	
+
 	if len(g.Circles) != 0 {
-		if e = genPath(&enc, &Path{}, adjs, outSize, size, offset, g.Circles); E.Chk(e) {
+		if e = genPath(
+			&enc,
+			&Path{},
+			adjs,
+			outSize,
+			size,
+			offset,
+			g.Circles,
+		); E.Chk(e) {
 			return e
 		}
 		g.Circles = nil
 	}
-	
+
 	ivgData, e := enc.Bytes()
 	if e != nil {
 		return fmt.Errorf("iconvg encoding failed: %v", e)
@@ -305,7 +333,7 @@ func genFile(svgData []byte, baseName string, outSize float32) (e error) {
 		}
 		_, _ = fmt.Fprintf(out, "%#02x, ", x)
 	}
-	
+
 	totalFiles++
 	totalSVGBytes += len(svgData)
 	totalIVGBytes += len(ivgData)
@@ -359,12 +387,16 @@ func genPath(
 			adjs[opacity] = adj
 			// Set CREG[0-adj] to be a blend of transparent (0x7f) and the
 			// first custom palette color (0x80).
-			enc.SetCReg(adj, false, iconvg.BlendColor(uint8(opacity*0xff), 0x7f, 0x80+p.creg))
+			enc.SetCReg(
+				adj,
+				false,
+				iconvg.BlendColor(uint8(opacity*0xff), 0x7f, 0x80+p.creg),
+			)
 		}
 	} else {
 		enc.SetCReg(adj, false, iconvg.PaletteIndexColor(p.creg))
 	}
-	
+
 	needStartPath := true
 	if p.D != "" {
 		needStartPath = false
@@ -372,7 +404,7 @@ func genPath(
 			return e
 		}
 	}
-	
+
 	for _, c := range circles {
 		// Normalize.
 		cx := c.Cx * outSize / size
@@ -380,31 +412,37 @@ func genPath(
 		cy := c.Cy * outSize / size
 		cy -= outSize/2 + offset[1]
 		r := c.R * outSize / size
-		
+
 		if needStartPath {
 			needStartPath = false
 			enc.StartPath(adj, cx-r, cy)
 		} else {
 			enc.ClosePathAbsMoveTo(cx-r, cy)
 		}
-		
+
 		// Convert a circle to two relative arcTo ops, each of 180 degrees.
 		// We can't use one 360 degree arcTo as the start and end point
 		// would be coincident and the computation is degenerate.
 		enc.RelArcTo(r, r, 0, false, true, +2*r, 0)
 		enc.RelArcTo(r, r, 0, false, true, -2*r, 0)
 	}
-	
+
 	enc.ClosePathEndPath()
 	return nil
 }
 
-func genPathData(enc *iconvg.Encoder, adj uint8, pathData string, outSize, size float32, offset f32.Vec2) (e error) {
+func genPathData(
+	enc *iconvg.Encoder,
+	adj uint8,
+	pathData string,
+	outSize, size float32,
+	offset f32.Vec2,
+) (e error) {
 	if strings.HasSuffix(pathData, "z") {
 		pathData = pathData[:len(pathData)-1]
 	}
 	r := strings.NewReader(pathData)
-	
+
 	var args [7]float32
 	op, relative, started := byte(0), false, false
 	var count int
@@ -417,7 +455,7 @@ func genPathData(enc *iconvg.Encoder, adj uint8, pathData string, outSize, size 
 			return e
 		}
 		count++
-		
+
 		switch {
 		case b == ' ' || b == '\n' || b == '\t':
 			continue
@@ -429,7 +467,7 @@ func genPathData(enc *iconvg.Encoder, adj uint8, pathData string, outSize, size 
 			if e := r.UnreadByte(); E.Chk(e) {
 			}
 		}
-		
+
 		n := 0
 		switch op {
 		case 'A', 'a':
@@ -448,15 +486,31 @@ func genPathData(enc *iconvg.Encoder, adj uint8, pathData string, outSize, size 
 		default:
 			return fmt.Errorf("unknown opcode %c\n", b)
 		}
-		
+
 		scan(&args, r, n)
 		normalize(&args, n, op, outSize, size, offset, relative)
-		
+
 		switch op {
 		case 'A':
-			enc.AbsArcTo(args[0], args[1], args[2], args[3] != 0, args[4] != 0, args[5], args[6])
+			enc.AbsArcTo(
+				args[0],
+				args[1],
+				args[2],
+				args[3] != 0,
+				args[4] != 0,
+				args[5],
+				args[6],
+			)
 		case 'a':
-			enc.RelArcTo(args[0], args[1], args[2], args[3] != 0, args[4] != 0, args[5], args[6])
+			enc.RelArcTo(
+				args[0],
+				args[1],
+				args[2],
+				args[3] != 0,
+				args[4] != 0,
+				args[5],
+				args[6],
+			)
 		case 'L':
 			enc.AbsLineTo(args[0], args[1])
 		case 'l':
@@ -512,7 +566,14 @@ func scan(args *[7]float32, r *strings.Reader, n int) {
 	}
 }
 
-func normalize(args *[7]float32, n int, op byte, outSize, size float32, offset f32.Vec2, relative bool) {
+func normalize(
+	args *[7]float32,
+	n int,
+	op byte,
+	outSize, size float32,
+	offset f32.Vec2,
+	relative bool,
+) {
 	for i := 0; i < n; i++ {
 		if (op == 'A' || op == 'a') && (i == 3 || i == 4) {
 			continue

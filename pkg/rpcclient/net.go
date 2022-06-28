@@ -37,7 +37,8 @@ func (r FutureAddNodeResult) Receive() (e error) {
 
 // AddNodeAsync returns an instance of a type that can be used to get the result of the RPC at some future time by
 // invoking the Receive function on the returned instance. See AddNode for the blocking version and more details.
-func (c *Client) AddNodeAsync(host string, command AddNodeCommand,
+func (c *Client) AddNodeAsync(
+	host string, command AddNodeCommand,
 ) FutureAddNodeResult {
 	cmd := btcjson.NewAddNodeCmd(host, btcjson.AddNodeSubCmd(command))
 	return c.sendCmd(cmd)
@@ -62,7 +63,8 @@ func (r FutureNodeResult) Receive() (e error) {
 
 // NodeAsync returns an instance of a type that can be used to get the result of the RPC at some future time by invoking
 // the Receive function on the returned instance. See Node for the blocking version and more details.
-func (c *Client) NodeAsync(command btcjson.NodeSubCmd, host string,
+func (c *Client) NodeAsync(
+	command btcjson.NodeSubCmd, host string,
 	connectSubCmd *string,
 ) FutureNodeResult {
 	cmd := btcjson.NewNodeCmd(command, host, connectSubCmd)
@@ -73,7 +75,8 @@ func (c *Client) NodeAsync(command btcjson.NodeSubCmd, host string,
 // persistent peer, or to do connect or diconnect a non-persistent one. The connectSubCmd should be set either "perm" or
 // "temp", depending on whether we are targetting a persistent or non-persistent peer. Passing nil will cause the
 // default value to be used, which currently is "temp".
-func (c *Client) Node(command btcjson.NodeSubCmd, host string,
+func (c *Client) Node(
+	command btcjson.NodeSubCmd, host string,
 	connectSubCmd *string,
 ) (e error) {
 	return c.NodeAsync(command, host, connectSubCmd).Receive()
@@ -85,7 +88,8 @@ type FutureGetAddedNodeInfoResult chan *response
 
 // Receive waits for the response promised by the future and returns information about manually added (persistent)
 // peers.
-func (r FutureGetAddedNodeInfoResult) Receive() ([]btcjson.GetAddedNodeInfoResult,
+func (r FutureGetAddedNodeInfoResult) Receive() (
+	[]btcjson.GetAddedNodeInfoResult,
 	error,
 ) {
 	res, e := receiveFuture(r)
@@ -111,7 +115,8 @@ func (c *Client) GetAddedNodeInfoAsync(peer string) FutureGetAddedNodeInfoResult
 
 // GetAddedNodeInfo returns information about manually added (persistent) peers. See GetAddedNodeInfoNoDNS to retrieve
 // only a list of the added (persistent) peers.
-func (c *Client) GetAddedNodeInfo(peer string) ([]btcjson.GetAddedNodeInfoResult,
+func (c *Client) GetAddedNodeInfo(peer string) (
+	[]btcjson.GetAddedNodeInfoResult,
 	error,
 ) {
 	return c.GetAddedNodeInfoAsync(peer).Receive()
@@ -210,7 +215,8 @@ func (c *Client) Ping() (e error) {
 type FutureGetPeerInfoResult chan *response
 
 // Receive waits for the response promised by the future and returns data about each connected network peer.
-func (r FutureGetPeerInfoResult) Receive() ([]btcjson.GetPeerInfoResult, error,
+func (r FutureGetPeerInfoResult) Receive() (
+	[]btcjson.GetPeerInfoResult, error,
 ) {
 	res, e := receiveFuture(r)
 	if e != nil {
@@ -244,7 +250,8 @@ func (c *Client) GetPeerInfo() ([]btcjson.GetPeerInfoResult, error) {
 type FutureGetNetTotalsResult chan *response
 
 // Receive waits for the response promised by the future and returns network statistics.
-func (r FutureGetNetTotalsResult) Receive() (*btcjson.GetNetTotalsResult, error,
+func (r FutureGetNetTotalsResult) Receive() (
+	*btcjson.GetNetTotalsResult, error,
 ) {
 	res, e := receiveFuture(r)
 	if e != nil {

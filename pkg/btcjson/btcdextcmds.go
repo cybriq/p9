@@ -21,7 +21,11 @@ type NodeCmd struct {
 
 // NewNodeCmd returns a new instance which can be used to issue a `node` JSON-RPC command. The parameters which are
 // pointers indicate they are optional. Passing nil for optional parameters will use the default value.
-func NewNodeCmd(subCmd NodeSubCmd, target string, connectSubCmd *string) *NodeCmd {
+func NewNodeCmd(
+	subCmd NodeSubCmd,
+	target string,
+	connectSubCmd *string,
+) *NodeCmd {
 	return &NodeCmd{
 		SubCmd:        subCmd,
 		Target:        target,

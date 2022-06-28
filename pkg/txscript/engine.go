@@ -172,7 +172,8 @@ func (vm *Engine) executeOpcode(pop *parsedOpcode) (e error) {
 // to provide a valid offset.
 func (vm *Engine) disasm(scriptIdx int, scriptOff int) string {
 	if scriptIdx >= len(vm.scripts) {
-		return fmt.Sprintf("disasm array index out of bounds ERR: %02x:%04x",
+		return fmt.Sprintf(
+			"disasm array index out of bounds ERR: %02x:%04x",
 			scriptIdx, scriptOff,
 		)
 	}

@@ -80,7 +80,8 @@ type State struct {
 	receiveAddresses        []AddressEntry
 }
 
-func GetNewState(params *chaincfg.Params, activePage *uberatomic.String,
+func GetNewState(
+	params *chaincfg.Params, activePage *uberatomic.String,
 ) *State {
 	fc := &atom.Bool{
 		Bool: uberatomic.NewBool(false),
@@ -242,7 +243,8 @@ func (m *Marshalled) Unmarshal(s *State) {
 	if m.ReceivingAddress != "1111111111111111111114oLvT2" {
 		var e error
 		var ra btcaddr.Address
-		if ra, e = btcaddr.Decode(m.ReceivingAddress,
+		if ra, e = btcaddr.Decode(
+			m.ReceivingAddress,
 			s.currentReceivingAddress.ForNet,
 		); E.Chk(e) {
 		}
@@ -263,7 +265,8 @@ func (s *State) SetGoroutines(gr []l.Widget) {
 func (s *State) SetAllTxs(atxs []btcjson.ListTransactionsResult) {
 	s.allTxs.Store(atxs)
 	// generate filtered state
-	filteredTxs := make([]btcjson.ListTransactionsResult, 0,
+	filteredTxs := make(
+		[]btcjson.ListTransactionsResult, 0,
 		len(s.allTxs.Load()),
 	)
 	for i := range atxs {

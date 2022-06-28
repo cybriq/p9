@@ -2,12 +2,13 @@ package blockchain_test
 
 import (
 	"fmt"
-	bits2 "github.com/cybriq/p9/pkg/bits"
-	"github.com/cybriq/p9/pkg/block"
 	"log"
 	"math/big"
 	"os"
 	"path/filepath"
+
+	bits2 "github.com/cybriq/p9/pkg/bits"
+	"github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/blockchain"
 	"github.com/cybriq/p9/pkg/chaincfg"

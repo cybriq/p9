@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/cybriq/p9/pkg/block"
 	"os"
 	"path/filepath"
 	"runtime"
 	"sort"
 	"sync"
+
+	"github.com/cybriq/p9/pkg/block"
 
 	"github.com/btcsuite/goleveldb/leveldb"
 	"github.com/btcsuite/goleveldb/leveldb/comparer"
@@ -1198,7 +1199,8 @@ func (tx *transaction) FetchBlockHeader(hash *chainhash.Hash) ([]byte, error) {
 // This constraint prevents additional data copies and allows support for memory-mapped database implementations.
 //
 // This function is part of the database.Tx interface implementation.
-func (tx *transaction) FetchBlockHeaders(hashes []chainhash.Hash) ([][]byte,
+func (tx *transaction) FetchBlockHeaders(hashes []chainhash.Hash) (
+	[][]byte,
 	error,
 ) {
 	regions := make([]database.BlockRegion, len(hashes))
@@ -1296,7 +1298,8 @@ func (tx *transaction) FetchBlocks(hashes []chainhash.Hash) ([][]byte, error) {
 //
 // It will return nil for the byte slice when the region references a block which is not pending. When the region does
 // reference a pending block, it is bounds checked and returns ErrBlockRegionInvalid if invalid.
-func (tx *transaction) fetchPendingRegion(region *database.BlockRegion) ([]byte,
+func (tx *transaction) fetchPendingRegion(region *database.BlockRegion) (
+	[]byte,
 	error,
 ) {
 	// Nothing to do if the block is not pending to be written on commit.
@@ -1345,7 +1348,8 @@ func (tx *transaction) fetchPendingRegion(region *database.BlockRegion) ([]byte,
 // transaction has ended results in undefined behavior. This constraint prevents additional data copies and allows
 // support for memory-mapped database implementations. This function is part of the database.Tx interface
 // implementation.
-func (tx *transaction) FetchBlockRegion(region *database.BlockRegion) ([]byte,
+func (tx *transaction) FetchBlockRegion(region *database.BlockRegion) (
+	[]byte,
 	error,
 ) {
 	// Ensure transaction state is valid.
@@ -1414,7 +1418,8 @@ func (tx *transaction) FetchBlockRegion(region *database.BlockRegion) ([]byte,
 // transaction has ended results in undefined behavior. This constraint prevents additional data copies and allows
 // support for memory-mapped database implementations. This function is part of the database.Tx interface
 // implementation.
-func (tx *transaction) FetchBlockRegions(regions []database.BlockRegion) ([][]byte,
+func (tx *transaction) FetchBlockRegions(regions []database.BlockRegion) (
+	[][]byte,
 	error,
 ) {
 	// Ensure transaction state is valid.
@@ -1859,7 +1864,8 @@ func initDB(ldb *leveldb.DB) (e error) {
 // openDB opens the database at the provided path
 //
 // ErrDbDoesNotExist is returned if the database doesn't exist and the create flag is not set.
-func openDB(dbPath string, network wire.BitcoinNet, create bool) (database.DB,
+func openDB(dbPath string, network wire.BitcoinNet, create bool) (
+	database.DB,
 	error,
 ) {
 	// DBError if the database doesn't exist and the create flag is not set.

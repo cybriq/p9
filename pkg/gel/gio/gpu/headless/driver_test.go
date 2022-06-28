@@ -50,7 +50,10 @@ func TestSimpleShader(t *testing.T) {
 	// Just off the center to catch inverted triangles.
 	cx, cy := 300, 400
 	shaderCol := f32color.RGBA{R: .25, G: .55, B: .75, A: 1.0}
-	if got, exp := img.RGBAAt(cx, cy), shaderCol.SRGB(); got != f32color.NRGBAToRGBA(exp) {
+	if got, exp := img.RGBAAt(
+		cx,
+		cy,
+	), shaderCol.SRGB(); got != f32color.NRGBAToRGBA(exp) {
 		t.Errorf("got color %v, expected %v", got, f32color.NRGBAToRGBA(exp))
 	}
 }
@@ -65,12 +68,14 @@ func TestInputShader(t *testing.T) {
 	}
 	defer p.Release()
 	b.BindProgram(p)
-	buf, err := b.NewImmutableBuffer(driver.BufferBindingVertices,
-		byteslice.Slice([]float32{
-			0, .5, .5, 1,
-			-.5, -.5, .5, 1,
-			.5, -.5, .5, 1,
-		},
+	buf, err := b.NewImmutableBuffer(
+		driver.BufferBindingVertices,
+		byteslice.Slice(
+			[]float32{
+				0, .5, .5, 1,
+				-.5, -.5, .5, 1,
+				.5, -.5, .5, 1,
+			},
 		),
 	)
 	if err != nil {
@@ -78,13 +83,14 @@ func TestInputShader(t *testing.T) {
 	}
 	defer buf.Release()
 	b.BindVertexBuffer(buf, 4*4, 0)
-	layout, err := b.NewInputLayout(shader_input_vert, []driver.InputDesc{
-		{
-			Type:   driver.DataTypeFloat,
-			Size:   4,
-			Offset: 0,
+	layout, err := b.NewInputLayout(
+		shader_input_vert, []driver.InputDesc{
+			{
+				Type:   driver.DataTypeFloat,
+				Size:   4,
+				Offset: 0,
+			},
 		},
-	},
 	)
 	if err != nil {
 		t.Fatal(err)
@@ -98,7 +104,10 @@ func TestInputShader(t *testing.T) {
 	}
 	cx, cy := 300, 400
 	shaderCol := f32color.RGBA{R: .25, G: .55, B: .75, A: 1.0}
-	if got, exp := img.RGBAAt(cx, cy), shaderCol.SRGB(); got != f32color.NRGBAToRGBA(exp) {
+	if got, exp := img.RGBAAt(
+		cx,
+		cy,
+	), shaderCol.SRGB(); got != f32color.NRGBAToRGBA(exp) {
 		t.Errorf("got color %v, expected %v", got, f32color.NRGBAToRGBA(exp))
 	}
 }
@@ -127,7 +136,8 @@ func TestFramebuffers(t *testing.T) {
 	}
 }
 
-func setupFBO(t *testing.T, b driver.Device, size image.Point,
+func setupFBO(
+	t *testing.T, b driver.Device, size image.Point,
 ) driver.Framebuffer {
 	fbo := newFBO(t, b, size)
 	b.BindFramebuffer(fbo)
@@ -140,7 +150,8 @@ func setupFBO(t *testing.T, b driver.Device, size image.Point,
 	return fbo
 }
 
-func newFBO(t *testing.T, b driver.Device, size image.Point,
+func newFBO(
+	t *testing.T, b driver.Device, size image.Point,
 ) driver.Framebuffer {
 	fboTex, err := b.NewTexture(
 		driver.TextureFormatSRGB,
@@ -151,18 +162,20 @@ func newFBO(t *testing.T, b driver.Device, size image.Point,
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Cleanup(func() {
-		fboTex.Release()
-	},
+	t.Cleanup(
+		func() {
+			fboTex.Release()
+		},
 	)
 	const depthBits = 16
 	fbo, err := b.NewFramebuffer(fboTex, depthBits)
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Cleanup(func() {
-		fbo.Release()
-	},
+	t.Cleanup(
+		func() {
+			fbo.Release()
+		},
 	)
 	return fbo
 }
@@ -181,17 +194,19 @@ func newDriver(t *testing.T) driver.Device {
 		t.Fatal(err)
 	}
 	b.BeginFrame()
-	t.Cleanup(func() {
-		b.EndFrame()
-		ctx.ReleaseCurrent()
-		runtime.UnlockOSThread()
-		ctx.Release()
-	},
+	t.Cleanup(
+		func() {
+			b.EndFrame()
+			ctx.ReleaseCurrent()
+			runtime.UnlockOSThread()
+			ctx.Release()
+		},
 	)
 	return b
 }
 
-func screenshot(t *testing.T, d driver.Device, fbo driver.Framebuffer,
+func screenshot(
+	t *testing.T, d driver.Device, fbo driver.Framebuffer,
 	size image.Point,
 ) *image.RGBA {
 	img, err := driver.DownloadImage(d, fbo, image.Rectangle{Max: size})

@@ -264,11 +264,13 @@ func (a Axis) crossConstraint(cs Constraints) (int, int) {
 // constraints returns the constraints for axis a.
 func (a Axis) constraints(mainMin, mainMax, crossMin, crossMax int) Constraints {
 	if a == Horizontal {
-		return Constraints{Min: image.Pt(mainMin, crossMin),
+		return Constraints{
+			Min: image.Pt(mainMin, crossMin),
 			Max: image.Pt(mainMax, crossMax),
 		}
 	}
-	return Constraints{Min: image.Pt(crossMin, mainMin),
+	return Constraints{
+		Min: image.Pt(crossMin, mainMin),
 		Max: image.Pt(crossMax, mainMax),
 	}
 }

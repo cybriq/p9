@@ -1,8 +1,9 @@
 package blockchain
 
 import (
-	block2 "github.com/cybriq/p9/pkg/block"
 	"testing"
+
+	block2 "github.com/cybriq/p9/pkg/block"
 )
 
 // TestMerkle tests the BuildMerkleTreeStore API.
@@ -12,7 +13,8 @@ func TestMerkle(t *testing.T) {
 	calculatedMerkleRoot := merkles.GetRoot()
 	wantMerkle := &Block100000.Header.MerkleRoot
 	if !wantMerkle.IsEqual(calculatedMerkleRoot) {
-		t.Errorf("BuildMerkleTreeStore: merkle root mismatch - got %v, want %v",
+		t.Errorf(
+			"BuildMerkleTreeStore: merkle root mismatch - got %v, want %v",
 			calculatedMerkleRoot, wantMerkle,
 		)
 	}

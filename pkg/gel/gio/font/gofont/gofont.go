@@ -34,34 +34,44 @@ var (
 )
 
 func Collection() []text.FontFace {
-	once.Do(func() {
-		register(text.Font{}, goregular.TTF)
-		register(text.Font{Style: text.Italic}, goitalic.TTF)
-		register(text.Font{Weight: text.Bold}, gobold.TTF)
-		register(text.Font{Style: text.Italic, Weight: text.Bold},
-			gobolditalic.TTF,
-		)
-		register(text.Font{Weight: text.Medium}, gomedium.TTF)
-		register(text.Font{Weight: text.Medium, Style: text.Italic},
-			gomediumitalic.TTF,
-		)
-		register(text.Font{Variant: "Mono"}, gomono.TTF)
-		register(text.Font{Variant: "Mono", Weight: text.Bold}, gomonobold.TTF)
-		register(text.Font{Variant: "Mono", Weight: text.Bold,
-			Style: text.Italic,
-		}, gomonobolditalic.TTF,
-		)
-		register(text.Font{Variant: "Mono", Style: text.Italic},
-			gomonoitalic.TTF,
-		)
-		register(text.Font{Variant: "Smallcaps"}, gosmallcaps.TTF)
-		register(text.Font{Variant: "Smallcaps", Style: text.Italic},
-			gosmallcapsitalic.TTF,
-		)
-		// Ensure that any outside appends will not reuse the backing store.
-		n := len(collection)
-		collection = collection[:n:n]
-	},
+	once.Do(
+		func() {
+			register(text.Font{}, goregular.TTF)
+			register(text.Font{Style: text.Italic}, goitalic.TTF)
+			register(text.Font{Weight: text.Bold}, gobold.TTF)
+			register(
+				text.Font{Style: text.Italic, Weight: text.Bold},
+				gobolditalic.TTF,
+			)
+			register(text.Font{Weight: text.Medium}, gomedium.TTF)
+			register(
+				text.Font{Weight: text.Medium, Style: text.Italic},
+				gomediumitalic.TTF,
+			)
+			register(text.Font{Variant: "Mono"}, gomono.TTF)
+			register(
+				text.Font{Variant: "Mono", Weight: text.Bold},
+				gomonobold.TTF,
+			)
+			register(
+				text.Font{
+					Variant: "Mono", Weight: text.Bold,
+					Style: text.Italic,
+				}, gomonobolditalic.TTF,
+			)
+			register(
+				text.Font{Variant: "Mono", Style: text.Italic},
+				gomonoitalic.TTF,
+			)
+			register(text.Font{Variant: "Smallcaps"}, gosmallcaps.TTF)
+			register(
+				text.Font{Variant: "Smallcaps", Style: text.Italic},
+				gosmallcapsitalic.TTF,
+			)
+			// Ensure that any outside appends will not reuse the backing store.
+			n := len(collection)
+			collection = collection[:n:n]
+		},
 	)
 	return collection
 }

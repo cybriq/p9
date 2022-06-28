@@ -34,10 +34,11 @@ func TestTxFeePrioHeap(t *testing.T) {
 	}()
 	prng := rand.New(rand.NewSource(randSeed))
 	for i := 0; i < 1000; i++ {
-		testItems = append(testItems, &txPrioItem{
-			feePerKB: int64(prng.Float64() * util.SatoshiPerBitcoin),
-			priority: prng.Float64() * 100,
-		},
+		testItems = append(
+			testItems, &txPrioItem{
+				feePerKB: int64(prng.Float64() * util.SatoshiPerBitcoin),
+				priority: prng.Float64() * 100,
+			},
 		)
 	}
 	// Test sorting by fee per KB then priority.
@@ -58,9 +59,9 @@ func TestTxFeePrioHeap(t *testing.T) {
 		prioItem := heap.Pop(priorityQueue).(*txPrioItem)
 		if prioItem.feePerKB >= highest.feePerKB &&
 			prioItem.priority > highest.priority {
-			t.Fatalf("fee sort: item (fee per KB: %v, "+
-				"priority: %v) higher than than prev "+
-				"(fee per KB: %v, priority %v)",
+			t.Fatalf(
+				"fee sort: item (fee per KB: %v, priority: %v) higher than "+
+					"than prev (fee per KB: %v, priority %v)",
 				prioItem.feePerKB, prioItem.priority,
 				highest.feePerKB, highest.priority,
 			)
@@ -85,9 +86,9 @@ func TestTxFeePrioHeap(t *testing.T) {
 		prioItem := heap.Pop(priorityQueue).(*txPrioItem)
 		if prioItem.priority >= highest.priority &&
 			prioItem.feePerKB > highest.feePerKB {
-			t.Fatalf("priority sort: item (fee per KB: %v, "+
-				"priority: %v) higher than than prev "+
-				"(fee per KB: %v, priority %v)",
+			t.Fatalf(
+				"priority sort: item (fee per KB: %v, priority: %v) higher "+
+					"than than prev (fee per KB: %v, priority %v)",
 				prioItem.feePerKB, prioItem.priority,
 				highest.feePerKB, highest.priority,
 			)

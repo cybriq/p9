@@ -2,13 +2,14 @@ package mempool
 
 import (
 	"encoding/hex"
-	"github.com/cybriq/p9/pkg/amt"
-	"github.com/cybriq/p9/pkg/btcaddr"
 	"reflect"
 	"runtime"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/cybriq/p9/pkg/amt"
+	"github.com/cybriq/p9/pkg/btcaddr"
 
 	"github.com/cybriq/p9/pkg/blockchain"
 	"github.com/cybriq/p9/pkg/chaincfg"
@@ -31,7 +32,8 @@ type fakeChain struct {
 // FetchUtxoView loads utxo details about the inputs referenced by the passed transaction from the point of view of the
 // fake chain. It also attempts to fetch the utxos for the outputs of the transaction itself so the returned view can be
 // examined for duplicate transactions. This function is safe for concurrent access however the returned view is NOT.
-func (s *fakeChain) FetchUtxoView(tx *util.Tx) (*blockchain.UtxoViewpoint,
+func (s *fakeChain) FetchUtxoView(tx *util.Tx) (
+	*blockchain.UtxoViewpoint,
 	error,
 ) {
 	s.RLock()
@@ -124,7 +126,8 @@ type poolHarness struct {
 // CreateCoinbaseTx returns a coinbase transaction with the requested number of outputs paying an appropriate subsidy
 // based on the passed block height to the address associated with the harness. It automatically uses a standard
 // signature script that starts with the block height that is required by version 2 blocks.
-func (p *poolHarness) CreateCoinbaseTx(blockHeight int32, numOutputs uint32,
+func (p *poolHarness) CreateCoinbaseTx(
+	blockHeight int32, numOutputs uint32,
 	version int32,
 ) (*util.Tx, error) {
 	// Create standard coinbase script.
@@ -146,7 +149,8 @@ func (p *poolHarness) CreateCoinbaseTx(blockHeight int32, numOutputs uint32,
 			Sequence:        wire.MaxTxInSequenceNum,
 		},
 	)
-	totalInput := blockchain.CalcBlockSubsidy(blockHeight, p.chainParams,
+	totalInput := blockchain.CalcBlockSubsidy(
+		blockHeight, p.chainParams,
 		version,
 	)
 	amountPerOutput := totalInput / int64(numOutputs)
@@ -170,7 +174,8 @@ func (p *poolHarness) CreateCoinbaseTx(blockHeight int32, numOutputs uint32,
 // CreateSignedTx creates a new signed transaction that consumes the provided inputs and generates the provided number
 // of outputs by evenly splitting the total input amount. All outputs will be to the payment script associated with the
 // harness and all inputs are assumed to do the same.
-func (p *poolHarness) CreateSignedTx(inputs []spendableOutput,
+func (p *poolHarness) CreateSignedTx(
+	inputs []spendableOutput,
 	numOutputs uint32,
 ) (*util.Tx, error) {
 	// Calculate the total input amount and split it amongst the requested number of outputs.
@@ -220,7 +225,8 @@ func (p *poolHarness) CreateSignedTx(inputs []spendableOutput,
 // CreateTxChain creates a chain of zero-fee transactions (each subsequent transaction spends the entire amount from the
 // previous one) with the first one spending the provided outpoint. Each transaction spends the entire amount of the
 // previous one and as such does not include any fees.
-func (p *poolHarness) CreateTxChain(firstOutput spendableOutput, numTxns uint32,
+func (p *poolHarness) CreateTxChain(
+	firstOutput spendableOutput, numTxns uint32,
 ) ([]*util.Tx, error) {
 	txChain := make([]*util.Tx, 0, numTxns)
 	prevOutPoint := firstOutput.outPoint
@@ -260,8 +266,9 @@ func (p *poolHarness) CreateTxChain(firstOutput spendableOutput, numTxns uint32,
 
 // newPoolHarness returns a new instance of a pool harness initialized with a fake chain and a TxPool bound to it that
 // is configured with a policy suitable for testing. Also the fake chain is populated with the returned spendable
-// outputs so the caller can easily create new valid transactions which podbuild off of it.
-func newPoolHarness(chainParams *chaincfg.Params) (*poolHarness,
+// outputs so the caller can easily create new valid transactions which build off of it.
+func newPoolHarness(chainParams *chaincfg.Params) (
+	*poolHarness,
 	[]spendableOutput, error,
 ) {
 	// Use a hard coded key pair for deterministic results.
@@ -341,7 +348,8 @@ type testContext struct {
 // testPoolMembership tests the transaction pool associated with the provided test context to determine if the passed
 // transaction matches the provided orphan pool and transaction pool status. It also further determines if it should be
 // reported as available by the HaveTransaction function based upon the two flags and tests that condition as well.
-func testPoolMembership(tc *testContext, tx *util.Tx,
+func testPoolMembership(
+	tc *testContext, tx *util.Tx,
 	inOrphanPool, inTxPool bool,
 ) {
 	txHash := tx.Hash()

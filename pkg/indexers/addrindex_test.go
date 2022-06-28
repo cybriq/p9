@@ -88,7 +88,8 @@ func (b *addrIndexBucket) printLevels(addrKey [addrKeySize]byte) string {
 
 // sanityCheck ensures that all data stored in the bucket for the given address adheres to the level-based rules
 // described by the address index documentation.
-func (b *addrIndexBucket) sanityCheck(addrKey [addrKeySize]byte,
+func (b *addrIndexBucket) sanityCheck(
+	addrKey [addrKeySize]byte,
 	expectedTotal int,
 ) (e error) {
 	// Find the highest level for the key.
@@ -115,19 +116,22 @@ func (b *addrIndexBucket) sanityCheck(addrKey [addrKeySize]byte,
 		if level == 0 {
 			if (highestLevel != 0 && numEntries == 0) ||
 				numEntries > maxEntries {
-				return fmt.Errorf("level %d has %d entries",
+				return fmt.Errorf(
+					"level %d has %d entries",
 					level, numEntries,
 				)
 			}
 		} else if numEntries != maxEntries && numEntries != maxEntries/2 {
-			return fmt.Errorf("level %d has %d entries", level,
+			return fmt.Errorf(
+				"level %d has %d entries", level,
 				numEntries,
 			)
 		}
 		maxEntries *= 2
 	}
 	if totalEntries != expectedTotal {
-		return fmt.Errorf("expected %d entries - got %d", expectedTotal,
+		return fmt.Errorf(
+			"expected %d entries - got %d", expectedTotal,
 			totalEntries,
 		)
 	}
@@ -140,9 +144,10 @@ func (b *addrIndexBucket) sanityCheck(addrKey [addrKeySize]byte,
 			start := i * txEntrySize
 			num := byteOrder.Uint32(data[start:])
 			if num != expectedNum {
-				return fmt.Errorf("level %d offset %d does "+
-					"not contain the expected number of "+
-					"%d - got %d", level, i, num,
+				return fmt.Errorf(
+					"level %d offset %d does "+
+						"not contain the expected number of "+
+						"%d - got %d", level, i, num,
 					expectedNum,
 				)
 			}
@@ -207,12 +212,14 @@ nextTest:
 		}
 		for i := 0; i < test.numInsert; i++ {
 			txLoc := wire.TxLoc{TxStart: i * 2}
-			e := dbPutAddrIndexEntry(populatedBucket, test.key,
+			e := dbPutAddrIndexEntry(
+				populatedBucket, test.key,
 				uint32(i), txLoc,
 			)
 			if e != nil {
-				t.Errorf("dbPutAddrIndexEntry #%d (%s) - "+
-					"unexpected error: %v", testNum,
+				t.Errorf(
+					"dbPutAddrIndexEntry #%d (%s) - "+
+						"unexpected error: %v", testNum,
 					test.name, e,
 				)
 				continue nextTest
@@ -228,14 +235,16 @@ nextTest:
 			// Clone populated bucket to run each delete against.
 			bucket := populatedBucket.Clone()
 			// Remove the number of entries for this iteration.
-			e := dbRemoveAddrIndexEntries(bucket, test.key,
+			e := dbRemoveAddrIndexEntries(
+				bucket, test.key,
 				numDelete,
 			)
 			if e != nil {
 				if numDelete <= test.numInsert {
-					t.Errorf("dbRemoveAddrIndexEntries (%s) "+
-						" delete %d - unexpected error: "+
-						"%v", test.name, numDelete, e,
+					t.Errorf(
+						"dbRemoveAddrIndexEntries (%s) "+
+							" delete %d - unexpected error: "+
+							"%v", test.name, numDelete, e,
 					)
 					continue nextTest
 				}
@@ -250,7 +259,8 @@ nextTest:
 			}
 			e = bucket.sanityCheck(test.key, numExpected)
 			if e != nil {
-				t.Errorf("sanity check fail (%s) delete %d: %v",
+				t.Errorf(
+					"sanity check fail (%s) delete %d: %v",
 					test.name, numDelete, e,
 				)
 				continue nextTest

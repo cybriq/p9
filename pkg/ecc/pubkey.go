@@ -24,7 +24,10 @@ func isOdd(a *big.Int) bool {
 
 // decompressPoint decompresses a point on the secp256k1 curve given the X point and
 // the solution to use.
-func decompressPoint(curve *KoblitzCurve, bigX *big.Int, ybit bool) (*big.Int, error) {
+func decompressPoint(curve *KoblitzCurve, bigX *big.Int, ybit bool) (
+	*big.Int,
+	error,
+) {
 	var x fieldVal
 	x.SetByteSlice(bigX.Bytes())
 
@@ -76,7 +79,10 @@ func IsCompressedPubKey(pubKey []byte) bool {
 // ParsePubKey parses a public key for a koblitz curve from a bytestring into a
 // ecdsa.Publickey, verifying that it is valid. It supports compressed,
 // uncompressed and hybrid signature formats.
-func ParsePubKey(pubKeyStr []byte, curve *KoblitzCurve) (key *PublicKey, err error) {
+func ParsePubKey(pubKeyStr []byte, curve *KoblitzCurve) (
+	key *PublicKey,
+	err error,
+) {
 	pubkey := PublicKey{}
 	pubkey.Curve = curve
 
@@ -91,8 +97,10 @@ func ParsePubKey(pubKeyStr []byte, curve *KoblitzCurve) (key *PublicKey, err err
 	switch len(pubKeyStr) {
 	case PubKeyBytesLenUncompressed:
 		if format != pubkeyUncompressed && format != pubkeyHybrid {
-			return nil, fmt.Errorf("invalid magic in pubkey str: "+
-				"%d", pubKeyStr[0])
+			return nil, fmt.Errorf(
+				"invalid magic in pubkey str: "+
+					"%d", pubKeyStr[0],
+			)
 		}
 
 		pubkey.X = new(big.Int).SetBytes(pubKeyStr[1:33])
@@ -115,10 +123,12 @@ func ParsePubKey(pubKeyStr []byte, curve *KoblitzCurve) (key *PublicKey, err err
 	case PubKeyBytesLenCompressed:
 		// format is 0x2 | solution, <X coordinate>
 		// solution determines which solution of the curve we use.
-		/// y^2 = x^3 + Curve.B
+		// / y^2 = x^3 + Curve.B
 		if format != pubkeyCompressed {
-			return nil, fmt.Errorf("invalid magic in compressed "+
-				"pubkey string: %d", pubKeyStr[0])
+			return nil, fmt.Errorf(
+				"invalid magic in compressed "+
+					"pubkey string: %d", pubKeyStr[0],
+			)
 		}
 		pubkey.X = new(big.Int).SetBytes(pubKeyStr[1:33])
 		pubkey.Y, err = decompressPoint(curve, pubkey.X, ybit)
@@ -127,8 +137,10 @@ func ParsePubKey(pubKeyStr []byte, curve *KoblitzCurve) (key *PublicKey, err err
 		}
 
 	default: // wrong!
-		return nil, fmt.Errorf("invalid pub key length %d",
-			len(pubKeyStr))
+		return nil, fmt.Errorf(
+			"invalid pub key length %d",
+			len(pubKeyStr),
+		)
 	}
 
 	return &pubkey, nil

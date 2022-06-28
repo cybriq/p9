@@ -39,7 +39,8 @@ func (f *Float) SetHook(fn func(fl float32)) *Float {
 }
 
 // Fn processes events.
-func (f *Float) Fn(gtx l.Context, pointerMargin int, min, max float32,
+func (f *Float) Fn(
+	gtx l.Context, pointerMargin int, min, max float32,
 ) l.Dimensions {
 	size := gtx.Constraints.Min
 	f.length = float32(size.X)

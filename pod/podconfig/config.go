@@ -1,11 +1,5 @@
 package podconfig
 
-import (
-
-// This ensures the database drivers get registered
-// _ "github.com/cybriq/p9/pkg/database/ffldb"
-)
-
 //
 // // Config defines the configuration options for pod. See loadConfig for details on the configuration load process.
 // type Config struct {

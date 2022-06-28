@@ -24,30 +24,36 @@ type d3d11Context struct {
 const debug = false
 
 func init() {
-	drivers = append(drivers, gpuAPI{
-		priority: 1,
-		initializer: func(w *window) (Context, error) {
-			hwnd, _, _ := w.HWND()
-			var flags uint32
-			if debug {
-				flags |= d3d11.CREATE_DEVICE_DEBUG
-			}
-			dev, ctx, _, err := d3d11.CreateDevice(
-				d3d11.DRIVER_TYPE_HARDWARE,
-				flags,
-			)
-			if err != nil {
-				return nil, fmt.Errorf("NewContext: %v", err)
-			}
-			swchain, err := d3d11.CreateSwapChain(dev, hwnd)
-			if err != nil {
-				d3d11.IUnknownRelease(unsafe.Pointer(ctx), ctx.Vtbl.Release)
-				d3d11.IUnknownRelease(unsafe.Pointer(dev), dev.Vtbl.Release)
-				return nil, err
-			}
-			return &d3d11Context{win: w, dev: dev, ctx: ctx, swchain: swchain}, nil
+	drivers = append(
+		drivers, gpuAPI{
+			priority: 1,
+			initializer: func(w *window) (Context, error) {
+				hwnd, _, _ := w.HWND()
+				var flags uint32
+				if debug {
+					flags |= d3d11.CREATE_DEVICE_DEBUG
+				}
+				dev, ctx, _, err := d3d11.CreateDevice(
+					d3d11.DRIVER_TYPE_HARDWARE,
+					flags,
+				)
+				if err != nil {
+					return nil, fmt.Errorf("NewContext: %v", err)
+				}
+				swchain, err := d3d11.CreateSwapChain(dev, hwnd)
+				if err != nil {
+					d3d11.IUnknownRelease(unsafe.Pointer(ctx), ctx.Vtbl.Release)
+					d3d11.IUnknownRelease(unsafe.Pointer(dev), dev.Vtbl.Release)
+					return nil, err
+				}
+				return &d3d11Context{
+					win:     w,
+					dev:     dev,
+					ctx:     ctx,
+					swchain: swchain,
+				}, nil
+			},
 		},
-	},
 	)
 }
 
@@ -79,7 +85,13 @@ func (c *d3d11Context) MakeCurrent() error {
 		return nil
 	}
 	c.releaseFBO()
-	if err := c.swchain.ResizeBuffers(0, 0, 0, d3d11.DXGI_FORMAT_UNKNOWN, 0); err != nil {
+	if err := c.swchain.ResizeBuffers(
+		0,
+		0,
+		0,
+		d3d11.DXGI_FORMAT_UNKNOWN,
+		0,
+	); err != nil {
 		return err
 	}
 	c.width = width
@@ -99,11 +111,13 @@ func (c *d3d11Context) MakeCurrent() error {
 	if err != nil {
 		return err
 	}
-	depthView, err := d3d11.CreateDepthView(c.dev, int(desc.BufferDesc.Width),
+	depthView, err := d3d11.CreateDepthView(
+		c.dev, int(desc.BufferDesc.Width),
 		int(desc.BufferDesc.Height), 24,
 	)
 	if err != nil {
-		d3d11.IUnknownRelease(unsafe.Pointer(renderTarget),
+		d3d11.IUnknownRelease(
+			unsafe.Pointer(renderTarget),
 			renderTarget.Vtbl.Release,
 		)
 		return err
@@ -135,13 +149,15 @@ func (c *d3d11Context) Release() {
 
 func (c *d3d11Context) releaseFBO() {
 	if c.depthView != nil {
-		d3d11.IUnknownRelease(unsafe.Pointer(c.depthView),
+		d3d11.IUnknownRelease(
+			unsafe.Pointer(c.depthView),
 			c.depthView.Vtbl.Release,
 		)
 		c.depthView = nil
 	}
 	if c.renderTarget != nil {
-		d3d11.IUnknownRelease(unsafe.Pointer(c.renderTarget),
+		d3d11.IUnknownRelease(
+			unsafe.Pointer(c.renderTarget),
 			c.renderTarget.Vtbl.Release,
 		)
 		c.renderTarget = nil

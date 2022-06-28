@@ -1055,7 +1055,8 @@ func (state *GBTWorkState) UpdateBlockTemplate(
 			template.ValidPayAddress = true
 			// Update the merkle root.
 			block := block.NewBlock(template.Block)
-			merkles := blockchain.BuildMerkleTreeStore(block.Transactions(),
+			merkles := blockchain.BuildMerkleTreeStore(
+				block.Transactions(),
 				false,
 			)
 			template.Block.Header.MerkleRoot = *merkles.GetRoot()
@@ -1783,7 +1784,8 @@ func CreateVinListPrevOut(
 		}
 		// Ignore the error here since an error means the script couldn't parse and there is no additional information
 		// about it anyways.
-		_, addrs, _, _ := txscript.ExtractPkScriptAddrs(originTxOut.PkScript,
+		_, addrs, _, _ := txscript.ExtractPkScriptAddrs(
+			originTxOut.PkScript,
 			chainParams,
 		)
 		// Encode the addresses while checking if the address passes the filter when needed.
@@ -1831,7 +1833,8 @@ func CreateVoutList(
 		disbuf, _ := txscript.DisasmString(v.PkScript)
 		// Ignore the error here since an error means the script couldn't parse and there is no additional information
 		// about it anyways.
-		scriptClass, addrs, reqSigs, _ := txscript.ExtractPkScriptAddrs(v.PkScript,
+		scriptClass, addrs, reqSigs, _ := txscript.ExtractPkScriptAddrs(
+			v.PkScript,
 			chainParams,
 		)
 		// Encode the addresses while checking if the address passes the filter when needed.

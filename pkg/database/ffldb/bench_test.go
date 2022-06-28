@@ -1,10 +1,11 @@
 package ffldb
 
 import (
-	block2 "github.com/cybriq/p9/pkg/block"
 	"os"
 	"path/filepath"
 	"testing"
+
+	block2 "github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/database"
@@ -27,26 +28,28 @@ func BenchmarkBlockHeader(b *testing.B) {
 		if e = db.Close(); E.Chk(e) {
 		}
 	}()
-	e = db.Update(func(tx database.Tx) (e error) {
-		block := block2.NewBlock(chaincfg.MainNetParams.GenesisBlock)
-		return tx.StoreBlock(block)
-	},
+	e = db.Update(
+		func(tx database.Tx) (e error) {
+			block := block2.NewBlock(chaincfg.MainNetParams.GenesisBlock)
+			return tx.StoreBlock(block)
+		},
 	)
 	if e != nil {
 		b.Fatal(e)
 	}
 	b.ReportAllocs()
 	b.ResetTimer()
-	e = db.View(func(tx database.Tx) (e error) {
-		blockHash := chaincfg.MainNetParams.GenesisHash
-		for i := 0; i < b.N; i++ {
-			_, e := tx.FetchBlockHeader(blockHash)
-			if e != nil {
-				return e
+	e = db.View(
+		func(tx database.Tx) (e error) {
+			blockHash := chaincfg.MainNetParams.GenesisHash
+			for i := 0; i < b.N; i++ {
+				_, e := tx.FetchBlockHeader(blockHash)
+				if e != nil {
+					return e
+				}
 			}
-		}
-		return nil
-	},
+			return nil
+		},
 	)
 	if e != nil {
 		b.Fatal(e)
@@ -72,26 +75,28 @@ func BenchmarkBlock(b *testing.B) {
 		if e = db.Close(); E.Chk(e) {
 		}
 	}()
-	e = db.Update(func(tx database.Tx) (e error) {
-		block := block2.NewBlock(chaincfg.MainNetParams.GenesisBlock)
-		return tx.StoreBlock(block)
-	},
+	e = db.Update(
+		func(tx database.Tx) (e error) {
+			block := block2.NewBlock(chaincfg.MainNetParams.GenesisBlock)
+			return tx.StoreBlock(block)
+		},
 	)
 	if e != nil {
 		b.Fatal(e)
 	}
 	b.ReportAllocs()
 	b.ResetTimer()
-	e = db.View(func(tx database.Tx) (e error) {
-		blockHash := chaincfg.MainNetParams.GenesisHash
-		for i := 0; i < b.N; i++ {
-			_, e := tx.FetchBlock(blockHash)
-			if e != nil {
-				return e
+	e = db.View(
+		func(tx database.Tx) (e error) {
+			blockHash := chaincfg.MainNetParams.GenesisHash
+			for i := 0; i < b.N; i++ {
+				_, e := tx.FetchBlock(blockHash)
+				if e != nil {
+					return e
+				}
 			}
-		}
-		return nil
-	},
+			return nil
+		},
 	)
 	if e != nil {
 		b.Fatal(e)

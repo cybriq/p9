@@ -4,11 +4,12 @@ import (
 	"crypto/rand"
 	"crypto/sha512"
 	"fmt"
+	"sync"
+	"time"
+
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/log"
-	"sync"
-	"time"
 
 	"github.com/cybriq/p9/pkg/snacl"
 	"github.com/cybriq/p9/pkg/util/hdkeychain"
@@ -186,7 +187,8 @@ func SetSecretKeyGen(keyGen SecretKeyGenerator) SecretKeyGenerator {
 }
 
 // newSecretKey generates a new secret key using the active secretKeyGen.
-func newSecretKey(passphrase *[]byte, config *ScryptOptions) (*snacl.SecretKey,
+func newSecretKey(passphrase *[]byte, config *ScryptOptions) (
+	*snacl.SecretKey,
 	error,
 ) {
 	secretKeyGenMtx.RLock()
@@ -470,7 +472,8 @@ func (m *Manager) NewScopedKeyManager(
 // its registered scope. If the manger is found, then a nil error is returned
 // along with the active scoped manager. Otherwise, a nil manager and a non-nil
 // error will be returned.
-func (m *Manager) FetchScopedKeyManager(scope KeyScope) (*ScopedKeyManager,
+func (m *Manager) FetchScopedKeyManager(scope KeyScope) (
+	*ScopedKeyManager,
 	error,
 ) {
 	m.mtx.RLock()
@@ -559,7 +562,8 @@ func (m *Manager) Address(
 }
 
 // MarkUsed updates the used flag for the provided address.
-func (m *Manager) MarkUsed(ns walletdb.ReadWriteBucket, address btcaddr.Address,
+func (m *Manager) MarkUsed(
+	ns walletdb.ReadWriteBucket, address btcaddr.Address,
 ) (e error) {
 	m.mtx.RLock()
 	defer m.mtx.RUnlock()
@@ -620,7 +624,11 @@ func (m *Manager) ForEachActiveAccountAddress(
 	m.mtx.RLock()
 	defer m.mtx.RUnlock()
 	for _, scopedMgr := range m.scopedManagers {
-		if e = scopedMgr.ForEachActiveAccountAddress(ns, account, fn); E.Chk(e) {
+		if e = scopedMgr.ForEachActiveAccountAddress(
+			ns,
+			account,
+			fn,
+		); E.Chk(e) {
 			return e
 		}
 	}
@@ -629,7 +637,8 @@ func (m *Manager) ForEachActiveAccountAddress(
 
 // ForEachActiveAddress calls the given function with each active address stored
 // in the manager, breaking early on error.
-func (m *Manager) ForEachActiveAddress(ns walletdb.ReadBucket,
+func (m *Manager) ForEachActiveAddress(
+	ns walletdb.ReadBucket,
 	fn func(addr btcaddr.Address) error,
 ) (e error) {
 	m.mtx.RLock()
@@ -970,7 +979,8 @@ func (m *Manager) Unlock(ns walletdb.ReadBucket, passphrase []byte) (e error) {
 			var decrypted []byte
 			if decrypted, e = m.cryptoKeyPriv.Decrypt(acctInfo.acctKeyEncrypted); E.Chk(e) {
 				m.lock()
-				str := fmt.Sprintf("failed to decrypt account %d private key",
+				str := fmt.Sprintf(
+					"failed to decrypt account %d private key",
 					account,
 				)
 				return managerError(ErrCrypto, str, e)
@@ -978,7 +988,8 @@ func (m *Manager) Unlock(ns walletdb.ReadBucket, passphrase []byte) (e error) {
 			if acctKeyPriv, e = hdkeychain.NewKeyFromString(string(decrypted)); E.Chk(e) {
 				zero.Bytes(decrypted)
 				m.lock()
-				str := fmt.Sprintf("failed to regenerate account %d extended key",
+				str := fmt.Sprintf(
+					"failed to regenerate account %d extended key",
 					account,
 				)
 				return managerError(ErrKeyChain, str, e)
@@ -1006,7 +1017,8 @@ func (m *Manager) Unlock(ns walletdb.ReadBucket, passphrase []byte) (e error) {
 			if privKeyEncrypted, e = m.cryptoKeyPriv.Encrypt(privKeyBytes); E.Chk(e) {
 				zero.BigInt(privKey.D)
 				m.lock()
-				str := fmt.Sprintf("failed to encrypt private key for address %s",
+				str := fmt.Sprintf(
+					"failed to encrypt private key for address %s",
 					info.managedAddr.Address(),
 				)
 				return managerError(ErrCrypto, str, e)
@@ -1049,7 +1061,8 @@ func ValidateAccountName(name string) (e error) {
 // requires the manager to be unlocked when it isn't.
 //
 // This function MUST be called with the manager lock held for reads.
-func (m *Manager) selectCryptoKey(keyType CryptoKeyType) (EncryptorDecryptor,
+func (m *Manager) selectCryptoKey(keyType CryptoKeyType) (
+	EncryptorDecryptor,
 	error,
 ) {
 	if keyType == CKTPrivate || keyType == CKTScript {
@@ -1198,7 +1211,8 @@ func deriveCoinTypeKey(
 // In particular this is the hierarchical deterministic extended key path:
 //
 //   m/purpose'/<coin type>'/<account>'
-func deriveAccountKey(coinTypeKey *hdkeychain.ExtendedKey, account uint32,
+func deriveAccountKey(
+	coinTypeKey *hdkeychain.ExtendedKey, account uint32,
 ) (*hdkeychain.ExtendedKey, error) {
 	// Enforce maximum account number.
 	var er ManagerError
@@ -1485,7 +1499,12 @@ func createManagerKeyScope(
 		return managerError(ErrCrypto, str, e)
 	}
 	// Save the encrypted cointype keys to the database.
-	if e = putCoinTypeKeys(ns, &scope, coinTypePubEnc, coinTypePrivEnc); E.Chk(e) {
+	if e = putCoinTypeKeys(
+		ns,
+		&scope,
+		coinTypePubEnc,
+		coinTypePrivEnc,
+	); E.Chk(e) {
 		return e
 	}
 	// Save the information for the default account to the database.
@@ -1641,7 +1660,11 @@ func Create(
 	if masterHDPubKeyEnc, e = cryptoKeyPub.Encrypt([]byte(rootPubKey.String())); E.Chk(e) {
 		return maybeConvertDbError(e)
 	}
-	if e = putMasterHDKeys(ns, masterHDPrivKeyEnc, masterHDPubKeyEnc); E.Chk(e) {
+	if e = putMasterHDKeys(
+		ns,
+		masterHDPrivKeyEnc,
+		masterHDPubKeyEnc,
+	); E.Chk(e) {
 		return maybeConvertDbError(e)
 	}
 	// Save the encrypted crypto keys to the database.

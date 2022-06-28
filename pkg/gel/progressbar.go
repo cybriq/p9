@@ -49,9 +49,11 @@ func (p *ProgressBar) Fn(gtx l.Context) l.Dimensions {
 		d := image.Point{X: int(width), Y: gtx.Px(maxHeight)}
 
 		clip.RRect{
-			Rect: f32.Rectangle{Max: f32.Point{X: width,
-				Y: float32(gtx.Px(maxHeight)),
-			},
+			Rect: f32.Rectangle{
+				Max: f32.Point{
+					X: width,
+					Y: float32(gtx.Px(maxHeight)),
+				},
 			},
 			NE: rr, NW: rr, SE: rr, SW: rr,
 		}.Add(gtx.Ops)
@@ -71,22 +73,25 @@ func (p *ProgressBar) Fn(gtx l.Context) l.Dimensions {
 
 	progressBarWidth := float32(gtx.Constraints.Max.X)
 
-	return l.Stack{Alignment: l.W}.Layout(gtx,
-		l.Stacked(func(gtx l.Context) l.Dimensions {
-			// Use a transparent equivalent of progress color.
-			bgCol := f32color.MulAlpha(p.color, 150)
+	return l.Stack{Alignment: l.W}.Layout(
+		gtx,
+		l.Stacked(
+			func(gtx l.Context) l.Dimensions {
+				// Use a transparent equivalent of progress color.
+				bgCol := f32color.MulAlpha(p.color, 150)
 
-			return shader(progressBarWidth, bgCol)
-		},
+				return shader(progressBarWidth, bgCol)
+			},
 		),
-		l.Stacked(func(gtx l.Context) l.Dimensions {
-			fillWidth := (progressBarWidth / 100) * float32(progress)
-			fillColor := p.color
-			if gtx.Queue == nil {
-				fillColor = f32color.MulAlpha(fillColor, 200)
-			}
-			return shader(fillWidth, fillColor)
-		},
+		l.Stacked(
+			func(gtx l.Context) l.Dimensions {
+				fillWidth := (progressBarWidth / 100) * float32(progress)
+				fillColor := p.color
+				if gtx.Queue == nil {
+					fillColor = f32color.MulAlpha(fillColor, 200)
+				}
+				return shader(fillWidth, fillColor)
+			},
 		),
 	)
 }

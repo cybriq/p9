@@ -3,8 +3,9 @@ package block
 import (
 	"bytes"
 	"fmt"
-	"github.com/cybriq/p9/pkg/util"
 	"io"
+
+	"github.com/cybriq/p9/pkg/util"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/wire"

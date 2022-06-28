@@ -60,7 +60,8 @@ type MsgReject struct {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation.
-func (msg *MsgReject) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding,
+func (msg *MsgReject) BtcDecode(
+	r io.Reader, pver uint32, enc MessageEncoding,
 ) (e error) {
 	if pver < RejectVersion {
 		str := fmt.Sprintf(
@@ -98,7 +99,8 @@ func (msg *MsgReject) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding,
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgReject) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding,
+func (msg *MsgReject) BtcEncode(
+	w io.Writer, pver uint32, enc MessageEncoding,
 ) (e error) {
 	if pver < RejectVersion {
 		str := fmt.Sprintf(

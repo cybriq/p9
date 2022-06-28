@@ -79,9 +79,11 @@ func (fl UsageFlag) String() string {
 // called from package init functions.
 func MustRegisterCmd(method string, cmd interface{}, flags UsageFlag) {
 	if e := RegisterCmd(method, cmd, flags); E.Chk(e) {
-		panic(fmt.Sprintf("failed to register type %q: %v\n", method,
-			e,
-		),
+		panic(
+			fmt.Sprintf(
+				"failed to register type %q: %v\n", method,
+				e,
+			),
 		)
 	}
 	RegisteredCommands[method] = cmd
@@ -133,21 +135,24 @@ func RegisterCmd(method string, cmd interface{}, flags UsageFlag) (e error) {
 	}
 	// Ensure that no unrecognized flag bits were specified.
 	if ^(highestUsageFlagBit-1)&flags != 0 {
-		str := fmt.Sprintf("invalid usage flags specified for method "+
-			"%s: %v", method, flags,
+		str := fmt.Sprintf(
+			"invalid usage flags specified for method "+
+				"%s: %v", method, flags,
 		)
 		return makeError(ErrInvalidUsageFlags, str)
 	}
 	rtp := reflect.TypeOf(cmd)
 	if rtp.Kind() != reflect.Ptr {
-		str := fmt.Sprintf("type must be *struct not '%s (%s)'", rtp,
+		str := fmt.Sprintf(
+			"type must be *struct not '%s (%s)'", rtp,
 			rtp.Kind(),
 		)
 		return makeError(ErrInvalidType, str)
 	}
 	rt := rtp.Elem()
 	if rt.Kind() != reflect.Struct {
-		str := fmt.Sprintf("type must be *struct not '%s (*%s)'",
+		str := fmt.Sprintf(
+			"type must be *struct not '%s (*%s)'",
 			rtp, rt.Kind(),
 		)
 		return makeError(ErrInvalidType, str)
@@ -159,14 +164,16 @@ func RegisterCmd(method string, cmd interface{}, flags UsageFlag) (e error) {
 	for i := 0; i < numFields; i++ {
 		rtf := rt.Field(i)
 		if rtf.Anonymous {
-			str := fmt.Sprintf("embedded fields are not supported "+
-				"(field name: %q)", rtf.Name,
+			str := fmt.Sprintf(
+				"embedded fields are not supported "+
+					"(field name: %q)", rtf.Name,
 			)
 			return makeError(ErrEmbeddedType, str)
 		}
 		if rtf.PkgPath != "" {
-			str := fmt.Sprintf("unexported fields are not supported "+
-				"(field name: %q)", rtf.Name,
+			str := fmt.Sprintf(
+				"unexported fields are not supported "+
+					"(field name: %q)", rtf.Name,
 			)
 			return makeError(ErrUnexportedField, str)
 		}
@@ -179,8 +186,9 @@ func RegisterCmd(method string, cmd interface{}, flags UsageFlag) (e error) {
 			fallthrough
 		default:
 			if !isAcceptableKind(kind) {
-				str := fmt.Sprintf("unsupported field type "+
-					"'%s (%s)' (field name %q)", rtf.Type,
+				str := fmt.Sprintf(
+					"unsupported field type "+
+						"'%s (%s)' (field name %q)", rtf.Type,
 					baseKindString(rtf.Type), rtf.Name,
 				)
 				return makeError(ErrUnsupportedFieldType, str)
@@ -191,9 +199,10 @@ func RegisterCmd(method string, cmd interface{}, flags UsageFlag) (e error) {
 			numOptFields++
 		} else {
 			if numOptFields > 0 {
-				str := fmt.Sprintf("all fields after the first "+
-					"optional field must also be optional "+
-					"(field name %q)", rtf.Name,
+				str := fmt.Sprintf(
+					"all fields after the first "+
+						"optional field must also be optional "+
+						"(field name %q)", rtf.Name,
 				)
 				return makeError(ErrNonOptionalField, str)
 			}
@@ -202,9 +211,10 @@ func RegisterCmd(method string, cmd interface{}, flags UsageFlag) (e error) {
 		// fields.
 		if tag := rtf.Tag.Get("jsonrpcdefault"); tag != "" {
 			if !isOptional {
-				str := fmt.Sprintf("required fields must not "+
-					"have a default specified (field name "+
-					"%q)", rtf.Name,
+				str := fmt.Sprintf(
+					"required fields must not "+
+						"have a default specified (field name "+
+						"%q)", rtf.Name,
 				)
 				return makeError(ErrNonOptionalDefault, str)
 			}
@@ -212,8 +222,9 @@ func RegisterCmd(method string, cmd interface{}, flags UsageFlag) (e error) {
 			e := json.Unmarshal([]byte(tag), rvf.Interface())
 			if e != nil {
 				E.Ln(e)
-				str := fmt.Sprintf("default value of %q is "+
-					"the wrong type (field name %q)", tag,
+				str := fmt.Sprintf(
+					"default value of %q is "+
+						"the wrong type (field name %q)", tag,
 					rtf.Name,
 				)
 				return makeError(ErrMismatchedDefault, str)

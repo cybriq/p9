@@ -1,8 +1,9 @@
 package util_test
 
 import (
-	"github.com/cybriq/p9/pkg/chaincfg"
 	"testing"
+
+	"github.com/cybriq/p9/pkg/chaincfg"
 
 	"github.com/cybriq/p9/pkg/ecc"
 	"github.com/cybriq/p9/pkg/util"

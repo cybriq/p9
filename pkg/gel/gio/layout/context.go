@@ -49,10 +49,11 @@ func NewContext(ops *op.Ops, e system.FrameEvent) Context {
 	if e.Insets != (system.Insets{}) {
 		left := e.Metric.Px(e.Insets.Left)
 		top := e.Metric.Px(e.Insets.Top)
-		op.Offset(f32.Point{
-			X: float32(left),
-			Y: float32(top),
-		},
+		op.Offset(
+			f32.Point{
+				X: float32(left),
+				Y: float32(top),
+			},
 		).Add(ops)
 
 		size.X -= left + e.Metric.Px(e.Insets.Right)

@@ -163,7 +163,8 @@ func TestAssignField(t *testing.T) {
 		src := reflect.ValueOf(test.src)
 		e := btcjson.TstAssignField(1, "testField", dst, src)
 		if e != nil {
-			t.Errorf("Test #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"Test #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
@@ -173,8 +174,9 @@ func TestAssignField(t *testing.T) {
 			dst = dst.Elem()
 		}
 		if !reflect.DeepEqual(dst.Interface(), test.expected) {
-			t.Errorf("Test #%d (%s) unexpected value - got %v, "+
-				"want %v", i, test.name, dst.Interface(),
+			t.Errorf(
+				"Test #%d (%s) unexpected value - got %v, "+
+					"want %v", i, test.name, dst.Interface(),
 				test.expected,
 			)
 			continue
@@ -324,15 +326,17 @@ func TestAssignFieldErrors(t *testing.T) {
 		src := reflect.ValueOf(test.src)
 		e := btcjson.TstAssignField(1, "testField", dst, src)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("Test #%d (%s) wrong error - got %T (%[3]v), "+
-				"want %T", i, test.name, e, test.e,
+			t.Errorf(
+				"Test #%d (%s) wrong error - got %T (%[3]v), "+
+					"want %T", i, test.name, e, test.e,
 			)
 			continue
 		}
 		gotErrorCode := e.(btcjson.GeneralError).ErrorCode
 		if gotErrorCode != test.e.ErrorCode {
-			t.Errorf("Test #%d (%s) mismatched error code - got "+
-				"%v (%v), want %v", i, test.name, gotErrorCode,
+			t.Errorf(
+				"Test #%d (%s) mismatched error code - got "+
+					"%v (%v), want %v", i, test.name, gotErrorCode,
 				e, test.e.ErrorCode,
 			)
 			continue
@@ -378,15 +382,17 @@ func TestNewCmdErrors(t *testing.T) {
 	for i, test := range tests {
 		_, e := btcjson.NewCmd(test.method, test.args...)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("Test #%d (%s) wrong error - got %T (%v), "+
-				"want %T", i, test.name, e, e, test.e,
+			t.Errorf(
+				"Test #%d (%s) wrong error - got %T (%v), "+
+					"want %T", i, test.name, e, e, test.e,
 			)
 			continue
 		}
 		gotErrorCode := e.(btcjson.GeneralError).ErrorCode
 		if gotErrorCode != test.e.ErrorCode {
-			t.Errorf("Test #%d (%s) mismatched error code - got "+
-				"%v (%v), want %v", i, test.name, gotErrorCode,
+			t.Errorf(
+				"Test #%d (%s) mismatched error code - got "+
+					"%v (%v), want %v", i, test.name, gotErrorCode,
 				e, test.e.ErrorCode,
 			)
 			continue
@@ -426,15 +432,17 @@ func TestMarshalCmdErrors(t *testing.T) {
 	for i, test := range tests {
 		_, e := btcjson.MarshalCmd(test.id, test.cmd)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("Test #%d (%s) wrong error - got %T (%v), "+
-				"want %T", i, test.name, e, e, test.e,
+			t.Errorf(
+				"Test #%d (%s) wrong error - got %T (%v), "+
+					"want %T", i, test.name, e, e, test.e,
 			)
 			continue
 		}
 		gotErrorCode := e.(btcjson.GeneralError).ErrorCode
 		if gotErrorCode != test.e.ErrorCode {
-			t.Errorf("Test #%d (%s) mismatched error code - got "+
-				"%v (%v), want %v", i, test.name, gotErrorCode,
+			t.Errorf(
+				"Test #%d (%s) mismatched error code - got "+
+					"%v (%v), want %v", i, test.name, gotErrorCode,
 				e, test.e.ErrorCode,
 			)
 			continue
@@ -495,15 +503,17 @@ func TestUnmarshalCmdErrors(t *testing.T) {
 	for i, test := range tests {
 		_, e := btcjson.UnmarshalCmd(&test.request)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.e) {
-			t.Errorf("Test #%d (%s) wrong error - got %T (%v), "+
-				"want %T", i, test.name, e, e, test.e,
+			t.Errorf(
+				"Test #%d (%s) wrong error - got %T (%v), "+
+					"want %T", i, test.name, e, e, test.e,
 			)
 			continue
 		}
 		gotErrorCode := e.(btcjson.GeneralError).ErrorCode
 		if gotErrorCode != test.e.ErrorCode {
-			t.Errorf("Test #%d (%s) mismatched error code - got "+
-				"%v (%v), want %v", i, test.name, gotErrorCode,
+			t.Errorf(
+				"Test #%d (%s) mismatched error code - got "+
+					"%v (%v), want %v", i, test.name, gotErrorCode,
 				e, test.e.ErrorCode,
 			)
 			continue

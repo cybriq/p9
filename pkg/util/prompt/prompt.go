@@ -59,7 +59,8 @@ func ProvidePrivPassphrase() ([]byte, error) {
 
 // promptList prompts the user with the given prefix, list of valid responses, and default list entry to use. The
 // function will repeat the prompt to the user until they enter a valid response.
-func promptList(reader *bufio.Reader, prefix string, validResponses []string,
+func promptList(
+	reader *bufio.Reader, prefix string, validResponses []string,
 	defaultEntry string,
 ) (string, error) {
 	// Setup the prompt according to the parameters.
@@ -94,7 +95,8 @@ func promptList(reader *bufio.Reader, prefix string, validResponses []string,
 
 // promptListBool prompts the user for a boolean (yes/no) with the given prefix. The function will repeat the prompt to
 // the user until they enter a valid reponse.
-func promptListBool(reader *bufio.Reader, prefix string, defaultEntry string,
+func promptListBool(
+	reader *bufio.Reader, prefix string, defaultEntry string,
 ) (bool, error) {
 	// Setup the valid responses.
 	valid := []string{"n", "no", "y", "yes"}
@@ -107,7 +109,8 @@ func promptListBool(reader *bufio.Reader, prefix string, defaultEntry string,
 
 // promptPass prompts the user for a passphrase with the given prefix. The function will ask the user to confirm the
 // passphrase and will repeat the prompts until they enter a matching response.
-func promptPass(reader *bufio.Reader, prefix string, confirm bool) ([]byte,
+func promptPass(reader *bufio.Reader, prefix string, confirm bool) (
+	[]byte,
 	error,
 ) {
 	// Prompt the user until they enter a passphrase.
@@ -146,7 +149,8 @@ func promptPass(reader *bufio.Reader, prefix string, confirm bool) ([]byte,
 //
 // On the other hand, when the legacy keystore is nil, the user is prompted for a new private passphrase. All prompts
 // are repeated until the user enters a valid response.
-func PrivatePass(reader *bufio.Reader, legacyKeyStore *keystore.Store) ([]byte,
+func PrivatePass(reader *bufio.Reader, legacyKeyStore *keystore.Store) (
+	[]byte,
 	error,
 ) {
 	// When there is not an existing legacy wallet, simply prompt the user for a new private passphase and return it.
@@ -165,7 +169,8 @@ func PrivatePass(reader *bufio.Reader, legacyKeyStore *keystore.Store) ([]byte,
 			" the new wallet format.",
 	)
 	for {
-		privPass, e := promptPass(reader,
+		privPass, e := promptPass(
+			reader,
 			"Enter the private passphrase for your existing wallet", false,
 		)
 		if e != nil {

@@ -50,14 +50,23 @@ func (na *NetAddress) AddService(service ServiceFlag) {
 
 // NewNetAddressIPPort returns a new NetAddress using the provided IP, port, and
 // supported services with defaults for the remaining fields.
-func NewNetAddressIPPort(ip net.IP, port uint16, services ServiceFlag) *NetAddress {
+func NewNetAddressIPPort(
+	ip net.IP,
+	port uint16,
+	services ServiceFlag,
+) *NetAddress {
 	return NewNetAddressTimestamp(time.Now(), services, ip, port)
 }
 
 // NewNetAddressTimestamp returns a new NetAddress using the provided timestamp,
 // IP, port, and supported services. The timestamp is rounded to single second
 // precision.
-func NewNetAddressTimestamp(timestamp time.Time, services ServiceFlag, ip net.IP, port uint16) *NetAddress {
+func NewNetAddressTimestamp(
+	timestamp time.Time,
+	services ServiceFlag,
+	ip net.IP,
+	port uint16,
+) *NetAddress {
 	// Limit the timestamp to one second precision since the protocol doesn't support better.
 	na := NetAddress{
 		Timestamp: time.Unix(timestamp.Unix(), 0),
@@ -77,7 +86,12 @@ func NewNetAddress(addr *net.TCPAddr, services ServiceFlag) *NetAddress {
 // readNetAddress reads an encoded NetAddress from r depending on the protocol
 // version and whether or not the timestamp is included per ts. Some messages
 // like version do not include the timestamp.
-func readNetAddress(r io.Reader, pver uint32, na *NetAddress, ts bool) (e error) {
+func readNetAddress(
+	r io.Reader,
+	pver uint32,
+	na *NetAddress,
+	ts bool,
+) (e error) {
 	var ip [16]byte
 	// NOTE: The bitcoin protocol uses a uint32 for the timestamp so it will stop
 	// working somewhere around 2106. Also timestamp wasn't added until protocol
@@ -107,7 +121,12 @@ func readNetAddress(r io.Reader, pver uint32, na *NetAddress, ts bool) (e error)
 // writeNetAddress serializes a NetAddress to w depending on the protocol
 // version and whether or not the timestamp is included per ts. Some messages
 // like version do not include the timestamp.
-func writeNetAddress(w io.Writer, pver uint32, na *NetAddress, ts bool) (e error) {
+func writeNetAddress(
+	w io.Writer,
+	pver uint32,
+	na *NetAddress,
+	ts bool,
+) (e error) {
 	// NOTE: The bitcoin protocol uses a uint32 for the timestamp so it will stop
 	// working somewhere around 2106. Also timestamp wasn't added until until
 	// protocol version >= NetAddressTimeVersion.

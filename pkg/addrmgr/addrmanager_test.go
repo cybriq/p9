@@ -119,7 +119,8 @@ func TestAddAddressByIP(t *testing.T) {
 	for i, test := range tests {
 		e := amgr.AddAddressByIP(test.addrIP)
 		if test.err != nil && e == nil {
-			t.Errorf("TestGood test %d failed expected an error and got none",
+			t.Errorf(
+				"TestGood test %d failed expected an error and got none",
 				i,
 			)
 			continue
@@ -129,7 +130,8 @@ func TestAddAddressByIP(t *testing.T) {
 			continue
 		}
 		if reflect.TypeOf(e) != reflect.TypeOf(test.err) {
-			t.Errorf("TestGood test %d failed got %v, want %v", i,
+			t.Errorf(
+				"TestGood test %d failed got %v, want %v", i,
 				reflect.TypeOf(e), reflect.TypeOf(test.err),
 			)
 			continue
@@ -177,13 +179,15 @@ func TestAddLocalAddress(t *testing.T) {
 	for x, test := range tests {
 		result := amgr.AddLocalAddress(&test.address, test.priority)
 		if result == nil && !test.valid {
-			t.Errorf("TestAddLocalAddress test #%d failed: %s should have been accepted",
+			t.Errorf(
+				"TestAddLocalAddress test #%d failed: %s should have been accepted",
 				x, test.address.IP,
 			)
 			continue
 		}
 		if result != nil && test.valid {
-			t.Errorf("TestAddLocalAddress test #%d failed: %s should not have been accepted",
+			t.Errorf(
+				"TestAddLocalAddress test #%d failed: %s should not have been accepted",
 				x, test.address.IP,
 			)
 			continue
@@ -243,7 +247,8 @@ func TestNeedMoreAddresses(t *testing.T) {
 	n.AddAddresses(addrs, srcAddr)
 	numAddrs := n.NumAddresses()
 	if numAddrs > addrsToAdd {
-		t.Errorf("Number of addresses is too many %d vs %d", numAddrs,
+		t.Errorf(
+			"Number of addresses is too many %d vs %d", numAddrs,
 			addrsToAdd,
 		)
 	}
@@ -271,13 +276,15 @@ func TestGood(t *testing.T) {
 	}
 	numAddrs := n.NumAddresses()
 	if numAddrs >= addrsToAdd {
-		t.Errorf("Number of addresses is too many: %d vs %d", numAddrs,
+		t.Errorf(
+			"Number of addresses is too many: %d vs %d", numAddrs,
 			addrsToAdd,
 		)
 	}
 	numCache := len(n.AddressCache())
 	if numCache >= numAddrs/4 {
-		t.Errorf("Number of addresses in cache: got %d, want %d", numCache,
+		t.Errorf(
+			"Number of addresses in cache: got %d, want %d", numCache,
 			numAddrs/4,
 		)
 	}
@@ -298,7 +305,8 @@ func TestGetAddress(t *testing.T) {
 		t.Fatalf("Did not get an address where there is one in the pool")
 	}
 	if ka.NetAddress().IP.String() != someIP {
-		t.Errorf("Wrong IP: got %v, want %v", ka.NetAddress().IP.String(),
+		t.Errorf(
+			"Wrong IP: got %v, want %v", ka.NetAddress().IP.String(),
 			someIP,
 		)
 	}
@@ -309,7 +317,8 @@ func TestGetAddress(t *testing.T) {
 		t.Fatalf("Did not get an address where there is one in the pool")
 	}
 	if ka.NetAddress().IP.String() != someIP {
-		t.Errorf("Wrong IP: got %v, want %v", ka.NetAddress().IP.String(),
+		t.Errorf(
+			"Wrong IP: got %v, want %v", ka.NetAddress().IP.String(),
 			someIP,
 		)
 	}
@@ -371,7 +380,8 @@ func TestGetBestLocalAddress(t *testing.T) {
 	for x, test := range tests {
 		got := amgr.GetBestLocalAddress(&test.remoteAddr)
 		if !test.want0.IP.Equal(got.IP) {
-			t.Errorf("TestGetBestLocalAddress test1 #%d failed for remote address %s: want %s got %s",
+			t.Errorf(
+				"TestGetBestLocalAddress test1 #%d failed for remote address %s: want %s got %s",
 				x, test.remoteAddr.IP, test.want1.IP, got.IP,
 			)
 			continue
@@ -388,7 +398,8 @@ func TestGetBestLocalAddress(t *testing.T) {
 	for x, test := range tests {
 		got := amgr.GetBestLocalAddress(&test.remoteAddr)
 		if !test.want1.IP.Equal(got.IP) {
-			t.Errorf("TestGetBestLocalAddress test1 #%d failed for remote address %s: want %s got %s",
+			t.Errorf(
+				"TestGetBestLocalAddress test1 #%d failed for remote address %s: want %s got %s",
 				x, test.remoteAddr.IP, test.want1.IP, got.IP,
 			)
 			continue
@@ -404,7 +415,8 @@ func TestGetBestLocalAddress(t *testing.T) {
 	for x, test := range tests {
 		got := amgr.GetBestLocalAddress(&test.remoteAddr)
 		if !test.want2.IP.Equal(got.IP) {
-			t.Errorf("TestGetBestLocalAddress test2 #%d failed for remote address %s: want %s got %s",
+			t.Errorf(
+				"TestGetBestLocalAddress test2 #%d failed for remote address %s: want %s got %s",
 				x, test.remoteAddr.IP, test.want2.IP, got.IP,
 			)
 			continue

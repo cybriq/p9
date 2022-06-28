@@ -2,8 +2,9 @@ package blockchain
 
 import (
 	"fmt"
-	"github.com/cybriq/p9/pkg/block"
 	"time"
+
+	"github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/chainhash"
@@ -64,7 +65,8 @@ func (b *BlockChain) verifyCheckpoint(height int32, hash *chainhash.Hash) bool {
 	if !checkpoint.Hash.IsEqual(hash) {
 		return false
 	}
-	I.F("Verified checkpoint at height %d/block %s", checkpoint.Height,
+	I.F(
+		"Verified checkpoint at height %d/block %s", checkpoint.Height,
 		checkpoint.Hash,
 	)
 	return true
@@ -125,10 +127,12 @@ func (b *BlockChain) findPreviousCheckpoint() (*BlockNode, error) {
 	// was verified as accurate before inserting it.
 	checkpointNode := b.Index.LookupNode(b.nextCheckpoint.Hash)
 	if checkpointNode == nil {
-		return nil, AssertError(fmt.Sprintf("findPreviousCheckpoint "+
-			"failed lookup of known good block node %s",
-			b.nextCheckpoint.Hash,
-		),
+		return nil, AssertError(
+			fmt.Sprintf(
+				"findPreviousCheckpoint "+
+					"failed lookup of known good block node %s",
+				b.nextCheckpoint.Hash,
+			),
 		)
 	}
 	b.checkpointNode = checkpointNode
@@ -186,8 +190,9 @@ func (b *BlockChain) IsCheckpointCandidate(block *block.Block) (bool, error) {
 	// Ensure the height of the passed block and the entry for the block in the main chain match. This should always be
 	// the case unless the caller provided an invalid block.
 	if node.height != block.Height() {
-		return false, fmt.Errorf("passed block height of %d does not "+
-			"match the main chain height of %d", block.Height(),
+		return false, fmt.Errorf(
+			"passed block height of %d does not "+
+				"match the main chain height of %d", block.Height(),
 			node.height,
 		)
 	}

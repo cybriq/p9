@@ -62,7 +62,8 @@ func (e EditorStyle) Layout(gtx layout.Context) layout.Dimensions {
 	dims = e.Editor.Layout(gtx, e.shaper, e.Font, e.TextSize)
 	disabled := gtx.Queue == nil
 	if e.Editor.Len() > 0 {
-		paint.ColorOp{Color: blendDisabledColor(disabled, e.SelectionColor),
+		paint.ColorOp{
+			Color: blendDisabledColor(disabled, e.SelectionColor),
 		}.Add(gtx.Ops)
 		e.Editor.PaintSelection(gtx)
 		paint.ColorOp{Color: blendDisabledColor(disabled, e.Color)}.Add(gtx.Ops)

@@ -49,14 +49,16 @@ func TestNewTLSCertPair(t *testing.T) {
 		if len(x509Orgs) > 0 {
 			x509Org = x509Orgs[0]
 		}
-		t.Fatalf("generated cert organization field mismatch, got "+
-			"'%v', want '%v'", x509Org, org,
+		t.Fatalf(
+			"generated cert organization field mismatch, got "+
+				"'%v', want '%v'", x509Org, org,
 		)
 	}
 	// Ensure the specified valid until value is correct.
 	if !x509Cert.NotAfter.Equal(validUntil) {
-		t.Fatalf("generated cert valid until field mismatch, got %v, "+
-			"want %v", x509Cert.NotAfter, validUntil,
+		t.Fatalf(
+			"generated cert valid until field mismatch, got %v, "+
+				"want %v", x509Cert.NotAfter, validUntil,
 		)
 	}
 	// Ensure the specified extra hosts are present.
@@ -87,7 +89,8 @@ func TestNewTLSCertPair(t *testing.T) {
 	}
 	for ipStr, count := range ipCounts {
 		if count != 1 {
-			t.Errorf("ip %s appears %d times in certificate", net.IP(ipStr),
+			t.Errorf(
+				"ip %s appears %d times in certificate", net.IP(ipStr),
 				count,
 			)
 		}

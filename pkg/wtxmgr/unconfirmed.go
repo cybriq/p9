@@ -8,7 +8,8 @@ import (
 
 // insertMemPoolTx inserts the unmined transaction record. It also marks previous outputs referenced by the inputs as
 // spent.
-func (s *Store) insertMemPoolTx(ns walletdb.ReadWriteBucket, rec *TxRecord,
+func (s *Store) insertMemPoolTx(
+	ns walletdb.ReadWriteBucket, rec *TxRecord,
 ) (e error) {
 	// Chk whether the transaction has already been added to the unconfirmed bucket.
 	if existsRawUnmined(ns, rec.Hash[:]) != nil {
@@ -49,7 +50,8 @@ func (s *Store) insertMemPoolTx(ns walletdb.ReadWriteBucket, rec *TxRecord,
 // removeDoubleSpends checks for any unmined transactions which would introduce a double spend if tx was added to the
 // store (either as a confirmed or unmined transaction). Each conflicting transaction and all transactions which spend
 // it are recursively removed.
-func (s *Store) removeDoubleSpends(ns walletdb.ReadWriteBucket, rec *TxRecord,
+func (s *Store) removeDoubleSpends(
+	ns walletdb.ReadWriteBucket, rec *TxRecord,
 ) (e error) {
 	for _, input := range rec.MsgTx.TxIn {
 		prevOut := &input.PreviousOutPoint
@@ -145,7 +147,8 @@ func (s *Store) UnminedTxs(ns walletdb.ReadBucket) ([]*wire.MsgTx, error) {
 	return txs, nil
 }
 
-func (s *Store) unminedTxRecords(ns walletdb.ReadBucket) (map[chainhash.Hash]*TxRecord,
+func (s *Store) unminedTxRecords(ns walletdb.ReadBucket) (
+	map[chainhash.Hash]*TxRecord,
 	error,
 ) {
 	unmined := make(map[chainhash.Hash]*TxRecord)
@@ -169,13 +172,15 @@ func (s *Store) unminedTxRecords(ns walletdb.ReadBucket) (map[chainhash.Hash]*Tx
 }
 
 // UnminedTxHashes returns the hashes of all transactions not known to have been mined in a block.
-func (s *Store) UnminedTxHashes(ns walletdb.ReadBucket) ([]*chainhash.Hash,
+func (s *Store) UnminedTxHashes(ns walletdb.ReadBucket) (
+	[]*chainhash.Hash,
 	error,
 ) {
 	return s.unminedTxHashes(ns)
 }
 
-func (s *Store) unminedTxHashes(ns walletdb.ReadBucket) (hashes []*chainhash.Hash,
+func (s *Store) unminedTxHashes(ns walletdb.ReadBucket) (
+	hashes []*chainhash.Hash,
 	e error,
 ) {
 	e = ns.NestedReadBucket(bucketUnmined).ForEach(

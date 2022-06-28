@@ -99,15 +99,17 @@ testLoop:
 		}
 		gotKey := iter.Key()
 		if !bytes.Equal(gotKey, test.expectedFirst) {
-			t.Errorf("First.Key #%d: unexpected key - got %x, "+
-				"want %x", i, gotKey, test.expectedFirst,
+			t.Errorf(
+				"First.Key #%d: unexpected key - got %x, "+
+					"want %x", i, gotKey, test.expectedFirst,
 			)
 			continue
 		}
 		gotVal := iter.Value()
 		if !bytes.Equal(gotVal, test.expectedFirst) {
-			t.Errorf("First.value #%d: unexpected value - got %x, "+
-				"want %x", i, gotVal, test.expectedFirst,
+			t.Errorf(
+				"First.value #%d: unexpected value - got %x, "+
+					"want %x", i, gotVal, test.expectedFirst,
 			)
 			continue
 		}
@@ -119,8 +121,9 @@ testLoop:
 			gotKey = iter.Key()
 			expectedKey := serializeUint32(curNum)
 			if !bytes.Equal(gotKey, expectedKey) {
-				t.Errorf("iter.Key #%d (%d): unexpected key - "+
-					"got %x, want %x", i, curNum, gotKey,
+				t.Errorf(
+					"iter.Key #%d (%d): unexpected key - "+
+						"got %x, want %x", i, curNum, gotKey,
 					expectedKey,
 				)
 				continue testLoop
@@ -128,8 +131,9 @@ testLoop:
 			// Ensure value is as expected.
 			gotVal = iter.Value()
 			if !bytes.Equal(gotVal, expectedKey) {
-				t.Errorf("iter.value #%d (%d): unexpected "+
-					"value - got %x, want %x", i, curNum,
+				t.Errorf(
+					"iter.value #%d (%d): unexpected "+
+						"value - got %x, want %x", i, curNum,
 					gotVal, expectedKey,
 				)
 				continue testLoop
@@ -148,15 +152,17 @@ testLoop:
 		}
 		gotKey = iter.Key()
 		if !bytes.Equal(gotKey, test.expectedLast) {
-			t.Errorf("Last.Key #%d: unexpected key - got %x, "+
-				"want %x", i, gotKey, test.expectedLast,
+			t.Errorf(
+				"Last.Key #%d: unexpected key - got %x, "+
+					"want %x", i, gotKey, test.expectedLast,
 			)
 			continue
 		}
 		gotVal = iter.Value()
 		if !bytes.Equal(gotVal, test.expectedLast) {
-			t.Errorf("Last.value #%d: unexpected value - got %x, "+
-				"want %x", i, gotVal, test.expectedLast,
+			t.Errorf(
+				"Last.value #%d: unexpected value - got %x, "+
+					"want %x", i, gotVal, test.expectedLast,
 			)
 			continue
 		}
@@ -169,8 +175,9 @@ testLoop:
 			gotKey = iter.Key()
 			expectedKey := serializeUint32(curNum)
 			if !bytes.Equal(gotKey, expectedKey) {
-				t.Errorf("iter.Key #%d (%d): unexpected key - "+
-					"got %x, want %x", i, curNum, gotKey,
+				t.Errorf(
+					"iter.Key #%d (%d): unexpected key - "+
+						"got %x, want %x", i, curNum, gotKey,
 					expectedKey,
 				)
 				continue testLoop
@@ -178,8 +185,9 @@ testLoop:
 			// Ensure value is as expected.
 			gotVal = iter.Value()
 			if !bytes.Equal(gotVal, expectedKey) {
-				t.Errorf("iter.value #%d (%d): unexpected "+
-					"value - got %x, want %x", i, curNum,
+				t.Errorf(
+					"iter.value #%d (%d): unexpected "+
+						"value - got %x, want %x", i, curNum,
 					gotVal, expectedKey,
 				)
 				continue testLoop
@@ -198,15 +206,17 @@ testLoop:
 		}
 		gotKey = iter.Key()
 		if !bytes.Equal(gotKey, test.expectedSeek) {
-			t.Errorf("Seek.Key #%d: unexpected key - got %x, "+
-				"want %x", i, gotKey, test.expectedSeek,
+			t.Errorf(
+				"Seek.Key #%d: unexpected key - got %x, "+
+					"want %x", i, gotKey, test.expectedSeek,
 			)
 			continue
 		}
 		gotVal = iter.Value()
 		if !bytes.Equal(gotVal, test.expectedSeek) {
-			t.Errorf("Seek.value #%d: unexpected value - got %x, "+
-				"want %x", i, gotVal, test.expectedSeek,
+			t.Errorf(
+				"Seek.value #%d: unexpected value - got %x, "+
+					"want %x", i, gotVal, test.expectedSeek,
 			)
 			continue
 		}
@@ -220,15 +230,17 @@ testLoop:
 		}
 		gotKey = iter.Key()
 		if !bytes.Equal(gotKey, test.expectedFirst) {
-			t.Errorf("Next.Key #%d: unexpected key - got %x, "+
-				"want %x", i, gotKey, test.expectedFirst,
+			t.Errorf(
+				"Next.Key #%d: unexpected key - got %x, "+
+					"want %x", i, gotKey, test.expectedFirst,
 			)
 			continue
 		}
 		gotVal = iter.Value()
 		if !bytes.Equal(gotVal, test.expectedFirst) {
-			t.Errorf("Next.value #%d: unexpected value - got %x, "+
-				"want %x", i, gotVal, test.expectedFirst,
+			t.Errorf(
+				"Next.value #%d: unexpected value - got %x, "+
+					"want %x", i, gotVal, test.expectedFirst,
 			)
 			continue
 		}
@@ -242,15 +254,17 @@ testLoop:
 		}
 		gotKey = iter.Key()
 		if !bytes.Equal(gotKey, test.expectedLast) {
-			t.Errorf("Prev.Key #%d: unexpected key - got %x, "+
-				"want %x", i, gotKey, test.expectedLast,
+			t.Errorf(
+				"Prev.Key #%d: unexpected key - got %x, "+
+					"want %x", i, gotKey, test.expectedLast,
 			)
 			continue
 		}
 		gotVal = iter.Value()
 		if !bytes.Equal(gotVal, test.expectedLast) {
-			t.Errorf("Next.value #%d: unexpected value - got %x, "+
-				"want %x", i, gotVal, test.expectedLast,
+			t.Errorf(
+				"Next.value #%d: unexpected value - got %x, "+
+					"want %x", i, gotVal, test.expectedLast,
 			)
 			continue
 		}
@@ -326,7 +340,8 @@ func TestIteratorUpdates(t *testing.T) {
 	wantKey := serializeUint32(4)
 	gotKey := iter.Key()
 	if !bytes.Equal(gotKey, wantKey) {
-		t.Fatalf("ForceReseek.Key: unexpected key - got %x, want %x",
+		t.Fatalf(
+			"ForceReseek.Key: unexpected key - got %x, want %x",
 			gotKey, wantKey,
 		)
 	}
@@ -341,7 +356,8 @@ func TestIteratorUpdates(t *testing.T) {
 	wantKey = serializeUint32(7)
 	gotKey = iter.Key()
 	if !bytes.Equal(gotKey, wantKey) {
-		t.Fatalf("ForceReseek.Key: unexpected key - got %x, want %x",
+		t.Fatalf(
+			"ForceReseek.Key: unexpected key - got %x, want %x",
 			gotKey, wantKey,
 		)
 	}
@@ -356,7 +372,8 @@ func TestIteratorUpdates(t *testing.T) {
 	wantKey = serializeUint32(4)
 	gotKey = iter.Key()
 	if !bytes.Equal(gotKey, wantKey) {
-		t.Fatalf("ForceReseek.Key: unexpected key - got %x, want %x",
+		t.Fatalf(
+			"ForceReseek.Key: unexpected key - got %x, want %x",
 			gotKey, wantKey,
 		)
 	}
@@ -371,7 +388,8 @@ func TestIteratorUpdates(t *testing.T) {
 	wantKey = serializeUint32(18)
 	gotKey = iter.Key()
 	if !bytes.Equal(gotKey, wantKey) {
-		t.Fatalf("ForceReseek.Key: unexpected key - got %x, want %x",
+		t.Fatalf(
+			"ForceReseek.Key: unexpected key - got %x, want %x",
 			gotKey, wantKey,
 		)
 	}
@@ -470,15 +488,17 @@ testLoop:
 		}
 		gotKey := iter.Key()
 		if !bytes.Equal(gotKey, test.expectedFirst) {
-			t.Errorf("First.Key #%d: unexpected key - got %x, "+
-				"want %x", i, gotKey, test.expectedFirst,
+			t.Errorf(
+				"First.Key #%d: unexpected key - got %x, "+
+					"want %x", i, gotKey, test.expectedFirst,
 			)
 			continue
 		}
 		gotVal := iter.Value()
 		if !bytes.Equal(gotVal, test.expectedFirst) {
-			t.Errorf("First.value #%d: unexpected value - got %x, "+
-				"want %x", i, gotVal, test.expectedFirst,
+			t.Errorf(
+				"First.value #%d: unexpected value - got %x, "+
+					"want %x", i, gotVal, test.expectedFirst,
 			)
 			continue
 		}
@@ -490,8 +510,9 @@ testLoop:
 			gotKey = iter.Key()
 			expectedKey := serializeUint32(curNum)
 			if !bytes.Equal(gotKey, expectedKey) {
-				t.Errorf("iter.Key #%d (%d): unexpected key - "+
-					"got %x, want %x", i, curNum, gotKey,
+				t.Errorf(
+					"iter.Key #%d (%d): unexpected key - "+
+						"got %x, want %x", i, curNum, gotKey,
 					expectedKey,
 				)
 				continue testLoop
@@ -499,8 +520,9 @@ testLoop:
 			// Ensure value is as expected.
 			gotVal = iter.Value()
 			if !bytes.Equal(gotVal, expectedKey) {
-				t.Errorf("iter.value #%d (%d): unexpected "+
-					"value - got %x, want %x", i, curNum,
+				t.Errorf(
+					"iter.value #%d (%d): unexpected "+
+						"value - got %x, want %x", i, curNum,
 					gotVal, expectedKey,
 				)
 				continue testLoop
@@ -519,15 +541,17 @@ testLoop:
 		}
 		gotKey = iter.Key()
 		if !bytes.Equal(gotKey, test.expectedLast) {
-			t.Errorf("Last.Key #%d: unexpected key - got %x, "+
-				"want %x", i, gotKey, test.expectedLast,
+			t.Errorf(
+				"Last.Key #%d: unexpected key - got %x, "+
+					"want %x", i, gotKey, test.expectedLast,
 			)
 			continue
 		}
 		gotVal = iter.Value()
 		if !bytes.Equal(gotVal, test.expectedLast) {
-			t.Errorf("Last.value #%d: unexpected value - got %x, "+
-				"want %x", i, gotVal, test.expectedLast,
+			t.Errorf(
+				"Last.value #%d: unexpected value - got %x, "+
+					"want %x", i, gotVal, test.expectedLast,
 			)
 			continue
 		}
@@ -540,8 +564,9 @@ testLoop:
 			gotKey = iter.Key()
 			expectedKey := serializeUint32(curNum)
 			if !bytes.Equal(gotKey, expectedKey) {
-				t.Errorf("iter.Key #%d (%d): unexpected key - "+
-					"got %x, want %x", i, curNum, gotKey,
+				t.Errorf(
+					"iter.Key #%d (%d): unexpected key - "+
+						"got %x, want %x", i, curNum, gotKey,
 					expectedKey,
 				)
 				continue testLoop
@@ -549,8 +574,9 @@ testLoop:
 			// Ensure value is as expected.
 			gotVal = iter.Value()
 			if !bytes.Equal(gotVal, expectedKey) {
-				t.Errorf("iter.value #%d (%d): unexpected "+
-					"value - got %x, want %x", i, curNum,
+				t.Errorf(
+					"iter.value #%d (%d): unexpected "+
+						"value - got %x, want %x", i, curNum,
 					gotVal, expectedKey,
 				)
 				continue testLoop
@@ -569,15 +595,17 @@ testLoop:
 		}
 		gotKey = iter.Key()
 		if !bytes.Equal(gotKey, test.expectedSeek) {
-			t.Errorf("Seek.Key #%d: unexpected key - got %x, "+
-				"want %x", i, gotKey, test.expectedSeek,
+			t.Errorf(
+				"Seek.Key #%d: unexpected key - got %x, "+
+					"want %x", i, gotKey, test.expectedSeek,
 			)
 			continue
 		}
 		gotVal = iter.Value()
 		if !bytes.Equal(gotVal, test.expectedSeek) {
-			t.Errorf("Seek.value #%d: unexpected value - got %x, "+
-				"want %x", i, gotVal, test.expectedSeek,
+			t.Errorf(
+				"Seek.value #%d: unexpected value - got %x, "+
+					"want %x", i, gotVal, test.expectedSeek,
 			)
 			continue
 		}
@@ -591,15 +619,17 @@ testLoop:
 		}
 		gotKey = iter.Key()
 		if !bytes.Equal(gotKey, test.expectedFirst) {
-			t.Errorf("Next.Key #%d: unexpected key - got %x, "+
-				"want %x", i, gotKey, test.expectedFirst,
+			t.Errorf(
+				"Next.Key #%d: unexpected key - got %x, "+
+					"want %x", i, gotKey, test.expectedFirst,
 			)
 			continue
 		}
 		gotVal = iter.Value()
 		if !bytes.Equal(gotVal, test.expectedFirst) {
-			t.Errorf("Next.value #%d: unexpected value - got %x, "+
-				"want %x", i, gotVal, test.expectedFirst,
+			t.Errorf(
+				"Next.value #%d: unexpected value - got %x, "+
+					"want %x", i, gotVal, test.expectedFirst,
 			)
 			continue
 		}
@@ -613,15 +643,17 @@ testLoop:
 		}
 		gotKey = iter.Key()
 		if !bytes.Equal(gotKey, test.expectedLast) {
-			t.Errorf("Prev.Key #%d: unexpected key - got %x, "+
-				"want %x", i, gotKey, test.expectedLast,
+			t.Errorf(
+				"Prev.Key #%d: unexpected key - got %x, "+
+					"want %x", i, gotKey, test.expectedLast,
 			)
 			continue
 		}
 		gotVal = iter.Value()
 		if !bytes.Equal(gotVal, test.expectedLast) {
-			t.Errorf("Next.value #%d: unexpected value - got %x, "+
-				"want %x", i, gotVal, test.expectedLast,
+			t.Errorf(
+				"Next.value #%d: unexpected value - got %x, "+
+					"want %x", i, gotVal, test.expectedLast,
 			)
 			continue
 		}

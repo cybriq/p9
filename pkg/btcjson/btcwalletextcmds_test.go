@@ -66,12 +66,14 @@ func TestBtcWalletExtCmds(t *testing.T) {
 		{
 			name: "importaddress optional",
 			newCmd: func() (interface{}, error) {
-				return btcjson.NewCmd("importaddress", "1Address", "acct",
+				return btcjson.NewCmd(
+					"importaddress", "1Address", "acct",
 					false,
 				)
 			},
 			staticCmd: func() interface{} {
-				return btcjson.NewImportAddressCmd("1Address", "acct",
+				return btcjson.NewImportAddressCmd(
+					"1Address", "acct",
 					btcjson.Bool(false),
 				)
 			},
@@ -143,14 +145,16 @@ func TestBtcWalletExtCmds(t *testing.T) {
 		// Marshal the command as created by the new static command creation function.
 		marshalled, e := btcjson.MarshalCmd(testID, test.staticCmd())
 		if e != nil {
-			t.Errorf("MarshalCmd #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"MarshalCmd #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		if !bytes.Equal(marshalled, []byte(test.marshalled)) {
-			t.Errorf("Test #%d (%s) unexpected marshalled data - "+
-				"got %s, want %s", i, test.name, marshalled,
+			t.Errorf(
+				"Test #%d (%s) unexpected marshalled data - "+
+					"got %s, want %s", i, test.name, marshalled,
 				test.marshalled,
 			)
 			continue
@@ -158,43 +162,49 @@ func TestBtcWalletExtCmds(t *testing.T) {
 		// Ensure the command is created without error via the generic new command creation function.
 		cmd, e := test.newCmd()
 		if e != nil {
-			t.Errorf("Test #%d (%s) unexpected NewCmd error: %v ",
+			t.Errorf(
+				"Test #%d (%s) unexpected NewCmd error: %v ",
 				i, test.name, e,
 			)
 		}
 		// Marshal the command as created by the generic new command creation function.
 		marshalled, e = btcjson.MarshalCmd(testID, cmd)
 		if e != nil {
-			t.Errorf("MarshalCmd #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"MarshalCmd #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		if !bytes.Equal(marshalled, []byte(test.marshalled)) {
-			t.Errorf("Test #%d (%s) unexpected marshalled data - "+
-				"got %s, want %s", i, test.name, marshalled,
+			t.Errorf(
+				"Test #%d (%s) unexpected marshalled data - "+
+					"got %s, want %s", i, test.name, marshalled,
 				test.marshalled,
 			)
 			continue
 		}
 		var request btcjson.Request
 		if e = json.Unmarshal(marshalled, &request); E.Chk(e) {
-			t.Errorf("Test #%d (%s) unexpected error while "+
-				"unmarshalling JSON-RPC request: %v", i,
+			t.Errorf(
+				"Test #%d (%s) unexpected error while "+
+					"unmarshalling JSON-RPC request: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		cmd, e = btcjson.UnmarshalCmd(&request)
 		if e != nil {
-			t.Errorf("UnmarshalCmd #%d (%s) unexpected error: %v", i,
+			t.Errorf(
+				"UnmarshalCmd #%d (%s) unexpected error: %v", i,
 				test.name, e,
 			)
 			continue
 		}
 		if !reflect.DeepEqual(cmd, test.unmarshalled) {
-			t.Errorf("Test #%d (%s) unexpected unmarshalled command "+
-				"- got %s, want %s", i, test.name,
+			t.Errorf(
+				"Test #%d (%s) unexpected unmarshalled command "+
+					"- got %s, want %s", i, test.name,
 				fmt.Sprintf("(%T) %+[1]v", cmd),
 				fmt.Sprintf("(%T) %+[1]v\n", test.unmarshalled),
 			)

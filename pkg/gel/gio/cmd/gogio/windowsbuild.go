@@ -30,18 +30,28 @@ func buildWindows(tmpDir string, bi *buildInfo) error {
 	name := bi.name
 	if *destPath != "" {
 		if filepath.Ext(*destPath) != ".exe" {
-			return fmt.Errorf("invalid output name %q, it must end with `.exe`", *destPath)
+			return fmt.Errorf(
+				"invalid output name %q, it must end with `.exe`",
+				*destPath,
+			)
 		}
 		name = filepath.Base(*destPath)
 	}
 	name = strings.TrimSuffix(name, ".exe")
 	sdk := bi.minsdk
 	if sdk > 10 {
-		return fmt.Errorf("invalid minsdk (%d) it's higher than Windows 10", sdk)
+		return fmt.Errorf(
+			"invalid minsdk (%d) it's higher than Windows 10",
+			sdk,
+		)
 	}
 	version := strconv.Itoa(bi.version)
 	if bi.version > math.MaxUint16 {
-		return fmt.Errorf("version (%d) is larger than the maximum (%d)", bi.version, math.MaxUint16)
+		return fmt.Errorf(
+			"version (%d) is larger than the maximum (%d)",
+			bi.version,
+			math.MaxUint16,
+		)
 	}
 
 	for _, arch := range bi.archs {
@@ -52,20 +62,24 @@ func buildWindows(tmpDir string, bi *buildInfo) error {
 			return err
 		}
 
-		if err := builder.embedManifest(windowsManifest{
-			Version:        "1.0.0." + version,
-			WindowsVersion: sdk,
-			Name:           name,
-		}); err != nil {
+		if err := builder.embedManifest(
+			windowsManifest{
+				Version:        "1.0.0." + version,
+				WindowsVersion: sdk,
+				Name:           name,
+			},
+		); err != nil {
 			return fmt.Errorf("can't create manifest: %v", err)
 		}
 
-		if err := builder.embedInfo(windowsResources{
-			Version:      [2]uint32{uint32(1) << 16, uint32(bi.version)},
-			VersionHuman: "1.0.0." + version,
-			Name:         name,
-			Language:     0x0400, // Process Default Language: https://docs.microsoft.com/en-us/previous-versions/ms957130(v=msdn.10)
-		}); err != nil {
+		if err := builder.embedInfo(
+			windowsResources{
+				Version:      [2]uint32{uint32(1) << 16, uint32(bi.version)},
+				VersionHuman: "1.0.0." + version,
+				Name:         name,
+				Language:     0x0400, // Process Default Language: https://docs.microsoft.com/en-us/previous-versions/ms957130(v=msdn.10)
+			},
+		); err != nil {
 			return fmt.Errorf("can't create info: %v", err)
 		}
 
@@ -132,33 +146,45 @@ func (b *windowsBuilder) embedIcon(path string) (err error) {
 	var iconHeader bufferCoff
 
 	// GRPICONDIR structure.
-	if err := binary.Write(&iconHeader, binary.LittleEndian, [3]uint16{0, 1, uint16(len(sizes))}); err != nil {
+	if err := binary.Write(
+		&iconHeader,
+		binary.LittleEndian,
+		[3]uint16{0, 1, uint16(len(sizes))},
+	); err != nil {
 		return err
 	}
 
 	for _, size := range sizes {
 		var iconBuffer bufferCoff
 
-		if err := png.Encode(&iconBuffer, resizeIcon(iconVariant{size: size, fill: false}, iconImage)); err != nil {
+		if err := png.Encode(
+			&iconBuffer,
+			resizeIcon(iconVariant{size: size, fill: false}, iconImage),
+		); err != nil {
 			return fmt.Errorf("can't encode image: %v", err)
 		}
 
 		b.Coff.AddResource(windowsResourceIcon, uint16(size), &iconBuffer)
 
-		if err := binary.Write(&iconHeader, binary.LittleEndian, struct {
-			Size     [2]uint8
-			Color    [2]uint8
-			Planes   uint16
-			BitCount uint16
-			Length   uint32
-			Id       uint16
-		}{
-			Size:     [2]uint8{uint8(size % 256), uint8(size % 256)}, // "0" means 256px.
-			Planes:   1,
-			BitCount: 32,
-			Length:   uint32(iconBuffer.Len()),
-			Id:       uint16(size),
-		}); err != nil {
+		if err := binary.Write(
+			&iconHeader, binary.LittleEndian, struct {
+				Size     [2]uint8
+				Color    [2]uint8
+				Planes   uint16
+				BitCount uint16
+				Length   uint32
+				Id       uint16
+			}{
+				Size: [2]uint8{
+					uint8(size % 256),
+					uint8(size % 256),
+				}, // "0" means 256px.
+				Planes:   1,
+				BitCount: 32,
+				Length:   uint32(iconBuffer.Len()),
+				Id:       uint16(size),
+			},
+		); err != nil {
 			return err
 		}
 	}
@@ -168,8 +194,17 @@ func (b *windowsBuilder) embedIcon(path string) (err error) {
 	return nil
 }
 
-func (b *windowsBuilder) buildResource(buildInfo *buildInfo, name string, arch string) error {
-	out, err := os.Create(filepath.Join(buildInfo.pkgPath, name+"_windows_"+arch+".syso"))
+func (b *windowsBuilder) buildResource(
+	buildInfo *buildInfo,
+	name string,
+	arch string,
+) error {
+	out, err := os.Create(
+		filepath.Join(
+			buildInfo.pkgPath,
+			name+"_windows_"+arch+".syso",
+		),
+	)
 	if err != nil {
 		return err
 	}
@@ -178,18 +213,20 @@ func (b *windowsBuilder) buildResource(buildInfo *buildInfo, name string, arch s
 
 	// See https://github.com/akavel/rsrc/internal/write.go#L13.
 	w := binutil.Writer{W: out}
-	binutil.Walk(b.Coff, func(v reflect.Value, path string) error {
-		if binutil.Plain(v.Kind()) {
-			w.WriteLE(v.Interface())
+	binutil.Walk(
+		b.Coff, func(v reflect.Value, path string) error {
+			if binutil.Plain(v.Kind()) {
+				w.WriteLE(v.Interface())
+				return nil
+			}
+			vv, ok := v.Interface().(binutil.SizedReader)
+			if ok {
+				w.WriteFromSized(vv)
+				return binutil.WALK_SKIP
+			}
 			return nil
-		}
-		vv, ok := v.Interface().(binutil.SizedReader)
-		if ok {
-			w.WriteFromSized(vv)
-			return binutil.WALK_SKIP
-		}
-		return nil
-	})
+		},
+	)
 
 	if w.Err != nil {
 		return fmt.Errorf("error writing output file: %s", w.Err)
@@ -198,7 +235,11 @@ func (b *windowsBuilder) buildResource(buildInfo *buildInfo, name string, arch s
 	return nil
 }
 
-func (b *windowsBuilder) buildProgram(buildInfo *buildInfo, name string, arch string) error {
+func (b *windowsBuilder) buildProgram(
+	buildInfo *buildInfo,
+	name string,
+	arch string,
+) error {
 	dest := b.DestDir
 	if len(buildInfo.archs) > 1 {
 		dest = filepath.Join(filepath.Dir(b.DestDir), name+"_"+arch+".exe")
@@ -222,7 +263,8 @@ func (b *windowsBuilder) buildProgram(buildInfo *buildInfo, name string, arch st
 }
 
 func (b *windowsBuilder) embedManifest(v windowsManifest) error {
-	t, err := template.New("manifest").Parse(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	t, err := template.New("manifest").Parse(
+		`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
     <assemblyIdentity type="win32" name="{{.Name}}" version="{{.Version}}" />
     <description>{{.Name}}</description>
@@ -252,7 +294,8 @@ func (b *windowsBuilder) embedManifest(v windowsManifest) error {
 			<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true</dpiAware>
 		</asmv3:windowsSettings>
 	</asmv3:application>
-</assembly>`)
+</assembly>`,
+	)
 	if err != nil {
 		return err
 	}
@@ -271,37 +314,55 @@ func (b *windowsBuilder) embedInfo(v windowsResources) error {
 	page := uint16(1)
 
 	// https://docs.microsoft.com/pt-br/windows/win32/menurc/vs-versioninfo
-	t := newValue(valueBinary, "VS_VERSION_INFO", []io.WriterTo{
-		// https://docs.microsoft.com/pt-br/windows/win32/api/VerRsrc/ns-verrsrc-vs_fixedfileinfo
-		windowsInfoValueFixed{
-			Signature:      0xFEEF04BD,
-			StructVersion:  0x00010000,
-			FileVersion:    v.Version,
-			ProductVersion: v.Version,
-			FileFlagMask:   0x3F,
-			FileFlags:      0,
-			FileOS:         0x40004,
-			FileType:       0x1,
-			FileSubType:    0,
+	t := newValue(
+		valueBinary, "VS_VERSION_INFO", []io.WriterTo{
+			// https://docs.microsoft.com/pt-br/windows/win32/api/VerRsrc/ns-verrsrc-vs_fixedfileinfo
+			windowsInfoValueFixed{
+				Signature:      0xFEEF04BD,
+				StructVersion:  0x00010000,
+				FileVersion:    v.Version,
+				ProductVersion: v.Version,
+				FileFlagMask:   0x3F,
+				FileFlags:      0,
+				FileOS:         0x40004,
+				FileType:       0x1,
+				FileSubType:    0,
+			},
+			// https://docs.microsoft.com/pt-br/windows/win32/menurc/stringfileinfo
+			newValue(
+				valueText, "StringFileInfo", []io.WriterTo{
+					// https://docs.microsoft.com/pt-br/windows/win32/menurc/stringtable
+					newValue(
+						valueText,
+						fmt.Sprintf("%04X%04X", v.Language, page),
+						[]io.WriterTo{
+							// https://docs.microsoft.com/pt-br/windows/win32/menurc/string-str
+							newValue(
+								valueText,
+								"ProductVersion",
+								v.VersionHuman,
+							),
+							newValue(valueText, "FileVersion", v.VersionHuman),
+							newValue(valueText, "FileDescription", v.Name),
+							newValue(valueText, "ProductName", v.Name),
+							// TODO include more data: gogio must have some way to provide such information (like Company Name, Copyright...)
+						},
+					),
+				},
+			),
+			// https://docs.microsoft.com/pt-br/windows/win32/menurc/varfileinfo
+			newValue(
+				valueBinary, "VarFileInfo", []io.WriterTo{
+					// https://docs.microsoft.com/pt-br/windows/win32/menurc/var-str
+					newValue(
+						valueBinary,
+						"Translation",
+						uint32(page)<<16|uint32(v.Language),
+					),
+				},
+			),
 		},
-		// https://docs.microsoft.com/pt-br/windows/win32/menurc/stringfileinfo
-		newValue(valueText, "StringFileInfo", []io.WriterTo{
-			// https://docs.microsoft.com/pt-br/windows/win32/menurc/stringtable
-			newValue(valueText, fmt.Sprintf("%04X%04X", v.Language, page), []io.WriterTo{
-				// https://docs.microsoft.com/pt-br/windows/win32/menurc/string-str
-				newValue(valueText, "ProductVersion", v.VersionHuman),
-				newValue(valueText, "FileVersion", v.VersionHuman),
-				newValue(valueText, "FileDescription", v.Name),
-				newValue(valueText, "ProductName", v.Name),
-				// TODO include more data: gogio must have some way to provide such information (like Company Name, Copyright...)
-			}),
-		}),
-		// https://docs.microsoft.com/pt-br/windows/win32/menurc/varfileinfo
-		newValue(valueBinary, "VarFileInfo", []io.WriterTo{
-			// https://docs.microsoft.com/pt-br/windows/win32/menurc/var-str
-			newValue(valueBinary, "Translation", uint32(page)<<16|uint32(v.Language)),
-		}),
-	})
+	)
 
 	// For some reason the ValueLength of the VS_VERSIONINFO must be the byte-length of `windowsInfoValueFixed`:
 	t.ValueLength = 52
@@ -343,7 +404,11 @@ type windowsInfoValue struct {
 
 func (v windowsInfoValue) WriteTo(w io.Writer) (_ int64, err error) {
 	// binary.Write doesn't support []byte inside struct.
-	if err = binary.Write(w, binary.LittleEndian, [3]uint16{v.Length, v.ValueLength, v.Type}); err != nil {
+	if err = binary.Write(
+		w,
+		binary.LittleEndian,
+		[3]uint16{v.Length, v.ValueLength, v.Type},
+	); err != nil {
 		return 0, err
 	}
 	if _, err = w.Write(v.Key); err != nil {
@@ -360,7 +425,11 @@ const (
 	valueText   uint16 = 1
 )
 
-func newValue(valueType uint16, key string, input interface{}) windowsInfoValue {
+func newValue(
+	valueType uint16,
+	key string,
+	input interface{},
+) windowsInfoValue {
 	v := windowsInfoValue{
 		Type:   valueType,
 		Length: 6,
@@ -404,7 +473,10 @@ func newValue(valueType uint16, key string, input interface{}) windowsInfoValue 
 
 // utf16Encode encodes the string to UTF16 with null-termination.
 func utf16Encode(s string) []byte {
-	b, err := unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM).NewEncoder().Bytes([]byte(s))
+	b, err := unicode.UTF16(
+		unicode.LittleEndian,
+		unicode.IgnoreBOM,
+	).NewEncoder().Bytes([]byte(s))
 	if err != nil {
 		panic(err)
 	}

@@ -90,7 +90,10 @@ func (sig *Signature) IsEqual(otherSig *Signature) bool {
 // 0x30 + <1-byte> + 0x02 + 0x01 + <byte> + 0x2 + 0x01 + <byte>
 const MinSigLen = 8
 
-func parseSig(sigStr []byte, curve elliptic.Curve, der bool) (*Signature, error) {
+func parseSig(sigStr []byte, curve elliptic.Curve, der bool) (
+	*Signature,
+	error,
+) {
 	// Originally this code used encoding/asn1 in order to parse the
 	// signature, but a number of problems were found with this approach.
 	// Despite the fact that signatures are stored as DER, the difference
@@ -181,8 +184,10 @@ func parseSig(sigStr []byte, curve elliptic.Curve, der bool) (*Signature, error)
 
 	// sanity check length parsing
 	if index != len(sigStr) {
-		return nil, fmt.Errorf("malformed signature: bad final length %v != %v",
-			index, len(sigStr))
+		return nil, fmt.Errorf(
+			"malformed signature: bad final length %v != %v",
+			index, len(sigStr),
+		)
 	}
 
 	// Verify also checks this, but we can be more sure that we parsed
@@ -215,7 +220,10 @@ func ParseSignature(sigStr []byte, curve elliptic.Curve) (*Signature, error) {
 // ParseDERSignature parses a signature in DER format for the curve type
 // `curve` into a Signature type.  If parsing according to the less strict
 // BER format is needed, use ParseSignature.
-func ParseDERSignature(sigStr []byte, curve elliptic.Curve) (*Signature, error) {
+func ParseDERSignature(sigStr []byte, curve elliptic.Curve) (
+	*Signature,
+	error,
+) {
 	return parseSig(sigStr, curve, true)
 }
 
@@ -282,8 +290,10 @@ func hashToInt(hash []byte, c elliptic.Curve) *big.Int {
 // of the loop * 2 - on the first iteration of j we do the R case, else the -R
 // case in step 1.6. This counter is used in the bitcoin compressed signature
 // format and thus we match bitcoind's behaviour here.
-func recoverKeyFromSignature(curve *KoblitzCurve, sig *Signature, msg []byte,
-	iter int, doChecks bool) (*PublicKey, error) {
+func recoverKeyFromSignature(
+	curve *KoblitzCurve, sig *Signature, msg []byte,
+	iter int, doChecks bool,
+) (*PublicKey, error) {
 	// Parse and validate the R and S signature components.
 	//
 	// Fail if r and s are not in [1, N-1].
@@ -304,8 +314,10 @@ func recoverKeyFromSignature(curve *KoblitzCurve, sig *Signature, msg []byte,
 	}
 
 	// 1.1 x = (n * i) + r
-	Rx := new(big.Int).Mul(curve.Params().N,
-		new(big.Int).SetInt64(int64(iter/2)))
+	Rx := new(big.Int).Mul(
+		curve.Params().N,
+		new(big.Int).SetInt64(int64(iter/2)),
+	)
 	Rx.Add(Rx, sig.R)
 	if Rx.Cmp(curve.Params().P) != -1 {
 		return nil, errors.New("calculated Rx is larger than curve P")
@@ -367,8 +379,10 @@ func recoverKeyFromSignature(curve *KoblitzCurve, sig *Signature, msg []byte,
 // returned in the format:
 // <(byte of 27+public key solution)+4 if compressed >< padded bytes for signature R><padded bytes for signature S>
 // where the R and S parameters are padde up to the bitlengh of the curve.
-func SignCompact(curve *KoblitzCurve, key *PrivateKey,
-	hash []byte, isCompressedKey bool) ([]byte, error) {
+func SignCompact(
+	curve *KoblitzCurve, key *PrivateKey,
+	hash []byte, isCompressedKey bool,
+) ([]byte, error) {
 	sig, err := key.Sign(hash)
 	if err != nil {
 		return nil, err
@@ -391,15 +405,19 @@ func SignCompact(curve *KoblitzCurve, key *PrivateKey,
 			// Pad R and S to curvelen if needed.
 			bytelen := (sig.R.BitLen() + 7) / 8
 			if bytelen < curvelen {
-				result = append(result,
-					make([]byte, curvelen-bytelen)...)
+				result = append(
+					result,
+					make([]byte, curvelen-bytelen)...,
+				)
 			}
 			result = append(result, sig.R.Bytes()...)
 
 			bytelen = (sig.S.BitLen() + 7) / 8
 			if bytelen < curvelen {
-				result = append(result,
-					make([]byte, curvelen-bytelen)...)
+				result = append(
+					result,
+					make([]byte, curvelen-bytelen)...,
+				)
 			}
 			result = append(result, sig.S.Bytes()...)
 
@@ -414,8 +432,10 @@ func SignCompact(curve *KoblitzCurve, key *PrivateKey,
 // Koblitz curve in "curve". If the signature matches then the recovered public
 // key will be returned as well as a boolean if the original key was compressed
 // or not, else an error will be returned.
-func RecoverCompact(curve *KoblitzCurve, signature,
-	hash []byte) (*PublicKey, bool, error) {
+func RecoverCompact(
+	curve *KoblitzCurve, signature,
+	hash []byte,
+) (*PublicKey, bool, error) {
 	bitlen := (curve.BitSize + 7) / 8
 	if len(signature) != 1+bitlen*2 {
 		return nil, false, errors.New("invalid compact signature size")

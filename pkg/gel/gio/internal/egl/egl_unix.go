@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Unlicense OR MIT
 
+//go:build linux || freebsd || openbsd
 // +build linux freebsd openbsd
 
 package egl
@@ -41,7 +42,12 @@ func eglChooseConfig(disp _EGLDisplay, attribs []_EGLint) (_EGLConfig, bool) {
 	return _EGLConfig(cfg), true
 }
 
-func eglCreateContext(disp _EGLDisplay, cfg _EGLConfig, shareCtx _EGLContext, attribs []_EGLint) _EGLContext {
+func eglCreateContext(
+	disp _EGLDisplay,
+	cfg _EGLConfig,
+	shareCtx _EGLContext,
+	attribs []_EGLint,
+) _EGLContext {
 	ctx := C.eglCreateContext(disp, cfg, shareCtx, &attribs[0])
 	return _EGLContext(ctx)
 }
@@ -54,7 +60,11 @@ func eglDestroyContext(disp _EGLDisplay, ctx _EGLContext) bool {
 	return C.eglDestroyContext(disp, ctx) == C.EGL_TRUE
 }
 
-func eglGetConfigAttrib(disp _EGLDisplay, cfg _EGLConfig, attr _EGLint) (_EGLint, bool) {
+func eglGetConfigAttrib(
+	disp _EGLDisplay,
+	cfg _EGLConfig,
+	attr _EGLint,
+) (_EGLint, bool) {
 	var val _EGLint
 	ret := C.eglGetConfigAttrib(disp, cfg, attr, &val)
 	return val, ret == C.EGL_TRUE
@@ -70,7 +80,11 @@ func eglInitialize(disp _EGLDisplay) (_EGLint, _EGLint, bool) {
 	return maj, min, ret == C.EGL_TRUE
 }
 
-func eglMakeCurrent(disp _EGLDisplay, draw, read _EGLSurface, ctx _EGLContext) bool {
+func eglMakeCurrent(
+	disp _EGLDisplay,
+	draw, read _EGLSurface,
+	ctx _EGLContext,
+) bool {
 	return C.eglMakeCurrent(disp, draw, read, ctx) == C.EGL_TRUE
 }
 
@@ -98,7 +112,12 @@ func eglGetDisplay(disp NativeDisplayType) _EGLDisplay {
 	return C.eglGetDisplay(disp)
 }
 
-func eglCreateWindowSurface(disp _EGLDisplay, conf _EGLConfig, win NativeWindowType, attribs []_EGLint) _EGLSurface {
+func eglCreateWindowSurface(
+	disp _EGLDisplay,
+	conf _EGLConfig,
+	win NativeWindowType,
+	attribs []_EGLint,
+) _EGLSurface {
 	eglSurf := C.eglCreateWindowSurface(disp, conf, win, &attribs[0])
 	return eglSurf
 }

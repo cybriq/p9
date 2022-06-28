@@ -73,7 +73,8 @@ type thresholdStateCache struct {
 
 // Lookup returns the threshold state associated with the given hash along with a boolean that indicates whether or not
 // it is valid.
-func (c *thresholdStateCache) Lookup(hash *chainhash.Hash) (ThresholdState,
+func (c *thresholdStateCache) Lookup(hash *chainhash.Hash) (
+	ThresholdState,
 	bool,
 ) {
 	state, ok := c.entries[*hash]
@@ -81,7 +82,8 @@ func (c *thresholdStateCache) Lookup(hash *chainhash.Hash) (ThresholdState,
 }
 
 // Update updates the cache to contain the provided hash to threshold state mapping.
-func (c *thresholdStateCache) Update(hash *chainhash.Hash, state ThresholdState,
+func (c *thresholdStateCache) Update(
+	hash *chainhash.Hash, state ThresholdState,
 ) {
 	c.entries[*hash] = state
 }

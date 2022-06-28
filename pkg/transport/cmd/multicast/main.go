@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 	"time"
-	
+
 	"golang.org/x/net/ipv4"
 )
 
@@ -16,7 +16,7 @@ func main() {
 		fmt.Printf("ListenUDP error %v\n", e)
 		return
 	}
-	
+
 	pc := ipv4.NewPacketConn(conn)
 	var ifaces []net.Interface
 	var iface net.Interface
@@ -31,7 +31,10 @@ func main() {
 			break
 		}
 	}
-	if e = pc.JoinGroup(&iface, &net.UDPAddr{IP: net.IPv4(224, 0, 0, 1)}); E.Chk(e) {
+	if e = pc.JoinGroup(
+		&iface,
+		&net.UDPAddr{IP: net.IPv4(224, 0, 0, 1)},
+	); E.Chk(e) {
 		return
 	}
 	// test
@@ -52,7 +55,7 @@ func main() {
 			time.Sleep(time.Second)
 		}
 	}()
-	
+
 	buf := make([]byte, 1024)
 	for {
 		if n, addr, e := conn.ReadFrom(buf); E.Chk(e) {
@@ -61,7 +64,7 @@ func main() {
 			fmt.Printf("recv %s from %v\n", string(buf[:n]), addr)
 		}
 	}
-	
+
 	// return
 }
 

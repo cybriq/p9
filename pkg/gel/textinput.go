@@ -121,10 +121,12 @@ func (ti *TextInput) Fn(gtx l.Context) l.Dimensions {
 	dims = ti.editor.Layout(gtx, ti.shaper, ti.font, ti.textSize)
 	disabled := gtx.Queue == nil
 	if ti.editor.Len() > 0 {
-		paint.ColorOp{Color: blendDisabledColor(disabled, ti.selectionColor),
+		paint.ColorOp{
+			Color: blendDisabledColor(disabled, ti.selectionColor),
 		}.Add(gtx.Ops)
 		ti.editor.PaintSelection(gtx)
-		paint.ColorOp{Color: blendDisabledColor(disabled, ti.color),
+		paint.ColorOp{
+			Color: blendDisabledColor(disabled, ti.color),
 		}.Add(gtx.Ops)
 		ti.editor.PaintText(gtx)
 	} else {

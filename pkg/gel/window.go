@@ -165,7 +165,8 @@ func (w *Window) Open() (out *Window) {
 	return w
 }
 
-func (w *Window) Run(frame func(ctx l.Context) l.Dimensions, destroy func(),
+func (w *Window) Run(
+	frame func(ctx l.Context) l.Dimensions, destroy func(),
 	quit qu.C,
 ) (e error) {
 	runner := func() {
@@ -184,14 +185,18 @@ func (w *Window) Run(frame func(ctx l.Context) l.Dimensions, destroy func(),
 					var e error
 					var b []byte
 					textSize := unit.Sp(16)
-					runner := exec.Command("gsettings", "get",
+					runner := exec.Command(
+						"gsettings", "get",
 						"org.gnome.desktop.interface", "text-scaling-factor",
 					)
 					if b, e = runner.CombinedOutput(); D.Chk(e) {
 					}
 					var factor float64
 					numberString := strings.TrimSpace(string(b))
-					if factor, e = strconv.ParseFloat(numberString, 10); D.Chk(e) {
+					if factor, e = strconv.ParseFloat(
+						numberString,
+						10,
+					); D.Chk(e) {
 					}
 					w.TextSize = textSize.Scale(float32(factor))
 					// I.Ln(w.TextSize)
@@ -253,7 +258,8 @@ func (w *Window) Run(frame func(ctx l.Context) l.Dimensions, destroy func(),
 	return
 }
 
-func (w *Window) processEvents(e event.Event,
+func (w *Window) processEvents(
+	e event.Event,
 	frame func(ctx l.Context) l.Dimensions, destroy func(),
 ) error {
 	switch ev := e.(type) {

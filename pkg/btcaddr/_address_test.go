@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-	"github.com/cybriq/p9/pkg/btcaddr"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/cybriq/p9/pkg/btcaddr"
 
 	"github.com/btcsuite/golangcrypto/ripemd160"
 
@@ -174,7 +175,8 @@ func TestAddresses(t *testing.T) {
 					0xe8, 0xc3, 0x00, 0xc8, 0x79, 0x86, 0xef, 0xa8, 0x4c, 0x37,
 					0xc0, 0x51, 0x99, 0x29, 0x01, 0x9e, 0xf8, 0x6e, 0xb5, 0xb4,
 				}
-				return btcaddr.NewScriptHashFromHash(hash,
+				return btcaddr.NewScriptHashFromHash(
+					hash,
 					&chaincfg.MainNetParams,
 				)
 			},
@@ -198,7 +200,8 @@ func TestAddresses(t *testing.T) {
 					0xc5, 0x79, 0x34, 0x2c, 0x2c, 0x4c, 0x92, 0x20, 0x20, 0x5e,
 					0x2c, 0xdc, 0x28, 0x56, 0x17, 0x04, 0x0c, 0x92, 0x4a, 0x0a,
 				}
-				return btcaddr.NewScriptHashFromHash(hash,
+				return btcaddr.NewScriptHashFromHash(
+					hash,
 					&chaincfg.TestNet3Params,
 				)
 			},
@@ -215,7 +218,8 @@ func TestAddresses(t *testing.T) {
 					0xf2, 0xa0, 0x0a, 0xbd, 0x1b, 0xf3, 0xdc, 0x91, 0xe9, 0x55,
 					0x10,
 				}
-				return btcaddr.NewScriptHashFromHash(hash,
+				return btcaddr.NewScriptHashFromHash(
+					hash,
 					&chaincfg.MainNetParams,
 				)
 			},
@@ -243,7 +247,8 @@ func TestAddresses(t *testing.T) {
 					0xc3, 0xeb, 0xec, 0x3a, 0x95, 0x77, 0x24, 0x89, 0x5d, 0xca,
 					0x52, 0xc6, 0xb4,
 				}
-				return btcaddr.NewPubKey(serializedPubKey,
+				return btcaddr.NewPubKey(
+					serializedPubKey,
 					&chaincfg.MainNetParams,
 				)
 			},
@@ -270,7 +275,8 @@ func TestAddresses(t *testing.T) {
 					0x01, 0xf9, 0x13, 0x7f, 0x23, 0xc2, 0xc4, 0x09, 0x27, 0x3e,
 					0xb1, 0x6e, 0x65,
 				}
-				return btcaddr.NewPubKey(serializedPubKey,
+				return btcaddr.NewPubKey(
+					serializedPubKey,
 					&chaincfg.MainNetParams,
 				)
 			},
@@ -305,7 +311,8 @@ func TestAddresses(t *testing.T) {
 					0x8b, 0x64, 0xf9, 0xd4, 0xc0, 0x3f, 0x99, 0x9b, 0x86, 0x43,
 					0xf6, 0x56, 0xb4, 0x12, 0xa3,
 				}
-				return btcaddr.NewPubKey(serializedPubKey,
+				return btcaddr.NewPubKey(
+					serializedPubKey,
 					&chaincfg.MainNetParams,
 				)
 			},
@@ -339,7 +346,8 @@ func TestAddresses(t *testing.T) {
 					0x76, 0x83, 0x01, 0x60, 0xc6, 0xd2, 0xeb, 0x5e, 0x6a, 0x4c,
 					0x44, 0xd3, 0x3f, 0x45, 0x3e,
 				}
-				return btcaddr.NewPubKey(serializedPubKey,
+				return btcaddr.NewPubKey(
+					serializedPubKey,
 					&chaincfg.MainNetParams,
 				)
 			},
@@ -373,7 +381,8 @@ func TestAddresses(t *testing.T) {
 					0x17, 0xab, 0x65, 0x12, 0x9b, 0x8a, 0x2e, 0x68, 0x1f, 0x3c,
 					0x1e, 0x09, 0x08, 0xef, 0x7b,
 				}
-				return btcaddr.NewPubKey(serializedPubKey,
+				return btcaddr.NewPubKey(
+					serializedPubKey,
 					&chaincfg.MainNetParams,
 				)
 			},
@@ -400,7 +409,8 @@ func TestAddresses(t *testing.T) {
 					0xc3, 0xeb, 0xec, 0x3a, 0x95, 0x77, 0x24, 0x89, 0x5d, 0xca,
 					0x52, 0xc6, 0xb4,
 				}
-				return btcaddr.NewPubKey(serializedPubKey,
+				return btcaddr.NewPubKey(
+					serializedPubKey,
 					&chaincfg.TestNet3Params,
 				)
 			},
@@ -427,7 +437,8 @@ func TestAddresses(t *testing.T) {
 					0x01, 0xf9, 0x13, 0x7f, 0x23, 0xc2, 0xc4, 0x09, 0x27, 0x3e,
 					0xb1, 0x6e, 0x65,
 				}
-				return btcaddr.NewPubKey(serializedPubKey,
+				return btcaddr.NewPubKey(
+					serializedPubKey,
 					&chaincfg.TestNet3Params,
 				)
 			},
@@ -462,7 +473,8 @@ func TestAddresses(t *testing.T) {
 					0x8b, 0x64, 0xf9, 0xd4, 0xc0, 0x3f, 0x99, 0x9b, 0x86, 0x43,
 					0xf6, 0x56, 0xb4, 0x12, 0xa3,
 				}
-				return btcaddr.NewPubKey(serializedPubKey,
+				return btcaddr.NewPubKey(
+					serializedPubKey,
 					&chaincfg.TestNet3Params,
 				)
 			},
@@ -496,7 +508,8 @@ func TestAddresses(t *testing.T) {
 					0x76, 0x83, 0x01, 0x60, 0xc6, 0xd2, 0xeb, 0x5e, 0x6a, 0x4c,
 					0x44, 0xd3, 0x3f, 0x45, 0x3e,
 				}
-				return btcaddr.NewPubKey(serializedPubKey,
+				return btcaddr.NewPubKey(
+					serializedPubKey,
 					&chaincfg.TestNet3Params,
 				)
 			},
@@ -530,7 +543,8 @@ func TestAddresses(t *testing.T) {
 					0x17, 0xab, 0x65, 0x12, 0x9b, 0x8a, 0x2e, 0x68, 0x1f, 0x3c,
 					0x1e, 0x09, 0x08, 0xef, 0x7b,
 				}
-				return btcaddr.NewPubKey(serializedPubKey,
+				return btcaddr.NewPubKey(
+					serializedPubKey,
 					&chaincfg.TestNet3Params,
 				)
 			},

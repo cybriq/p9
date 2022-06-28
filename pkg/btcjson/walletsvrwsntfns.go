@@ -20,7 +20,11 @@ type AccountBalanceNtfn struct {
 }
 
 // NewAccountBalanceNtfn returns a new instance which can be used to issue an accountbalance JSON-RPC notification.
-func NewAccountBalanceNtfn(account string, balance float64, confirmed bool) *AccountBalanceNtfn {
+func NewAccountBalanceNtfn(
+	account string,
+	balance float64,
+	confirmed bool,
+) *AccountBalanceNtfn {
 	return &AccountBalanceNtfn{
 		Account:   account,
 		Balance:   balance,
@@ -66,11 +70,15 @@ func NewNewTxNtfn(account string, details ListTransactionsResult) *NewTxNtfn {
 	}
 }
 func init() {
-	
+
 	// The commands in this file are only usable with a wallet server via websockets and are notifications.
 	flags := UFWalletOnly | UFWebsocketOnly | UFNotification
 	MustRegisterCmd(AccountBalanceNtfnMethod, (*AccountBalanceNtfn)(nil), flags)
 	MustRegisterCmd(PodConnectedNtfnMethod, (*PodConnectedNtfn)(nil), flags)
-	MustRegisterCmd(WalletLockStateNtfnMethod, (*WalletLockStateNtfn)(nil), flags)
+	MustRegisterCmd(
+		WalletLockStateNtfnMethod,
+		(*WalletLockStateNtfn)(nil),
+		flags,
+	)
 	MustRegisterCmd(NewTxNtfnMethod, (*NewTxNtfn)(nil), flags)
 }

@@ -44,7 +44,10 @@ func Conn(port int) (conn *net.UDPConn, e error) {
 	ifcs, _ := routeable.GetAllInterfacesAndAddresses()
 	for _, ifc := range ifcs {
 		iface = ifc
-		if e = pc.JoinGroup(iface, &net.UDPAddr{IP: net.IPv4(224, 0, 0, 1)}); E.Chk(e) {
+		if e = pc.JoinGroup(
+			iface,
+			&net.UDPAddr{IP: net.IPv4(224, 0, 0, 1)},
+		); E.Chk(e) {
 			return
 		}
 		// test

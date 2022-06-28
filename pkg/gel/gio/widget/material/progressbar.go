@@ -36,7 +36,10 @@ func (p ProgressBarStyle) Layout(gtx layout.Context) layout.Dimensions {
 		d := image.Point{X: int(width), Y: gtx.Px(maxHeight)}
 
 		height := float32(gtx.Px(maxHeight))
-		clip.UniformRRect(f32.Rectangle{Max: f32.Pt(width, height)}, rr).Add(gtx.Ops)
+		clip.UniformRRect(
+			f32.Rectangle{Max: f32.Pt(width, height)},
+			rr,
+		).Add(gtx.Ops)
 		paint.ColorOp{Color: color}.Add(gtx.Ops)
 		paint.PaintOp{}.Add(gtx.Ops)
 
@@ -44,19 +47,22 @@ func (p ProgressBarStyle) Layout(gtx layout.Context) layout.Dimensions {
 	}
 
 	progressBarWidth := float32(gtx.Constraints.Max.X)
-	return layout.Stack{Alignment: layout.W}.Layout(gtx,
-		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			return shader(progressBarWidth, p.TrackColor)
-		},
+	return layout.Stack{Alignment: layout.W}.Layout(
+		gtx,
+		layout.Stacked(
+			func(gtx layout.Context) layout.Dimensions {
+				return shader(progressBarWidth, p.TrackColor)
+			},
 		),
-		layout.Stacked(func(gtx layout.Context) layout.Dimensions {
-			fillWidth := progressBarWidth * clamp1(p.Progress)
-			fillColor := p.Color
-			if gtx.Queue == nil {
-				fillColor = f32color.Disabled(fillColor)
-			}
-			return shader(fillWidth, fillColor)
-		},
+		layout.Stacked(
+			func(gtx layout.Context) layout.Dimensions {
+				fillWidth := progressBarWidth * clamp1(p.Progress)
+				fillColor := p.Color
+				if gtx.Queue == nil {
+					fillColor = f32color.Disabled(fillColor)
+				}
+				return shader(fillWidth, fillColor)
+			},
 		),
 	)
 }

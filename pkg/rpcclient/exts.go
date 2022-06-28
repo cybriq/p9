@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	js "encoding/json"
 	"fmt"
+
 	"github.com/cybriq/p9/pkg/btcaddr"
 
 	"github.com/cybriq/p9/pkg/btcjson"
@@ -87,7 +88,8 @@ type FutureListAddressTransactionsResult chan *response
 
 // Receive waits for the response promised by the future and returns information about all transactions associated with
 // the provided addresses.
-func (r FutureListAddressTransactionsResult) Receive() ([]btcjson.ListTransactionsResult,
+func (r FutureListAddressTransactionsResult) Receive() (
+	[]btcjson.ListTransactionsResult,
 	error,
 ) {
 	res, e := receiveFuture(r)
@@ -121,7 +123,8 @@ func (c *Client) ListAddressTransactionsAsync(
 
 // ListAddressTransactions returns information about all transactions associated with the provided addresses. NOTE: This
 // is a btcwallet extension.
-func (c *Client) ListAddressTransactions(addresses []btcaddr.Address,
+func (c *Client) ListAddressTransactions(
+	addresses []btcaddr.Address,
 	account string,
 ) (
 	[]btcjson.ListTransactionsResult,
@@ -245,7 +248,8 @@ func (r FutureGetHeadersResult) Receive() ([]wire.BlockHeader, error) {
 // invoking the Receive function on the returned instance. See GetHeaders for the blocking version and more details.
 //
 // NOTE: This is a btcsuite extension ported from github.com/decred/dcrrpcclient.
-func (c *Client) GetHeadersAsync(blockLocators []chainhash.Hash,
+func (c *Client) GetHeadersAsync(
+	blockLocators []chainhash.Hash,
 	hashStop *chainhash.Hash,
 ) FutureGetHeadersResult {
 	locators := make([]string, len(blockLocators))
@@ -264,7 +268,8 @@ func (c *Client) GetHeadersAsync(blockLocators []chainhash.Hash,
 // the first known block in the locators, up until a block hash matches hashStop.
 //
 // NOTE: This is a btcsuite extension ported from github.com/decred/dcrrpcclient.
-func (c *Client) GetHeaders(blockLocators []chainhash.Hash,
+func (c *Client) GetHeaders(
+	blockLocators []chainhash.Hash,
 	hashStop *chainhash.Hash,
 ) ([]wire.BlockHeader, error) {
 	return c.GetHeadersAsync(blockLocators, hashStop).Receive()

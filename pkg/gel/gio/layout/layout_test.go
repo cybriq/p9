@@ -17,14 +17,17 @@ func TestStack(t *testing.T) {
 		},
 	}
 	exp := image.Point{X: 60, Y: 70}
-	dims := Stack{Alignment: Center}.Layout(gtx,
-		Expanded(func(gtx Context) Dimensions {
-			return Dimensions{Size: exp}
-		},
+	dims := Stack{Alignment: Center}.Layout(
+		gtx,
+		Expanded(
+			func(gtx Context) Dimensions {
+				return Dimensions{Size: exp}
+			},
 		),
-		Stacked(func(gtx Context) Dimensions {
-			return Dimensions{Size: image.Point{X: 50, Y: 50}}
-		},
+		Stacked(
+			func(gtx Context) Dimensions {
+				return Dimensions{Size: image.Point{X: 50, Y: 50}}
+			},
 		),
 	)
 	if got := dims.Size; got != exp {

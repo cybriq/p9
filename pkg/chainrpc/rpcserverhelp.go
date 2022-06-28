@@ -692,8 +692,8 @@ var HelpDescsEnUS = map[string]string{
 	"versionresult-major":         "The major component of the JSON-RPC API version",
 	"versionresult-minor":         "The minor component of the JSON-RPC API version",
 	"versionresult-patch":         "The patch component of the JSON-RPC API version",
-	"versionresult-prerelease":    "Prerelease info about the current podbuild",
-	"versionresult-buildmetadata": "metadata about the current podbuild",
+	"versionresult-prerelease":    "Prerelease info about the current build",
+	"versionresult-buildmetadata": "metadata about the current build",
 }
 
 // ResultTypes specifies the result types that each RPC command can return.
@@ -707,20 +707,24 @@ var ResultTypes = map[string][]interface{}{
 	"decodescript":         {(*btcjson.DecodeScriptResult)(nil)},
 	"estimatefee":          {(*float64)(nil)},
 	"generate":             {(*[]string)(nil)},
-	"getaddednodeinfo": {(*[]string)(nil),
+	"getaddednodeinfo": {
+		(*[]string)(nil),
 		(*[]btcjson.GetAddedNodeInfoResult)(nil),
 	},
 	"getbestblock":     {(*btcjson.GetBestBlockResult)(nil)},
 	"getbestblockhash": {(*string)(nil)},
-	"getblock": {(*string)(nil),
+	"getblock": {
+		(*string)(nil),
 		(*btcjson.GetBlockVerboseResult)(nil),
 	},
 	"getblockcount": {(*int64)(nil)},
 	"getblockhash":  {(*string)(nil)},
-	"getblockheader": {(*string)(nil),
+	"getblockheader": {
+		(*string)(nil),
 		(*btcjson.GetBlockHeaderVerboseResult)(nil),
 	},
-	"getblocktemplate": {(*btcjson.GetBlockTemplateResult)(nil),
+	"getblocktemplate": {
+		(*btcjson.GetBlockTemplateResult)(nil),
 		(*string)(nil), nil,
 	},
 	"getblockchaininfo":  {(*btcjson.GetBlockChainInfoResult)(nil)},
@@ -738,7 +742,8 @@ var ResultTypes = map[string][]interface{}{
 	"getnettotals":       {(*btcjson.GetNetTotalsResult)(nil)},
 	"getnetworkhashps":   {(*int64)(nil)},
 	"getpeerinfo":        {(*[]btcjson.GetPeerInfoResult)(nil)},
-	"getrawmempool": {(*[]string)(nil),
+	"getrawmempool": {
+		(*[]string)(nil),
 		(*btcjson.GetRawMempoolVerboseResult)(nil),
 	},
 	"getrawtransaction": {(*string)(nil), (*btcjson.TxRawResult)(nil)},
@@ -746,7 +751,8 @@ var ResultTypes = map[string][]interface{}{
 	"node":              nil,
 	"help":              {(*string)(nil), (*string)(nil)},
 	"ping":              nil,
-	"searchrawtransactions": {(*string)(nil),
+	"searchrawtransactions": {
+		(*string)(nil),
 		(*[]btcjson.SearchRawTransactionsResult)(nil),
 	},
 	"sendrawtransaction": {(*string)(nil)},

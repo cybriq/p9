@@ -4,14 +4,15 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"math"
+	"math/big"
+	"time"
+
 	"github.com/cybriq/p9/pkg/amt"
 	"github.com/cybriq/p9/pkg/bits"
 	"github.com/cybriq/p9/pkg/block"
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/fork"
-	"math"
-	"math/big"
-	"time"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/txscript"
@@ -200,7 +201,11 @@ func (b *BlockChain) checkConnectBlock(
 	for _, txOut := range transactions[0].MsgTx().TxOut {
 		totalSatoshiOut += txOut.Value
 	}
-	expectedSatoshiOut := CalcBlockSubsidy(node.height, b.params, node.version) +
+	expectedSatoshiOut := CalcBlockSubsidy(
+		node.height,
+		b.params,
+		node.version,
+	) +
 		totalFees
 	if totalSatoshiOut > expectedSatoshiOut {
 		str := fmt.Sprintf(
@@ -353,7 +358,8 @@ func (b *BlockChain) CheckConnectBlockTemplate(block *block.Block) (e error) {
 // For more details, see https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki and http://r6.ca/blog/20120206T005236Z.html
 //
 // This function MUST be called with the chain state lock held (for reads).
-func (b *BlockChain) checkBIP0030(node *BlockNode, block *block.Block,
+func (b *BlockChain) checkBIP0030(
+	node *BlockNode, block *block.Block,
 	view *UtxoViewpoint,
 ) (e error) {
 	// Fetch utxos for all of the transaction ouputs in this block. Typically, there will not be any utxos for any of
@@ -537,7 +543,8 @@ func (b *BlockChain) checkBlockHeaderContext(
 			ct := header.Timestamp.Truncate(time.Second)
 			pt := prevNode.Header().Timestamp.Truncate(time.Second)
 			if ct.Sub(pt) < time.Second {
-				return ruleError(ErrTimeTooOld,
+				return ruleError(
+					ErrTimeTooOld,
 					"timestamp is equal to or less than the chain tip",
 				)
 			}
@@ -558,14 +565,15 @@ func (b *BlockChain) checkBlockHeaderContext(
 	// Ensure chain matches up to predetermined checkpoints.
 	blockHash := header.BlockHash()
 	if !b.verifyCheckpoint(blockHeight, &blockHash) {
-		str := fmt.Sprintf("block at height %d does not match checkpoint hash",
+		str := fmt.Sprintf(
+			"block at height %d does not match checkpoint hash",
 			blockHeight,
 		)
 		E.Ln(str)
 		return ruleError(ErrBadCheckpoint, str)
 	}
 	// Find the previous checkpoint and prevent blocks which fork the main chain before it. This prevents storage of
-	// new, otherwise valid, blocks which podbuild off of old blocks that are likely at a much easier difficulty and
+	// new, otherwise valid, blocks which build off of old blocks that are likely at a much easier difficulty and
 	// therefore could be used to waste cache and disk space.
 	checkpointNode, e := b.findPreviousCheckpoint()
 	if e != nil {
@@ -605,7 +613,8 @@ func (b *BlockChain) checkBlockHeaderContext(
 // At the target block generation rate for the main network, this is approximately every 4 years.
 //
 // After the Plan 9 Hardfork the block value is adjusted every block according to the time it is to repeat
-func CalcBlockSubsidy(height int32, chainParams *chaincfg.Params, version int32,
+func CalcBlockSubsidy(
+	height int32, chainParams *chaincfg.Params, version int32,
 ) (r int64) {
 	if chainParams.SubsidyReductionInterval == 0 {
 		return int64(baseSubsidy)
@@ -622,10 +631,17 @@ func CalcBlockSubsidy(height int32, chainParams *chaincfg.Params, version int32,
 	case 1:
 		// Plan 9 hard fork prescribes a smooth supply curve made using an exponential decay formula adjusted to fit the
 		// previous halving cycle and accounting for the block time difference
-		ttpb := float64(fork.List[1].Algos[fork.GetAlgoName(version, height)].VersionInterval)
-		r = int64(2.7 * ttpb / 300 * (math.Pow(2.7,
-			-float64(height)*300*9/ttpb/375000.0,
-		)) * 100000000 / 9,
+		ttpb := float64(
+			fork.List[1].Algos[fork.GetAlgoName(
+				version,
+				height,
+			)].VersionInterval,
+		)
+		r = int64(
+			2.7 * ttpb / 300 * (math.Pow(
+				2.7,
+				-float64(height)*300*9/ttpb/375000.0,
+			)) * 100000000 / 9,
 		)
 	}
 
@@ -645,14 +661,16 @@ func CheckBlockSanity(
 	prevBlockTimestamp time.Time,
 ) (e error) {
 	F.Ln("CheckBlockSanity powlimit %64x", powLimit)
-	return checkBlockSanity(block, powLimit, timeSource, BFNone, DoNotCheckPow,
+	return checkBlockSanity(
+		block, powLimit, timeSource, BFNone, DoNotCheckPow,
 		height, prevBlockTimestamp,
 	)
 }
 
 // CheckProofOfWork ensures the block header bits which indicate the target difficulty is in min/max range and that the
 // block hash is less than the target difficulty as claimed.
-func CheckProofOfWork(block *block.Block, powLimit *big.Int, height int32,
+func CheckProofOfWork(
+	block *block.Block, powLimit *big.Int, height int32,
 ) (e error) {
 	return checkProofOfWork(&block.WireBlock().Header, powLimit, BFNone, height)
 }
@@ -668,7 +686,8 @@ func CheckProofOfWork(block *block.Block, powLimit *big.Int, height int32,
 //
 // NOTE: The transaction MUST have already been sanity checked with the CheckTransactionSanity function prior to calling
 // this function.
-func CheckTransactionInputs(tx *util.Tx, txHeight int32,
+func CheckTransactionInputs(
+	tx *util.Tx, txHeight int32,
 	utxoView *UtxoViewpoint, chainParams *chaincfg.Params,
 ) (
 	int64,
@@ -879,7 +898,8 @@ func CheckTransactionSanity(tx *util.Tx) (e error) {
 //
 // This uses the precise, signature operation counting mechanism from the script engine which requires access to the
 // input transaction scripts.
-func CountP2SHSigOps(tx *util.Tx, isCoinBaseTx bool, utxoView *UtxoViewpoint,
+func CountP2SHSigOps(
+	tx *util.Tx, isCoinBaseTx bool, utxoView *UtxoViewpoint,
 ) (int, error) {
 	// Coinbase transactions have no interesting inputs.
 	if isCoinBaseTx {
@@ -1017,7 +1037,8 @@ func IsCoinBaseTx(msgTx *wire.MsgTx) bool {
 }
 
 // IsFinalizedTransaction determines whether or not a transaction is finalized.
-func IsFinalizedTransaction(tx *util.Tx, blockHeight int32, blockTime time.Time,
+func IsFinalizedTransaction(
+	tx *util.Tx, blockHeight int32, blockTime time.Time,
 ) bool {
 	msgTx := tx.MsgTx()
 	// Lock time of zero means the transaction is finalized.
@@ -1097,7 +1118,8 @@ func checkBlockHeaderSanity(
 	// whereas the consensus rules only apply to seconds and it's much nicer to deal
 	// with standard Go time values instead of converting to seconds everywhere.
 	if !header.Timestamp.Equal(time.Unix(header.Timestamp.Unix(), 0)) {
-		str := fmt.Sprintf("block timestamp of %v has a higher precision than one second",
+		str := fmt.Sprintf(
+			"block timestamp of %v has a higher precision than one second",
 			header.Timestamp,
 		)
 		e = ruleError(ErrInvalidTime, str)
@@ -1149,7 +1171,8 @@ func checkBlockSanity(
 	T.F("checkBlockSanity %08x %064x", block.WireBlock().Header.Bits, powLimit)
 	msgBlock := block.WireBlock()
 	header := &msgBlock.Header
-	e = checkBlockHeaderSanity(header, powLimit, timeSource, flags, height,
+	e = checkBlockHeaderSanity(
+		header, powLimit, timeSource, flags, height,
 		prevBlockTimestamp,
 	)
 	if e != nil {

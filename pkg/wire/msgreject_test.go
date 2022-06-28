@@ -5,7 +5,7 @@ import (
 	"io"
 	"reflect"
 	"testing"
-	
+
 	"github.com/davecgh/go-spew/spew"
 )
 
@@ -29,7 +29,8 @@ func TestRejectCodeStringer(t *testing.T) {
 	for i, test := range tests {
 		result := test.in.String()
 		if result != test.want {
-			t.Errorf("String #%d\n got: %s want: %s", i, result,
+			t.Errorf(
+				"String #%d\n got: %s want: %s", i, result,
 				test.want,
 			)
 			continue
@@ -50,24 +51,28 @@ func TestRejectLatest(t *testing.T) {
 	msg := NewMsgReject(rejCommand, rejCode, rejReason)
 	msg.Hash = rejHash
 	if msg.Cmd != rejCommand {
-		t.Errorf("NewMsgReject: wrong rejected command - got %v, "+
-			"want %v", msg.Cmd, rejCommand,
+		t.Errorf(
+			"NewMsgReject: wrong rejected command - got %v, "+
+				"want %v", msg.Cmd, rejCommand,
 		)
 	}
 	if msg.Code != rejCode {
-		t.Errorf("NewMsgReject: wrong rejected code - got %v, "+
-			"want %v", msg.Code, rejCode,
+		t.Errorf(
+			"NewMsgReject: wrong rejected code - got %v, "+
+				"want %v", msg.Code, rejCode,
 		)
 	}
 	if msg.Reason != rejReason {
-		t.Errorf("NewMsgReject: wrong rejected reason - got %v, "+
-			"want %v", msg.Reason, rejReason,
+		t.Errorf(
+			"NewMsgReject: wrong rejected reason - got %v, "+
+				"want %v", msg.Reason, rejReason,
 		)
 	}
 	// Ensure the command is expected value.
 	wantCmd := "reject"
 	if cmd := msg.Command(); cmd != wantCmd {
-		t.Errorf("NewMsgReject: wrong command - got %v want %v",
+		t.Errorf(
+			"NewMsgReject: wrong command - got %v want %v",
 			cmd, wantCmd,
 		)
 	}
@@ -75,8 +80,9 @@ func TestRejectLatest(t *testing.T) {
 	wantPayload := uint32(MaxMessagePayload)
 	maxPayload := msg.MaxPayloadLength(pver)
 	if maxPayload != wantPayload {
-		t.Errorf("MaxPayloadLength: wrong max payload length for "+
-			"protocol version %d - got %v, want %v", pver,
+		t.Errorf(
+			"MaxPayloadLength: wrong max payload length for "+
+				"protocol version %d - got %v, want %v", pver,
 			maxPayload, wantPayload,
 		)
 	}
@@ -90,28 +96,33 @@ func TestRejectLatest(t *testing.T) {
 	readMsg := MsgReject{}
 	e = readMsg.BtcDecode(&buf, pver, enc)
 	if e != nil {
-		t.Errorf("decode of MsgReject failed %v e <%v>", buf.Bytes(),
+		t.Errorf(
+			"decode of MsgReject failed %v e <%v>", buf.Bytes(),
 			e,
 		)
 	}
 	// Ensure decoded data is the same.
 	if msg.Cmd != readMsg.Cmd {
-		t.Errorf("Should get same reject command - got %v, want %v",
+		t.Errorf(
+			"Should get same reject command - got %v, want %v",
 			readMsg.Cmd, msg.Cmd,
 		)
 	}
 	if msg.Code != readMsg.Code {
-		t.Errorf("Should get same reject code - got %v, want %v",
+		t.Errorf(
+			"Should get same reject code - got %v, want %v",
 			readMsg.Code, msg.Code,
 		)
 	}
 	if msg.Reason != readMsg.Reason {
-		t.Errorf("Should get same reject reason - got %v, want %v",
+		t.Errorf(
+			"Should get same reject reason - got %v, want %v",
 			readMsg.Reason, msg.Reason,
 		)
 	}
 	if msg.Hash != readMsg.Hash {
-		t.Errorf("Should get same reject hash - got %v, want %v",
+		t.Errorf(
+			"Should get same reject hash - got %v, want %v",
 			readMsg.Hash, msg.Hash,
 		)
 	}
@@ -133,7 +144,8 @@ func TestRejectBeforeAdded(t *testing.T) {
 	// Ensure max payload is expected value for old protocol version.
 	size := msg.MaxPayloadLength(pver)
 	if size != 0 {
-		t.Errorf("Max length should be 0 for reject protocol version %d.",
+		t.Errorf(
+			"Max length should be 0 for reject protocol version %d.",
 			pver,
 		)
 	}
@@ -141,38 +153,44 @@ func TestRejectBeforeAdded(t *testing.T) {
 	var buf bytes.Buffer
 	e := msg.BtcEncode(&buf, pver, enc)
 	if e == nil {
-		t.Errorf("encode of MsgReject succeeded when it shouldn't "+
-			"have %v", msg,
+		t.Errorf(
+			"encode of MsgReject succeeded when it shouldn't "+
+				"have %v", msg,
 		)
 	}
 	//	// Test decode with old protocol version.
 	readMsg := MsgReject{}
 	e = readMsg.BtcDecode(&buf, pver, enc)
 	if e == nil {
-		t.Errorf("decode of MsgReject succeeded when it shouldn't "+
-			"have %v", spew.Sdump(buf.Bytes()),
+		t.Errorf(
+			"decode of MsgReject succeeded when it shouldn't "+
+				"have %v", spew.Sdump(buf.Bytes()),
 		)
 	}
 	// Since this protocol version doesn't support reject, make sure various fields didn't get encoded and decoded back
 	// out.
 	if msg.Cmd == readMsg.Cmd {
-		t.Errorf("Should not get same reject command for protocol "+
-			"version %d", pver,
+		t.Errorf(
+			"Should not get same reject command for protocol "+
+				"version %d", pver,
 		)
 	}
 	if msg.Code == readMsg.Code {
-		t.Errorf("Should not get same reject code for protocol "+
-			"version %d", pver,
+		t.Errorf(
+			"Should not get same reject code for protocol "+
+				"version %d", pver,
 		)
 	}
 	if msg.Reason == readMsg.Reason {
-		t.Errorf("Should not get same reject reason for protocol "+
-			"version %d", pver,
+		t.Errorf(
+			"Should not get same reject reason for protocol "+
+				"version %d", pver,
 		)
 	}
 	if msg.Hash == readMsg.Hash {
-		t.Errorf("Should not get same reject hash for protocol "+
-			"version %d", pver,
+		t.Errorf(
+			"Should not get same reject hash for protocol "+
+				"version %d", pver,
 		)
 	}
 }
@@ -197,8 +215,9 @@ func TestRejectCrossProtocol(t *testing.T) {
 	readMsg := MsgReject{}
 	e = readMsg.BtcDecode(&buf, RejectVersion-1, BaseEncoding)
 	if e == nil {
-		t.Errorf("encode of MsgReject succeeded when it shouldn't "+
-			"have %v", msg,
+		t.Errorf(
+			"encode of MsgReject succeeded when it shouldn't "+
+				"have %v", msg,
 		)
 	}
 	// Since one of the protocol versions doesn't support the reject message, make sure the various fields didn't get
@@ -251,14 +270,61 @@ func TestRejectWire(t *testing.T) {
 				Hash:   mainNetGenesisHash,
 			},
 			[]byte{
-				0x05, 0x62, 0x6c, 0x6f, 0x63, 0x6b, // "block"
+				0x05,
+				0x62,
+				0x6c,
+				0x6f,
+				0x63,
+				0x6b, // "block"
 				0x12, // RejectDuplicate
-				0x0f, 0x64, 0x75, 0x70, 0x6c, 0x69, 0x63, 0x61,
-				0x74, 0x65, 0x20, 0x62, 0x6c, 0x6f, 0x63, 0x6b, // "duplicate block"
-				0x6f, 0xe2, 0x8c, 0x0a, 0xb6, 0xf1, 0xb3, 0x72,
-				0xc1, 0xa6, 0xa2, 0x46, 0xae, 0x63, 0xf7, 0x4f,
-				0x93, 0x1e, 0x83, 0x65, 0xe1, 0x5a, 0x08, 0x9c,
-				0x68, 0xd6, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, // mainNetGenesisHash
+				0x0f,
+				0x64,
+				0x75,
+				0x70,
+				0x6c,
+				0x69,
+				0x63,
+				0x61,
+				0x74,
+				0x65,
+				0x20,
+				0x62,
+				0x6c,
+				0x6f,
+				0x63,
+				0x6b, // "duplicate block"
+				0x6f,
+				0xe2,
+				0x8c,
+				0x0a,
+				0xb6,
+				0xf1,
+				0xb3,
+				0x72,
+				0xc1,
+				0xa6,
+				0xa2,
+				0x46,
+				0xae,
+				0x63,
+				0xf7,
+				0x4f,
+				0x93,
+				0x1e,
+				0x83,
+				0x65,
+				0xe1,
+				0x5a,
+				0x08,
+				0x9c,
+				0x68,
+				0xd6,
+				0x19,
+				0x00,
+				0x00,
+				0x00,
+				0x00,
+				0x00, // mainNetGenesisHash
 			},
 			ProtocolVersion,
 			BaseEncoding,
@@ -274,7 +340,8 @@ func TestRejectWire(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("BtcEncode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcEncode #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -288,7 +355,8 @@ func TestRejectWire(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(msg, test.msg) {
-			t.Errorf("BtcDecode #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"BtcDecode #%d\n got: %s want: %s", i,
 				spew.Sdump(msg), spew.Sdump(test.msg),
 			)
 			continue
@@ -324,15 +392,55 @@ func TestRejectWireErrors(t *testing.T) {
 		readErr  error           // Expected read error
 	}{
 		// Latest protocol version with intentional read/write errors. Force error in reject command.
-		{baseReject, baseRejectEncoded, pver, BaseEncoding, 0, io.ErrShortWrite, io.EOF},
+		{
+			baseReject,
+			baseRejectEncoded,
+			pver,
+			BaseEncoding,
+			0,
+			io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in reject code.
-		{baseReject, baseRejectEncoded, pver, BaseEncoding, 6, io.ErrShortWrite, io.EOF},
+		{
+			baseReject,
+			baseRejectEncoded,
+			pver,
+			BaseEncoding,
+			6,
+			io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in reject reason.
-		{baseReject, baseRejectEncoded, pver, BaseEncoding, 7, io.ErrShortWrite, io.EOF},
+		{
+			baseReject,
+			baseRejectEncoded,
+			pver,
+			BaseEncoding,
+			7,
+			io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error in reject hash.
-		{baseReject, baseRejectEncoded, pver, BaseEncoding, 23, io.ErrShortWrite, io.EOF},
+		{
+			baseReject,
+			baseRejectEncoded,
+			pver,
+			BaseEncoding,
+			23,
+			io.ErrShortWrite,
+			io.EOF,
+		},
 		// Force error due to unsupported protocol version.
-		{baseReject, baseRejectEncoded, pverNoReject, BaseEncoding, 6, wireErr, wireErr},
+		{
+			baseReject,
+			baseRejectEncoded,
+			pverNoReject,
+			BaseEncoding,
+			6,
+			wireErr,
+			wireErr,
+		},
 	}
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
@@ -340,7 +448,8 @@ func TestRejectWireErrors(t *testing.T) {
 		w := newFixedWriter(test.max)
 		e := test.in.BtcEncode(w, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.writeErr) {
-			t.Errorf("BtcEncode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcEncode #%d wrong error got: %v, want: %v",
 				i, e, test.writeErr,
 			)
 			continue
@@ -348,8 +457,9 @@ func TestRejectWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.writeErr {
-				t.Errorf("BtcEncode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.writeErr,
+				t.Errorf(
+					"BtcEncode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.writeErr,
 				)
 				continue
 			}
@@ -359,7 +469,8 @@ func TestRejectWireErrors(t *testing.T) {
 		r := newFixedReader(test.max, test.buf)
 		e = msg.BtcDecode(r, test.pver, test.enc)
 		if reflect.TypeOf(e) != reflect.TypeOf(test.readErr) {
-			t.Errorf("BtcDecode #%d wrong error got: %v, want: %v",
+			t.Errorf(
+				"BtcDecode #%d wrong error got: %v, want: %v",
 				i, e, test.readErr,
 			)
 			continue
@@ -367,8 +478,9 @@ func TestRejectWireErrors(t *testing.T) {
 		// For errors which are not of type MessageError, check them for equality.
 		if _, ok := e.(*MessageError); !ok {
 			if e != test.readErr {
-				t.Errorf("BtcDecode #%d wrong error got: %v, "+
-					"want: %v", i, e, test.readErr,
+				t.Errorf(
+					"BtcDecode #%d wrong error got: %v, "+
+						"want: %v", i, e, test.readErr,
 				)
 				continue
 			}

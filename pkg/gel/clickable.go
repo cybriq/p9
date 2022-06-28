@@ -156,10 +156,11 @@ func (c *Clickable) update(gtx l.Context) {
 			}
 			c.Window.Runner <- func() (e error) { c.Events.Cancel(); return nil }
 		case gesture.TypePress:
-			c.history = append(c.history, press{
-				Position: ev.Position,
-				Start:    gtx.Now,
-			},
+			c.history = append(
+				c.history, press{
+					Position: ev.Position,
+					Start:    gtx.Now,
+				},
 			)
 			c.
 				Window.

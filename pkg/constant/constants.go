@@ -1,11 +1,12 @@
 package constant
 
 import (
+	"time"
+
 	"github.com/cybriq/p9/pkg/amt"
 	"github.com/cybriq/p9/pkg/appdata"
 	"github.com/cybriq/p9/pkg/blockchain"
 	"github.com/cybriq/p9/pkg/peer"
-	"time"
 )
 
 // A lotta constants that probably aren't being used

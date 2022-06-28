@@ -2,10 +2,11 @@ package peer_test
 
 import (
 	"fmt"
-	"github.com/cybriq/p9/pkg/log"
-	"github.com/cybriq/p9/version"
 	"net"
 	"time"
+
+	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/version"
 
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -63,7 +64,8 @@ func Example_newOutboundPeer() {
 		Services:         0,
 		TrickleInterval:  time.Second * 10,
 		Listeners: peer.MessageListeners{
-			OnVersion: func(p *peer.Peer, msg *wire.MsgVersion,
+			OnVersion: func(
+				p *peer.Peer, msg *wire.MsgVersion,
 			) *wire.MsgReject {
 				fmt.Println("outbound: received version")
 				return nil

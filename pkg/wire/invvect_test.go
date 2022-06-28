@@ -25,7 +25,8 @@ func TestInvTypeStringer(t *testing.T) {
 	for i, test := range tests {
 		result := test.in.String()
 		if result != test.want {
-			t.Errorf("String #%d\n got: %s want: %s", i, result,
+			t.Errorf(
+				"String #%d\n got: %s want: %s", i, result,
 				test.want,
 			)
 			continue
@@ -40,12 +41,14 @@ func TestInvVect(t *testing.T) {
 	// Ensure we get the same payload and signature back out.
 	iv := NewInvVect(ivType, &hash)
 	if iv.Type != ivType {
-		t.Errorf("NewInvVect: wrong type - got %v, want %v",
+		t.Errorf(
+			"NewInvVect: wrong type - got %v, want %v",
 			iv.Type, ivType,
 		)
 	}
 	if !iv.Hash.IsEqual(&hash) {
-		t.Errorf("NewInvVect: wrong hash - got %v, want %v",
+		t.Errorf(
+			"NewInvVect: wrong hash - got %v, want %v",
 			spew.Sdump(iv.Hash), spew.Sdump(hash),
 		)
 	}
@@ -220,7 +223,8 @@ func TestInvVectWire(t *testing.T) {
 			continue
 		}
 		if !bytes.Equal(buf.Bytes(), test.buf) {
-			t.Errorf("writeInvVect #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"writeInvVect #%d\n got: %s want: %s", i,
 				spew.Sdump(buf.Bytes()), spew.Sdump(test.buf),
 			)
 			continue
@@ -234,7 +238,8 @@ func TestInvVectWire(t *testing.T) {
 			continue
 		}
 		if !reflect.DeepEqual(iv, test.out) {
-			t.Errorf("readInvVect #%d\n got: %s want: %s", i,
+			t.Errorf(
+				"readInvVect #%d\n got: %s want: %s", i,
 				spew.Sdump(iv), spew.Sdump(test.out),
 			)
 			continue

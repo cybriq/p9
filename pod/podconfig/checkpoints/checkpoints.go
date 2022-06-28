@@ -2,10 +2,11 @@ package checkpoints
 
 import (
 	"fmt"
-	"github.com/cybriq/p9/pkg/chaincfg"
-	"github.com/cybriq/p9/pkg/chainhash"
 	"strconv"
 	"strings"
+
+	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/chainhash"
 )
 
 // Parse checks the checkpoint strings for valid syntax ( '<height>:<hash>') and parses them to

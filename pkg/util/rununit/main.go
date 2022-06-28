@@ -54,7 +54,8 @@ func New(
 						}
 					}
 					// quit from rununit's quit, which closes after the main quit triggers stopping in the watcher loop
-					r.worker = pipe.LogConsume(r.quit, logger, pkgFilter,
+					r.worker = pipe.LogConsume(
+						r.quit, logger, pkgFilter,
 						args...,
 					)
 					// D.S(r.worker)

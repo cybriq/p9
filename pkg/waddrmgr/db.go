@@ -4,8 +4,9 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
-	"github.com/cybriq/p9/pkg/chaincfg"
 	"time"
+
+	"github.com/cybriq/p9/pkg/chaincfg"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/walletdb"
@@ -324,7 +325,8 @@ func fetchScopeAddrSchema(
 
 // putScopeAddrSchema attempts to store the passed addr scehma for the given
 // manager scope.
-func putScopeAddrTypes(ns walletdb.ReadWriteBucket, scope *KeyScope,
+func putScopeAddrTypes(
+	ns walletdb.ReadWriteBucket, scope *KeyScope,
 	schema *ScopeAddrSchema,
 ) (e error) {
 	scopeSchemaBucket := ns.NestedReadWriteBucket(scopeSchemaBucketName)
@@ -337,7 +339,8 @@ func putScopeAddrTypes(ns walletdb.ReadWriteBucket, scope *KeyScope,
 	return scopeSchemaBucket.Put(scopeKey[:], schemaBytes)
 }
 
-func fetchReadScopeBucket(ns walletdb.ReadBucket, scope *KeyScope,
+func fetchReadScopeBucket(
+	ns walletdb.ReadBucket, scope *KeyScope,
 ) (walletdb.ReadBucket, error) {
 	rootScopeBucket := ns.NestedReadBucket(scopeBucketName)
 	scopeKey := scopeToBytes(scope)
@@ -414,7 +417,8 @@ func fetchMasterKeyParams(ns walletdb.ReadBucket) ([]byte, []byte, error) {
 // putMasterKeyParams stores the master key parameters needed to derive them to
 // the database. Either parameter can be nil in which case no value is written
 // for the parameter.
-func putMasterKeyParams(ns walletdb.ReadWriteBucket,
+func putMasterKeyParams(
+	ns walletdb.ReadWriteBucket,
 	pubParams, privParams []byte,
 ) (e error) {
 	bucket := ns.NestedReadWriteBucket(mainBucketName)
@@ -436,7 +440,8 @@ func putMasterKeyParams(ns walletdb.ReadWriteBucket,
 // fetchCoinTypeKeys loads the encrypted cointype keys which are in turn used to
 // derive the extended keys for all accounts. Each cointype key is associated
 // with a particular manager scoped.
-func fetchCoinTypeKeys(ns walletdb.ReadBucket, scope *KeyScope) ([]byte, []byte,
+func fetchCoinTypeKeys(ns walletdb.ReadBucket, scope *KeyScope) (
+	[]byte, []byte,
 	error,
 ) {
 	scopedBucket, e := fetchReadScopeBucket(ns, scope)
@@ -469,13 +474,19 @@ func putCoinTypeKeys(
 		return e
 	}
 	if coinTypePubKeyEnc != nil {
-		if e = scopedBucket.Put(coinTypePubKeyName, coinTypePubKeyEnc); E.Chk(e) {
+		if e = scopedBucket.Put(
+			coinTypePubKeyName,
+			coinTypePubKeyEnc,
+		); E.Chk(e) {
 			str := "failed to store encrypted cointype public key"
 			return managerError(ErrDatabase, str, e)
 		}
 	}
 	if coinTypePrivKeyEnc != nil {
-		if e = scopedBucket.Put(coinTypePrivKeyName, coinTypePrivKeyEnc); E.Chk(e) {
+		if e = scopedBucket.Put(
+			coinTypePrivKeyName,
+			coinTypePrivKeyEnc,
+		); E.Chk(e) {
 			str := "failed to store encrypted cointype private key"
 			return managerError(ErrDatabase, str, e)
 		}
@@ -486,7 +497,8 @@ func putCoinTypeKeys(
 // putMasterHDKeys stores the encrypted master HD keys in the top level main
 // bucket. These are required in order to create any new manager scopes, as
 // those are created via hardened derivation of the children of this key.
-func putMasterHDKeys(ns walletdb.ReadWriteBucket,
+func putMasterHDKeys(
+	ns walletdb.ReadWriteBucket,
 	masterHDPrivEnc, masterHDPubEnc []byte,
 ) (e error) {
 	// As this is the key for the root manager, we don't need to fetch any
@@ -619,7 +631,8 @@ func putWatchingOnly(ns walletdb.ReadWriteBucket, watchingOnly bool) (e error) {
 // deserializeAccountRow deserializes the passed serialized account information.
 // This is used as a common base for the various account types to deserialize
 // the common parts.
-func deserializeAccountRow(accountID []byte, serializedAccount []byte,
+func deserializeAccountRow(
+	accountID []byte, serializedAccount []byte,
 ) (*dbAccountRow, error) {
 	// The serialized account format is:
 	//
@@ -661,7 +674,8 @@ func serializeAccountRow(row *dbAccountRow) []byte {
 
 // deserializeDefaultAccountRow deserializes the raw data from the passed
 // account row as a BIP0044-like account.
-func deserializeDefaultAccountRow(accountID []byte, row *dbAccountRow,
+func deserializeDefaultAccountRow(
+	accountID []byte, row *dbAccountRow,
 ) (*dbDefaultAccountRow, error) {
 	// The serialized BIP0044 account raw data format is:
 	//
@@ -677,7 +691,8 @@ func deserializeDefaultAccountRow(accountID []byte, row *dbAccountRow,
 	// Given the above, the length of the entry must be at a minimum the constant
 	// value txsizes.
 	if len(row.rawData) < 20 {
-		str := fmt.Sprintf("malformed serialized bip0044 account for key %x",
+		str := fmt.Sprintf(
+			"malformed serialized bip0044 account for key %x",
 			accountID,
 		)
 		return nil, managerError(ErrDatabase, str, nil)
@@ -742,7 +757,8 @@ func serializeDefaultAccountRow(
 
 // forEachKeyScope calls the given function for each known manager scope within
 // the set of scopes known by the root manager.
-func forEachKeyScope(ns walletdb.ReadBucket, fn func(KeyScope) error,
+func forEachKeyScope(
+	ns walletdb.ReadBucket, fn func(KeyScope) error,
 ) (e error) {
 	bucket := ns.NestedReadBucket(scopeBucketName)
 	return bucket.ForEach(
@@ -848,7 +864,8 @@ func fetchAccountByName(
 
 // fetchAccountInfo loads information about the passed account from the
 // database.
-func fetchAccountInfo(ns walletdb.ReadBucket, scope *KeyScope, account uint32,
+func fetchAccountInfo(
+	ns walletdb.ReadBucket, scope *KeyScope, account uint32,
 ) (ii interface{}, e error) {
 	var scopedBucket walletdb.ReadBucket
 	if scopedBucket, e = fetchReadScopeBucket(ns, scope); E.Chk(e) {
@@ -968,7 +985,8 @@ func putAddrAccountIndex(
 	}
 	// In account bucket, write a null value keyed by the address hash
 	if e = bucket.Put(addrHash, nullVal); E.Chk(e) {
-		str := fmt.Sprintf("failed to store address account index key %s",
+		str := fmt.Sprintf(
+			"failed to store address account index key %s",
 			addrHash,
 		)
 		return managerError(ErrDatabase, str, e)
@@ -988,7 +1006,10 @@ func putAccountRow(
 	}
 	bucket := scopedBucket.NestedReadWriteBucket(acctBucketName)
 	// Write the serialized value keyed by the account number.
-	if e = bucket.Put(uint32ToBytes(account), serializeAccountRow(row)); E.Chk(e) {
+	if e = bucket.Put(
+		uint32ToBytes(account),
+		serializeAccountRow(row),
+	); E.Chk(e) {
 		str := fmt.Sprintf("failed to store account %d", account)
 		return managerError(ErrDatabase, str, e)
 	}
@@ -1126,7 +1147,8 @@ func serializeChainedAddress(branch, index uint32) []byte {
 
 // deserializeImportedAddress deserializes the raw data from the passed address
 // row as an imported address.
-func deserializeImportedAddress(row *dbAddressRow) (*dbImportedAddressRow,
+func deserializeImportedAddress(row *dbAddressRow) (
+	*dbImportedAddressRow,
 	error,
 ) {
 	// The serialized imported address raw data format is:
@@ -1269,7 +1291,8 @@ func fetchAddressByHash(
 }
 
 // fetchAddressUsed returns true if the provided address id was flagged as used.
-func fetchAddressUsed(ns walletdb.ReadBucket, scope *KeyScope, addressID []byte,
+func fetchAddressUsed(
+	ns walletdb.ReadBucket, scope *KeyScope, addressID []byte,
 ) bool {
 	var scopedBucket walletdb.ReadBucket
 	var e error
@@ -1436,7 +1459,8 @@ func putScriptAddress(
 }
 
 // existsAddress returns whether or not the address id exists in the database.
-func existsAddress(ns walletdb.ReadBucket, scope *KeyScope, addressID []byte,
+func existsAddress(
+	ns walletdb.ReadBucket, scope *KeyScope, addressID []byte,
 ) bool {
 	var scopedBucket walletdb.ReadBucket
 	var e error
@@ -1747,7 +1771,8 @@ func putSyncedTo(ns walletdb.ReadWriteBucket, bs *BlockStamp) (e error) {
 }
 
 // fetchBlockHash loads the block hash for the provided height from the database.
-func fetchBlockHash(ns walletdb.ReadBucket, height int32) (h *chainhash.Hash,
+func fetchBlockHash(ns walletdb.ReadBucket, height int32) (
+	h *chainhash.Hash,
 	e error,
 ) {
 	bucket := ns.NestedReadBucket(syncBucketName)
@@ -1842,7 +1867,8 @@ func managerExists(ns walletdb.ReadBucket) bool {
 // createScopedManagerNS creates the namespace buckets for a new registered
 // manager scope within the top level bucket. All relevant sub-buckets that a
 // ScopedManager needs to perform its duties are also created.
-func createScopedManagerNS(ns walletdb.ReadWriteBucket, scope *KeyScope,
+func createScopedManagerNS(
+	ns walletdb.ReadWriteBucket, scope *KeyScope,
 ) (e error) {
 	// First, we'll create the scope bucket itself for this particular
 	// scope.
@@ -2009,7 +2035,8 @@ func upgradeManager(
 // the fact that in version 5, we now store the encrypted master private keys on
 // disk. However, using the BIP0044 key scope, users will still be able to
 // create old p2pkh addresses.
-func upgradeToVersion5(ns walletdb.ReadWriteBucket, pubPassPhrase []byte,
+func upgradeToVersion5(
+	ns walletdb.ReadWriteBucket, pubPassPhrase []byte,
 ) (e error) {
 	// First, we'll check if there are any existing segwit addresses, which can't be
 	// upgraded to the new version. If so, we abort and warn the user.

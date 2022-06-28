@@ -5,11 +5,12 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/cybriq/p9/pkg/btcaddr"
-	"github.com/cybriq/p9/pkg/chaincfg"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/cybriq/p9/pkg/btcaddr"
+	"github.com/cybriq/p9/pkg/chaincfg"
 
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -238,7 +239,8 @@ func (c *BitcoindClient) shouldNotifyBlocks() bool {
 //	map[wire.OutPoint]util.Address
 //	[]chainhash.Hash
 //	[]*chainhash.Hash
-func (c *BitcoindClient) LoadTxFilter(reset bool, filters ...interface{},
+func (c *BitcoindClient) LoadTxFilter(
+	reset bool, filters ...interface{},
 ) (e error) {
 	if reset {
 		select {

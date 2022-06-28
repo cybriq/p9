@@ -207,11 +207,17 @@ func (e *Editor) processEvents(gtx layout.Context) {
 		// Can't process events without a shaper.
 		return
 	}
-	oldStart, oldLen := min(e.caret.start.ofs, e.caret.end.ofs), e.SelectionLen()
+	oldStart, oldLen := min(
+		e.caret.start.ofs,
+		e.caret.end.ofs,
+	), e.SelectionLen()
 	e.processPointer(gtx)
 	e.processKey(gtx)
 	// Queue a SelectEvent if the selection changed, including if it went away.
-	if newStart, newLen := min(e.caret.start.ofs, e.caret.end.ofs), e.SelectionLen(); oldStart != newStart || oldLen != newLen {
+	if newStart, newLen := min(
+		e.caret.start.ofs,
+		e.caret.end.ofs,
+	), e.SelectionLen(); oldStart != newStart || oldLen != newLen {
 		e.events = append(e.events, SelectEvent{})
 	}
 }
@@ -253,10 +259,11 @@ func (e *Editor) processPointer(gtx layout.Context) {
 				evt.Type == gesture.TypeClick:
 				prevCaretPos := e.caret.start
 				e.blinkStart = gtx.Now
-				e.moveCoord(image.Point{
-					X: int(math.Round(float64(evt.Position.X))),
-					Y: int(math.Round(float64(evt.Position.Y))),
-				},
+				e.moveCoord(
+					image.Point{
+						X: int(math.Round(float64(evt.Position.X))),
+						Y: int(math.Round(float64(evt.Position.Y))),
+					},
 				)
 				e.requestFocus = true
 				if e.scroller.State() != gesture.StateFlinging {
@@ -290,10 +297,11 @@ func (e *Editor) processPointer(gtx layout.Context) {
 			case evt.Type == pointer.Drag && evt.Source == pointer.Mouse:
 				if e.dragging {
 					e.blinkStart = gtx.Now
-					e.moveCoord(image.Point{
-						X: int(math.Round(float64(evt.Position.X))),
-						Y: int(math.Round(float64(evt.Position.Y))),
-					},
+					e.moveCoord(
+						image.Point{
+							X: int(math.Round(float64(evt.Position.X))),
+							Y: int(math.Round(float64(evt.Position.Y))),
+						},
 					)
 					e.caret.scroll = true
 
@@ -336,9 +344,10 @@ func (e *Editor) processKey(gtx layout.Context) {
 			}
 			if e.Submit && (ke.Name == key.NameReturn || ke.Name == key.NameEnter) {
 				if !ke.Modifiers.Contain(key.ModShift) {
-					e.events = append(e.events, SubmitEvent{
-						Text: e.Text(),
-					},
+					e.events = append(
+						e.events, SubmitEvent{
+							Text: e.Text(),
+						},
 					)
 					continue
 				}
@@ -364,7 +373,8 @@ func (e *Editor) processKey(gtx layout.Context) {
 }
 
 func (e *Editor) moveLines(distance int, selAct selectionAction) {
-	e.caret.start = e.movePosToLine(e.caret.start,
+	e.caret.start = e.movePosToLine(
+		e.caret.start,
 		e.caret.start.x+e.caret.start.xoff, e.caret.start.lineCol.Y+distance,
 	)
 	e.updateSelection(selAct)
@@ -466,7 +476,8 @@ func (e *Editor) Focused() bool {
 }
 
 // Layout lays out the editor.
-func (e *Editor) Layout(gtx layout.Context, sh text.Shaper, font text.Font,
+func (e *Editor) Layout(
+	gtx layout.Context, sh text.Shaper, font text.Font,
 	size unit.Value,
 ) layout.Dimensions {
 	textSize := fixed.I(gtx.Px(size))
@@ -630,14 +641,16 @@ func (e *Editor) PaintCaret(gtx layout.Context) {
 	carAsc, carDesc := -e.lines[e.caret.start.lineCol.Y].Bounds.Min.Y, e.lines[e.caret.start.lineCol.Y].Bounds.Max.Y
 	carRect := image.Rectangle{
 		Min: image.Point{X: carX.Ceil(), Y: carY - carAsc.Ceil()},
-		Max: image.Point{X: carX.Ceil() + carWidth.Ceil(),
+		Max: image.Point{
+			X: carX.Ceil() + carWidth.Ceil(),
 			Y: carY + carDesc.Ceil(),
 		},
 	}
-	carRect = carRect.Add(image.Point{
-		X: -e.scrollOff.X,
-		Y: -e.scrollOff.Y,
-	},
+	carRect = carRect.Add(
+		image.Point{
+			X: -e.scrollOff.X,
+			Y: -e.scrollOff.Y,
+		},
 	)
 	cl := textPadding(e.lines)
 	// Account for caret width to each side.
@@ -791,7 +804,8 @@ func (e *Editor) offsetToScreenPos2(o1, o2 int) (combinedPos, combinedPos) {
 // This function is written this way to take advantage of previous work done
 // for offsets after the first. Otherwise you have to start from the top each
 // time.
-func (e *Editor) offsetToScreenPos(offset int) (combinedPos,
+func (e *Editor) offsetToScreenPos(offset int) (
+	combinedPos,
 	func(int) combinedPos,
 ) {
 	var col, line, idx int
@@ -881,7 +895,8 @@ func (e *Editor) prepend(s string) {
 	if e.SingleLine {
 		s = strings.ReplaceAll(s, "\n", " ")
 	}
-	e.caret.start.ofs = e.rr.deleteRunes(e.caret.start.ofs,
+	e.caret.start.ofs = e.rr.deleteRunes(
+		e.caret.start.ofs,
 		e.caret.end.ofs-e.caret.start.ofs,
 	) // Delete any selection first.
 	e.rr.prepend(e.caret.start.ofs, s)
@@ -910,13 +925,15 @@ func (e *Editor) movePages(pages int, selAct selectionAction) {
 		y2 += h
 		carLine2++
 	}
-	e.caret.start = e.movePosToLine(e.caret.start,
+	e.caret.start = e.movePosToLine(
+		e.caret.start,
 		e.caret.start.x+e.caret.start.xoff, carLine2,
 	)
 	e.updateSelection(selAct)
 }
 
-func (e *Editor) movePosToLine(pos combinedPos, x fixed.Int26_6, line int,
+func (e *Editor) movePosToLine(
+	pos combinedPos, x fixed.Int26_6, line int,
 ) combinedPos {
 	e.makeValid(&pos)
 	if line < 0 {
@@ -1228,9 +1245,10 @@ func (e *Editor) makeValidCaret(positions ...*combinedPos) {
 	// Jump through some hoops to order the offsets given to offsetToScreenPos,
 	// but still be able to update them correctly with the results thereof.
 	positions = append(positions, &e.caret.start, &e.caret.end)
-	sort.Slice(positions, func(i, j int) bool {
-		return positions[i].ofs < positions[j].ofs
-	},
+	sort.Slice(
+		positions, func(i, j int) bool {
+			return positions[i].ofs < positions[j].ofs
+		},
 	)
 	var iter func(offset int) combinedPos
 	*positions[0], iter = e.offsetToScreenPos(positions[0].ofs)

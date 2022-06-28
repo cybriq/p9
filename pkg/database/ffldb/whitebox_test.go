@@ -5,12 +5,13 @@ import (
 	"compress/bzip2"
 	"encoding/binary"
 	"fmt"
-	"github.com/cybriq/p9/pkg/block"
 	"hash/crc32"
 	"io"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/cybriq/p9/pkg/block"
 
 	"github.com/btcsuite/goleveldb/leveldb"
 	ldberrors "github.com/btcsuite/goleveldb/leveldb/errors"
@@ -30,7 +31,8 @@ var (
 )
 
 // loadBlocks loads the blocks contained in the tstdata directory and returns a slice of them.
-func loadBlocks(t *testing.T, dataFile string, network wire.BitcoinNet,
+func loadBlocks(
+	t *testing.T, dataFile string, network wire.BitcoinNet,
 ) ([]*block.Block, error) {
 	// Open the file that contains the blocks for reading.
 	fi, e := os.Open(dataFile)
@@ -101,7 +103,8 @@ func loadBlocks(t *testing.T, dataFile string, network wire.BitcoinNet,
 }
 
 // checkDbError ensures the passed error is a database.DBError with an error code that matches the passed  error code.
-func checkDbError(t *testing.T, testName string, gotErr error,
+func checkDbError(
+	t *testing.T, testName string, gotErr error,
 	wantErrCode database.ErrorCode,
 ) bool {
 	dbErr, ok := gotErr.(database.DBError)
@@ -147,7 +150,8 @@ func TestConvertErr(t *testing.T) {
 	for i, test := range tests {
 		gotErr := convertErr("test", test.err)
 		if gotErr.ErrorCode != test.wantErrCode {
-			t.Errorf("convertErr #%d unexpected error - got %v, want %v", i,
+			t.Errorf(
+				"convertErr #%d unexpected error - got %v, want %v", i,
 				gotErr.ErrorCode, test.wantErrCode,
 			)
 			continue

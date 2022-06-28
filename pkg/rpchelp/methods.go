@@ -41,10 +41,12 @@ var Methods = []struct {
 	{"keypoolrefill", nil},
 	{"listaccounts", []interface{}{(*map[string]float64)(nil)}},
 	{"listlockunspent", []interface{}{(*[]btcjson.TransactionInput)(nil)}},
-	{"listreceivedbyaccount",
+	{
+		"listreceivedbyaccount",
 		[]interface{}{(*[]btcjson.ListReceivedByAccountResult)(nil)},
 	},
-	{"listreceivedbyaddress",
+	{
+		"listreceivedbyaddress",
 		[]interface{}{(*[]btcjson.ListReceivedByAddressResult)(nil)},
 	},
 	{"listsinceblock", []interface{}{(*btcjson.ListSinceBlockResult)(nil)}},
@@ -56,10 +58,12 @@ var Methods = []struct {
 	{"sendtoaddress", returnsString},
 	{"settxfee", returnsBool},
 	{"signmessage", returnsString},
-	{"signrawtransaction",
+	{
+		"signrawtransaction",
 		[]interface{}{(*btcjson.SignRawTransactionResult)(nil)},
 	},
-	{"validateaddress",
+	{
+		"validateaddress",
 		[]interface{}{(*btcjson.ValidateAddressWalletResult)(nil)},
 	},
 	{"verifymessage", returnsBool},

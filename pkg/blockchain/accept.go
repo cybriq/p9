@@ -2,6 +2,7 @@ package blockchain
 
 import (
 	"fmt"
+
 	"github.com/cybriq/p9/pkg/block"
 
 	"github.com/cybriq/p9/pkg/database"
@@ -16,7 +17,8 @@ import (
 // The flags are also passed to checkBlockContext and connectBestChain.
 // See their documentation for how the flags modify their behavior.
 // This function MUST be called with the chain state lock held (for writes).
-func (b *BlockChain) maybeAcceptBlock(workerNumber uint32, block *block.Block,
+func (b *BlockChain) maybeAcceptBlock(
+	workerNumber uint32, block *block.Block,
 	flags BehaviorFlags,
 ) (bool, error) {
 	T.Ln("maybeAcceptBlock starting")
@@ -66,7 +68,12 @@ func (b *BlockChain) maybeAcceptBlock(workerNumber uint32, block *block.Block,
 	if pn != nil {
 		// The block must pass all of the validation rules which depend on the position
 		// of the block within the block chain.
-		if e = b.checkBlockContext(block, prevNode, flags, DoNotCheckPow); E.Chk(e) {
+		if e = b.checkBlockContext(
+			block,
+			prevNode,
+			flags,
+			DoNotCheckPow,
+		); E.Chk(e) {
 			return false, e
 		}
 	}
@@ -79,9 +86,10 @@ func (b *BlockChain) maybeAcceptBlock(workerNumber uint32, block *block.Block,
 	// other nice properties such as making blocks that never become part of the
 	// main chain or blocks that fail to connect available for further analysis.
 	T.Ln("inserting block into database")
-	if e = b.db.Update(func(dbTx database.Tx) (e error) {
-		return dbStoreBlock(dbTx, block)
-	},
+	if e = b.db.Update(
+		func(dbTx database.Tx) (e error) {
+			return dbStoreBlock(dbTx, block)
+		},
 	); E.Chk(e) {
 		return false, e
 	}

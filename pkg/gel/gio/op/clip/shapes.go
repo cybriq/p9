@@ -83,25 +83,29 @@ func (rr RRect) Path(ops *op.Ops) PathSpec {
 
 	p.MoveTo(f32.Point{X: w + nw, Y: n})
 	p.LineTo(f32.Point{X: e - ne, Y: n}) // N
-	p.CubeTo(                            // NE
+	p.CubeTo(
+		// NE
 		f32.Point{X: e - ne*iq, Y: n},
 		f32.Point{X: e, Y: n + ne*iq},
 		f32.Point{X: e, Y: n + ne},
 	)
 	p.LineTo(f32.Point{X: e, Y: s - se}) // E
-	p.CubeTo(                            // SE
+	p.CubeTo(
+		// SE
 		f32.Point{X: e, Y: s - se*iq},
 		f32.Point{X: e - se*iq, Y: s},
 		f32.Point{X: e - se, Y: s},
 	)
 	p.LineTo(f32.Point{X: w + sw, Y: s}) // S
-	p.CubeTo(                            // SW
+	p.CubeTo(
+		// SW
 		f32.Point{X: w + sw*iq, Y: s},
 		f32.Point{X: w, Y: s - sw*iq},
 		f32.Point{X: w, Y: s - sw},
 	)
 	p.LineTo(f32.Point{X: w, Y: n + nw}) // W
-	p.CubeTo(                            // NW
+	p.CubeTo(
+		// NW
 		f32.Point{X: w, Y: n + nw*iq},
 		f32.Point{X: w + nw*iq, Y: n},
 		f32.Point{X: w + nw, Y: n},

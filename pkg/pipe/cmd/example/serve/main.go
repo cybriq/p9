@@ -10,10 +10,11 @@ import (
 )
 
 func main() {
-	p := pipe.Serve(qu.T(), func(b []byte) (e error) {
-		fmt.Print("from parent: ", string(b))
-		return
-	},
+	p := pipe.Serve(
+		qu.T(), func(b []byte) (e error) {
+			fmt.Print("from parent: ", string(b))
+			return
+		},
 	)
 	for {
 		_, e := p.Write([]byte("ping"))

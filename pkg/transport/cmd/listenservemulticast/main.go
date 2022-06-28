@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/cybriq/p9/pkg/log"
 	"net"
 	"time"
+
+	"github.com/cybriq/p9/pkg/log"
 
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -46,7 +47,8 @@ func main() {
 	loop.To(
 		10, func(i int) {
 			text := []byte(fmt.Sprintf("this is a test %d", i))
-			I.F("%s -> %s [%d] '%s'", c.Sender.LocalAddr(),
+			I.F(
+				"%s -> %s [%d] '%s'", c.Sender.LocalAddr(),
 				c.Sender.RemoteAddr(), n-4, text,
 			)
 			if e = c.SendMany(TestMagicB, transport.GetShards(text)); E.Chk(e) {

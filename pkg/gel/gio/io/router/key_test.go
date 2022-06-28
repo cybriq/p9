@@ -121,9 +121,11 @@ func TestKeyRemoveFocus(t *testing.T) {
 	r.Frame(ops)
 
 	// Add some key events:
-	event := event.Event(key.Event{Name: key.NameTab,
-		Modifiers: key.ModShortcut, State: key.Press,
-	},
+	event := event.Event(
+		key.Event{
+			Name:      key.NameTab,
+			Modifiers: key.ModShortcut, State: key.Press,
+		},
 	)
 	r.Queue(event)
 
@@ -259,7 +261,8 @@ func TestKeyFocusedInvisible(t *testing.T) {
 
 }
 
-func assertKeyEvent(t *testing.T, events []event.Event, expected bool,
+func assertKeyEvent(
+	t *testing.T, events []event.Event, expected bool,
 	expectedInputs ...event.Event,
 ) {
 	t.Helper()
@@ -269,7 +272,8 @@ func assertKeyEvent(t *testing.T, events []event.Event, expected bool,
 		switch ev := e.(type) {
 		case key.FocusEvent:
 			if ev.Focus != expected {
-				t.Errorf("focus is expected to be %v, got %v", expected,
+				t.Errorf(
+					"focus is expected to be %v, got %v", expected,
 					ev.Focus,
 				)
 			}
@@ -279,7 +283,8 @@ func assertKeyEvent(t *testing.T, events []event.Event, expected bool,
 				t.Errorf("unexpected key events")
 			}
 			if !reflect.DeepEqual(ev, expectedInputs[evtKeyPress]) {
-				t.Errorf("expected %v events, got %v",
+				t.Errorf(
+					"expected %v events, got %v",
 					expectedInputs[evtKeyPress], ev,
 				)
 			}
@@ -314,7 +319,8 @@ func assertKeyEventUnexpected(t *testing.T, events []event.Event) {
 func assertFocus(t *testing.T, router *Router, expected event.Tag) {
 	t.Helper()
 	if router.kqueue.focus != expected {
-		t.Errorf("expected %v to be focused, got %v", expected,
+		t.Errorf(
+			"expected %v to be focused, got %v", expected,
 			router.kqueue.focus,
 		)
 	}

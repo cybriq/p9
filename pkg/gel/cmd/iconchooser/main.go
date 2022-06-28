@@ -32,10 +32,11 @@ func main() {
 		Size(48, 32).
 		Title("icons chooser").
 		Open().
-		Run(rootWidget, func() {
-			interrupt.Request()
-			quit.Q()
-		}, quit,
+		Run(
+			rootWidget, func() {
+				interrupt.Request()
+				quit.Q()
+			}, quit,
 		); E.Chk(e) {
 
 	}
@@ -67,11 +68,12 @@ func (s *State) rootWidget() (o l.Widget) {
 		clicks[i] = s.WidgetPool.GetClickable()
 	}
 	le := func(gtx l.Context, index int) l.Dimensions {
-		clicks[index].SetClick(func() {
-			var e error
-			if e = clipboard.WriteAll("icons." + ow[index].name); E.Chk(e) {
-			}
-		},
+		clicks[index].SetClick(
+			func() {
+				var e error
+				if e = clipboard.WriteAll("icons." + ow[index].name); E.Chk(e) {
+				}
+			},
 		)
 		return s.Flex().AlignStart().
 			// Rigid(s.Inset(0.5, gel.EmptySpace(0, 0)).Fn).
@@ -93,21 +95,27 @@ func (s *State) rootWidget() (o l.Widget) {
 			Fn(gtx)
 	}
 	return s.VFlex().AlignStart().
-		Rigid(s.Fill("DocBg", l.Center, 0, 0,
-			s.Inset(0.5,
-				s.Flex().AlignStart().
-					Rigid(
-						s.H4("material icons").Fn,
-					).
-					Rigid(s.Inset(0.5, gel.EmptySpace(0, 0)).Fn).
-					Flexed(1,
-						s.Body1("click to copy icon's variable name").Fn,
-					).Fn,
+		Rigid(
+			s.Fill(
+				"DocBg", l.Center, 0, 0,
+				s.Inset(
+					0.5,
+					s.Flex().AlignStart().
+						Rigid(
+							s.H4("material icons").Fn,
+						).
+						Rigid(s.Inset(0.5, gel.EmptySpace(0, 0)).Fn).
+						Flexed(
+							1,
+							s.Body1("click to copy icon's variable name").Fn,
+						).Fn,
+				).Fn,
 			).Fn,
-		).Fn,
 		).
-		Flexed(1,
-			s.Inset(0.25,
+		Flexed(
+			1,
+			s.Inset(
+				0.25,
 				lis.Vertical().Length(len(ow)).ListElement(le).Fn,
 			).Fn,
 		).

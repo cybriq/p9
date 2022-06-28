@@ -47,7 +47,8 @@ func nextPowerOfTwo(n int) int {
 // HashMerkleBranches takes two hashes, treated as the left and right tree
 // nodes, and returns the hash of their concatenation. This is a helper function
 // used to aid in the generation of a merkle tree.
-func HashMerkleBranches(left *chainhash.Hash, right *chainhash.Hash,
+func HashMerkleBranches(
+	left *chainhash.Hash, right *chainhash.Hash,
 ) *chainhash.Hash {
 	// Concatenate the left and right nodes.
 	var hash [chainhash.HashSize * 2]byte

@@ -100,7 +100,10 @@ func subArrayUsage(arrayType reflect.Type, fieldName string) string {
 
 // fieldUsage returns a string for use in the one-line usage for the struct field of a command. Any fields that include
 // a jsonrpcusage struct tag will use that instead of being automatically generated.
-func fieldUsage(structField reflect.StructField, defaultVal *reflect.Value) string {
+func fieldUsage(
+	structField reflect.StructField,
+	defaultVal *reflect.Value,
+) string {
 	// When the field has a jsonrpcusage struct tag specified use that instead of automatically generating it.
 	if tag := structField.Tag.Get("jsonrpcusage"); tag != "" {
 		return tag
@@ -120,7 +123,8 @@ func fieldUsage(structField reflect.StructField, defaultVal *reflect.Value) stri
 	switch fieldType.Kind() {
 	case reflect.String:
 		if defaultVal != nil {
-			return fmt.Sprintf("%s=%q", fieldName,
+			return fmt.Sprintf(
+				"%s=%q", fieldName,
 				defaultVal.Interface(),
 			)
 		}
@@ -139,7 +143,11 @@ func fieldUsage(structField reflect.StructField, defaultVal *reflect.Value) stri
 
 // methodUsageText returns a one-line usage string for the provided command and method info. This is the main work horse
 // for the exported MethodUsageText function.
-func methodUsageText(rtp reflect.Type, defaults map[int]reflect.Value, method string) string {
+func methodUsageText(
+	rtp reflect.Type,
+	defaults map[int]reflect.Value,
+	method string,
+) string {
 	// Generate the individual usage for each field in the command. Several simplifying assumptions are made here
 	// because the RegisterCmd function has already rigorously enforced the layout.
 	rt := rtp.Elem()

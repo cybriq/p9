@@ -28,16 +28,19 @@ var (
 		"bariol regular": {Typeface: "bariol regular"},
 		"bariol italic":  {Typeface: "bariol italic", Style: text.Italic},
 		"bariol bold":    {Typeface: "bariol bold", Weight: text.Bold},
-		"bariol bolditalic": {Typeface: "bariol bolditalic",
-			Style: text.Italic, Weight: text.Bold,
+		"bariol bolditalic": {
+			Typeface: "bariol bolditalic",
+			Style:    text.Italic, Weight: text.Bold,
 		},
 		"bariol light": {Typeface: "bariol light", Weight: text.Medium},
-		"bariol lightitalic": {Typeface: "bariol lightitalic",
-			Weight: text.Medium, Style: text.Italic,
+		"bariol lightitalic": {
+			Typeface: "bariol lightitalic",
+			Weight:   text.Medium, Style: text.Italic,
 		},
 		"go regular": {Typeface: "go regular"},
 		"go bold":    {Typeface: "go bold", Weight: text.Bold},
-		"go bolditalic": {Typeface: "go bolditalic", Weight: text.Bold,
+		"go bolditalic": {
+			Typeface: "go bolditalic", Weight: text.Bold,
 			Style: text.Italic,
 		},
 		"go italic": {Typeface: "go italic", Style: text.Italic},
@@ -45,22 +48,23 @@ var (
 )
 
 func Collection() []text.FontFace {
-	once.Do(func() {
-		register(Fonts["plan9"], plan9.TTF)
-		register(Fonts["bariol regular"], bariolregular.TTF)
-		register(Fonts["bariol italic"], bariolregularitalic.TTF)
-		register(Fonts["bariol bold"], bariolbold.TTF)
-		register(Fonts["bariol bold italic"], bariolbolditalic.TTF)
-		register(Fonts["bariol light"], bariollight.TTF)
-		register(Fonts["bariol light italic"], bariollightitalic.TTF)
-		register(Fonts["go regular"], gomono.TTF)
-		register(Fonts["go bold"], gomonobold.TTF)
-		register(Fonts["go bolditalic"], gomonobolditalic.TTF)
-		register(Fonts["go italic"], gomonoitalic.TTF)
-		// Ensure that any outside appends will not reuse the backing store.
-		n := len(collection)
-		collection = collection[:n:n]
-	},
+	once.Do(
+		func() {
+			register(Fonts["plan9"], plan9.TTF)
+			register(Fonts["bariol regular"], bariolregular.TTF)
+			register(Fonts["bariol italic"], bariolregularitalic.TTF)
+			register(Fonts["bariol bold"], bariolbold.TTF)
+			register(Fonts["bariol bold italic"], bariolbolditalic.TTF)
+			register(Fonts["bariol light"], bariollight.TTF)
+			register(Fonts["bariol light italic"], bariollightitalic.TTF)
+			register(Fonts["go regular"], gomono.TTF)
+			register(Fonts["go bold"], gomonobold.TTF)
+			register(Fonts["go bolditalic"], gomonobolditalic.TTF)
+			register(Fonts["go italic"], gomonoitalic.TTF)
+			// Ensure that any outside appends will not reuse the backing store.
+			n := len(collection)
+			collection = collection[:n:n]
+		},
 	)
 	return collection
 }

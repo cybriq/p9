@@ -74,9 +74,10 @@ func onCreate(view C.CFTypeRef) {
 	w := &window{
 		view: view,
 	}
-	dl, err := NewDisplayLink(func() {
-		w.draw(false)
-	},
+	dl, err := NewDisplayLink(
+		func() {
+			w.draw(false)
+		},
 	)
 	if err != nil {
 		panic(err)
@@ -110,26 +111,27 @@ func (w *window) draw(sync bool) {
 		w.w.Event(system.StageEvent{Stage: system.StageRunning})
 	}
 	const inchPrDp = 1.0 / 163
-	w.w.Event(FrameEvent{
-		FrameEvent: system.FrameEvent{
-			Now: time.Now(),
-			Size: image.Point{
-				X: int(params.width + .5),
-				Y: int(params.height + .5),
+	w.w.Event(
+		FrameEvent{
+			FrameEvent: system.FrameEvent{
+				Now: time.Now(),
+				Size: image.Point{
+					X: int(params.width + .5),
+					Y: int(params.height + .5),
+				},
+				Insets: system.Insets{
+					Top:    unit.Px(float32(params.top)),
+					Right:  unit.Px(float32(params.right)),
+					Bottom: unit.Px(float32(params.bottom)),
+					Left:   unit.Px(float32(params.left)),
+				},
+				Metric: unit.Metric{
+					PxPerDp: float32(params.dpi) * inchPrDp,
+					PxPerSp: float32(params.sdpi) * inchPrDp,
+				},
 			},
-			Insets: system.Insets{
-				Top:    unit.Px(float32(params.top)),
-				Right:  unit.Px(float32(params.right)),
-				Bottom: unit.Px(float32(params.bottom)),
-				Left:   unit.Px(float32(params.left)),
-			},
-			Metric: unit.Metric{
-				PxPerDp: float32(params.dpi) * inchPrDp,
-				PxPerSp: float32(params.sdpi) * inchPrDp,
-			},
+			Sync: sync,
 		},
-		Sync: sync,
-	},
 	)
 }
 
@@ -192,14 +194,16 @@ func onDeleteBackward(view C.CFTypeRef) {
 //export onText
 func onText(view C.CFTypeRef, str *C.char) {
 	w := views[view]
-	w.w.Event(key.EditEvent{
-		Text: C.GoString(str),
-	},
+	w.w.Event(
+		key.EditEvent{
+			Text: C.GoString(str),
+		},
 	)
 }
 
 //export onTouch
-func onTouch(last C.int, view, touchRef C.CFTypeRef, phase C.NSInteger,
+func onTouch(
+	last C.int, view, touchRef C.CFTypeRef, phase C.NSInteger,
 	x, y C.CGFloat, ti C.double,
 ) {
 	var typ pointer.Type
@@ -218,33 +222,36 @@ func onTouch(last C.int, view, touchRef C.CFTypeRef, phase C.NSInteger,
 	w := views[view]
 	t := time.Duration(float64(ti) * float64(time.Second))
 	p := f32.Point{X: float32(x), Y: float32(y)}
-	w.w.Event(pointer.Event{
-		Type:      typ,
-		Source:    pointer.Touch,
-		PointerID: w.lookupTouch(last != 0, touchRef),
-		Position:  p,
-		Time:      t,
-	},
+	w.w.Event(
+		pointer.Event{
+			Type:      typ,
+			Source:    pointer.Touch,
+			PointerID: w.lookupTouch(last != 0, touchRef),
+			Position:  p,
+			Time:      t,
+		},
 	)
 }
 
 func (w *window) ReadClipboard() {
-	runOnMain(func() {
-		content := nsstringToString(C.gio_readClipboard())
-		w.w.Event(clipboard.Event{Text: content})
-	},
+	runOnMain(
+		func() {
+			content := nsstringToString(C.gio_readClipboard())
+			w.w.Event(clipboard.Event{Text: content})
+		},
 	)
 }
 
 func (w *window) WriteClipboard(s string) {
 	u16 := utf16.Encode([]rune(s))
-	runOnMain(func() {
-		var chars *C.unichar
-		if len(u16) > 0 {
-			chars = (*C.unichar)(unsafe.Pointer(&u16[0]))
-		}
-		C.gio_writeClipboard(chars, C.NSUInteger(len(u16)))
-	},
+	runOnMain(
+		func() {
+			var chars *C.unichar
+			if len(u16) > 0 {
+				chars = (*C.unichar)(unsafe.Pointer(&u16[0]))
+			}
+			C.gio_writeClipboard(chars, C.NSUInteger(len(u16)))
+		},
 	)
 }
 
@@ -267,9 +274,10 @@ func (w *window) SetCursor(name pointer.CursorName) {
 }
 
 func (w *window) onKeyCommand(name string) {
-	w.w.Event(key.Event{
-		Name: name,
-	},
+	w.w.Event(
+		key.Event{
+			Name: name,
+		},
 	)
 }
 
@@ -307,14 +315,15 @@ func (w *window) ShowTextInput(show bool) {
 		return
 	}
 	C.CFRetain(v)
-	runOnMain(func() {
-		defer C.CFRelease(v)
-		if show {
-			C.gio_showTextInput(w.view)
-		} else {
-			C.gio_hideTextInput(w.view)
-		}
-	},
+	runOnMain(
+		func() {
+			defer C.CFRelease(v)
+			if show {
+				C.gio_showTextInput(w.view)
+			} else {
+				C.gio_hideTextInput(w.view)
+			}
+		},
 	)
 }
 

@@ -1,8 +1,9 @@
 package chainclient
 
 import (
-	"github.com/cybriq/p9/pkg/btcaddr"
 	"time"
+
+	"github.com/cybriq/p9/pkg/btcaddr"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/waddrmgr"
@@ -33,7 +34,8 @@ type Interface interface {
 	FilterBlocks(*FilterBlocksRequest) (*FilterBlocksResponse, error)
 	BlockStamp() (*waddrmgr.BlockStamp, error)
 	SendRawTransaction(*wire.MsgTx, bool) (*chainhash.Hash, error)
-	Rescan(*chainhash.Hash, []btcaddr.Address,
+	Rescan(
+		*chainhash.Hash, []btcaddr.Address,
 		map[wire.OutPoint]btcaddr.Address,
 	) error
 	NotifyReceived([]btcaddr.Address) error

@@ -48,7 +48,10 @@ func (wg *WalletGUI) unlockWallet(pass string) {
 			filename := filepath.Join(wg.cx.Config.DataDir.V(), "state.json")
 			// if log.FileExists(filename) {
 			I.Ln("#### loading state data...")
-			if e = wg.State.Load(filename, wg.cx.Config.WalletPass.Bytes()); !E.Chk(e) {
+			if e = wg.State.Load(
+				filename,
+				wg.cx.Config.WalletPass.Bytes(),
+			); !E.Chk(e) {
 				D.Ln("#### loaded state data")
 			}
 			// it is as though it is loaded if it didn't exist
@@ -174,7 +177,8 @@ func (wg *WalletGUI) getWalletUnlockAppWidget() (a *gel.App) {
 																					Rigid(
 																						wg.Inset(
 																							0.5,
-																							gel.EmptySpace(0,
+																							gel.EmptySpace(
+																								0,
 																								0,
 																							),
 																						).Fn,
@@ -186,11 +190,14 @@ func (wg *WalletGUI) getWalletUnlockAppWidget() (a *gel.App) {
 																				return dims
 																			},
 																		).
-																		Rigid(wg.Inset(0.5,
-																			gel.EmptySpace(0,
-																				0,
-																			),
-																		).Fn,
+																		Rigid(
+																			wg.Inset(
+																				0.5,
+																				gel.EmptySpace(
+																					0,
+																					0,
+																				),
+																			).Fn,
 																		).
 																		Rigid(
 																			func(gtx l.Context) l.
@@ -202,11 +209,14 @@ func (wg *WalletGUI) getWalletUnlockAppWidget() (a *gel.App) {
 																					Fn(gtx)
 																			},
 																		).
-																		Rigid(wg.Inset(0.5,
-																			gel.EmptySpace(0,
-																				0,
-																			),
-																		).Fn,
+																		Rigid(
+																			wg.Inset(
+																				0.5,
+																				gel.EmptySpace(
+																					0,
+																					0,
+																				),
+																			).Fn,
 																		).
 																		Rigid(
 																			wg.Body1(

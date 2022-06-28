@@ -44,7 +44,8 @@ func (s SliderStyle) Layout(gtx layout.Context) layout.Dimensions {
 	minLength := thumbRadius + 3*thumbRadius + thumbRadius
 	// Try to expand to finger size, but only if the constraints
 	// allow for it.
-	touchSizePx := min(gtx.Px(s.FingerSize),
+	touchSizePx := min(
+		gtx.Px(s.FingerSize),
 		axis.Convert(gtx.Constraints.Max).Y,
 	)
 	sizeMain := max(axis.Convert(gtx.Constraints.Min).X, minLength)
@@ -54,15 +55,20 @@ func (s SliderStyle) Layout(gtx layout.Context) layout.Dimensions {
 	st := op.Save(gtx.Ops)
 	o := axis.Convert(image.Pt(thumbRadius, 0))
 	op.Offset(layout.FPt(o)).Add(gtx.Ops)
-	gtx.Constraints.Min = axis.Convert(image.Pt(sizeMain-2*thumbRadius,
-		sizeCross,
-	),
+	gtx.Constraints.Min = axis.Convert(
+		image.Pt(
+			sizeMain-2*thumbRadius,
+			sizeCross,
+		),
 	)
 	s.Float.Layout(gtx, thumbRadius, s.Min, s.Max)
-	gtx.Constraints.Min = gtx.Constraints.Min.Add(axis.Convert(image.Pt(0,
-		sizeCross,
-	),
-	),
+	gtx.Constraints.Min = gtx.Constraints.Min.Add(
+		axis.Convert(
+			image.Pt(
+				0,
+				sizeCross,
+			),
+		),
 	)
 	thumbPos := thumbRadius + int(s.Float.Pos())
 	st.Load()
@@ -86,9 +92,11 @@ func (s SliderStyle) Layout(gtx layout.Context) layout.Dimensions {
 	st = op.Save(gtx.Ops)
 	track = image.Rectangle{
 		Min: axis.Convert(image.Pt(thumbPos, axis.Convert(track.Min).Y)),
-		Max: axis.Convert(image.Pt(sizeMain-thumbRadius,
-			axis.Convert(track.Max).Y,
-		),
+		Max: axis.Convert(
+			image.Pt(
+				sizeMain-thumbRadius,
+				axis.Convert(track.Max).Y,
+			),
 		),
 	}
 	clip.Rect(track).Add(gtx.Ops)
@@ -97,7 +105,8 @@ func (s SliderStyle) Layout(gtx layout.Context) layout.Dimensions {
 
 	// Draw thumb.
 	pt := axis.Convert(image.Pt(thumbPos, sizeCross/2))
-	paint.FillShape(gtx.Ops, color,
+	paint.FillShape(
+		gtx.Ops, color,
 		clip.Circle{
 			Center: f32.Point{X: float32(pt.X), Y: float32(pt.Y)},
 			Radius: float32(thumbRadius),

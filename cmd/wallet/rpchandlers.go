@@ -278,8 +278,10 @@ type (
 // RequestHandler is a handler function to handle an unmarshaled and parsed request into a marshalable response.  If the
 // error is a *json.RPCError or any of the above special error classes, the server will respond with the JSON-RPC
 // appropriate error code.  All other errors use the wallet catch-all error code, json.ErrRPCWallet.
-type RequestHandler func(interface{}, *Wallet,
-	...*chainclient.RPCClient) (interface{}, error)
+type RequestHandler func(
+	interface{}, *Wallet,
+	...*chainclient.RPCClient,
+) (interface{}, error)
 
 // RPCHandlers is all of the RPC calls available
 //
@@ -310,136 +312,180 @@ var RPCHandlers = map[string]struct {
 }{
 	"addmultisigaddress": {
 		Handler: AddMultiSigAddress, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan AddMultiSigAddressRes)} }},
+		Result: func() API { return API{Ch: make(chan AddMultiSigAddressRes)} },
+	},
 	"createmultisig": {
 		Handler: CreateMultiSig, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan CreateMultiSigRes)} }},
+		Result: func() API { return API{Ch: make(chan CreateMultiSigRes)} },
+	},
 	"createnewaccount": {
 		Handler: CreateNewAccount, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan CreateNewAccountRes)} }},
+		Result: func() API { return API{Ch: make(chan CreateNewAccountRes)} },
+	},
 	"dropwallethistory": {
 		Handler: HandleDropWalletHistory, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan HandleDropWalletHistoryRes)} }},
+		Result: func() API { return API{Ch: make(chan HandleDropWalletHistoryRes)} },
+	},
 	"dumpprivkey": {
 		Handler: DumpPrivKey, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan DumpPrivKeyRes)} }},
+		Result: func() API { return API{Ch: make(chan DumpPrivKeyRes)} },
+	},
 	"getaccount": {
 		Handler: GetAccount, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetAccountRes)} }},
+		Result: func() API { return API{Ch: make(chan GetAccountRes)} },
+	},
 	"getaccountaddress": {
 		Handler: GetAccountAddress, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetAccountAddressRes)} }},
+		Result: func() API { return API{Ch: make(chan GetAccountAddressRes)} },
+	},
 	"getaddressesbyaccount": {
 		Handler: GetAddressesByAccount, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetAddressesByAccountRes)} }},
+		Result: func() API { return API{Ch: make(chan GetAddressesByAccountRes)} },
+	},
 	"getbalance": {
 		Handler: GetBalance, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetBalanceRes)} }},
+		Result: func() API { return API{Ch: make(chan GetBalanceRes)} },
+	},
 	"getbestblock": {
 		Handler: GetBestBlock, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetBestBlockRes)} }},
+		Result: func() API { return API{Ch: make(chan GetBestBlockRes)} },
+	},
 	"getbestblockhash": {
 		Handler: GetBestBlockHash, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetBestBlockHashRes)} }},
+		Result: func() API { return API{Ch: make(chan GetBestBlockHashRes)} },
+	},
 	"getblockcount": {
 		Handler: GetBlockCount, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetBlockCountRes)} }},
+		Result: func() API { return API{Ch: make(chan GetBlockCountRes)} },
+	},
 	"getinfo": {
 		Handler: GetInfo, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetInfoRes)} }},
+		Result: func() API { return API{Ch: make(chan GetInfoRes)} },
+	},
 	"getnewaddress": {
 		Handler: GetNewAddress, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetNewAddressRes)} }},
+		Result: func() API { return API{Ch: make(chan GetNewAddressRes)} },
+	},
 	"getrawchangeaddress": {
 		Handler: GetRawChangeAddress, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetRawChangeAddressRes)} }},
+		Result: func() API { return API{Ch: make(chan GetRawChangeAddressRes)} },
+	},
 	"getreceivedbyaccount": {
 		Handler: GetReceivedByAccount, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetReceivedByAccountRes)} }},
+		Result: func() API { return API{Ch: make(chan GetReceivedByAccountRes)} },
+	},
 	"getreceivedbyaddress": {
 		Handler: GetReceivedByAddress, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetReceivedByAddressRes)} }},
+		Result: func() API { return API{Ch: make(chan GetReceivedByAddressRes)} },
+	},
 	"gettransaction": {
 		Handler: GetTransaction, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetTransactionRes)} }},
+		Result: func() API { return API{Ch: make(chan GetTransactionRes)} },
+	},
 	"getunconfirmedbalance": {
 		Handler: GetUnconfirmedBalance, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan GetUnconfirmedBalanceRes)} }},
+		Result: func() API { return API{Ch: make(chan GetUnconfirmedBalanceRes)} },
+	},
 	"help": {
 		Handler: HelpNoChainRPC, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan HelpNoChainRPCRes)} }},
+		Result: func() API { return API{Ch: make(chan HelpNoChainRPCRes)} },
+	},
 	"importprivkey": {
 		Handler: ImportPrivKey, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan ImportPrivKeyRes)} }},
+		Result: func() API { return API{Ch: make(chan ImportPrivKeyRes)} },
+	},
 	"keypoolrefill": {
 		Handler: KeypoolRefill, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan KeypoolRefillRes)} }},
+		Result: func() API { return API{Ch: make(chan KeypoolRefillRes)} },
+	},
 	"listaccounts": {
 		Handler: ListAccounts, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan ListAccountsRes)} }},
+		Result: func() API { return API{Ch: make(chan ListAccountsRes)} },
+	},
 	"listaddresstransactions": {
 		Handler: ListAddressTransactions, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan ListAddressTransactionsRes)} }},
+		Result: func() API { return API{Ch: make(chan ListAddressTransactionsRes)} },
+	},
 	"listalltransactions": {
 		Handler: ListAllTransactions, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan ListAllTransactionsRes)} }},
+		Result: func() API { return API{Ch: make(chan ListAllTransactionsRes)} },
+	},
 	"listlockunspent": {
 		Handler: ListLockUnspent, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan ListLockUnspentRes)} }},
+		Result: func() API { return API{Ch: make(chan ListLockUnspentRes)} },
+	},
 	"listreceivedbyaccount": {
 		Handler: ListReceivedByAccount, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan ListReceivedByAccountRes)} }},
+		Result: func() API { return API{Ch: make(chan ListReceivedByAccountRes)} },
+	},
 	"listreceivedbyaddress": {
 		Handler: ListReceivedByAddress, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan ListReceivedByAddressRes)} }},
+		Result: func() API { return API{Ch: make(chan ListReceivedByAddressRes)} },
+	},
 	"listsinceblock": {
 		Handler: ListSinceBlock, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan ListSinceBlockRes)} }},
+		Result: func() API { return API{Ch: make(chan ListSinceBlockRes)} },
+	},
 	"listtransactions": {
 		Handler: ListTransactions, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan ListTransactionsRes)} }},
+		Result: func() API { return API{Ch: make(chan ListTransactionsRes)} },
+	},
 	"listunspent": {
 		Handler: ListUnspent, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan ListUnspentRes)} }},
+		Result: func() API { return API{Ch: make(chan ListUnspentRes)} },
+	},
 	"renameaccount": {
 		Handler: RenameAccount, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan RenameAccountRes)} }},
+		Result: func() API { return API{Ch: make(chan RenameAccountRes)} },
+	},
 	"sendfrom": {
 		Handler: LockUnspent, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan LockUnspentRes)} }},
+		Result: func() API { return API{Ch: make(chan LockUnspentRes)} },
+	},
 	"sendmany": {
 		Handler: SendMany, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan SendManyRes)} }},
+		Result: func() API { return API{Ch: make(chan SendManyRes)} },
+	},
 	"sendtoaddress": {
 		Handler: SendToAddress, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan SendToAddressRes)} }},
+		Result: func() API { return API{Ch: make(chan SendToAddressRes)} },
+	},
 	"settxfee": {
 		Handler: SetTxFee, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan SetTxFeeRes)} }},
+		Result: func() API { return API{Ch: make(chan SetTxFeeRes)} },
+	},
 	"signmessage": {
 		Handler: SignMessage, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan SignMessageRes)} }},
+		Result: func() API { return API{Ch: make(chan SignMessageRes)} },
+	},
 	"signrawtransaction": {
 		Handler: SignRawTransaction, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan SignRawTransactionRes)} }},
+		Result: func() API { return API{Ch: make(chan SignRawTransactionRes)} },
+	},
 	"validateaddress": {
 		Handler: ValidateAddress, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan ValidateAddressRes)} }},
+		Result: func() API { return API{Ch: make(chan ValidateAddressRes)} },
+	},
 	"verifymessage": {
 		Handler: VerifyMessage, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan VerifyMessageRes)} }},
+		Result: func() API { return API{Ch: make(chan VerifyMessageRes)} },
+	},
 	"walletislocked": {
 		Handler: WalletIsLocked, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan WalletIsLockedRes)} }},
+		Result: func() API { return API{Ch: make(chan WalletIsLockedRes)} },
+	},
 	"walletlock": {
 		Handler: WalletLock, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan WalletLockRes)} }},
+		Result: func() API { return API{Ch: make(chan WalletLockRes)} },
+	},
 	"walletpassphrase": {
 		Handler: WalletPassphrase, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan WalletPassphraseRes)} }},
+		Result: func() API { return API{Ch: make(chan WalletPassphraseRes)} },
+	},
 	"walletpassphrasechange": {
 		Handler: WalletPassphraseChange, Call: make(chan API, 32),
-		Result: func() API { return API{Ch: make(chan WalletPassphraseChangeRes)} }},
+		Result: func() API { return API{Ch: make(chan WalletPassphraseChangeRes)} },
+	},
 }
 
 // API functions
@@ -477,7 +523,10 @@ func (a API) AddMultiSigAddressGetRes() (out *string, e error) {
 }
 
 // AddMultiSigAddressWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) AddMultiSigAddressWait(cmd *btcjson.AddMultisigAddressCmd) (out *string, e error) {
+func (a API) AddMultiSigAddressWait(cmd *btcjson.AddMultisigAddressCmd) (
+	out *string,
+	e error,
+) {
 	RPCHandlers["addmultisigaddress"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -511,14 +560,20 @@ func (a API) CreateMultiSigCheck() (isNew bool) {
 }
 
 // CreateMultiSigGetRes returns a pointer to the value in the Result field
-func (a API) CreateMultiSigGetRes() (out *btcjson.CreateMultiSigResult, e error) {
+func (a API) CreateMultiSigGetRes() (
+	out *btcjson.CreateMultiSigResult,
+	e error,
+) {
 	out, _ = a.Result.(*btcjson.CreateMultiSigResult)
 	e, _ = a.Result.(error)
 	return
 }
 
 // CreateMultiSigWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) CreateMultiSigWait(cmd *btcjson.CreateMultisigCmd) (out *btcjson.CreateMultiSigResult, e error) {
+func (a API) CreateMultiSigWait(cmd *btcjson.CreateMultisigCmd) (
+	out *btcjson.CreateMultiSigResult,
+	e error,
+) {
 	RPCHandlers["createmultisig"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -559,7 +614,10 @@ func (a API) CreateNewAccountGetRes() (out *None, e error) {
 }
 
 // CreateNewAccountWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) CreateNewAccountWait(cmd *btcjson.CreateNewAccountCmd) (out *None, e error) {
+func (a API) CreateNewAccountWait(cmd *btcjson.CreateNewAccountCmd) (
+	out *None,
+	e error,
+) {
 	RPCHandlers["createnewaccount"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -641,7 +699,10 @@ func (a API) DumpPrivKeyGetRes() (out *string, e error) {
 }
 
 // DumpPrivKeyWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) DumpPrivKeyWait(cmd *btcjson.DumpPrivKeyCmd) (out *string, e error) {
+func (a API) DumpPrivKeyWait(cmd *btcjson.DumpPrivKeyCmd) (
+	out *string,
+	e error,
+) {
 	RPCHandlers["dumpprivkey"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -723,7 +784,10 @@ func (a API) GetAccountAddressGetRes() (out *string, e error) {
 }
 
 // GetAccountAddressWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) GetAccountAddressWait(cmd *btcjson.GetAccountAddressCmd) (out *string, e error) {
+func (a API) GetAccountAddressWait(cmd *btcjson.GetAccountAddressCmd) (
+	out *string,
+	e error,
+) {
 	RPCHandlers["getaccountaddress"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -764,7 +828,10 @@ func (a API) GetAddressesByAccountGetRes() (out *[]string, e error) {
 }
 
 // GetAddressesByAccountWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) GetAddressesByAccountWait(cmd *btcjson.GetAddressesByAccountCmd) (out *[]string, e error) {
+func (a API) GetAddressesByAccountWait(cmd *btcjson.GetAddressesByAccountCmd) (
+	out *[]string,
+	e error,
+) {
 	RPCHandlers["getaddressesbyaccount"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -805,7 +872,10 @@ func (a API) GetBalanceGetRes() (out *float64, e error) {
 }
 
 // GetBalanceWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) GetBalanceWait(cmd *btcjson.GetBalanceCmd) (out *float64, e error) {
+func (a API) GetBalanceWait(cmd *btcjson.GetBalanceCmd) (
+	out *float64,
+	e error,
+) {
 	RPCHandlers["getbalance"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -846,7 +916,10 @@ func (a API) GetBestBlockGetRes() (out *btcjson.GetBestBlockResult, e error) {
 }
 
 // GetBestBlockWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) GetBestBlockWait(cmd *None) (out *btcjson.GetBestBlockResult, e error) {
+func (a API) GetBestBlockWait(cmd *None) (
+	out *btcjson.GetBestBlockResult,
+	e error,
+) {
 	RPCHandlers["getbestblock"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1010,7 +1083,10 @@ func (a API) GetNewAddressGetRes() (out *string, e error) {
 }
 
 // GetNewAddressWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) GetNewAddressWait(cmd *btcjson.GetNewAddressCmd) (out *string, e error) {
+func (a API) GetNewAddressWait(cmd *btcjson.GetNewAddressCmd) (
+	out *string,
+	e error,
+) {
 	RPCHandlers["getnewaddress"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1051,7 +1127,10 @@ func (a API) GetRawChangeAddressGetRes() (out *string, e error) {
 }
 
 // GetRawChangeAddressWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) GetRawChangeAddressWait(cmd *btcjson.GetRawChangeAddressCmd) (out *string, e error) {
+func (a API) GetRawChangeAddressWait(cmd *btcjson.GetRawChangeAddressCmd) (
+	out *string,
+	e error,
+) {
 	RPCHandlers["getrawchangeaddress"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1092,7 +1171,10 @@ func (a API) GetReceivedByAccountGetRes() (out *float64, e error) {
 }
 
 // GetReceivedByAccountWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) GetReceivedByAccountWait(cmd *btcjson.GetReceivedByAccountCmd) (out *float64, e error) {
+func (a API) GetReceivedByAccountWait(cmd *btcjson.GetReceivedByAccountCmd) (
+	out *float64,
+	e error,
+) {
 	RPCHandlers["getreceivedbyaccount"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1133,7 +1215,10 @@ func (a API) GetReceivedByAddressGetRes() (out *float64, e error) {
 }
 
 // GetReceivedByAddressWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) GetReceivedByAddressWait(cmd *btcjson.GetReceivedByAddressCmd) (out *float64, e error) {
+func (a API) GetReceivedByAddressWait(cmd *btcjson.GetReceivedByAddressCmd) (
+	out *float64,
+	e error,
+) {
 	RPCHandlers["getreceivedbyaddress"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1167,14 +1252,20 @@ func (a API) GetTransactionCheck() (isNew bool) {
 }
 
 // GetTransactionGetRes returns a pointer to the value in the Result field
-func (a API) GetTransactionGetRes() (out *btcjson.GetTransactionResult, e error) {
+func (a API) GetTransactionGetRes() (
+	out *btcjson.GetTransactionResult,
+	e error,
+) {
 	out, _ = a.Result.(*btcjson.GetTransactionResult)
 	e, _ = a.Result.(error)
 	return
 }
 
 // GetTransactionWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) GetTransactionWait(cmd *btcjson.GetTransactionCmd) (out *btcjson.GetTransactionResult, e error) {
+func (a API) GetTransactionWait(cmd *btcjson.GetTransactionCmd) (
+	out *btcjson.GetTransactionResult,
+	e error,
+) {
 	RPCHandlers["gettransaction"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1215,7 +1306,10 @@ func (a API) GetUnconfirmedBalanceGetRes() (out *float64, e error) {
 }
 
 // GetUnconfirmedBalanceWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) GetUnconfirmedBalanceWait(cmd *btcjson.GetUnconfirmedBalanceCmd) (out *float64, e error) {
+func (a API) GetUnconfirmedBalanceWait(cmd *btcjson.GetUnconfirmedBalanceCmd) (
+	out *float64,
+	e error,
+) {
 	RPCHandlers["getunconfirmedbalance"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1297,7 +1391,10 @@ func (a API) ImportPrivKeyGetRes() (out *None, e error) {
 }
 
 // ImportPrivKeyWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) ImportPrivKeyWait(cmd *btcjson.ImportPrivKeyCmd) (out *None, e error) {
+func (a API) ImportPrivKeyWait(cmd *btcjson.ImportPrivKeyCmd) (
+	out *None,
+	e error,
+) {
 	RPCHandlers["importprivkey"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1379,7 +1476,10 @@ func (a API) ListAccountsGetRes() (out *map[string]float64, e error) {
 }
 
 // ListAccountsWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) ListAccountsWait(cmd *btcjson.ListAccountsCmd) (out *map[string]float64, e error) {
+func (a API) ListAccountsWait(cmd *btcjson.ListAccountsCmd) (
+	out *map[string]float64,
+	e error,
+) {
 	RPCHandlers["listaccounts"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1413,14 +1513,20 @@ func (a API) ListAddressTransactionsCheck() (isNew bool) {
 }
 
 // ListAddressTransactionsGetRes returns a pointer to the value in the Result field
-func (a API) ListAddressTransactionsGetRes() (out *[]btcjson.ListTransactionsResult, e error) {
+func (a API) ListAddressTransactionsGetRes() (
+	out *[]btcjson.ListTransactionsResult,
+	e error,
+) {
 	out, _ = a.Result.(*[]btcjson.ListTransactionsResult)
 	e, _ = a.Result.(error)
 	return
 }
 
 // ListAddressTransactionsWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) ListAddressTransactionsWait(cmd *btcjson.ListAddressTransactionsCmd) (out *[]btcjson.ListTransactionsResult, e error) {
+func (a API) ListAddressTransactionsWait(cmd *btcjson.ListAddressTransactionsCmd) (
+	out *[]btcjson.ListTransactionsResult,
+	e error,
+) {
 	RPCHandlers["listaddresstransactions"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1454,14 +1560,20 @@ func (a API) ListAllTransactionsCheck() (isNew bool) {
 }
 
 // ListAllTransactionsGetRes returns a pointer to the value in the Result field
-func (a API) ListAllTransactionsGetRes() (out *[]btcjson.ListTransactionsResult, e error) {
+func (a API) ListAllTransactionsGetRes() (
+	out *[]btcjson.ListTransactionsResult,
+	e error,
+) {
 	out, _ = a.Result.(*[]btcjson.ListTransactionsResult)
 	e, _ = a.Result.(error)
 	return
 }
 
 // ListAllTransactionsWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) ListAllTransactionsWait(cmd *btcjson.ListAllTransactionsCmd) (out *[]btcjson.ListTransactionsResult, e error) {
+func (a API) ListAllTransactionsWait(cmd *btcjson.ListAllTransactionsCmd) (
+	out *[]btcjson.ListTransactionsResult,
+	e error,
+) {
 	RPCHandlers["listalltransactions"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1495,14 +1607,20 @@ func (a API) ListLockUnspentCheck() (isNew bool) {
 }
 
 // ListLockUnspentGetRes returns a pointer to the value in the Result field
-func (a API) ListLockUnspentGetRes() (out *[]btcjson.TransactionInput, e error) {
+func (a API) ListLockUnspentGetRes() (
+	out *[]btcjson.TransactionInput,
+	e error,
+) {
 	out, _ = a.Result.(*[]btcjson.TransactionInput)
 	e, _ = a.Result.(error)
 	return
 }
 
 // ListLockUnspentWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) ListLockUnspentWait(cmd *None) (out *[]btcjson.TransactionInput, e error) {
+func (a API) ListLockUnspentWait(cmd *None) (
+	out *[]btcjson.TransactionInput,
+	e error,
+) {
 	RPCHandlers["listlockunspent"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1536,14 +1654,20 @@ func (a API) ListReceivedByAccountCheck() (isNew bool) {
 }
 
 // ListReceivedByAccountGetRes returns a pointer to the value in the Result field
-func (a API) ListReceivedByAccountGetRes() (out *[]btcjson.ListReceivedByAccountResult, e error) {
+func (a API) ListReceivedByAccountGetRes() (
+	out *[]btcjson.ListReceivedByAccountResult,
+	e error,
+) {
 	out, _ = a.Result.(*[]btcjson.ListReceivedByAccountResult)
 	e, _ = a.Result.(error)
 	return
 }
 
 // ListReceivedByAccountWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) ListReceivedByAccountWait(cmd *btcjson.ListReceivedByAccountCmd) (out *[]btcjson.ListReceivedByAccountResult, e error) {
+func (a API) ListReceivedByAccountWait(cmd *btcjson.ListReceivedByAccountCmd) (
+	out *[]btcjson.ListReceivedByAccountResult,
+	e error,
+) {
 	RPCHandlers["listreceivedbyaccount"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1577,14 +1701,20 @@ func (a API) ListReceivedByAddressCheck() (isNew bool) {
 }
 
 // ListReceivedByAddressGetRes returns a pointer to the value in the Result field
-func (a API) ListReceivedByAddressGetRes() (out *btcjson.ListReceivedByAddressResult, e error) {
+func (a API) ListReceivedByAddressGetRes() (
+	out *btcjson.ListReceivedByAddressResult,
+	e error,
+) {
 	out, _ = a.Result.(*btcjson.ListReceivedByAddressResult)
 	e, _ = a.Result.(error)
 	return
 }
 
 // ListReceivedByAddressWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) ListReceivedByAddressWait(cmd *btcjson.ListReceivedByAddressCmd) (out *btcjson.ListReceivedByAddressResult, e error) {
+func (a API) ListReceivedByAddressWait(cmd *btcjson.ListReceivedByAddressCmd) (
+	out *btcjson.ListReceivedByAddressResult,
+	e error,
+) {
 	RPCHandlers["listreceivedbyaddress"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1618,14 +1748,20 @@ func (a API) ListSinceBlockCheck() (isNew bool) {
 }
 
 // ListSinceBlockGetRes returns a pointer to the value in the Result field
-func (a API) ListSinceBlockGetRes() (out *btcjson.ListSinceBlockResult, e error) {
+func (a API) ListSinceBlockGetRes() (
+	out *btcjson.ListSinceBlockResult,
+	e error,
+) {
 	out, _ = a.Result.(*btcjson.ListSinceBlockResult)
 	e, _ = a.Result.(error)
 	return
 }
 
 // ListSinceBlockWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) ListSinceBlockWait(cmd btcjson.ListSinceBlockCmd) (out *btcjson.ListSinceBlockResult, e error) {
+func (a API) ListSinceBlockWait(cmd btcjson.ListSinceBlockCmd) (
+	out *btcjson.ListSinceBlockResult,
+	e error,
+) {
 	RPCHandlers["listsinceblock"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1659,14 +1795,20 @@ func (a API) ListTransactionsCheck() (isNew bool) {
 }
 
 // ListTransactionsGetRes returns a pointer to the value in the Result field
-func (a API) ListTransactionsGetRes() (out *[]btcjson.ListTransactionsResult, e error) {
+func (a API) ListTransactionsGetRes() (
+	out *[]btcjson.ListTransactionsResult,
+	e error,
+) {
 	out, _ = a.Result.(*[]btcjson.ListTransactionsResult)
 	e, _ = a.Result.(error)
 	return
 }
 
 // ListTransactionsWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) ListTransactionsWait(cmd *btcjson.ListTransactionsCmd) (out *[]btcjson.ListTransactionsResult, e error) {
+func (a API) ListTransactionsWait(cmd *btcjson.ListTransactionsCmd) (
+	out *[]btcjson.ListTransactionsResult,
+	e error,
+) {
 	RPCHandlers["listtransactions"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1707,7 +1849,10 @@ func (a API) ListUnspentGetRes() (out *[]btcjson.ListUnspentResult, e error) {
 }
 
 // ListUnspentWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) ListUnspentWait(cmd *btcjson.ListUnspentCmd) (out *[]btcjson.ListUnspentResult, e error) {
+func (a API) ListUnspentWait(cmd *btcjson.ListUnspentCmd) (
+	out *[]btcjson.ListUnspentResult,
+	e error,
+) {
 	RPCHandlers["listunspent"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1748,7 +1893,10 @@ func (a API) RenameAccountGetRes() (out *None, e error) {
 }
 
 // RenameAccountWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) RenameAccountWait(cmd *btcjson.RenameAccountCmd) (out *None, e error) {
+func (a API) RenameAccountWait(cmd *btcjson.RenameAccountCmd) (
+	out *None,
+	e error,
+) {
 	RPCHandlers["renameaccount"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1871,7 +2019,10 @@ func (a API) SendToAddressGetRes() (out *string, e error) {
 }
 
 // SendToAddressWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) SendToAddressWait(cmd *btcjson.SendToAddressCmd) (out *string, e error) {
+func (a API) SendToAddressWait(cmd *btcjson.SendToAddressCmd) (
+	out *string,
+	e error,
+) {
 	RPCHandlers["sendtoaddress"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1953,7 +2104,10 @@ func (a API) SignMessageGetRes() (out *string, e error) {
 }
 
 // SignMessageWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) SignMessageWait(cmd *btcjson.SignMessageCmd) (out *string, e error) {
+func (a API) SignMessageWait(cmd *btcjson.SignMessageCmd) (
+	out *string,
+	e error,
+) {
 	RPCHandlers["signmessage"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -1987,14 +2141,20 @@ func (a API) SignRawTransactionCheck() (isNew bool) {
 }
 
 // SignRawTransactionGetRes returns a pointer to the value in the Result field
-func (a API) SignRawTransactionGetRes() (out *btcjson.SignRawTransactionResult, e error) {
+func (a API) SignRawTransactionGetRes() (
+	out *btcjson.SignRawTransactionResult,
+	e error,
+) {
 	out, _ = a.Result.(*btcjson.SignRawTransactionResult)
 	e, _ = a.Result.(error)
 	return
 }
 
 // SignRawTransactionWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) SignRawTransactionWait(cmd btcjson.SignRawTransactionCmd) (out *btcjson.SignRawTransactionResult, e error) {
+func (a API) SignRawTransactionWait(cmd btcjson.SignRawTransactionCmd) (
+	out *btcjson.SignRawTransactionResult,
+	e error,
+) {
 	RPCHandlers["signrawtransaction"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -2028,14 +2188,20 @@ func (a API) ValidateAddressCheck() (isNew bool) {
 }
 
 // ValidateAddressGetRes returns a pointer to the value in the Result field
-func (a API) ValidateAddressGetRes() (out *btcjson.ValidateAddressWalletResult, e error) {
+func (a API) ValidateAddressGetRes() (
+	out *btcjson.ValidateAddressWalletResult,
+	e error,
+) {
 	out, _ = a.Result.(*btcjson.ValidateAddressWalletResult)
 	e, _ = a.Result.(error)
 	return
 }
 
 // ValidateAddressWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) ValidateAddressWait(cmd *btcjson.ValidateAddressCmd) (out *btcjson.ValidateAddressWalletResult, e error) {
+func (a API) ValidateAddressWait(cmd *btcjson.ValidateAddressCmd) (
+	out *btcjson.ValidateAddressWalletResult,
+	e error,
+) {
 	RPCHandlers["validateaddress"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -2076,7 +2242,10 @@ func (a API) VerifyMessageGetRes() (out *bool, e error) {
 }
 
 // VerifyMessageWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) VerifyMessageWait(cmd *btcjson.VerifyMessageCmd) (out *bool, e error) {
+func (a API) VerifyMessageWait(cmd *btcjson.VerifyMessageCmd) (
+	out *bool,
+	e error,
+) {
 	RPCHandlers["verifymessage"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -2199,7 +2368,10 @@ func (a API) WalletPassphraseGetRes() (out *None, e error) {
 }
 
 // WalletPassphraseWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) WalletPassphraseWait(cmd *btcjson.WalletPassphraseCmd) (out *None, e error) {
+func (a API) WalletPassphraseWait(cmd *btcjson.WalletPassphraseCmd) (
+	out *None,
+	e error,
+) {
 	RPCHandlers["walletpassphrase"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -2240,7 +2412,10 @@ func (a API) WalletPassphraseChangeGetRes() (out *None, e error) {
 }
 
 // WalletPassphraseChangeWait calls the method and blocks until it returns or 5 seconds passes
-func (a API) WalletPassphraseChangeWait(cmd *btcjson.WalletPassphraseChangeCmd) (out *None, e error) {
+func (a API) WalletPassphraseChangeWait(cmd *btcjson.WalletPassphraseChangeCmd) (
+	out *None,
+	e error,
+) {
 	RPCHandlers["walletpassphrasechange"].Call <- API{a.Ch, cmd, nil}
 	select {
 	case <-time.After(time.Second * 5):
@@ -2254,8 +2429,10 @@ func (a API) WalletPassphraseChangeWait(cmd *btcjson.WalletPassphraseChangeCmd) 
 // RunAPI starts up the api handler server that receives rpc.API messages and runs the handler and returns the result
 // Note that the parameters are type asserted to prevent the consumer of the API from sending wrong message types not
 // because it's necessary since they are interfaces end to end
-func RunAPI(chainRPC *chainclient.RPCClient, wallet *Wallet,
-	quit qu.C) {
+func RunAPI(
+	chainRPC *chainclient.RPCClient, wallet *Wallet,
+	quit qu.C,
+) {
 	nrh := RPCHandlers
 	go func() {
 		D.Ln("starting up wallet cAPI")
@@ -2265,355 +2442,504 @@ func RunAPI(chainRPC *chainclient.RPCClient, wallet *Wallet,
 			select {
 			case msg := <-nrh["addmultisigaddress"].Call:
 				if res, e = nrh["addmultisigaddress"].
-					Handler(msg.Params.(*btcjson.AddMultisigAddressCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.AddMultisigAddressCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(string); ok {
-					msg.Ch.(chan AddMultiSigAddressRes) <- AddMultiSigAddressRes{&r, e}
+					msg.Ch.(chan AddMultiSigAddressRes) <- AddMultiSigAddressRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["createmultisig"].Call:
 				if res, e = nrh["createmultisig"].
-					Handler(msg.Params.(*btcjson.CreateMultisigCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.CreateMultisigCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(btcjson.CreateMultiSigResult); ok {
 					msg.Ch.(chan CreateMultiSigRes) <- CreateMultiSigRes{&r, e}
 				}
 			case msg := <-nrh["createnewaccount"].Call:
 				if res, e = nrh["createnewaccount"].
-					Handler(msg.Params.(*btcjson.CreateNewAccountCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.CreateNewAccountCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(None); ok {
-					msg.Ch.(chan CreateNewAccountRes) <- CreateNewAccountRes{&r, e}
+					msg.Ch.(chan CreateNewAccountRes) <- CreateNewAccountRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["dropwallethistory"].Call:
 				if res, e = nrh["dropwallethistory"].
-					Handler(msg.Params.(*None), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*None), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(string); ok {
-					msg.Ch.(chan HandleDropWalletHistoryRes) <- HandleDropWalletHistoryRes{&r, e}
+					msg.Ch.(chan HandleDropWalletHistoryRes) <- HandleDropWalletHistoryRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["dumpprivkey"].Call:
 				if res, e = nrh["dumpprivkey"].
-					Handler(msg.Params.(*btcjson.DumpPrivKeyCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.DumpPrivKeyCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(string); ok {
 					msg.Ch.(chan DumpPrivKeyRes) <- DumpPrivKeyRes{&r, e}
 				}
 			case msg := <-nrh["getaccount"].Call:
 				if res, e = nrh["getaccount"].
-					Handler(msg.Params.(*btcjson.GetAccountCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.GetAccountCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(string); ok {
 					msg.Ch.(chan GetAccountRes) <- GetAccountRes{&r, e}
 				}
 			case msg := <-nrh["getaccountaddress"].Call:
 				if res, e = nrh["getaccountaddress"].
-					Handler(msg.Params.(*btcjson.GetAccountAddressCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.GetAccountAddressCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(string); ok {
-					msg.Ch.(chan GetAccountAddressRes) <- GetAccountAddressRes{&r, e}
+					msg.Ch.(chan GetAccountAddressRes) <- GetAccountAddressRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["getaddressesbyaccount"].Call:
 				if res, e = nrh["getaddressesbyaccount"].
-					Handler(msg.Params.(*btcjson.GetAddressesByAccountCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.GetAddressesByAccountCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.([]string); ok {
-					msg.Ch.(chan GetAddressesByAccountRes) <- GetAddressesByAccountRes{&r, e}
+					msg.Ch.(chan GetAddressesByAccountRes) <- GetAddressesByAccountRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["getbalance"].Call:
 				if res, e = nrh["getbalance"].
-					Handler(msg.Params.(*btcjson.GetBalanceCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.GetBalanceCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(float64); ok {
 					msg.Ch.(chan GetBalanceRes) <- GetBalanceRes{&r, e}
 				}
 			case msg := <-nrh["getbestblock"].Call:
 				if res, e = nrh["getbestblock"].
-					Handler(msg.Params.(*None), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*None), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(btcjson.GetBestBlockResult); ok {
 					msg.Ch.(chan GetBestBlockRes) <- GetBestBlockRes{&r, e}
 				}
 			case msg := <-nrh["getbestblockhash"].Call:
 				if res, e = nrh["getbestblockhash"].
-					Handler(msg.Params.(*None), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*None), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(string); ok {
-					msg.Ch.(chan GetBestBlockHashRes) <- GetBestBlockHashRes{&r, e}
+					msg.Ch.(chan GetBestBlockHashRes) <- GetBestBlockHashRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["getblockcount"].Call:
 				if res, e = nrh["getblockcount"].
-					Handler(msg.Params.(*None), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*None), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(int32); ok {
 					msg.Ch.(chan GetBlockCountRes) <- GetBlockCountRes{&r, e}
 				}
 			case msg := <-nrh["getinfo"].Call:
 				if res, e = nrh["getinfo"].
-					Handler(msg.Params.(*None), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*None), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(btcjson.InfoWalletResult); ok {
 					msg.Ch.(chan GetInfoRes) <- GetInfoRes{&r, e}
 				}
 			case msg := <-nrh["getnewaddress"].Call:
 				if res, e = nrh["getnewaddress"].
-					Handler(msg.Params.(*btcjson.GetNewAddressCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.GetNewAddressCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(string); ok {
 					msg.Ch.(chan GetNewAddressRes) <- GetNewAddressRes{&r, e}
 				}
 			case msg := <-nrh["getrawchangeaddress"].Call:
 				if res, e = nrh["getrawchangeaddress"].
-					Handler(msg.Params.(*btcjson.GetRawChangeAddressCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.GetRawChangeAddressCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(string); ok {
-					msg.Ch.(chan GetRawChangeAddressRes) <- GetRawChangeAddressRes{&r, e}
+					msg.Ch.(chan GetRawChangeAddressRes) <- GetRawChangeAddressRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["getreceivedbyaccount"].Call:
 				if res, e = nrh["getreceivedbyaccount"].
-					Handler(msg.Params.(*btcjson.GetReceivedByAccountCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.GetReceivedByAccountCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(float64); ok {
-					msg.Ch.(chan GetReceivedByAccountRes) <- GetReceivedByAccountRes{&r, e}
+					msg.Ch.(chan GetReceivedByAccountRes) <- GetReceivedByAccountRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["getreceivedbyaddress"].Call:
 				if res, e = nrh["getreceivedbyaddress"].
-					Handler(msg.Params.(*btcjson.GetReceivedByAddressCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.GetReceivedByAddressCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(float64); ok {
-					msg.Ch.(chan GetReceivedByAddressRes) <- GetReceivedByAddressRes{&r, e}
+					msg.Ch.(chan GetReceivedByAddressRes) <- GetReceivedByAddressRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["gettransaction"].Call:
 				if res, e = nrh["gettransaction"].
-					Handler(msg.Params.(*btcjson.GetTransactionCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.GetTransactionCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(btcjson.GetTransactionResult); ok {
 					msg.Ch.(chan GetTransactionRes) <- GetTransactionRes{&r, e}
 				}
 			case msg := <-nrh["getunconfirmedbalance"].Call:
 				if res, e = nrh["getunconfirmedbalance"].
-					Handler(msg.Params.(*btcjson.GetUnconfirmedBalanceCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.GetUnconfirmedBalanceCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(float64); ok {
-					msg.Ch.(chan GetUnconfirmedBalanceRes) <- GetUnconfirmedBalanceRes{&r, e}
+					msg.Ch.(chan GetUnconfirmedBalanceRes) <- GetUnconfirmedBalanceRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["help"].Call:
 				if res, e = nrh["help"].
-					Handler(msg.Params.(btcjson.HelpCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(btcjson.HelpCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(string); ok {
 					msg.Ch.(chan HelpNoChainRPCRes) <- HelpNoChainRPCRes{&r, e}
 				}
 			case msg := <-nrh["importprivkey"].Call:
 				if res, e = nrh["importprivkey"].
-					Handler(msg.Params.(*btcjson.ImportPrivKeyCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.ImportPrivKeyCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(None); ok {
 					msg.Ch.(chan ImportPrivKeyRes) <- ImportPrivKeyRes{&r, e}
 				}
 			case msg := <-nrh["keypoolrefill"].Call:
 				if res, e = nrh["keypoolrefill"].
-					Handler(msg.Params.(*None), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*None), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(None); ok {
 					msg.Ch.(chan KeypoolRefillRes) <- KeypoolRefillRes{&r, e}
 				}
 			case msg := <-nrh["listaccounts"].Call:
 				if res, e = nrh["listaccounts"].
-					Handler(msg.Params.(*btcjson.ListAccountsCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.ListAccountsCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(map[string]float64); ok {
 					msg.Ch.(chan ListAccountsRes) <- ListAccountsRes{&r, e}
 				}
 			case msg := <-nrh["listaddresstransactions"].Call:
 				if res, e = nrh["listaddresstransactions"].
-					Handler(msg.Params.(*btcjson.ListAddressTransactionsCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.ListAddressTransactionsCmd),
+						wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.([]btcjson.ListTransactionsResult); ok {
-					msg.Ch.(chan ListAddressTransactionsRes) <- ListAddressTransactionsRes{&r, e}
+					msg.Ch.(chan ListAddressTransactionsRes) <- ListAddressTransactionsRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["listalltransactions"].Call:
 				if res, e = nrh["listalltransactions"].
-					Handler(msg.Params.(*btcjson.ListAllTransactionsCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.ListAllTransactionsCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.([]btcjson.ListTransactionsResult); ok {
-					msg.Ch.(chan ListAllTransactionsRes) <- ListAllTransactionsRes{&r, e}
+					msg.Ch.(chan ListAllTransactionsRes) <- ListAllTransactionsRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["listlockunspent"].Call:
 				if res, e = nrh["listlockunspent"].
-					Handler(msg.Params.(*None), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*None), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.([]btcjson.TransactionInput); ok {
-					msg.Ch.(chan ListLockUnspentRes) <- ListLockUnspentRes{&r, e}
+					msg.Ch.(chan ListLockUnspentRes) <- ListLockUnspentRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["listreceivedbyaccount"].Call:
 				if res, e = nrh["listreceivedbyaccount"].
-					Handler(msg.Params.(*btcjson.ListReceivedByAccountCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.ListReceivedByAccountCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.([]btcjson.ListReceivedByAccountResult); ok {
-					msg.Ch.(chan ListReceivedByAccountRes) <- ListReceivedByAccountRes{&r, e}
+					msg.Ch.(chan ListReceivedByAccountRes) <- ListReceivedByAccountRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["listreceivedbyaddress"].Call:
 				if res, e = nrh["listreceivedbyaddress"].
-					Handler(msg.Params.(*btcjson.ListReceivedByAddressCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.ListReceivedByAddressCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(btcjson.ListReceivedByAddressResult); ok {
-					msg.Ch.(chan ListReceivedByAddressRes) <- ListReceivedByAddressRes{&r, e}
+					msg.Ch.(chan ListReceivedByAddressRes) <- ListReceivedByAddressRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["listsinceblock"].Call:
 				if res, e = nrh["listsinceblock"].
-					Handler(msg.Params.(btcjson.ListSinceBlockCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(btcjson.ListSinceBlockCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(btcjson.ListSinceBlockResult); ok {
 					msg.Ch.(chan ListSinceBlockRes) <- ListSinceBlockRes{&r, e}
 				}
 			case msg := <-nrh["listtransactions"].Call:
 				if res, e = nrh["listtransactions"].
-					Handler(msg.Params.(*btcjson.ListTransactionsCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.ListTransactionsCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.([]btcjson.ListTransactionsResult); ok {
-					msg.Ch.(chan ListTransactionsRes) <- ListTransactionsRes{&r, e}
+					msg.Ch.(chan ListTransactionsRes) <- ListTransactionsRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["listunspent"].Call:
 				if res, e = nrh["listunspent"].
-					Handler(msg.Params.(*btcjson.ListUnspentCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.ListUnspentCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.([]btcjson.ListUnspentResult); ok {
 					msg.Ch.(chan ListUnspentRes) <- ListUnspentRes{&r, e}
 				}
 			case msg := <-nrh["renameaccount"].Call:
 				if res, e = nrh["renameaccount"].
-					Handler(msg.Params.(*btcjson.RenameAccountCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.RenameAccountCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(None); ok {
 					msg.Ch.(chan RenameAccountRes) <- RenameAccountRes{&r, e}
 				}
 			case msg := <-nrh["sendfrom"].Call:
 				if res, e = nrh["sendfrom"].
-					Handler(msg.Params.(btcjson.LockUnspentCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(btcjson.LockUnspentCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(bool); ok {
 					msg.Ch.(chan LockUnspentRes) <- LockUnspentRes{&r, e}
 				}
 			case msg := <-nrh["sendmany"].Call:
 				if res, e = nrh["sendmany"].
-					Handler(msg.Params.(*btcjson.SendManyCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.SendManyCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(string); ok {
 					msg.Ch.(chan SendManyRes) <- SendManyRes{&r, e}
 				}
 			case msg := <-nrh["sendtoaddress"].Call:
 				if res, e = nrh["sendtoaddress"].
-					Handler(msg.Params.(*btcjson.SendToAddressCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.SendToAddressCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(string); ok {
 					msg.Ch.(chan SendToAddressRes) <- SendToAddressRes{&r, e}
 				}
 			case msg := <-nrh["settxfee"].Call:
 				if res, e = nrh["settxfee"].
-					Handler(msg.Params.(*btcjson.SetTxFeeCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.SetTxFeeCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(bool); ok {
 					msg.Ch.(chan SetTxFeeRes) <- SetTxFeeRes{&r, e}
 				}
 			case msg := <-nrh["signmessage"].Call:
 				if res, e = nrh["signmessage"].
-					Handler(msg.Params.(*btcjson.SignMessageCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.SignMessageCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(string); ok {
 					msg.Ch.(chan SignMessageRes) <- SignMessageRes{&r, e}
 				}
 			case msg := <-nrh["signrawtransaction"].Call:
 				if res, e = nrh["signrawtransaction"].
-					Handler(msg.Params.(btcjson.SignRawTransactionCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(btcjson.SignRawTransactionCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(btcjson.SignRawTransactionResult); ok {
-					msg.Ch.(chan SignRawTransactionRes) <- SignRawTransactionRes{&r, e}
+					msg.Ch.(chan SignRawTransactionRes) <- SignRawTransactionRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["validateaddress"].Call:
 				if res, e = nrh["validateaddress"].
-					Handler(msg.Params.(*btcjson.ValidateAddressCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.ValidateAddressCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(btcjson.ValidateAddressWalletResult); ok {
-					msg.Ch.(chan ValidateAddressRes) <- ValidateAddressRes{&r, e}
+					msg.Ch.(chan ValidateAddressRes) <- ValidateAddressRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["verifymessage"].Call:
 				if res, e = nrh["verifymessage"].
-					Handler(msg.Params.(*btcjson.VerifyMessageCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.VerifyMessageCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(bool); ok {
 					msg.Ch.(chan VerifyMessageRes) <- VerifyMessageRes{&r, e}
 				}
 			case msg := <-nrh["walletislocked"].Call:
 				if res, e = nrh["walletislocked"].
-					Handler(msg.Params.(*None), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*None), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(bool); ok {
 					msg.Ch.(chan WalletIsLockedRes) <- WalletIsLockedRes{&r, e}
 				}
 			case msg := <-nrh["walletlock"].Call:
 				if res, e = nrh["walletlock"].
-					Handler(msg.Params.(*None), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*None), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(None); ok {
 					msg.Ch.(chan WalletLockRes) <- WalletLockRes{&r, e}
 				}
 			case msg := <-nrh["walletpassphrase"].Call:
 				if res, e = nrh["walletpassphrase"].
-					Handler(msg.Params.(*btcjson.WalletPassphraseCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.WalletPassphraseCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(None); ok {
-					msg.Ch.(chan WalletPassphraseRes) <- WalletPassphraseRes{&r, e}
+					msg.Ch.(chan WalletPassphraseRes) <- WalletPassphraseRes{
+						&r,
+						e,
+					}
 				}
 			case msg := <-nrh["walletpassphrasechange"].Call:
 				if res, e = nrh["walletpassphrasechange"].
-					Handler(msg.Params.(*btcjson.WalletPassphraseChangeCmd), wallet,
-						chainRPC); E.Chk(e) {
+					Handler(
+						msg.Params.(*btcjson.WalletPassphraseChangeCmd), wallet,
+						chainRPC,
+					); E.Chk(e) {
 				}
 				if r, ok := res.(None); ok {
-					msg.Ch.(chan WalletPassphraseChangeRes) <- WalletPassphraseChangeRes{&r, e}
+					msg.Ch.(chan WalletPassphraseChangeRes) <- WalletPassphraseChangeRes{
+						&r,
+						e,
+					}
 				}
 			case <-quit.Wait():
 				D.Ln("stopping wallet cAPI")
@@ -2625,7 +2951,10 @@ func RunAPI(chainRPC *chainclient.RPCClient, wallet *Wallet,
 
 // RPC API functions to use with net/rpc
 
-func (c *CAPI) AddMultiSigAddress(req *btcjson.AddMultisigAddressCmd, resp string) (e error) {
+func (c *CAPI) AddMultiSigAddress(
+	req *btcjson.AddMultisigAddressCmd,
+	resp string,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["addmultisigaddress"].Result()
 	res.Params = req
@@ -2638,7 +2967,10 @@ func (c *CAPI) AddMultiSigAddress(req *btcjson.AddMultisigAddressCmd, resp strin
 	return
 }
 
-func (c *CAPI) CreateMultiSig(req *btcjson.CreateMultisigCmd, resp btcjson.CreateMultiSigResult) (e error) {
+func (c *CAPI) CreateMultiSig(
+	req *btcjson.CreateMultisigCmd,
+	resp btcjson.CreateMultiSigResult,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["createmultisig"].Result()
 	res.Params = req
@@ -2651,7 +2983,10 @@ func (c *CAPI) CreateMultiSig(req *btcjson.CreateMultisigCmd, resp btcjson.Creat
 	return
 }
 
-func (c *CAPI) CreateNewAccount(req *btcjson.CreateNewAccountCmd, resp None) (e error) {
+func (c *CAPI) CreateNewAccount(
+	req *btcjson.CreateNewAccountCmd,
+	resp None,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["createnewaccount"].Result()
 	res.Params = req
@@ -2703,7 +3038,10 @@ func (c *CAPI) GetAccount(req *btcjson.GetAccountCmd, resp string) (e error) {
 	return
 }
 
-func (c *CAPI) GetAccountAddress(req *btcjson.GetAccountAddressCmd, resp string) (e error) {
+func (c *CAPI) GetAccountAddress(
+	req *btcjson.GetAccountAddressCmd,
+	resp string,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["getaccountaddress"].Result()
 	res.Params = req
@@ -2716,7 +3054,10 @@ func (c *CAPI) GetAccountAddress(req *btcjson.GetAccountAddressCmd, resp string)
 	return
 }
 
-func (c *CAPI) GetAddressesByAccount(req *btcjson.GetAddressesByAccountCmd, resp []string) (e error) {
+func (c *CAPI) GetAddressesByAccount(
+	req *btcjson.GetAddressesByAccountCmd,
+	resp []string,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["getaddressesbyaccount"].Result()
 	res.Params = req
@@ -2742,7 +3083,10 @@ func (c *CAPI) GetBalance(req *btcjson.GetBalanceCmd, resp float64) (e error) {
 	return
 }
 
-func (c *CAPI) GetBestBlock(req *None, resp btcjson.GetBestBlockResult) (e error) {
+func (c *CAPI) GetBestBlock(
+	req *None,
+	resp btcjson.GetBestBlockResult,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["getbestblock"].Result()
 	res.Params = req
@@ -2794,7 +3138,10 @@ func (c *CAPI) GetInfo(req *None, resp btcjson.InfoWalletResult) (e error) {
 	return
 }
 
-func (c *CAPI) GetNewAddress(req *btcjson.GetNewAddressCmd, resp string) (e error) {
+func (c *CAPI) GetNewAddress(
+	req *btcjson.GetNewAddressCmd,
+	resp string,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["getnewaddress"].Result()
 	res.Params = req
@@ -2807,7 +3154,10 @@ func (c *CAPI) GetNewAddress(req *btcjson.GetNewAddressCmd, resp string) (e erro
 	return
 }
 
-func (c *CAPI) GetRawChangeAddress(req *btcjson.GetRawChangeAddressCmd, resp string) (e error) {
+func (c *CAPI) GetRawChangeAddress(
+	req *btcjson.GetRawChangeAddressCmd,
+	resp string,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["getrawchangeaddress"].Result()
 	res.Params = req
@@ -2820,7 +3170,10 @@ func (c *CAPI) GetRawChangeAddress(req *btcjson.GetRawChangeAddressCmd, resp str
 	return
 }
 
-func (c *CAPI) GetReceivedByAccount(req *btcjson.GetReceivedByAccountCmd, resp float64) (e error) {
+func (c *CAPI) GetReceivedByAccount(
+	req *btcjson.GetReceivedByAccountCmd,
+	resp float64,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["getreceivedbyaccount"].Result()
 	res.Params = req
@@ -2833,7 +3186,10 @@ func (c *CAPI) GetReceivedByAccount(req *btcjson.GetReceivedByAccountCmd, resp f
 	return
 }
 
-func (c *CAPI) GetReceivedByAddress(req *btcjson.GetReceivedByAddressCmd, resp float64) (e error) {
+func (c *CAPI) GetReceivedByAddress(
+	req *btcjson.GetReceivedByAddressCmd,
+	resp float64,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["getreceivedbyaddress"].Result()
 	res.Params = req
@@ -2846,7 +3202,10 @@ func (c *CAPI) GetReceivedByAddress(req *btcjson.GetReceivedByAddressCmd, resp f
 	return
 }
 
-func (c *CAPI) GetTransaction(req *btcjson.GetTransactionCmd, resp btcjson.GetTransactionResult) (e error) {
+func (c *CAPI) GetTransaction(
+	req *btcjson.GetTransactionCmd,
+	resp btcjson.GetTransactionResult,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["gettransaction"].Result()
 	res.Params = req
@@ -2859,7 +3218,10 @@ func (c *CAPI) GetTransaction(req *btcjson.GetTransactionCmd, resp btcjson.GetTr
 	return
 }
 
-func (c *CAPI) GetUnconfirmedBalance(req *btcjson.GetUnconfirmedBalanceCmd, resp float64) (e error) {
+func (c *CAPI) GetUnconfirmedBalance(
+	req *btcjson.GetUnconfirmedBalanceCmd,
+	resp float64,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["getunconfirmedbalance"].Result()
 	res.Params = req
@@ -2885,7 +3247,10 @@ func (c *CAPI) HelpNoChainRPC(req btcjson.HelpCmd, resp string) (e error) {
 	return
 }
 
-func (c *CAPI) ImportPrivKey(req *btcjson.ImportPrivKeyCmd, resp None) (e error) {
+func (c *CAPI) ImportPrivKey(
+	req *btcjson.ImportPrivKeyCmd,
+	resp None,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["importprivkey"].Result()
 	res.Params = req
@@ -2911,7 +3276,10 @@ func (c *CAPI) KeypoolRefill(req *None, resp None) (e error) {
 	return
 }
 
-func (c *CAPI) ListAccounts(req *btcjson.ListAccountsCmd, resp map[string]float64) (e error) {
+func (c *CAPI) ListAccounts(
+	req *btcjson.ListAccountsCmd,
+	resp map[string]float64,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["listaccounts"].Result()
 	res.Params = req
@@ -2924,7 +3292,10 @@ func (c *CAPI) ListAccounts(req *btcjson.ListAccountsCmd, resp map[string]float6
 	return
 }
 
-func (c *CAPI) ListAddressTransactions(req *btcjson.ListAddressTransactionsCmd, resp []btcjson.ListTransactionsResult) (e error) {
+func (c *CAPI) ListAddressTransactions(
+	req *btcjson.ListAddressTransactionsCmd,
+	resp []btcjson.ListTransactionsResult,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["listaddresstransactions"].Result()
 	res.Params = req
@@ -2937,7 +3308,10 @@ func (c *CAPI) ListAddressTransactions(req *btcjson.ListAddressTransactionsCmd, 
 	return
 }
 
-func (c *CAPI) ListAllTransactions(req *btcjson.ListAllTransactionsCmd, resp []btcjson.ListTransactionsResult) (e error) {
+func (c *CAPI) ListAllTransactions(
+	req *btcjson.ListAllTransactionsCmd,
+	resp []btcjson.ListTransactionsResult,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["listalltransactions"].Result()
 	res.Params = req
@@ -2950,7 +3324,10 @@ func (c *CAPI) ListAllTransactions(req *btcjson.ListAllTransactionsCmd, resp []b
 	return
 }
 
-func (c *CAPI) ListLockUnspent(req *None, resp []btcjson.TransactionInput) (e error) {
+func (c *CAPI) ListLockUnspent(
+	req *None,
+	resp []btcjson.TransactionInput,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["listlockunspent"].Result()
 	res.Params = req
@@ -2963,7 +3340,10 @@ func (c *CAPI) ListLockUnspent(req *None, resp []btcjson.TransactionInput) (e er
 	return
 }
 
-func (c *CAPI) ListReceivedByAccount(req *btcjson.ListReceivedByAccountCmd, resp []btcjson.ListReceivedByAccountResult) (e error) {
+func (c *CAPI) ListReceivedByAccount(
+	req *btcjson.ListReceivedByAccountCmd,
+	resp []btcjson.ListReceivedByAccountResult,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["listreceivedbyaccount"].Result()
 	res.Params = req
@@ -2976,7 +3356,10 @@ func (c *CAPI) ListReceivedByAccount(req *btcjson.ListReceivedByAccountCmd, resp
 	return
 }
 
-func (c *CAPI) ListReceivedByAddress(req *btcjson.ListReceivedByAddressCmd, resp btcjson.ListReceivedByAddressResult) (e error) {
+func (c *CAPI) ListReceivedByAddress(
+	req *btcjson.ListReceivedByAddressCmd,
+	resp btcjson.ListReceivedByAddressResult,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["listreceivedbyaddress"].Result()
 	res.Params = req
@@ -2989,7 +3372,10 @@ func (c *CAPI) ListReceivedByAddress(req *btcjson.ListReceivedByAddressCmd, resp
 	return
 }
 
-func (c *CAPI) ListSinceBlock(req btcjson.ListSinceBlockCmd, resp btcjson.ListSinceBlockResult) (e error) {
+func (c *CAPI) ListSinceBlock(
+	req btcjson.ListSinceBlockCmd,
+	resp btcjson.ListSinceBlockResult,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["listsinceblock"].Result()
 	res.Params = req
@@ -3002,7 +3388,10 @@ func (c *CAPI) ListSinceBlock(req btcjson.ListSinceBlockCmd, resp btcjson.ListSi
 	return
 }
 
-func (c *CAPI) ListTransactions(req *btcjson.ListTransactionsCmd, resp []btcjson.ListTransactionsResult) (e error) {
+func (c *CAPI) ListTransactions(
+	req *btcjson.ListTransactionsCmd,
+	resp []btcjson.ListTransactionsResult,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["listtransactions"].Result()
 	res.Params = req
@@ -3015,7 +3404,10 @@ func (c *CAPI) ListTransactions(req *btcjson.ListTransactionsCmd, resp []btcjson
 	return
 }
 
-func (c *CAPI) ListUnspent(req *btcjson.ListUnspentCmd, resp []btcjson.ListUnspentResult) (e error) {
+func (c *CAPI) ListUnspent(
+	req *btcjson.ListUnspentCmd,
+	resp []btcjson.ListUnspentResult,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["listunspent"].Result()
 	res.Params = req
@@ -3028,7 +3420,10 @@ func (c *CAPI) ListUnspent(req *btcjson.ListUnspentCmd, resp []btcjson.ListUnspe
 	return
 }
 
-func (c *CAPI) RenameAccount(req *btcjson.RenameAccountCmd, resp None) (e error) {
+func (c *CAPI) RenameAccount(
+	req *btcjson.RenameAccountCmd,
+	resp None,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["renameaccount"].Result()
 	res.Params = req
@@ -3067,7 +3462,10 @@ func (c *CAPI) SendMany(req *btcjson.SendManyCmd, resp string) (e error) {
 	return
 }
 
-func (c *CAPI) SendToAddress(req *btcjson.SendToAddressCmd, resp string) (e error) {
+func (c *CAPI) SendToAddress(
+	req *btcjson.SendToAddressCmd,
+	resp string,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["sendtoaddress"].Result()
 	res.Params = req
@@ -3106,7 +3504,10 @@ func (c *CAPI) SignMessage(req *btcjson.SignMessageCmd, resp string) (e error) {
 	return
 }
 
-func (c *CAPI) SignRawTransaction(req btcjson.SignRawTransactionCmd, resp btcjson.SignRawTransactionResult) (e error) {
+func (c *CAPI) SignRawTransaction(
+	req btcjson.SignRawTransactionCmd,
+	resp btcjson.SignRawTransactionResult,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["signrawtransaction"].Result()
 	res.Params = req
@@ -3119,7 +3520,10 @@ func (c *CAPI) SignRawTransaction(req btcjson.SignRawTransactionCmd, resp btcjso
 	return
 }
 
-func (c *CAPI) ValidateAddress(req *btcjson.ValidateAddressCmd, resp btcjson.ValidateAddressWalletResult) (e error) {
+func (c *CAPI) ValidateAddress(
+	req *btcjson.ValidateAddressCmd,
+	resp btcjson.ValidateAddressWalletResult,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["validateaddress"].Result()
 	res.Params = req
@@ -3132,7 +3536,10 @@ func (c *CAPI) ValidateAddress(req *btcjson.ValidateAddressCmd, resp btcjson.Val
 	return
 }
 
-func (c *CAPI) VerifyMessage(req *btcjson.VerifyMessageCmd, resp bool) (e error) {
+func (c *CAPI) VerifyMessage(
+	req *btcjson.VerifyMessageCmd,
+	resp bool,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["verifymessage"].Result()
 	res.Params = req
@@ -3171,7 +3578,10 @@ func (c *CAPI) WalletLock(req *None, resp None) (e error) {
 	return
 }
 
-func (c *CAPI) WalletPassphrase(req *btcjson.WalletPassphraseCmd, resp None) (e error) {
+func (c *CAPI) WalletPassphrase(
+	req *btcjson.WalletPassphraseCmd,
+	resp None,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["walletpassphrase"].Result()
 	res.Params = req
@@ -3184,7 +3594,10 @@ func (c *CAPI) WalletPassphrase(req *btcjson.WalletPassphraseCmd, resp None) (e 
 	return
 }
 
-func (c *CAPI) WalletPassphraseChange(req *btcjson.WalletPassphraseChangeCmd, resp None) (e error) {
+func (c *CAPI) WalletPassphraseChange(
+	req *btcjson.WalletPassphraseChangeCmd,
+	resp None,
+) (e error) {
 	nrh := RPCHandlers
 	res := nrh["walletpassphrasechange"].Result()
 	res.Params = req
@@ -3199,7 +3612,10 @@ func (c *CAPI) WalletPassphraseChange(req *btcjson.WalletPassphraseChangeCmd, re
 
 // Client call wrappers for a CAPI client with a given Conn
 
-func (r *CAPIClient) AddMultiSigAddress(cmd ...*btcjson.AddMultisigAddressCmd) (res string, e error) {
+func (r *CAPIClient) AddMultiSigAddress(cmd ...*btcjson.AddMultisigAddressCmd) (
+	res string,
+	e error,
+) {
 	var c *btcjson.AddMultisigAddressCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3209,7 +3625,10 @@ func (r *CAPIClient) AddMultiSigAddress(cmd ...*btcjson.AddMultisigAddressCmd) (
 	return
 }
 
-func (r *CAPIClient) CreateMultiSig(cmd ...*btcjson.CreateMultisigCmd) (res btcjson.CreateMultiSigResult, e error) {
+func (r *CAPIClient) CreateMultiSig(cmd ...*btcjson.CreateMultisigCmd) (
+	res btcjson.CreateMultiSigResult,
+	e error,
+) {
 	var c *btcjson.CreateMultisigCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3219,7 +3638,10 @@ func (r *CAPIClient) CreateMultiSig(cmd ...*btcjson.CreateMultisigCmd) (res btcj
 	return
 }
 
-func (r *CAPIClient) CreateNewAccount(cmd ...*btcjson.CreateNewAccountCmd) (res None, e error) {
+func (r *CAPIClient) CreateNewAccount(cmd ...*btcjson.CreateNewAccountCmd) (
+	res None,
+	e error,
+) {
 	var c *btcjson.CreateNewAccountCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3229,7 +3651,10 @@ func (r *CAPIClient) CreateNewAccount(cmd ...*btcjson.CreateNewAccountCmd) (res 
 	return
 }
 
-func (r *CAPIClient) HandleDropWalletHistory(cmd ...*None) (res string, e error) {
+func (r *CAPIClient) HandleDropWalletHistory(cmd ...*None) (
+	res string,
+	e error,
+) {
 	var c *None
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3239,7 +3664,10 @@ func (r *CAPIClient) HandleDropWalletHistory(cmd ...*None) (res string, e error)
 	return
 }
 
-func (r *CAPIClient) DumpPrivKey(cmd ...*btcjson.DumpPrivKeyCmd) (res string, e error) {
+func (r *CAPIClient) DumpPrivKey(cmd ...*btcjson.DumpPrivKeyCmd) (
+	res string,
+	e error,
+) {
 	var c *btcjson.DumpPrivKeyCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3249,7 +3677,10 @@ func (r *CAPIClient) DumpPrivKey(cmd ...*btcjson.DumpPrivKeyCmd) (res string, e 
 	return
 }
 
-func (r *CAPIClient) GetAccount(cmd ...*btcjson.GetAccountCmd) (res string, e error) {
+func (r *CAPIClient) GetAccount(cmd ...*btcjson.GetAccountCmd) (
+	res string,
+	e error,
+) {
 	var c *btcjson.GetAccountCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3259,7 +3690,10 @@ func (r *CAPIClient) GetAccount(cmd ...*btcjson.GetAccountCmd) (res string, e er
 	return
 }
 
-func (r *CAPIClient) GetAccountAddress(cmd ...*btcjson.GetAccountAddressCmd) (res string, e error) {
+func (r *CAPIClient) GetAccountAddress(cmd ...*btcjson.GetAccountAddressCmd) (
+	res string,
+	e error,
+) {
 	var c *btcjson.GetAccountAddressCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3269,7 +3703,10 @@ func (r *CAPIClient) GetAccountAddress(cmd ...*btcjson.GetAccountAddressCmd) (re
 	return
 }
 
-func (r *CAPIClient) GetAddressesByAccount(cmd ...*btcjson.GetAddressesByAccountCmd) (res []string, e error) {
+func (r *CAPIClient) GetAddressesByAccount(cmd ...*btcjson.GetAddressesByAccountCmd) (
+	res []string,
+	e error,
+) {
 	var c *btcjson.GetAddressesByAccountCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3279,7 +3716,10 @@ func (r *CAPIClient) GetAddressesByAccount(cmd ...*btcjson.GetAddressesByAccount
 	return
 }
 
-func (r *CAPIClient) GetBalance(cmd ...*btcjson.GetBalanceCmd) (res float64, e error) {
+func (r *CAPIClient) GetBalance(cmd ...*btcjson.GetBalanceCmd) (
+	res float64,
+	e error,
+) {
 	var c *btcjson.GetBalanceCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3289,7 +3729,10 @@ func (r *CAPIClient) GetBalance(cmd ...*btcjson.GetBalanceCmd) (res float64, e e
 	return
 }
 
-func (r *CAPIClient) GetBestBlock(cmd ...*None) (res btcjson.GetBestBlockResult, e error) {
+func (r *CAPIClient) GetBestBlock(cmd ...*None) (
+	res btcjson.GetBestBlockResult,
+	e error,
+) {
 	var c *None
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3319,7 +3762,10 @@ func (r *CAPIClient) GetBlockCount(cmd ...*None) (res int32, e error) {
 	return
 }
 
-func (r *CAPIClient) GetInfo(cmd ...*None) (res btcjson.InfoWalletResult, e error) {
+func (r *CAPIClient) GetInfo(cmd ...*None) (
+	res btcjson.InfoWalletResult,
+	e error,
+) {
 	var c *None
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3329,7 +3775,10 @@ func (r *CAPIClient) GetInfo(cmd ...*None) (res btcjson.InfoWalletResult, e erro
 	return
 }
 
-func (r *CAPIClient) GetNewAddress(cmd ...*btcjson.GetNewAddressCmd) (res string, e error) {
+func (r *CAPIClient) GetNewAddress(cmd ...*btcjson.GetNewAddressCmd) (
+	res string,
+	e error,
+) {
 	var c *btcjson.GetNewAddressCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3339,7 +3788,10 @@ func (r *CAPIClient) GetNewAddress(cmd ...*btcjson.GetNewAddressCmd) (res string
 	return
 }
 
-func (r *CAPIClient) GetRawChangeAddress(cmd ...*btcjson.GetRawChangeAddressCmd) (res string, e error) {
+func (r *CAPIClient) GetRawChangeAddress(cmd ...*btcjson.GetRawChangeAddressCmd) (
+	res string,
+	e error,
+) {
 	var c *btcjson.GetRawChangeAddressCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3349,7 +3801,10 @@ func (r *CAPIClient) GetRawChangeAddress(cmd ...*btcjson.GetRawChangeAddressCmd)
 	return
 }
 
-func (r *CAPIClient) GetReceivedByAccount(cmd ...*btcjson.GetReceivedByAccountCmd) (res float64, e error) {
+func (r *CAPIClient) GetReceivedByAccount(cmd ...*btcjson.GetReceivedByAccountCmd) (
+	res float64,
+	e error,
+) {
 	var c *btcjson.GetReceivedByAccountCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3359,7 +3814,10 @@ func (r *CAPIClient) GetReceivedByAccount(cmd ...*btcjson.GetReceivedByAccountCm
 	return
 }
 
-func (r *CAPIClient) GetReceivedByAddress(cmd ...*btcjson.GetReceivedByAddressCmd) (res float64, e error) {
+func (r *CAPIClient) GetReceivedByAddress(cmd ...*btcjson.GetReceivedByAddressCmd) (
+	res float64,
+	e error,
+) {
 	var c *btcjson.GetReceivedByAddressCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3369,7 +3827,10 @@ func (r *CAPIClient) GetReceivedByAddress(cmd ...*btcjson.GetReceivedByAddressCm
 	return
 }
 
-func (r *CAPIClient) GetTransaction(cmd ...*btcjson.GetTransactionCmd) (res btcjson.GetTransactionResult, e error) {
+func (r *CAPIClient) GetTransaction(cmd ...*btcjson.GetTransactionCmd) (
+	res btcjson.GetTransactionResult,
+	e error,
+) {
 	var c *btcjson.GetTransactionCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3379,7 +3840,10 @@ func (r *CAPIClient) GetTransaction(cmd ...*btcjson.GetTransactionCmd) (res btcj
 	return
 }
 
-func (r *CAPIClient) GetUnconfirmedBalance(cmd ...*btcjson.GetUnconfirmedBalanceCmd) (res float64, e error) {
+func (r *CAPIClient) GetUnconfirmedBalance(cmd ...*btcjson.GetUnconfirmedBalanceCmd) (
+	res float64,
+	e error,
+) {
 	var c *btcjson.GetUnconfirmedBalanceCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3389,7 +3853,10 @@ func (r *CAPIClient) GetUnconfirmedBalance(cmd ...*btcjson.GetUnconfirmedBalance
 	return
 }
 
-func (r *CAPIClient) HelpNoChainRPC(cmd ...btcjson.HelpCmd) (res string, e error) {
+func (r *CAPIClient) HelpNoChainRPC(cmd ...btcjson.HelpCmd) (
+	res string,
+	e error,
+) {
 	var c btcjson.HelpCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3399,7 +3866,10 @@ func (r *CAPIClient) HelpNoChainRPC(cmd ...btcjson.HelpCmd) (res string, e error
 	return
 }
 
-func (r *CAPIClient) ImportPrivKey(cmd ...*btcjson.ImportPrivKeyCmd) (res None, e error) {
+func (r *CAPIClient) ImportPrivKey(cmd ...*btcjson.ImportPrivKeyCmd) (
+	res None,
+	e error,
+) {
 	var c *btcjson.ImportPrivKeyCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3419,7 +3889,10 @@ func (r *CAPIClient) KeypoolRefill(cmd ...*None) (res None, e error) {
 	return
 }
 
-func (r *CAPIClient) ListAccounts(cmd ...*btcjson.ListAccountsCmd) (res map[string]float64, e error) {
+func (r *CAPIClient) ListAccounts(cmd ...*btcjson.ListAccountsCmd) (
+	res map[string]float64,
+	e error,
+) {
 	var c *btcjson.ListAccountsCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3429,7 +3902,10 @@ func (r *CAPIClient) ListAccounts(cmd ...*btcjson.ListAccountsCmd) (res map[stri
 	return
 }
 
-func (r *CAPIClient) ListAddressTransactions(cmd ...*btcjson.ListAddressTransactionsCmd) (res []btcjson.ListTransactionsResult, e error) {
+func (r *CAPIClient) ListAddressTransactions(cmd ...*btcjson.ListAddressTransactionsCmd) (
+	res []btcjson.ListTransactionsResult,
+	e error,
+) {
 	var c *btcjson.ListAddressTransactionsCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3439,7 +3915,10 @@ func (r *CAPIClient) ListAddressTransactions(cmd ...*btcjson.ListAddressTransact
 	return
 }
 
-func (r *CAPIClient) ListAllTransactions(cmd ...*btcjson.ListAllTransactionsCmd) (res []btcjson.ListTransactionsResult, e error) {
+func (r *CAPIClient) ListAllTransactions(cmd ...*btcjson.ListAllTransactionsCmd) (
+	res []btcjson.ListTransactionsResult,
+	e error,
+) {
 	var c *btcjson.ListAllTransactionsCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3449,7 +3928,10 @@ func (r *CAPIClient) ListAllTransactions(cmd ...*btcjson.ListAllTransactionsCmd)
 	return
 }
 
-func (r *CAPIClient) ListLockUnspent(cmd ...*None) (res []btcjson.TransactionInput, e error) {
+func (r *CAPIClient) ListLockUnspent(cmd ...*None) (
+	res []btcjson.TransactionInput,
+	e error,
+) {
 	var c *None
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3459,7 +3941,10 @@ func (r *CAPIClient) ListLockUnspent(cmd ...*None) (res []btcjson.TransactionInp
 	return
 }
 
-func (r *CAPIClient) ListReceivedByAccount(cmd ...*btcjson.ListReceivedByAccountCmd) (res []btcjson.ListReceivedByAccountResult, e error) {
+func (r *CAPIClient) ListReceivedByAccount(cmd ...*btcjson.ListReceivedByAccountCmd) (
+	res []btcjson.ListReceivedByAccountResult,
+	e error,
+) {
 	var c *btcjson.ListReceivedByAccountCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3469,7 +3954,10 @@ func (r *CAPIClient) ListReceivedByAccount(cmd ...*btcjson.ListReceivedByAccount
 	return
 }
 
-func (r *CAPIClient) ListReceivedByAddress(cmd ...*btcjson.ListReceivedByAddressCmd) (res btcjson.ListReceivedByAddressResult, e error) {
+func (r *CAPIClient) ListReceivedByAddress(cmd ...*btcjson.ListReceivedByAddressCmd) (
+	res btcjson.ListReceivedByAddressResult,
+	e error,
+) {
 	var c *btcjson.ListReceivedByAddressCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3479,7 +3967,10 @@ func (r *CAPIClient) ListReceivedByAddress(cmd ...*btcjson.ListReceivedByAddress
 	return
 }
 
-func (r *CAPIClient) ListSinceBlock(cmd ...btcjson.ListSinceBlockCmd) (res btcjson.ListSinceBlockResult, e error) {
+func (r *CAPIClient) ListSinceBlock(cmd ...btcjson.ListSinceBlockCmd) (
+	res btcjson.ListSinceBlockResult,
+	e error,
+) {
 	var c btcjson.ListSinceBlockCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3489,7 +3980,10 @@ func (r *CAPIClient) ListSinceBlock(cmd ...btcjson.ListSinceBlockCmd) (res btcjs
 	return
 }
 
-func (r *CAPIClient) ListTransactions(cmd ...*btcjson.ListTransactionsCmd) (res []btcjson.ListTransactionsResult, e error) {
+func (r *CAPIClient) ListTransactions(cmd ...*btcjson.ListTransactionsCmd) (
+	res []btcjson.ListTransactionsResult,
+	e error,
+) {
 	var c *btcjson.ListTransactionsCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3499,7 +3993,10 @@ func (r *CAPIClient) ListTransactions(cmd ...*btcjson.ListTransactionsCmd) (res 
 	return
 }
 
-func (r *CAPIClient) ListUnspent(cmd ...*btcjson.ListUnspentCmd) (res []btcjson.ListUnspentResult, e error) {
+func (r *CAPIClient) ListUnspent(cmd ...*btcjson.ListUnspentCmd) (
+	res []btcjson.ListUnspentResult,
+	e error,
+) {
 	var c *btcjson.ListUnspentCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3509,7 +4006,10 @@ func (r *CAPIClient) ListUnspent(cmd ...*btcjson.ListUnspentCmd) (res []btcjson.
 	return
 }
 
-func (r *CAPIClient) RenameAccount(cmd ...*btcjson.RenameAccountCmd) (res None, e error) {
+func (r *CAPIClient) RenameAccount(cmd ...*btcjson.RenameAccountCmd) (
+	res None,
+	e error,
+) {
 	var c *btcjson.RenameAccountCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3519,7 +4019,10 @@ func (r *CAPIClient) RenameAccount(cmd ...*btcjson.RenameAccountCmd) (res None, 
 	return
 }
 
-func (r *CAPIClient) LockUnspent(cmd ...btcjson.LockUnspentCmd) (res bool, e error) {
+func (r *CAPIClient) LockUnspent(cmd ...btcjson.LockUnspentCmd) (
+	res bool,
+	e error,
+) {
 	var c btcjson.LockUnspentCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3529,7 +4032,10 @@ func (r *CAPIClient) LockUnspent(cmd ...btcjson.LockUnspentCmd) (res bool, e err
 	return
 }
 
-func (r *CAPIClient) SendMany(cmd ...*btcjson.SendManyCmd) (res string, e error) {
+func (r *CAPIClient) SendMany(cmd ...*btcjson.SendManyCmd) (
+	res string,
+	e error,
+) {
 	var c *btcjson.SendManyCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3539,7 +4045,10 @@ func (r *CAPIClient) SendMany(cmd ...*btcjson.SendManyCmd) (res string, e error)
 	return
 }
 
-func (r *CAPIClient) SendToAddress(cmd ...*btcjson.SendToAddressCmd) (res string, e error) {
+func (r *CAPIClient) SendToAddress(cmd ...*btcjson.SendToAddressCmd) (
+	res string,
+	e error,
+) {
 	var c *btcjson.SendToAddressCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3559,7 +4068,10 @@ func (r *CAPIClient) SetTxFee(cmd ...*btcjson.SetTxFeeCmd) (res bool, e error) {
 	return
 }
 
-func (r *CAPIClient) SignMessage(cmd ...*btcjson.SignMessageCmd) (res string, e error) {
+func (r *CAPIClient) SignMessage(cmd ...*btcjson.SignMessageCmd) (
+	res string,
+	e error,
+) {
 	var c *btcjson.SignMessageCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3569,7 +4081,10 @@ func (r *CAPIClient) SignMessage(cmd ...*btcjson.SignMessageCmd) (res string, e 
 	return
 }
 
-func (r *CAPIClient) SignRawTransaction(cmd ...btcjson.SignRawTransactionCmd) (res btcjson.SignRawTransactionResult, e error) {
+func (r *CAPIClient) SignRawTransaction(cmd ...btcjson.SignRawTransactionCmd) (
+	res btcjson.SignRawTransactionResult,
+	e error,
+) {
 	var c btcjson.SignRawTransactionCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3579,7 +4094,10 @@ func (r *CAPIClient) SignRawTransaction(cmd ...btcjson.SignRawTransactionCmd) (r
 	return
 }
 
-func (r *CAPIClient) ValidateAddress(cmd ...*btcjson.ValidateAddressCmd) (res btcjson.ValidateAddressWalletResult, e error) {
+func (r *CAPIClient) ValidateAddress(cmd ...*btcjson.ValidateAddressCmd) (
+	res btcjson.ValidateAddressWalletResult,
+	e error,
+) {
 	var c *btcjson.ValidateAddressCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3589,7 +4107,10 @@ func (r *CAPIClient) ValidateAddress(cmd ...*btcjson.ValidateAddressCmd) (res bt
 	return
 }
 
-func (r *CAPIClient) VerifyMessage(cmd ...*btcjson.VerifyMessageCmd) (res bool, e error) {
+func (r *CAPIClient) VerifyMessage(cmd ...*btcjson.VerifyMessageCmd) (
+	res bool,
+	e error,
+) {
 	var c *btcjson.VerifyMessageCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3619,7 +4140,10 @@ func (r *CAPIClient) WalletLock(cmd ...*None) (res None, e error) {
 	return
 }
 
-func (r *CAPIClient) WalletPassphrase(cmd ...*btcjson.WalletPassphraseCmd) (res None, e error) {
+func (r *CAPIClient) WalletPassphrase(cmd ...*btcjson.WalletPassphraseCmd) (
+	res None,
+	e error,
+) {
 	var c *btcjson.WalletPassphraseCmd
 	if len(cmd) > 0 {
 		c = cmd[0]
@@ -3629,7 +4153,10 @@ func (r *CAPIClient) WalletPassphrase(cmd ...*btcjson.WalletPassphraseCmd) (res 
 	return
 }
 
-func (r *CAPIClient) WalletPassphraseChange(cmd ...*btcjson.WalletPassphraseChangeCmd) (res None, e error) {
+func (r *CAPIClient) WalletPassphraseChange(cmd ...*btcjson.WalletPassphraseChangeCmd) (
+	res None,
+	e error,
+) {
 	var c *btcjson.WalletPassphraseChangeCmd
 	if len(cmd) > 0 {
 		c = cmd[0]

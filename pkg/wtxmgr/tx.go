@@ -2,9 +2,10 @@ package wtxmgr
 
 import (
 	"bytes"
+	"time"
+
 	"github.com/cybriq/p9/pkg/amt"
 	"github.com/cybriq/p9/pkg/chaincfg"
-	"time"
 
 	"github.com/cybriq/p9/pkg/blockchain"
 	"github.com/cybriq/p9/pkg/chainhash"
@@ -100,7 +101,8 @@ func NewTxRecord(serializedTx []byte, received time.Time) (*TxRecord, error) {
 }
 
 // NewTxRecordFromMsgTx creates a new transaction record that may be inserted into the store.
-func NewTxRecordFromMsgTx(msgTx *wire.MsgTx, received time.Time) (*TxRecord,
+func NewTxRecordFromMsgTx(msgTx *wire.MsgTx, received time.Time) (
+	*TxRecord,
 	error,
 ) {
 	buf := bytes.NewBuffer(make([]byte, 0, msgTx.SerializeSize()))
@@ -127,7 +129,8 @@ func DoUpgrades(db walletdb.DB, namespaceKey []byte) (e error) {
 
 // Open opens the wallet transaction store from a walletdb namespace.
 // If the store does not exist, ErrNoExist is returned.
-func Open(ns walletdb.ReadBucket, chainParams *chaincfg.Params) (*Store, error,
+func Open(ns walletdb.ReadBucket, chainParams *chaincfg.Params) (
+	*Store, error,
 ) {
 	// Open the store.
 	e := openStore(ns)
@@ -243,7 +246,8 @@ func (s *Store) updateMinedBalance(
 // deleteUnminedTx deletes an unmined transaction from the store.
 //
 // NOTE: This should only be used once the transaction has been mined.
-func (s *Store) deleteUnminedTx(ns walletdb.ReadWriteBucket, rec *TxRecord,
+func (s *Store) deleteUnminedTx(
+	ns walletdb.ReadWriteBucket, rec *TxRecord,
 ) (e error) {
 	for i := range rec.MsgTx.TxOut {
 		k := canonicalOutPoint(&rec.Hash, uint32(i))
@@ -256,7 +260,8 @@ func (s *Store) deleteUnminedTx(ns walletdb.ReadWriteBucket, rec *TxRecord,
 
 // InsertTx records a transaction as belonging to a wallet's transaction history. If block is nil, the transaction is
 // considered unspent, and the transaction's index must be unset.
-func (s *Store) InsertTx(ns walletdb.ReadWriteBucket, rec *TxRecord,
+func (s *Store) InsertTx(
+	ns walletdb.ReadWriteBucket, rec *TxRecord,
 	block *BlockMeta,
 ) (e error) {
 	if block == nil {
@@ -269,7 +274,8 @@ func (s *Store) InsertTx(ns walletdb.ReadWriteBucket, rec *TxRecord,
 // scenario that a transaction that we attempt to rebroadcast, turns out to double spend one of our existing inputs.
 // This function we remove the conflicting transaction identified by the tx record, and also recursively remove all
 // transactions that depend on it.
-func (s *Store) RemoveUnminedTx(ns walletdb.ReadWriteBucket, rec *TxRecord,
+func (s *Store) RemoveUnminedTx(
+	ns walletdb.ReadWriteBucket, rec *TxRecord,
 ) (e error) {
 	// As we already have a tx record, we can directly call the RemoveConflict method. This will do the job of
 	// recursively removing this unmined transaction, and any transactions that depend on it.
@@ -312,7 +318,8 @@ func (s *Store) insertMinedTx(
 	// If this transaction previously existed within the store as unmined, we'll need to remove it from the unmined
 	// bucket.
 	if v := existsRawUnmined(ns, rec.Hash[:]); v != nil {
-		I.F("marking unconfirmed transaction %v mined in block %d", &rec.Hash,
+		I.F(
+			"marking unconfirmed transaction %v mined in block %d", &rec.Hash,
 			block.Height,
 		)
 		if e := s.deleteUnminedTx(ns, rec); E.Chk(e) {
@@ -367,7 +374,8 @@ func (s *Store) addCredit(
 		if existsRawUnspent(ns, k) != nil {
 			return false, nil
 		}
-		v := valueUnminedCredit(amt.Amount(rec.MsgTx.TxOut[index].Value),
+		v := valueUnminedCredit(
+			amt.Amount(rec.MsgTx.TxOut[index].Value),
 			change,
 		)
 		return true, putRawUnminedCredit(ns, k, v)
@@ -430,7 +438,8 @@ func (s *Store) rollback(ns walletdb.ReadWriteBucket, height int32) (e error) {
 			break
 		}
 		heightsToRemove = append(heightsToRemove, it.elem.Height)
-		T.F("rolling back %d transactions from block %v height %d",
+		T.F(
+			"rolling back %d transactions from block %v height %d",
 			len(b.transactions), b.Hash, b.Height,
 		)
 		for i := range b.transactions {
@@ -727,7 +736,8 @@ func // Balance returns the spendable wallet balance (total value of all unspent
 //
 // Balance may return unexpected results if syncHeight is lower than the block
 // height of the most recent mined transaction in the store.
-(s *Store) Balance(ns walletdb.ReadBucket, minConf int32, syncHeight int32,
+(s *Store) Balance(
+	ns walletdb.ReadBucket, minConf int32, syncHeight int32,
 ) (amt.Amount, error) {
 	bal, e := fetchMinedBalance(ns)
 	if e != nil {

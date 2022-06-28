@@ -7,7 +7,7 @@ import (
 
 // MsgNotFound defines a bitcoin notfound message which is sent in response to a getdata message if any of the requested
 // data in not available on the peer. Each message is limited to a maximum number of inventory vectors, which is
-// currently 50,000. Use the AddInvVect function to podbuild up the list of inventory vectors when sending a notfound
+// currently 50,000. Use the AddInvVect function to build up the list of inventory vectors when sending a notfound
 // message to another peer.
 type MsgNotFound struct {
 	InvList []*InvVect
@@ -28,7 +28,11 @@ func (msg *MsgNotFound) AddInvVect(iv *InvVect) (e error) {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver. This is part of the Message interface
 // implementation.
-func (msg *MsgNotFound) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgNotFound) BtcDecode(
+	r io.Reader,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	var count uint64
 	if count, e = ReadVarInt(r, pver); E.Chk(e) {
 		return
@@ -54,7 +58,11 @@ func (msg *MsgNotFound) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding)
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This is part of the Message interface
 // implementation.
-func (msg *MsgNotFound) BtcEncode(w io.Writer, pver uint32, enc MessageEncoding) (e error) {
+func (msg *MsgNotFound) BtcEncode(
+	w io.Writer,
+	pver uint32,
+	enc MessageEncoding,
+) (e error) {
 	// Limit to max inventory vectors per message.
 	count := len(msg.InvList)
 	if count > MaxInvPerMsg {

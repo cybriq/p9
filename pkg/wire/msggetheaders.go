@@ -13,7 +13,7 @@ import (
 // list is returned via a headers message (MsgHeaders) and is limited by a
 // specific hash to stop at or the maximum number of block headers per message,
 // which is currently 2000. Set the HashStop field to the hash at which to stop
-// and use AddBlockLocatorHash to podbuild up the list of block locator hashes. The
+// and use AddBlockLocatorHash to build up the list of block locator hashes. The
 // algorithm for building the block locator hashes should be to add the hashes
 // in reverse order until you reach the genesis block. In order to keep the list
 // of locator hashes to a resonable number of entries, first add the most recent
@@ -41,7 +41,8 @@ func (msg *MsgGetHeaders) AddBlockLocatorHash(hash *chainhash.Hash) (e error) {
 
 // BtcDecode decodes r using the bitcoin protocol encoding into the receiver.
 // This is part of the Message interface implementation.
-func (msg *MsgGetHeaders) BtcDecode(r io.Reader, pver uint32,
+func (msg *MsgGetHeaders) BtcDecode(
+	r io.Reader, pver uint32,
 	enc MessageEncoding,
 ) (e error) {
 	if e = readElement(r, &msg.ProtocolVersion); E.Chk(e) {
@@ -76,7 +77,8 @@ func (msg *MsgGetHeaders) BtcDecode(r io.Reader, pver uint32,
 
 // BtcEncode encodes the receiver to w using the bitcoin protocol encoding. This
 // is part of the Message interface implementation.
-func (msg *MsgGetHeaders) BtcEncode(w io.Writer, pver uint32,
+func (msg *MsgGetHeaders) BtcEncode(
+	w io.Writer, pver uint32,
 	enc MessageEncoding,
 ) (e error) {
 	// Limit to max block locator hashes per message.

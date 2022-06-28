@@ -32,8 +32,6 @@ type Loader struct {
 	Mutex          sync.Mutex
 }
 
-const ()
-
 var (
 	// ErrExists describes the error condition of attempting to create a new wallet when one exists already.
 	ErrExists = errors.New("wallet already exists")
@@ -78,13 +76,15 @@ func (ld *Loader) CreateNewWallet(
 		return nil, e
 	}
 	// Initialize the newly created database for the wallet before opening.
-	if e = Create(db, pubPassphrase, privPassphrase, seed, ld.ChainParams,
+	if e = Create(
+		db, pubPassphrase, privPassphrase, seed, ld.ChainParams,
 		bday,
 	); E.Chk(e) {
 		return nil, e
 	}
 	// Open the newly-created wallet.
-	if w, e = Open(db, pubPassphrase, nil, ld.ChainParams, ld.RecoveryWindow,
+	if w, e = Open(
+		db, pubPassphrase, nil, ld.ChainParams, ld.RecoveryWindow,
 		podConfig, quit,
 	); E.Chk(e) {
 		return nil, e

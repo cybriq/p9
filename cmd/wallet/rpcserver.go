@@ -21,7 +21,8 @@ type listenFunc func(net string, laddr string) (net.Listener, error)
 
 // GenerateRPCKeyPair generates a new RPC TLS keypair and writes the cert and possibly also the key in PEM format to the
 // paths specified by the config. If successful, the new keypair is returned.
-func GenerateRPCKeyPair(config *config.Config, writeKey bool) (tls.Certificate,
+func GenerateRPCKeyPair(config *config.Config, writeKey bool) (
+	tls.Certificate,
 	error,
 ) {
 	D.Ln("generating TLS certificates")
@@ -85,7 +86,8 @@ func GenerateRPCKeyPair(config *config.Config, writeKey bool) (tls.Certificate,
 
 // makeListeners splits the normalized listen addresses into IPv4 and IPv6 addresses and creates new net.Listeners for
 // each with the passed listen func. Invalid addresses are logged and skipped.
-func makeListeners(normalizedListenAddrs []string, listen listenFunc,
+func makeListeners(
+	normalizedListenAddrs []string, listen listenFunc,
 ) []net.Listener {
 	ipv4Addrs := make([]string, 0, len(normalizedListenAddrs)*2)
 	// ipv6Addrs := make([]string, 0, len(normalizedListenAddrs)*2)
@@ -209,7 +211,8 @@ func startRPCServers(cx *state.State, walletLoader *Loader) (*Server, error) {
 	if cx.Config.Username.V() == "" || cx.Config.Password.V() == "" {
 		I.Ln("legacy RPC server disabled (requires username and password)")
 	} else if len(cx.Config.WalletRPCListeners.S()) != 0 {
-		listeners := makeListeners(cx.Config.WalletRPCListeners.S(),
+		listeners := makeListeners(
+			cx.Config.WalletRPCListeners.S(),
 			walletListen,
 		)
 		if len(listeners) == 0 {
