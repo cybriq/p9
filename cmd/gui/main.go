@@ -212,6 +212,7 @@ func (wg *WalletGUI) Run() (e error) {
 	wg.State = GetNewState(wg.cx.ActiveNet, wg.MainApp.ActivePageGetAtomic())
 	wg.unlockPage = wg.getWalletUnlockAppWidget()
 	wg.loadingPage = wg.getLoadingPage()
+	wg.node.Start()
 	if !apputil.FileExists(wg.cx.Config.WalletFile.V()) {
 		W.Ln(
 			"wallet file does not exist", wg.cx.Config.WalletFile.V(),

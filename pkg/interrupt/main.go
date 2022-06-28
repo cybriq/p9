@@ -9,6 +9,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/cybriq/p9/pkg/log"
 	uberatomic "go.uber.org/atomic"
 
 	"github.com/cybriq/p9/pkg/qu"
@@ -180,7 +181,7 @@ func GoroutineDump() string {
 // RequestRestart sets the reset flag and requests a restart
 func RequestRestart() {
 	Restart = true
-	D.Ln("requesting restart")
+	D.Ln("requesting restart", log.Caller("aoeu", 1))
 	Request()
 }
 

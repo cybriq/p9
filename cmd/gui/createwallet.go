@@ -261,7 +261,7 @@ func (wg *WalletGUI) createWalletAction() {
 	// wg.miner.Start()
 	wg.unlockPassword.Editor().SetText(pass)
 	wg.unlockWallet(pass)
-	interrupt.RequestRestart()
+	// interrupt.RequestRestart()
 }
 
 func (wg *WalletGUI) createWalletTestnetToggle(b bool) {
