@@ -33,7 +33,7 @@ func Start() {
 	env := os.Environ()
 	for i := range env {
 		if env[i] == "XDG_SESSION_TYPE=x11" {
-			I.Ln("running X11, primary selection buffer enabled")
+			D.Ln("running X11, primary selection buffer enabled")
 			RunningX = true
 			break
 		}

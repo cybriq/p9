@@ -173,7 +173,6 @@ func (wg *WalletGUI) Run() (e error) {
 	wg.checkables = wg.GetCheckables()
 	before := func() { D.Ln("running before") }
 	after := func() { D.Ln("running after") }
-	I.Ln(os.Args[1:])
 	options := []string{os.Args[0]}
 	// options = append(options, wg.cx.Config.FoundArgs...)
 	// options = append(options, "pipelog")
@@ -214,7 +213,10 @@ func (wg *WalletGUI) Run() (e error) {
 	wg.unlockPage = wg.getWalletUnlockAppWidget()
 	wg.loadingPage = wg.getLoadingPage()
 	if !apputil.FileExists(wg.cx.Config.WalletFile.V()) {
-		I.Ln("wallet file does not exist", wg.cx.Config.WalletFile.V())
+		W.Ln(
+			"wallet file does not exist", wg.cx.Config.WalletFile.V(),
+			"- opening new wallet creation interface",
+		)
 	} else {
 		*wg.noWallet = false
 		// if !*wg.cx.Config.NodeOff {
@@ -513,7 +515,7 @@ func (wg *WalletGUI) GetIncDecs() IncDecMap {
 func (wg *WalletGUI) GetRunUnit(
 	name string, before, after func(), args ...string,
 ) *rununit.RunUnit {
-	I.Ln("getting rununit for", name, args)
+	D.Ln("getting rununit for", name, args)
 	// we have to copy the args otherwise further mutations affect this one
 	argsCopy := make([]string, len(args))
 	copy(argsCopy, args)
