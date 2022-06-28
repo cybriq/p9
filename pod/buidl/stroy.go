@@ -62,8 +62,8 @@ func main() {
 				)
 				var cmd *exec.Cmd
 				scriptPath := filepath.Join(
-					appdata.Dir("stroy", false),
-					"stroy.sh",
+					appdata.Dir("buidl", false),
+					"buidl.sh",
 				)
 				apputil.EnsureDir(scriptPath)
 				if len(os.Args) > 2 {
@@ -105,8 +105,8 @@ func main() {
 		}
 		fmt.Println()
 		fmt.Println(
-			"adding a second string to the commandline changes the path" +
-				" of the home folder selected in the scripts",
+			"add a path after the command name to change the home/root for" +
+				" the build",
 		)
 	}
 }

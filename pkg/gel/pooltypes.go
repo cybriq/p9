@@ -30,6 +30,7 @@ func (p *Pool) FreeBool(b *Bool) {
 	}
 }
 
+
 func (p *Pool) GetList() (out *List) {
 	if len(p.lists) >= p.listsInUse {
 		for i := 0; i < 10; i++ {
@@ -55,6 +56,7 @@ func (p *Pool) FreeList(b *List) {
 		}
 	}
 }
+
 
 func (p *Pool) GetCheckable() (out *Checkable) {
 	if len(p.checkables) >= p.checkablesInUse {
@@ -82,6 +84,7 @@ func (p *Pool) FreeCheckable(b *Checkable) {
 	}
 }
 
+
 func (p *Pool) GetClickable() (out *Clickable) {
 	if len(p.clickables) >= p.clickablesInUse {
 		for i := 0; i < 10; i++ {
@@ -107,6 +110,7 @@ func (p *Pool) FreeClickable(b *Clickable) {
 		}
 	}
 }
+
 
 func (p *Pool) GetEditor() (out *Editor) {
 	if len(p.editors) >= p.editorsInUse {
@@ -134,6 +138,7 @@ func (p *Pool) FreeEditor(b *Editor) {
 	}
 }
 
+
 func (p *Pool) GetIncDec() (out *IncDec) {
 	if len(p.incDecs) >= p.incDecsInUse {
 		for i := 0; i < 10; i++ {
@@ -159,3 +164,4 @@ func (p *Pool) FreeIncDec(b *IncDec) {
 		}
 	}
 }
+
