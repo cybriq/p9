@@ -1,139 +1,33 @@
 # The ParallelCoin Pod
 
-This is an all-in one, single binary, monorepo that contains the blockchain
-node, wallet, miner, CLI RPC client, and GUI for both the current legacy
-chain, and a substantial upgrade to the protocol that will fork the chain in
-the near future to bring the network up to date and fix its difficulty
-adjustment problems, and introduce a new proof of work and multi-interval
-block schedule that improves the chain's precision in difficulty adjustment.
+This is an all-in one, single binary, monorepo that contains the blockchain node, wallet, miner, CLI RPC client, and GUI for both the current legacy chain, and a substantial upgrade to the protocol that will fork the chain in the near future to bring the network up to date and fix its difficulty adjustment problems, and introduce a new proof of work and multi-interval block schedule that improves the chain's precision in difficulty adjustment.
 
 ## Building
 
-Please note that the following instructions have been tested and worked on
-Pop OS 21 (should be the same for ubuntu 21, also should work on ubuntu 20).
-The generators may not work but the prereqs have been updated to add things
-that seem to be missing for ubuntu 21 base.
+Firstly, you will need to install prerequisites.
 
-The ParallelCoin Pod is by default dependent on go 1.16 or later. It likely
-can build on earlier versions but newer is generally better, at least with
-the Go compiler codebase, unlike with many other languages like Java and C++
-where it's a crap shoot whether it's a good idea to upgrade (eg, Goland's
-linux implementation since the beginning of 2021).
+For the majority of users, this will mean ubuntu/debian based linux, for which you can get set up correctly with the script [prereqs/ubuntu.sh](prereqs/ubuntu.sh)
 
-In the `prereqs/` folder you can find scripts that will install the needed
-dependencies on Ubuntu, Fedora and Arch Linux. (apt, rpm and yay,
-respectively)
+Note that some of the generators for the GUI library's shaders will not work, but the code is already working that you can find in [shaders](shaders/). There is windows programs for this, they will be updated at some stage in the future based on the Gio library that we integrated here.
 
-To build correctly, so the versions are updated, first you should build the
-builder script:
+The versions for Fedora and Arch Linux can be found in [prereqs/](prereqs/) also. Note that the Fedora script has not been tested in a long time. The Arch version is the most up to date, as Arch is the project's preferred and recommended linux distribution (or manjaro, second best). 
 
-```bash
-cd path/to/repository/root
-go install ./pod/buidl/.
-```
+Arch linux has the latest version available, if you are using an AUR helper like `yay` to install packages, but for everyone else, you can use [prereqs/go.sh](prereqs/go.sh) to automatically install Go for your system.
 
-This assumes you have correctly put the $GOBIN environment variable path
-into your shell's path, as `go build` has the undesirable behaviour of
-dropping the binary into the repository filesystem tree. The same applies
-for the rest of these instructions.
+Next, run the script [build.sh](build.sh) and this will install `pod` in `$HOME/bin/`
 
-Next, to update all the things (for now just ignore the generator failures
-relating to the gio shader compilation, they are pre-generated):
+> WARNING: the software is not stable or fully functional yet
 
-```bash
-buidl generate
-```
+After you have run `build.sh` from then on you can use `buidl install` to update it from the source code, and update `buidl` with `buidl builder`.
 
-Next, build and install the binary into your $GOBIN folder:
+## Why Parallelcoin?
 
-```bash
-buidl install
-```
+Parallelcoin was a fork of bitcoin that was released by a hit-and-run, cheap and dirty fork of bitcoin in early 2014 by a [bitcointalk.org](https://bitcointalk.org) user called "paralaxis". It merged the proof of work used with Litecoin and created a poorly thought out combined block timing schedule that has over time slowly decelerated due to its hard adjustment limiter and periodic bouts of cloud mining jumping all over it when difficulty finally comes down after the previous hit.
 
-And now, `pod` will get you started and show you the wallet creation screen,
-unless you already did that.
+The code in this repository was primarily created by David Vennik, with some of the Gio custom widgets created by Djordje Marcetin (marcetin on Bitcointalk). David is the main designer of the current existing codebase, and wrote a very large amount of supporting libraries as part of this process, from configuration, to merging the btcd and btcwallet into one, adapting the protocol to work with Parallelcoin, and then designing the hard fork system, created a multicast mining cluster control system, CPU based proof of work and the bulk of the current GUI.
 
-If you are building for a headless, server version, such as a chain/wallet
-for supporting applications using blockchain/wallet data, use the tag
-`headless` to leave out the GUI component.
+It is once again the bear market, as it was in the time that this project was started. This time, David has some savings and is working to get this to beta standard and promoting it to the #bitcoin twitter. David has been paid very little to nothing to do all this work, and is aiming to keep the ethical and philosophical purity of this project to enable it to be the first non-security cryptocurrency project. As such there is no on chain subsidies, no governance system, and no plans to ever allow such a thing.
 
-### Other platforms
+Future plans include integrating the latest code from btcd and btcwallet to add Segwit support and to integrate and fork Lightning Network's LND and fork Neutrino to work with the chain, and ultimately to enable cross chain atomic swaps with Bitcoin, creating a pure decentralised marketplace and in-bitcoin valuation for Parallelcoin.
 
-The instructions above basically are the same, except for the differences in
-how to set up environment variables, on Mac, Windows, and FreeBSD.
-
-To build the android version, you can use the gogio fork found at
-`pkg/gel/gio/gogio`. The same tooling should allow also building for iOS
-devices.
-
-There is a `appstore` build tag that removes the miner code from
-the output binaries, as the duopoly of app curation have agreed in concert
-to ban any mining application, without any exceptions, such as, for example,
-the fact that 'cpu mining' is one of the 4 primary functions this
-application performs, and it is not deceptive in this respect.
-
-With the shortage of CPUs, we anticipate that some people will want to
-install the packages anyway, these non-`appstore` build tag versions will be
-made available in binary releases alongside the rest of the versions, including
-`headless` for fast deployment.
-
-## Design goal of this project:
-
-It is the belief of the ParallelCoin team that a blockchain network that has
-a 'centre' is defeating the whole purpose of the technology, and as such,
-the elimination of the utility of special purpose mining hardware is a key
-goal of this upgrade.
-
-The proof of work is based on long division, which
-cannot be accelerated any faster with custom silicon of a lower pitch than a
-modern CPU or GPU. There is currently no implementation of the hash function,
-tentatively called DivHash, for GPU, however, it must be pointed out that
-being that GPUs (and mobile CPUs) have 32 bit wide dividers and thus have
-half the performance per clock cycle. Long division circuits are the largest
-single processing unit on CPU chips, and the procedure for calculating it is
-little different than how it is done manually by hand - requiring times
-tables, and proceeding one digit at a time from most to the least significant
-digit.
-
-Thus, the state-of-the-art technology for performing this hash
-function is already the CPU, and implicitly, could not possibly be made
-faster without the most advanced chip making hardware that is primarily only
-available for making CPUs due to economics.
-
-The hash function jumbles and concatenates the raw block bytes, splits into
-two, squares each half, and then multiplies the halves, and finally divides
-by a jumbled version of the starting bytes. This is then repeated 3 times
-until a number is produced of the order of 20-40kb in size. It is possible
-to make this work target even harder, but beyond 3 cycles it starts to
-demand so much memory transfer that runs lower than one hash per second
-and 5 cycles produces nearly half a megabyte of data at the end.
-
-The result of the calculation is then hashed using the fast Blake3 hash
-function, to yield the result. Since there is no realistic way in which with
-such large numbers it could ever be shortcut, to produce the output value
-that goes through the hash function, this proof of work should permanently
-remain impossible to accelerate.
-
-This is very important to containing the tendency towards centralisation, as
-on the whole, CPUs can perform the calculations at a rate that has not
-accelerated much faster than the raising of clock speeds, and thus a current
-model CPU, compared to one 4 years old, is not so dramatically faster,
-either.
-
-Most of the performance improvements come from larger amounts of on-chip
-cache memory, which is also the most expensive, and fastest memory there is.
-Without any easy way to acquire large numbers of processors to perform the
-work, without heavily competing with a currently (April 2021) very
-overstretched chip manufacturing industry.
-
-It should ensure that no single miner, or even, as is the case with BTC and
-ETH, 20-30 miners, can dominate the mining, and thus threaten the security
-and stability of the network through either monopolistic practices or the
-incursion of government agencies into the business, in any one country, as
-the bulk of usable processors are distributed pretty evenly across the world in
-proportion with the relative size of the national economies.
-
-The miner's primary setup, contrary to standard designs, uses a multicast
-gossip protocol to deliver new block templates to miner workers, and the
-sending of solutions back to the nodes, based on a pre-shared key for basic
-symmetric encryption security.
+#### We are not interested in any strings attached, NDA strangled funding for this project. Hopefully David has the time and energy needed to bring this to beta and hopefully, to full release and get support to update and start a miner community to maintain the forked chain, and after that, David doesn't care, maybe he will have to go back to working for shitcoin projects once all the defaults are over. And hopefully Djordje can get the funds and finish the [parallelcoin.info](https://parallelcoin.info) web presence fully completed as well.
