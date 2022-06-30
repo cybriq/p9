@@ -64,12 +64,9 @@ type (
 )
 
 var (
-	logger_started = time.Now()
-	App            = "   pod"
-	AppColorizer   = color.White.Sprint
-	// sep is just a convenient shortcut for this very longwinded expression
-	sep          = string(os.PathSeparator)
-	currentLevel = uberatomic.NewInt32(logLevels.Info)
+	App          = "   pod"
+	AppColorizer = color.White.Sprint
+	CurrentLevel = uberatomic.NewInt32(logLevels.Info)
 	// writer can be swapped out for any io.*writer* that you want to use instead of
 	// stdout.
 	writer io.Writer = os.Stderr
@@ -130,6 +127,28 @@ const (
 	Trace = "trace"
 )
 
+func ListAllSubsystems() []string { return allSubsystems }
+func ListAllFilteredSubsystems() (out []string) {
+	var counter int
+	counter = len(logFilter)
+	out = make([]string, counter)
+	for i := range logFilter {
+		out[counter] = i
+	}
+	sort.Strings(out)
+	return
+}
+func ListAllHighlightedSubsystems() (out []string) {
+	var counter int
+	counter = len(highlighted)
+	out = make([]string, counter)
+	for i := range highlighted {
+		out[counter] = i
+	}
+	sort.Strings(out)
+	return
+}
+
 // AddLogChan adds a channel that log entries are sent to
 func AddLogChan() (ch chan Entry) {
 	LogChanDisabled.Store(false)
@@ -141,23 +160,34 @@ func AddLogChan() (ch chan Entry) {
 	return LogChan
 }
 
-// GetLogPrinterSet returns a set of LevelPrinter with their subsystem preloaded
-func GetLogPrinterSet(subsystem string) (Fatal, Error, Warn, Info, Debug, Trace LevelPrinter) {
-	return _getOnePrinter(_Fatal, subsystem),
-		_getOnePrinter(_Error, subsystem),
-		_getOnePrinter(_Warn, subsystem),
-		_getOnePrinter(_Info, subsystem),
-		_getOnePrinter(_Debug, subsystem),
-		_getOnePrinter(_Trace, subsystem)
+// LogPrinters is a struct that bundles a set of log printers for a subsystem
+type LogPrinters struct {
+	F, E, W, I, D, T LevelPrinter
 }
 
-func _getOnePrinter(level int32, subsystem string) LevelPrinter {
+// GetLogPrinters returns a set of log printers wrapped in a struct
+func GetLogPrinters(subsystem string) (log LogPrinters) {
+	log.F, log.E, log.W, log.I, log.D, log.T = GetLogPrinterSet(subsystem)
+	return
+}
+
+// GetLogPrinterSet returns a set of LevelPrinter with their subsystem preloaded
+func GetLogPrinterSet(subsystem string) (Fatal, Error, Warn, Info, Debug, Trace LevelPrinter) {
+	return GetOnePrinter(_Fatal, subsystem),
+		GetOnePrinter(_Error, subsystem),
+		GetOnePrinter(_Warn, subsystem),
+		GetOnePrinter(_Info, subsystem),
+		GetOnePrinter(_Debug, subsystem),
+		GetOnePrinter(_Trace, subsystem)
+}
+
+func GetOnePrinter(level int32, subsystem string) LevelPrinter {
 	return LevelPrinter{
-		Ln:  _ln(level, subsystem),
-		F:   _f(level, subsystem),
-		S:   _s(level, subsystem),
-		C:   _c(level, subsystem),
-		Chk: _chk(level, subsystem),
+		Ln:  GetPrintln(level, subsystem),
+		F:   GetPrintf(level, subsystem),
+		S:   GetPrints(level, subsystem),
+		C:   GetPrintc(level, subsystem),
+		Chk: GetChk(level, subsystem),
 	}
 }
 
@@ -175,7 +205,7 @@ func SetLogLevel(l string) {
 			lvl = LevelSpecs[i].ID
 		}
 	}
-	currentLevel.Store(lvl)
+	CurrentLevel.Store(lvl)
 }
 
 // SetLogWriter atomically changes the log io.Writer interface
@@ -297,9 +327,9 @@ func LoadSubsystemFilter() (o []string) {
 	return
 }
 
-// _isHighlighted returns true if the subsystem is in the list to have attention
+// IsHighlighted returns true if the subsystem is in the list to have attention
 // getters added to them
-func _isHighlighted(subsystem string) (found bool) {
+func IsHighlighted(subsystem string) (found bool) {
 	highlightMx.Lock()
 	_, found = highlighted[subsystem]
 	highlightMx.Unlock()
@@ -314,8 +344,8 @@ func AddHighlightedSubsystem(hl string) struct{} {
 	return struct{}{}
 }
 
-// _isSubsystemFiltered returns true if the subsystem should not pr logs
-func _isSubsystemFiltered(subsystem string) (found bool) {
+// IsSubsystemFiltered returns true if the subsystem should not pr logs
+func IsSubsystemFiltered(subsystem string) (found bool) {
 	_logFilterMx.Lock()
 	_, found = logFilter[subsystem]
 	_logFilterMx.Unlock()
@@ -342,18 +372,18 @@ func getTimeText(level int32) string {
 	)
 }
 
-func _ln(level int32, subsystem string) func(a ...interface{}) {
+func GetPrintln(level int32, subsystem string) func(a ...interface{}) {
 	return func(a ...interface{}) {
-		if level <= currentLevel.Load() && !_isSubsystemFiltered(subsystem) {
+		if level <= CurrentLevel.Load() && !IsSubsystemFiltered(subsystem) {
 			printer := fmt.Sprintf
-			if _isHighlighted(subsystem) {
+			if IsHighlighted(subsystem) {
 				printer = color.Bold.Sprintf
 			}
 			fmt.Fprintf(
 				writer,
 				printer(
 					"%-58v%s%s%-6v %s\n",
-					getLoc(2, level, subsystem),
+					GetLoc(2, level, subsystem),
 					getTimeText(level),
 					color.Bit24(20, 20, 20, true).
 						Sprint(AppColorizer(" "+App)),
@@ -361,25 +391,28 @@ func _ln(level int32, subsystem string) func(a ...interface{}) {
 						color.Bit24(20, 20, 20, true).
 							Sprint(" "+LevelSpecs[level].Name+" "),
 					),
-					AppColorizer(joinStrings(" ", a...)),
+					AppColorizer(JoinStrings(" ", a...)),
 				),
 			)
 		}
 	}
 }
 
-func _f(level int32, subsystem string) func(format string, a ...interface{}) {
+func GetPrintf(level int32, subsystem string) func(
+	format string,
+	a ...interface{},
+) {
 	return func(format string, a ...interface{}) {
-		if level <= currentLevel.Load() && !_isSubsystemFiltered(subsystem) {
+		if level <= CurrentLevel.Load() && !IsSubsystemFiltered(subsystem) {
 			printer := fmt.Sprintf
-			if _isHighlighted(subsystem) {
+			if IsHighlighted(subsystem) {
 				printer = color.Bold.Sprintf
 			}
 			fmt.Fprintf(
 				writer,
 				printer(
 					"%-58v%s%s%-6v %s\n",
-					getLoc(2, level, subsystem),
+					GetLoc(2, level, subsystem),
 					getTimeText(level),
 					color.Bit24(20, 20, 20, true).
 						Sprint(AppColorizer(" "+App)),
@@ -394,18 +427,18 @@ func _f(level int32, subsystem string) func(format string, a ...interface{}) {
 	}
 }
 
-func _s(level int32, subsystem string) func(a ...interface{}) {
+func GetPrints(level int32, subsystem string) func(a ...interface{}) {
 	return func(a ...interface{}) {
-		if level <= currentLevel.Load() && !_isSubsystemFiltered(subsystem) {
+		if level <= CurrentLevel.Load() && !IsSubsystemFiltered(subsystem) {
 			printer := fmt.Sprintf
-			if _isHighlighted(subsystem) {
+			if IsHighlighted(subsystem) {
 				printer = color.Bold.Sprintf
 			}
 			fmt.Fprintf(
 				writer,
 				printer(
 					"%-58v%s%s%s%s%s\n",
-					getLoc(2, level, subsystem),
+					GetLoc(2, level, subsystem),
 					getTimeText(level),
 					color.Bit24(20, 20, 20, true).
 						Sprint(AppColorizer(" "+App)),
@@ -431,18 +464,18 @@ func _s(level int32, subsystem string) func(a ...interface{}) {
 	}
 }
 
-func _c(level int32, subsystem string) func(closure func() string) {
+func GetPrintc(level int32, subsystem string) func(closure func() string) {
 	return func(closure func() string) {
-		if level <= currentLevel.Load() && !_isSubsystemFiltered(subsystem) {
+		if level <= CurrentLevel.Load() && !IsSubsystemFiltered(subsystem) {
 			printer := fmt.Sprintf
-			if _isHighlighted(subsystem) {
+			if IsHighlighted(subsystem) {
 				printer = color.Bold.Sprintf
 			}
 			fmt.Fprintf(
 				writer,
 				printer(
 					"%-58v%s%s%-6v %s\n",
-					getLoc(2, level, subsystem),
+					GetLoc(2, level, subsystem),
 					getTimeText(level),
 					color.Bit24(20, 20, 20, true).
 						Sprint(AppColorizer(" "+App)),
@@ -457,19 +490,19 @@ func _c(level int32, subsystem string) func(closure func() string) {
 	}
 }
 
-func _chk(level int32, subsystem string) func(e error) bool {
+func GetChk(level int32, subsystem string) func(e error) bool {
 	return func(e error) bool {
-		if level <= currentLevel.Load() && !_isSubsystemFiltered(subsystem) {
+		if level <= CurrentLevel.Load() && !IsSubsystemFiltered(subsystem) {
 			if e != nil {
 				printer := fmt.Sprintf
-				if _isHighlighted(subsystem) {
+				if IsHighlighted(subsystem) {
 					printer = color.Bold.Sprintf
 				}
 				fmt.Fprintf(
 					writer,
 					printer(
 						"%-58v%s%s%-6v %s\n",
-						getLoc(2, level, subsystem),
+						GetLoc(2, level, subsystem),
 						getTimeText(level),
 						color.Bit24(20, 20, 20, true).
 							Sprint(AppColorizer(" "+App)),
@@ -478,7 +511,7 @@ func _chk(level int32, subsystem string) func(e error) bool {
 								Sprint(" "+LevelSpecs[level].Name+" "),
 						),
 						LevelSpecs[level].Colorizer(
-							joinStrings(
+							JoinStrings(
 								" ",
 								e.Error(),
 							),
@@ -492,9 +525,9 @@ func _chk(level int32, subsystem string) func(e error) bool {
 	}
 }
 
-// joinStrings constructs a string from an slice of interface same as Println but
+// JoinStrings constructs a string from an slice of interface same as Println but
 // without the terminal newline
-func joinStrings(sep string, a ...interface{}) (o string) {
+func JoinStrings(sep string, a ...interface{}) (o string) {
 	for i := range a {
 		o += fmt.Sprint(a[i])
 		if i < len(a)-1 {
@@ -504,7 +537,7 @@ func joinStrings(sep string, a ...interface{}) (o string) {
 	return
 }
 
-// getLoc calls runtime.Caller and formats as expected by source code editors
+// GetLoc calls runtime.Caller and formats as expected by source code editors
 // for terminal hyperlinks
 //
 // Regular expressions and the substitution texts to make these clickable in
@@ -537,7 +570,7 @@ func joinStrings(sep string, a ...interface{}) (o string) {
 // Adapt the invocation to open your preferred editor if it has the capability,
 // the above is for Jetbrains Goland
 //
-func getLoc(skip int, level int32, subsystem string) (output string) {
+func GetLoc(skip int, level int32, subsystem string) (output string) {
 	_, file, line, _ := runtime.Caller(skip)
 	defer func() {
 		if r := recover(); r != nil {
