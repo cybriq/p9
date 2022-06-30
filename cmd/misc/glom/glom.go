@@ -2,12 +2,12 @@ package main
 
 import (
 	l "github.com/cybriq/p9/pkg/gel/gio/layout"
+	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/cybriq/p9/cmd/misc/glom/pkg/pathtree"
 	"github.com/cybriq/p9/pkg/gel"
-	"github.com/cybriq/p9/pkg/interrupt"
 )
 
 type State struct {
@@ -33,7 +33,7 @@ func main() {
 		Run(
 			func(gtx l.Context) l.Dimensions { return folderView.Fn(gtx) },
 			func() {
-				interrupt.Request()
+				proc.Request()
 				quit.Q()
 			}, quit,
 		); E.Chk(e) {

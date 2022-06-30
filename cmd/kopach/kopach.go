@@ -10,20 +10,17 @@ import (
 	"time"
 
 	"github.com/cybriq/gotiny"
+	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/chainrpc/p2padvt"
 	"github.com/cybriq/p9/pkg/chainrpc/templates"
 	"github.com/cybriq/p9/pkg/constant"
-	"github.com/cybriq/p9/pkg/log"
-	"github.com/cybriq/p9/pkg/pipe"
 	"github.com/cybriq/p9/pod/state"
 
 	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/VividCortex/ewma"
 	"go.uber.org/atomic"
-
-	"github.com/cybriq/p9/pkg/interrupt"
 
 	"github.com/cybriq/p9/cmd/kopach/client"
 	"github.com/cybriq/p9/pkg/chainhash"
@@ -65,7 +62,7 @@ type Worker struct {
 	quit                qu.C
 	sendAddresses       []*net.UDPAddr
 	clients             []*client.Client
-	workers             []*pipe.Worker
+	workers             []*proc.Worker
 	FirstSender         atomic.Uint64
 	lastSent            atomic.Int64
 	Status              atomic.String
@@ -85,11 +82,11 @@ type Worker struct {
 
 func (w *Worker) Start() {
 	D.Ln("starting up kopach workers")
-	w.workers = []*pipe.Worker{}
+	w.workers = []*proc.Worker{}
 	w.clients = []*client.Client{}
 	for i := 0; i < w.cx.Config.GenThreads.V(); i++ {
 		D.Ln("starting worker", i)
-		cmd, _ := pipe.Spawn(
+		cmd, _ := proc.Spawn(
 			w.quit, os.Args[0], "worker", w.id,
 			w.cx.ActiveNet.Name, w.cx.Config.LogLevel.V(),
 		)
@@ -161,7 +158,7 @@ func Run(cx *state.State) (e error) {
 	// if cx.Config.Generate.True() {
 	I.Ln("starting up miner workers")
 	w.Start()
-	interrupt.AddHandler(
+	proc.AddHandler(
 		func() {
 			w.Stop()
 		},
@@ -244,12 +241,12 @@ func Run(cx *state.State) (e error) {
 			// 	}
 			case <-w.quit.Wait():
 				D.Ln("stopping from quit")
-				interrupt.Request()
+				proc.Request()
 				break out
 			}
 		}
 		D.Ln("finished kopach miner work loop")
-		log.LogChanDisabled.Store(true)
+		proc.LogChanDisabled.Store(true)
 	}()
 	D.Ln("listening on", transport.MulticastAddress)
 	<-w.quit

@@ -4,13 +4,13 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 )
 
-var F, E, W, I, D, T log.LevelPrinter
+var F, E, W, I, D, T proc.LevelPrinter
 
 func init() {
 	_, file, _, _ := runtime.Caller(0)
 	verPath := filepath.Dir(file) + "/"
-	F, E, W, I, D, T = log.GetLogPrinterSet(log.AddLoggerSubsystem(verPath))
+	F, E, W, I, D, T = proc.GetLogPrinterSet(proc.AddLoggerSubsystem(verPath))
 }

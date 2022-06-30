@@ -1,4 +1,4 @@
-package pipe
+package proc
 
 import (
 	"io"

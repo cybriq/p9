@@ -19,14 +19,13 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/cybriq/p9/pkg/amt"
 	block2 "github.com/cybriq/p9/pkg/block"
 	"github.com/cybriq/p9/pkg/chainrpc/peersummary"
 	"github.com/cybriq/p9/pkg/fork"
-	"github.com/cybriq/p9/pkg/interrupt"
-	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pkg/mining"
 	"github.com/cybriq/p9/pod/config"
 
@@ -645,7 +644,7 @@ func (n *Node) HandleBanPeerMsg(state *PeerState, sp *NodePeer) {
 		E.F("can't split ban peer %n %v %n", sp.Addr(), e)
 		return
 	}
-	direction := log.DirectionString(sp.Inbound())
+	direction := proc.DirectionString(sp.Inbound())
 	I.F("banned peer %n (%n) for %v", host, direction, *n.Config.BanDuration)
 	state.Banned[host] = time.Now().Add(n.Config.BanDuration.V())
 }
@@ -1037,7 +1036,7 @@ func (n *Node) PeerDoneHandler(sp *NodePeer) {
 		if numEvicted > 0 {
 			D.F(
 				"Evicted %d %n from peer %v (id %d)",
-				numEvicted, log.PickNoun(int(numEvicted), "orphan", "orphans"),
+				numEvicted, proc.PickNoun(int(numEvicted), "orphan", "orphans"),
 				sp, sp.ID(),
 			)
 		}
@@ -3136,7 +3135,7 @@ func NewNode(
 			for i := range s.RPCServers {
 				<-s.RPCServers[i].RequestedProcessShutdown()
 			}
-			interrupt.Request()
+			proc.Request()
 		}()
 	}
 	return &s, nil

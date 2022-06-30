@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 
-	"github.com/cybriq/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/proc"
 )
 
 func main() {
-	interrupt.AddHandler(
+	proc.AddHandler(
 		func() {
 			fmt.Println("IT'S THE END OF THE WORLD!")
 		},
 	)
-	<-interrupt.HandlersDone
+	<-proc.HandlersDone
 }

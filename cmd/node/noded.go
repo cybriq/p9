@@ -36,9 +36,8 @@ import (
 	"path/filepath"
 	"runtime/pprof"
 
+	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/qu"
-
-	"github.com/cybriq/p9/pkg/interrupt"
 
 	"github.com/cybriq/p9/pkg/apputil"
 	"github.com/cybriq/p9/pkg/chainrpc"
@@ -47,7 +46,6 @@ import (
 	"github.com/cybriq/p9/pkg/database"
 	"github.com/cybriq/p9/pkg/database/blockdb"
 	"github.com/cybriq/p9/pkg/indexers"
-	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pod/state"
 )
 
@@ -97,7 +95,7 @@ func NodeMain(cx *state.State) (e error) {
 				}
 			}()
 			defer pprof.StopCPUProfile()
-			interrupt.AddHandler(
+			proc.AddHandler(
 				func() {
 					D.Ln("stopping CPU profiler")
 					e = f.Close()
@@ -114,7 +112,7 @@ func NodeMain(cx *state.State) (e error) {
 		return
 	}
 	// return now if an interrupt signal was triggered
-	if interrupt.Requested() {
+	if proc.Requested() {
 		return nil
 	}
 	// load the block database
@@ -132,9 +130,9 @@ func NodeMain(cx *state.State) (e error) {
 		}()
 	}
 	defer closeDb()
-	interrupt.AddHandler(closeDb)
+	proc.AddHandler(closeDb)
 	// return now if an interrupt signal was triggered
-	if interrupt.Requested() {
+	if proc.Requested() {
 		return nil
 	}
 	// drop indexes and exit if requested.
@@ -145,7 +143,7 @@ func NodeMain(cx *state.State) (e error) {
 		W.Ln("dropping address index")
 		if e = indexers.DropAddrIndex(
 			db,
-			interrupt.ShutdownRequestChan,
+			proc.ShutdownRequestChan,
 		); E.Chk(e) {
 			return
 		}
@@ -154,7 +152,7 @@ func NodeMain(cx *state.State) (e error) {
 		W.Ln("dropping transaction index")
 		if e = indexers.DropTxIndex(
 			db,
-			interrupt.ShutdownRequestChan,
+			proc.ShutdownRequestChan,
 		); E.Chk(e) {
 			return
 		}
@@ -163,13 +161,13 @@ func NodeMain(cx *state.State) (e error) {
 		W.Ln("dropping cfilter index")
 		if e = indexers.DropCfIndex(
 			db,
-			interrupt.ShutdownRequestChan,
+			proc.ShutdownRequestChan,
 		); E.Chk(e) {
 			return
 		}
 	}
 	// return now if an interrupt signal was triggered
-	if interrupt.Requested() {
+	if proc.Requested() {
 		return nil
 	}
 	mempoolUpdateChan := qu.Ts(1)
@@ -181,7 +179,7 @@ func NodeMain(cx *state.State) (e error) {
 	server, e = chainrpc.NewNode(
 		cx.Config.P2PListeners.S(),
 		db,
-		interrupt.ShutdownRequestChan,
+		proc.ShutdownRequestChan,
 		state.GetContext(cx),
 		mempoolUpdateHook,
 	)
@@ -239,26 +237,26 @@ func NodeMain(cx *state.State) (e error) {
 		}
 		server.WaitForShutdown()
 		I.Ln("server shutdown complete")
-		log.LogChanDisabled.Store(true)
+		proc.LogChanDisabled.Store(true)
 		cx.WaitDone()
 		cx.KillAll.Q()
 		cx.NodeKill.Q()
 	}
 	D.Ln("adding interrupt handler for node")
-	interrupt.AddHandler(gracefulShutdown)
+	proc.AddHandler(gracefulShutdown)
 	// Wait until the interrupt signal is received from an OS signal or shutdown is requested through one of the
 	// subsystems such as the RPC server.
 	select {
 	case <-cx.NodeKill.Wait():
 		D.Ln("NodeKill")
-		if !interrupt.Requested() {
-			interrupt.Request()
+		if !proc.Requested() {
+			proc.Request()
 		}
 		break
 	case <-cx.KillAll.Wait():
 		D.Ln("KillAll")
-		if !interrupt.Requested() {
-			interrupt.Request()
+		if !proc.Requested() {
+			proc.Request()
 		}
 		break
 	}

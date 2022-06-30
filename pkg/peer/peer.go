@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/cybriq/p9/pkg/chaincfg"
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -397,7 +397,7 @@ type Peer struct {
 //
 // This function is safe for concurrent access.
 func (p *Peer) String() string {
-	return fmt.Sprintf("%s (%s)", p.addr, log.DirectionString(p.inbound))
+	return fmt.Sprintf("%s (%s)", p.addr, proc.DirectionString(p.inbound))
 }
 
 // UpdateLastBlockHeight updates the last known block for the peer.
@@ -1693,7 +1693,7 @@ func (p *Peer) Disconnect() {
 	if atomic.AddInt32(&p.disconnect, 1) != 1 {
 		return
 	}
-	T.Ln("disconnecting", p, log.Caller("from", 1))
+	T.Ln("disconnecting", p, proc.Caller("from", 1))
 	if atomic.LoadInt32(&p.connected) != 0 {
 		_ = p.conn.Close()
 	}

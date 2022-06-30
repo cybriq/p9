@@ -1,12 +1,8 @@
-package rununit
+package proc
 
 import (
 	uberatomic "go.uber.org/atomic"
 
-	"github.com/cybriq/p9/pkg/log"
-	"github.com/cybriq/p9/pkg/pipe"
-
-	"github.com/cybriq/p9/pkg/interrupt"
 	"github.com/cybriq/p9/pkg/qu"
 )
 
@@ -17,14 +13,14 @@ type RunUnit struct {
 	args                  []string
 	running, shuttingDown uberatomic.Bool
 	commandChan           chan bool
-	worker                *pipe.Worker
+	worker                *Worker
 	quit                  qu.C
 }
 
-// New creates and starts a new rununit. run and stop functions are executed after starting and stopping. logger
+// NewUnit creates and starts a new rununit. run and stop functions are executed after starting and stopping. logger
 // receives log entries and processes them (such as logging them).
-func New(
-	name string, run, stop func(), logger func(ent *log.Entry) (e error),
+func NewUnit(
+	name string, run, stop func(), logger func(ent *Entry) (e error),
 	pkgFilter func(pkg string) (out bool), quit qu.C, args ...string,
 ) (r *RunUnit) {
 	r = &RunUnit{
@@ -54,12 +50,12 @@ func New(
 						}
 					}
 					// quit from rununit's quit, which closes after the main quit triggers stopping in the watcher loop
-					r.worker = pipe.LogConsume(
+					r.worker = LogConsume(
 						r.quit, logger, pkgFilter,
 						args...,
 					)
 					// D.S(r.worker)
-					pipe.Start(r.worker)
+					Start(r.worker)
 					r.running.Store(true)
 					run()
 					// D.Ln(r.running.Load())
@@ -70,7 +66,7 @@ func New(
 						D.Ln("wasn't running", args)
 						continue
 					}
-					pipe.Kill(r.worker)
+					Kill(r.worker)
 					// var e error
 					// if e = r.worker.Wait(); E.Chk(e) {
 					// }
@@ -97,7 +93,7 @@ func New(
 				break out
 			}
 			// r.quit.Q()
-			pipe.Kill(r.worker)
+			Kill(r.worker)
 			var e error
 			if e = r.worker.Wait(); E.Chk(e) {
 			}
@@ -106,7 +102,7 @@ func New(
 			D.Ln(args, "after stop", r.running.Load())
 		}
 	}()
-	interrupt.AddHandler(
+	AddHandler(
 		func() {
 			quit.Q()
 		},

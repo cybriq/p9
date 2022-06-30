@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cybriq/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/cybriq/p9/cmd/ctl"
@@ -87,7 +87,7 @@ func WalletHandle(ifc interface{}) (e error) {
 		}
 		fmt.Println("restart to complete initial setup")
 		// os.Exit(0)
-		interrupt.RequestRestart()
+		proc.RequestRestart()
 	}
 	// for security with apps launching the wallet, the public password can be set with a file that is deleted after
 	walletPassPath := filepath.Join(

@@ -1,13 +1,13 @@
 package meta
 
 import (
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/version"
 )
 
-var subsystem = log.AddLoggerSubsystem(version.PathBase)
-var F, E, W, I, D, T log.LevelPrinter = log.GetLogPrinterSet(subsystem)
+var subsystem = proc.AddLoggerSubsystem(version.PathBase)
+var F, E, W, I, D, T proc.LevelPrinter = proc.GetLogPrinterSet(subsystem)
 
 func init() {
 	// to filter out this package, uncomment the following

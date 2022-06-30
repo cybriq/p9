@@ -16,7 +16,7 @@ import (
 	block2 "github.com/cybriq/p9/pkg/block"
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/fork"
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -25,7 +25,6 @@ import (
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/database"
 	"github.com/cybriq/p9/pkg/ecc"
-	"github.com/cybriq/p9/pkg/interrupt"
 	"github.com/cybriq/p9/pkg/mempool"
 	"github.com/cybriq/p9/pkg/txscript"
 	"github.com/cybriq/p9/pkg/util"
@@ -507,7 +506,7 @@ func HandleGetAddedNodeInfo(
 			addr.Address = ip
 			addr.Connected = "false"
 			if ip == host && peer.Connected() {
-				addr.Connected = log.DirectionString(peer.Inbound())
+				addr.Connected = proc.DirectionString(peer.Inbound())
 			}
 			addrs = append(addrs, addr)
 		}
@@ -2733,7 +2732,7 @@ func HandleSetGenerate(s *Server, cmd interface{}, closeChan qu.C) (
 func HandleStop(s *Server, cmd interface{}, closeChan qu.C) (
 	interface{}, error,
 ) {
-	interrupt.Request()
+	proc.Request()
 	return nil, nil
 }
 
@@ -2745,7 +2744,7 @@ func HandleRestart(s *Server, cmd interface{}, closeChan qu.C) (
 	// case s.RequestProcessShutdown <- struct{}{}:
 	// default:
 	// }
-	interrupt.RequestRestart()
+	proc.RequestRestart()
 	return nil, nil
 }
 

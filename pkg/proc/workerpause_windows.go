@@ -1,4 +1,4 @@
-package pipe
+package proc
 
 func (w *Worker) Pause() (e error) {
 	return

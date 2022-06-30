@@ -13,12 +13,12 @@ import (
 	"github.com/cybriq/p9/pkg/amt"
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chaincfg"
+	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/btcjson"
 	"github.com/cybriq/p9/pkg/chainclient"
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/ecc"
-	"github.com/cybriq/p9/pkg/interrupt"
 	"github.com/cybriq/p9/pkg/rpcclient"
 	"github.com/cybriq/p9/pkg/txrules"
 	"github.com/cybriq/p9/pkg/txscript"
@@ -1285,7 +1285,7 @@ func HandleDropWalletHistory(
 	// 	if e = rwt.Commit(); E.Chk(e) {
 	// 	}
 	// }()
-	defer interrupt.RequestRestart()
+	defer proc.RequestRestart()
 	return nil, e
 }
 

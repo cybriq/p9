@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/btcsuite/go-socks/socks"
+	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/qu"
 	"go.uber.org/atomic"
 
@@ -24,8 +25,6 @@ import (
 	"github.com/cybriq/p9/pkg/chainrpc"
 	"github.com/cybriq/p9/pkg/connmgr"
 	"github.com/cybriq/p9/pkg/fork"
-	"github.com/cybriq/p9/pkg/log"
-	"github.com/cybriq/p9/pkg/pipe"
 	"github.com/cybriq/p9/pkg/util"
 	"github.com/cybriq/p9/pkg/util/routeable"
 	"github.com/cybriq/p9/pod/config"
@@ -41,7 +40,7 @@ func GetNew(
 		// return
 		panic(e)
 	}
-	log.SetLogLevel(config.LogLevel.V())
+	proc.SetLogLevel(config.LogLevel.V())
 	chainClientReady := qu.T()
 	rand.Seed(time.Now().UnixNano())
 	rand.Seed(rand.Int63())
@@ -82,7 +81,7 @@ func GetNew(
 	// if pipe logging is enabled, start it up
 	if s.Config.PipeLog.True() {
 		D.Ln("starting up pipe logger")
-		pipe.LogServe(s.KillAll, fmt.Sprint(os.Args))
+		proc.LogServe(s.KillAll, fmt.Sprint(os.Args))
 	}
 	D.Ln("set to write logs in the network specific directory")
 	if e = s.Config.LogDir.Set(
@@ -90,7 +89,7 @@ func GetNew(
 	); E.Chk(e) {
 	}
 	D.Ln("enable log file writing")
-	if e = log.SetLogWriteToFile(
+	if e = proc.SetLogWriteToFile(
 		s.Config.LogDir.V(),
 		s.Config.RunningCommand.Name,
 	); D.Chk(e) {

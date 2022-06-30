@@ -9,7 +9,7 @@ import (
 
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chaincfg"
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/snacl"
 	"github.com/cybriq/p9/pkg/util/hdkeychain"
@@ -1253,7 +1253,7 @@ func loadManager(
 	ns walletdb.ReadBucket, pubPassphrase []byte,
 	chainParams *chaincfg.Params,
 ) (*Manager, error) {
-	D.Ln("loading address manager", log.Caller("from", 1))
+	D.Ln("loading address manager", proc.Caller("from", 1))
 	// Verify the version is neither too old or too new.
 	var version uint32
 	var e error

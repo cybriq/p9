@@ -5,7 +5,7 @@ import (
 	"sort"
 	"text/template"
 
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 )
 
 type handler struct {
@@ -27,7 +27,7 @@ func (h handlersT) Swap(i, j int) {
 }
 
 func main() {
-	log.SetLogLevel("trace")
+	proc.SetLogLevel("trace")
 	if fd, e := os.Create("rpchandlers.go"); E.Chk(e) {
 	} else {
 		defer fd.Close()

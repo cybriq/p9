@@ -25,11 +25,11 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/cybriq/p9/pkg/proc"
 	"lukechampine.com/blake3"
 
 	"github.com/cybriq/p9/pkg/apputil"
 	"github.com/cybriq/p9/pkg/constant"
-	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pkg/opts/binary"
 	"github.com/cybriq/p9/pkg/opts/cmds"
 	"github.com/cybriq/p9/pkg/opts/duration"
@@ -546,8 +546,8 @@ func (c *Config) processCommandlineArgs(args []string) (
 		// I.S(commands[0])
 		ibs := commands[0]
 		cm = &ibs
-		log.AppColorizer = commands[0].Colorizer
-		log.App = commands[0].AppText
+		proc.AppColorizer = commands[0].Colorizer
+		proc.App = commands[0].AppText
 	} else {
 		T.Ln("checking commands")
 		// I.S(commands)
@@ -597,8 +597,8 @@ func (c *Config) processCommandlineArgs(args []string) (
 			for _, x := range commands {
 				cm = &x
 				if cm.Colorizer != nil {
-					log.AppColorizer = cm.Colorizer
-					log.App = cm.AppText
+					proc.AppColorizer = cm.Colorizer
+					proc.App = cm.AppText
 				}
 			}
 		}

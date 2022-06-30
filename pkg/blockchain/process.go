@@ -8,7 +8,7 @@ import (
 	"github.com/cybriq/p9/pkg/bits"
 	"github.com/cybriq/p9/pkg/block"
 	"github.com/cybriq/p9/pkg/fork"
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/database"
@@ -45,7 +45,7 @@ func (b *BlockChain) ProcessBlock(
 	workerNumber uint32, candidateBlock *block.Block,
 	flags BehaviorFlags, blockHeight int32,
 ) (bool, bool, error) {
-	T.Ln("blockchain.ProcessBlock", blockHeight, log.Caller("\nfrom", 1))
+	T.Ln("blockchain.ProcessBlock", blockHeight, proc.Caller("\nfrom", 1))
 	var prevBlock *block.Block
 	var e error
 	prevBlock, e = b.BlockByHash(&candidateBlock.WireBlock().Header.PrevBlock)

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -91,7 +91,7 @@ func (c *Channel) Send(magic []byte, nonce []byte, data []byte) (
 
 // SendMany sends a BufIter of shards as produced by GetShards
 func (c *Channel) SendMany(magic []byte, b [][]byte) (e error) {
-	D.Ln("magic", string(magic), log.Caller("sending from", 1))
+	D.Ln("magic", string(magic), proc.Caller("sending from", 1))
 	var nonce []byte
 	if nonce, e = GetNonce(c.sendCiph); E.Chk(e) {
 	} else {

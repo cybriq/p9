@@ -8,7 +8,7 @@ import (
 	"sort"
 	"text/template"
 
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 )
 
 const (
@@ -493,7 +493,7 @@ func (r *CAPIClient) {{.Handler}}(cmd ...{{.Cmd}}) (res {{.ResType}}, e error) {
 }
 {{end}}
 `
-	log.SetLogLevel("trace")
+	proc.SetLogLevel("trace")
 	if fd, e := os.Create("rpchandlers.go"); E.Chk(e) {
 		if fd, e := os.OpenFile(
 			"rpchandlers.go",

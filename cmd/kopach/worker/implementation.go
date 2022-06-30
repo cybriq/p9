@@ -12,7 +12,7 @@ import (
 	"github.com/cybriq/p9/pkg/chainrpc/templates"
 	"github.com/cybriq/p9/pkg/constant"
 	"github.com/cybriq/p9/pkg/fork"
-	"github.com/cybriq/p9/pkg/pipe"
+	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -21,8 +21,6 @@ import (
 	"github.com/cybriq/p9/pkg/chainrpc/sol"
 
 	"go.uber.org/atomic"
-
-	"github.com/cybriq/p9/pkg/interrupt"
 
 	"github.com/cybriq/p9/pkg/ring"
 	"github.com/cybriq/p9/pkg/transport"
@@ -33,7 +31,7 @@ const CountPerRound = 81
 type Worker struct {
 	mx               sync.Mutex
 	id               string
-	pipeConn         *pipe.StdConn
+	pipeConn         *proc.StdConn
 	dispatchConn     *transport.Channel
 	dispatchReady    atomic.Bool
 	ciph             cipher.AEAD
@@ -117,7 +115,7 @@ func (c *Counter) GetAlgoVer(height int32) (ver int32) {
 // NewWithConnAndSemaphore is exposed to enable use an actual network connection while retaining the same RPC API to
 // allow a worker to be configured to run on a bare metal system with a different launcher main
 func NewWithConnAndSemaphore(
-	id string, conn *pipe.StdConn, quit qu.C,
+	id string, conn *proc.StdConn, quit qu.C,
 	uuid uint64,
 ) *Worker {
 	T.Ln("creating new worker")
@@ -135,7 +133,7 @@ func NewWithConnAndSemaphore(
 	w.dispatchReady.Store(false)
 	// with this we can report cumulative hash counts as well as using it to distribute algorithms evenly
 	w.startNonce = uint32(w.roller.C.Load())
-	interrupt.AddHandler(
+	proc.AddHandler(
 		func() {
 			D.Ln("worker", id, "quitting")
 			w.stopChan <- struct{}{}
@@ -267,14 +265,14 @@ out:
 		}
 	}
 	D.Ln("worker finished")
-	interrupt.Request()
+	proc.Request()
 }
 
 // New initialises the state for a worker, loading the work function handler that runs a round of processing between
 // checking quit signal and work semaphore
 func New(id string, quit qu.C, uuid uint64) (w *Worker, conn net.Conn) {
 	// log.L.SetLevel("trace", true)
-	sc := pipe.New(os.Stdin, os.Stdout, quit)
+	sc := proc.New(os.Stdin, os.Stdout, quit)
 
 	return NewWithConnAndSemaphore(id, sc, quit, uuid), sc
 }

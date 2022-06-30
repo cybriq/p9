@@ -11,7 +11,7 @@ import (
 	"github.com/cybriq/p9/pkg/amt"
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/constant"
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/blockchain"
 	"github.com/cybriq/p9/pkg/chainhash"
@@ -581,7 +581,7 @@ func (mp *TxPool) limitNumOrphans() (e error) {
 		if numExpired := origNumOrphans - numOrphans; numExpired > 0 {
 			D.F(
 				"Expired %d %s (remaining: %d)",
-				numExpired, log.PickNoun(numExpired, "orphan", "orphans"),
+				numExpired, proc.PickNoun(numExpired, "orphan", "orphans"),
 				numOrphans,
 			)
 		}

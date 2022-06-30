@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 	"go.uber.org/atomic"
 )
 
@@ -34,7 +34,7 @@ func l(a ...interface{}) {
 func T() C {
 	mx.Lock()
 	defer mx.Unlock()
-	msg := log.Caller("chan from", 1)
+	msg := proc.Caller("chan from", 1)
 	l("created", msg)
 	createdList = append(createdList, msg)
 	o := make(C)
@@ -48,7 +48,7 @@ func T() C {
 func Ts(n int) C {
 	mx.Lock()
 	defer mx.Unlock()
-	msg := log.Caller("buffered chan from", 1)
+	msg := proc.Caller("buffered chan from", 1)
 	l("created", msg)
 	createdList = append(createdList, msg)
 	o := make(C, n)
@@ -65,14 +65,14 @@ func (c C) Q() {
 			defer mx.Unlock()
 			if !testChanIsClosed(c) {
 				close(c)
-				return "closing chan from " + loc + log.Caller(
+				return "closing chan from " + loc + proc.Caller(
 					"\n"+strings.Repeat(
 						" ",
 						48,
 					)+"from", 1,
 				)
 			} else {
-				return "from" + log.Caller("", 1) + "\n" + strings.Repeat(
+				return "from" + proc.Caller("", 1) + "\n" + strings.Repeat(
 					" ",
 					48,
 				) +
@@ -92,7 +92,7 @@ func (c C) Signal() {
 func (c C) Wait() <-chan struct{} {
 	l(
 		func() (o string) {
-			return "waiting on " + getLocForChan(c) + log.Caller(
+			return "waiting on " + getLocForChan(c) + proc.Caller(
 				"at",
 				1,
 			)

@@ -6,10 +6,9 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/qu"
 	"golang.org/x/exp/shiny/materialdesign/icons"
-
-	"github.com/cybriq/p9/pkg/interrupt"
 
 	"github.com/cybriq/p9/cmd/wallet"
 	"github.com/cybriq/p9/pkg/chaincfg"
@@ -63,7 +62,7 @@ func (wg *WalletGUI) createConfirmExitBar() l.Widget {
 									wg.ButtonLayout(
 										wg.clickables["quit"].SetClick(
 											func() {
-												interrupt.Request()
+												proc.Request()
 											},
 										),
 									).

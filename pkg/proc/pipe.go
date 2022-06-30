@@ -1,12 +1,9 @@
-package pipe
+package proc
 
 import (
 	"io"
 	"os"
 
-	"github.com/cybriq/p9/pkg/log"
-
-	"github.com/cybriq/p9/pkg/interrupt"
 	"github.com/cybriq/p9/pkg/qu"
 )
 
@@ -27,7 +24,7 @@ func Consume(
 	out:
 		for {
 			select {
-			case <-interrupt.HandlersDone.Wait():
+			case <-HandlersDone.Wait():
 				D.Ln("quitting log consumer")
 				break out
 			case <-quit.Wait():
@@ -38,7 +35,7 @@ func Consume(
 			n, e = w.StdConn.Read(data)
 			if n == 0 {
 				F.Ln("read zero from pipe", args)
-				log.LogChanDisabled.Store(true)
+				LogChanDisabled.Store(true)
 				break out
 			}
 			if E.Chk(e) && e != io.EOF {

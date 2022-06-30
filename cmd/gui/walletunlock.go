@@ -8,13 +8,12 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/cybriq/p9/pkg/proc"
 	"golang.org/x/exp/shiny/materialdesign/icons"
 	"lukechampine.com/blake3"
 
 	l "github.com/cybriq/p9/pkg/gel/gio/layout"
 	"github.com/cybriq/p9/pkg/gel/gio/text"
-
-	"github.com/cybriq/p9/pkg/interrupt"
 
 	"github.com/cybriq/p9/pkg/gel"
 	"github.com/cybriq/p9/pkg/p9icons"
@@ -253,7 +252,7 @@ func (wg *WalletGUI) getWalletUnlockAppWidget() (a *gel.App) {
 																						wg.ButtonLayout(
 																							exitButton.SetClick(
 																								func() {
-																									interrupt.Request()
+																									proc.Request()
 																								},
 																							),
 																						).

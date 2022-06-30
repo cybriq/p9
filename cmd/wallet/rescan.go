@@ -3,7 +3,7 @@ package wallet
 import (
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chainclient"
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/txscript"
 	"github.com/cybriq/p9/pkg/waddrmgr"
 	"github.com/cybriq/p9/pkg/wire"
@@ -172,7 +172,7 @@ out:
 		case msg := <-w.rescanFinished:
 			n := msg.Notification
 			addrs := msg.Addresses
-			noun := log.PickNoun(len(addrs), "address", "addresses")
+			noun := proc.PickNoun(len(addrs), "address", "addresses")
 			I.F(
 				"finished rescan for %d %s (synced to block %s, height %d)",
 				len(addrs), noun, n.Hash, n.Height,
@@ -202,7 +202,7 @@ out:
 		case batch := <-w.rescanBatch:
 			// Log the newly-started rescan.
 			numAddrs := len(batch.addrs)
-			noun := log.PickNoun(numAddrs, "address", "addresses")
+			noun := proc.PickNoun(numAddrs, "address", "addresses")
 			I.F(
 				"started rescan from block %v (height %d) for %d %s",
 				batch.bs.Hash, batch.bs.Height, numAddrs, noun,

@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/qu"
-
-	"github.com/cybriq/p9/pkg/pipe"
 )
 
 func main() {
 	quit := qu.T()
-	p := pipe.Consume(
+	p := proc.Consume(
 		quit, func(b []byte) (e error) {
 			fmt.Println("from child:", string(b))
 			return

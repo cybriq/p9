@@ -14,13 +14,13 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/btcsuite/websocket"
 
 	"github.com/cybriq/p9/pkg/btcjson"
 	"github.com/cybriq/p9/pkg/chainclient"
-	"github.com/cybriq/p9/pkg/interrupt"
 )
 
 type WebsocketClient struct {
@@ -475,7 +475,7 @@ out:
 				if e != nil {
 					break out
 				}
-				interrupt.Restart = true
+				proc.Restart = true
 				s.RequestProcessShutdown()
 			// break
 			default:

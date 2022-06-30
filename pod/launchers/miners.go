@@ -10,10 +10,8 @@ import (
 
 	"github.com/cybriq/p9/cmd/kopach"
 	"github.com/cybriq/p9/cmd/kopach/worker"
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pod/state"
-
-	"github.com/cybriq/p9/pkg/interrupt"
 
 	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/fork"
@@ -36,7 +34,7 @@ func Kopach(ifc interface{}) (e error) {
 	}
 	defer cx.KillAll.Q()
 	e = kopach.Run(cx)
-	<-interrupt.HandlersDone
+	<-proc.HandlersDone
 	D.Ln("kopach main finished")
 	return
 }
@@ -54,7 +52,7 @@ func Worker(ifc interface{}) (e error) {
 		}
 	}
 	if len(os.Args) > 2 {
-		log.SetLogLevel(os.Args[4])
+		proc.SetLogLevel(os.Args[4])
 	}
 	D.Ln("miner worker starting")
 	w, conn := worker.New(

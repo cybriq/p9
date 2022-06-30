@@ -8,7 +8,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/qu"
 )
@@ -317,7 +317,7 @@ out:
 
 // NewConnReq creates a new connection request and connects to the corresponding address.
 func (cm *ConnManager) NewConnReq() {
-	T.Ln("creating new connreq @", log.Caller("thingy", 1))
+	T.Ln("creating new connreq @", proc.Caller("thingy", 1))
 	if atomic.LoadInt32(&cm.stop) != 0 {
 		return
 	}

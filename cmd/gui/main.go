@@ -10,14 +10,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/cybriq/p9/pkg/proc"
 	"github.com/tyler-smith/go-bip39"
 
 	"github.com/cybriq/gotiny"
 	"github.com/cybriq/p9/pkg/chainrpc/p2padvt"
-	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pkg/opts/meta"
 	"github.com/cybriq/p9/pkg/opts/text"
-	"github.com/cybriq/p9/pkg/pipe"
 	"github.com/cybriq/p9/pkg/transport"
 	"github.com/cybriq/p9/pod/state"
 
@@ -27,8 +26,6 @@ import (
 
 	"github.com/cybriq/p9/pkg/qu"
 
-	"github.com/cybriq/p9/pkg/interrupt"
-
 	"github.com/cybriq/p9/pkg/btcjson"
 	"github.com/cybriq/p9/pkg/gel"
 
@@ -37,7 +34,6 @@ import (
 	"github.com/cybriq/p9/cmd/gui/cfg"
 	"github.com/cybriq/p9/pkg/apputil"
 	"github.com/cybriq/p9/pkg/rpcclient"
-	"github.com/cybriq/p9/pkg/util/rununit"
 )
 
 // Main is the entrypoint for the wallet GUI
@@ -70,7 +66,7 @@ type WalletGUI struct {
 	quit                      qu.C
 	State                     *State
 	noWallet                  *bool
-	node, wallet, miner       *rununit.RunUnit
+	node, wallet, miner       *proc.RunUnit
 	walletToLock              time.Time
 	walletLockTime            int
 	ChainMutex, WalletMutex   sync.Mutex
@@ -195,8 +191,8 @@ func (wg *WalletGUI) Run() (e error) {
 	wg.bools = wg.GetBools()
 	wg.inputs = wg.GetInputs()
 	wg.passwords = wg.GetPasswords()
-	// wg.toasts = toast.New(wg.th)
-	// wg.dialog = dialog.New(wg.th)
+	// wg.toasts = toast.NewUnit(wg.th)
+	// wg.dialog = dialog.NewUnit(wg.th)
 	wg.console = wg.ConsolePage()
 	wg.quitClickable = wg.Clickable()
 	wg.incdecs = wg.GetIncDecs()
@@ -230,7 +226,7 @@ func (wg *WalletGUI) Run() (e error) {
 		}
 		wg.unlockPassword.Focus()
 	}
-	interrupt.AddHandler(
+	proc.AddHandler(
 		func() {
 			D.Ln("quitting wallet gui")
 			// consume.Kill(wg.Node)
@@ -515,14 +511,14 @@ func (wg *WalletGUI) GetIncDecs() IncDecMap {
 
 func (wg *WalletGUI) GetRunUnit(
 	name string, before, after func(), args ...string,
-) *rununit.RunUnit {
+) *proc.RunUnit {
 	D.Ln("getting rununit for", name, args)
 	// we have to copy the args otherwise further mutations affect this one
 	argsCopy := make([]string, len(args))
 	copy(argsCopy, args)
-	return rununit.New(
-		name, before, after, pipe.SimpleLog(name),
-		pipe.FilterNone, wg.quit, argsCopy...,
+	return proc.NewUnit(
+		name, before, after, proc.SimpleLog(name),
+		proc.FilterNone, wg.quit, argsCopy...,
 	)
 }
 
@@ -598,7 +594,7 @@ var shuttingDown = false
 
 func (wg *WalletGUI) gracefulShutdown() {
 	if shuttingDown {
-		D.Ln(log.Caller("already called gracefulShutdown", 1))
+		D.Ln(proc.Caller("already called gracefulShutdown", 1))
 		return
 	} else {
 		shuttingDown = true

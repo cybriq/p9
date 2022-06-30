@@ -6,14 +6,12 @@ import (
 	// _ "net/http/pprof"
 	"sync"
 
+	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/cybriq/p9/pkg/chaincfg"
-	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pod/config"
 	"github.com/cybriq/p9/pod/state"
-
-	"github.com/cybriq/p9/pkg/interrupt"
 
 	"github.com/cybriq/p9/pkg/chainclient"
 )
@@ -59,7 +57,7 @@ func Main(cx *state.State) (e error) {
 			}
 		}()
 	}
-	interrupt.AddHandler(cx.WalletKill.Q)
+	proc.AddHandler(cx.WalletKill.Q)
 	select {
 	case <-cx.WalletKill.Wait():
 		D.Ln("wallet killswitch activated")
@@ -74,7 +72,7 @@ func Main(cx *state.State) (e error) {
 	case <-cx.KillAll.Wait():
 		D.Ln("killall")
 		cx.WalletKill.Q()
-	case <-interrupt.HandlersDone.Wait():
+	case <-proc.HandlersDone.Wait():
 	}
 	I.Ln("wallet shutdown complete")
 	cx.WaitDone()
@@ -115,7 +113,7 @@ func LoadWallet(
 	// Add interrupt handlers to shutdown the various process components before
 	// exiting. Interrupt handlers run in LIFO order, so the wallet (which should be
 	// closed last) is added first.
-	interrupt.AddHandler(
+	proc.AddHandler(
 		func() {
 			D.Ln("wallet.CtlMain interrupt")
 			e := loader.UnloadWallet()
@@ -125,7 +123,7 @@ func LoadWallet(
 		},
 	)
 	if legacyServer != nil {
-		interrupt.AddHandler(
+		proc.AddHandler(
 			func() {
 				D.Ln("stopping wallet RPC server")
 				legacyServer.Stop()
@@ -138,7 +136,7 @@ func LoadWallet(
 		case <-cx.KillAll.Wait():
 		case <-legacyServer.RequestProcessShutdownChan().Wait():
 		}
-		interrupt.Request()
+		proc.Request()
 	}()
 	return
 }
@@ -154,7 +152,7 @@ func rpcClientConnectLoop(
 	cx *state.State, legacyServer *Server,
 	loader *Loader,
 ) {
-	T.Ln("rpcClientConnectLoop", log.Caller("which was started at:", 2))
+	T.Ln("rpcClientConnectLoop", proc.Caller("which was started at:", 2))
 	// var certs []byte
 	// if !cx.PodConfig.UseSPV {
 	certs := cx.Config.ReadCAFile()

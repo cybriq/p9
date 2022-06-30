@@ -5,7 +5,7 @@ import (
 
 	"github.com/atotto/clipboard"
 	l "github.com/cybriq/p9/pkg/gel/gio/layout"
-	"github.com/cybriq/p9/pkg/interrupt"
+	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/cybriq/p9/pkg/gel/icons"
@@ -34,7 +34,7 @@ func main() {
 		Open().
 		Run(
 			rootWidget, func() {
-				interrupt.Request()
+				proc.Request()
 				quit.Q()
 			}, quit,
 		); E.Chk(e) {

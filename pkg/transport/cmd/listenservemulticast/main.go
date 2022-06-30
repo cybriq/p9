@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/cybriq/p9/pkg/log"
+	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -22,7 +22,7 @@ var (
 )
 
 func main() {
-	log.SetLogLevel("trace")
+	proc.SetLogLevel("trace")
 	D.Ln("starting test")
 	quit := qu.T()
 	var c *transport.Channel
