@@ -2,7 +2,7 @@
 cd $HOME
 wget -c https://go.dev/dl/go1.18.3.linux-amd64.tar.gz
 sudo rm -rf go
-tar xvf go1.16.2.linux-amd64.tar.gz
+tar xvf go1.18.3.linux-amd64.tar.gz
 cat >> $HOME/.bashrc <<- EOM
 export GOPATH=\$HOME
 export GOROOT=\$GOPATH/go
