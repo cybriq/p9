@@ -9,8 +9,7 @@ import (
 
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/chaincfg"
-	"github.com/cybriq/p9/pkg/proc"
-
+	"github.com/cybriq/p9/pkg/helpers"
 	"github.com/cybriq/p9/pkg/snacl"
 	"github.com/cybriq/p9/pkg/util/hdkeychain"
 	"github.com/cybriq/p9/pkg/util/zero"
@@ -594,7 +593,8 @@ func (m *Manager) AddrAccount(
 	defer m.mtx.RUnlock()
 	var e error
 	for _, scopedMgr := range m.scopedManagers {
-		if _, e = scopedMgr.Address(ns, address); e != nil /*T.Chk(e)*/ {
+		if _, e = scopedMgr.Address(ns,
+			address); e != nil /*T.Chk(e)*/ {
 			// D.Ln(address)
 			continue
 		}
@@ -660,7 +660,8 @@ func (m *Manager) ForEachAccountAddress(
 	m.mtx.RLock()
 	defer m.mtx.RUnlock()
 	for _, scopedMgr := range m.scopedManagers {
-		if e = scopedMgr.ForEachAccountAddress(ns, account, fn); E.Chk(e) {
+		if e = scopedMgr.ForEachAccountAddress(ns, account,
+			fn); E.Chk(e) {
 			return e
 		}
 	}
@@ -770,7 +771,8 @@ func (m *Manager) ChangePassphrase(
 		if m.locked {
 			newMasterKey.Zero()
 		} else {
-			saltedPassphrase := append(passphraseSalt[:], newPassphrase...)
+			saltedPassphrase := append(passphraseSalt[:],
+				newPassphrase...)
 			hashedPassphrase = sha512.Sum512(saltedPassphrase)
 			zero.Bytes(saltedPassphrase)
 		}
@@ -1253,7 +1255,7 @@ func loadManager(
 	ns walletdb.ReadBucket, pubPassphrase []byte,
 	chainParams *chaincfg.Params,
 ) (*Manager, error) {
-	D.Ln("loading address manager", proc.Caller("from", 1))
+	D.Ln("loading address manager", helpers.Caller("from", 1))
 	// Verify the version is neither too old or too new.
 	var version uint32
 	var e error

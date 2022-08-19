@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/cybriq/p9/pkg/helpers"
 	"github.com/cybriq/p9/pkg/proc"
 	"github.com/tyler-smith/go-bip39"
 
@@ -205,13 +206,15 @@ func (wg *WalletGUI) Run() (e error) {
 	wg.ReceivePage = wg.GetReceivePage()
 	wg.SendPage = wg.GetSendPage()
 	wg.MainApp = wg.GetAppWidget()
-	wg.State = GetNewState(wg.cx.ActiveNet, wg.MainApp.ActivePageGetAtomic())
+	wg.State = GetNewState(wg.cx.ActiveNet,
+		wg.MainApp.ActivePageGetAtomic())
 	wg.unlockPage = wg.getWalletUnlockAppWidget()
 	wg.loadingPage = wg.getLoadingPage()
 	wg.node.Start()
 	if !apputil.FileExists(wg.cx.Config.WalletFile.V()) {
 		W.Ln(
-			"wallet file does not exist", wg.cx.Config.WalletFile.V(),
+			"wallet file does not exist",
+			wg.cx.Config.WalletFile.V(),
 			"- opening new wallet creation interface",
 		)
 	} else {
@@ -280,7 +283,8 @@ func (wg *WalletGUI) Run() (e error) {
 		Run(
 			func(gtx l.Context) l.Dimensions {
 				return wg.Fill(
-					"DocBg", l.Center, 0, 0, func(gtx l.Context) l.Dimensions {
+					"DocBg", l.Center, 0, 0,
+					func(gtx l.Context) l.Dimensions {
 						return gel.If(
 							*wg.noWallet,
 							wg.CreateWalletPage,
@@ -392,7 +396,8 @@ func (wg *WalletGUI) GetInputs() Inputs {
 			func(string) {},
 		),
 		"walletWords": wg.Input(
-			/*wg.createWords*/ "", "wallet word seed", "DocText", "DocBg",
+			/*wg.createWords*/ "", "wallet word seed", "DocText",
+			"DocBg",
 			"PanelBg", func(string) {},
 			func(seedWords string) {
 				wg.createMatch = seedWords
@@ -400,7 +405,8 @@ func (wg *WalletGUI) GetInputs() Inputs {
 			},
 		),
 		"walletRestore": wg.Input(
-			/*wg.createWords*/ "", "enter seed to restore", "DocText", "DocBg",
+			/*wg.createWords*/ "", "enter seed to restore",
+			"DocText", "DocBg",
 			"PanelBg", func(string) {},
 			func(seedWords string) {
 				var e error
@@ -503,7 +509,8 @@ func (wg *WalletGUI) GetIncDecs() IncDecMap {
 			SetCurrent(300).
 			ChangeHook(
 				func(n int) {
-					D.Ln("idle timeout", time.Duration(n)*time.Second)
+					D.Ln("idle timeout",
+						time.Duration(n)*time.Second)
 				},
 			),
 	}
@@ -594,7 +601,7 @@ var shuttingDown = false
 
 func (wg *WalletGUI) gracefulShutdown() {
 	if shuttingDown {
-		D.Ln(proc.Caller("already called gracefulShutdown", 1))
+		D.Ln(helpers.Caller("already called gracefulShutdown", 1))
 		return
 	} else {
 		shuttingDown = true
@@ -707,7 +714,8 @@ func processAdvtMsg(
 	} else {
 		// update last seen time for peerUUID for garbage collection of stale disconnected
 		// nodes
-		D.Ln("other node seen again", peerUUID, wg.otherNodes[peerUUID].addr)
+		D.Ln("other node seen again", peerUUID,
+			wg.otherNodes[peerUUID].addr)
 		wg.otherNodes[peerUUID].Time = time.Now()
 	}
 	// I.S(wg.otherNodes)

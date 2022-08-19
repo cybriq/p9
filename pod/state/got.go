@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/btcsuite/go-socks/socks"
+	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/qu"
 	"go.uber.org/atomic"
@@ -40,7 +41,7 @@ func GetNew(
 		// return
 		panic(e)
 	}
-	proc.SetLogLevel(config.LogLevel.V())
+	log.SetLogLevel(config.LogLevel.V())
 	chainClientReady := qu.T()
 	rand.Seed(time.Now().UnixNano())
 	rand.Seed(rand.Int63())
@@ -89,7 +90,7 @@ func GetNew(
 	); E.Chk(e) {
 	}
 	D.Ln("enable log file writing")
-	if e = proc.SetLogWriteToFile(
+	if e = log.SetLogWriteToFile(
 		s.Config.LogDir.V(),
 		s.Config.RunningCommand.Name,
 	); D.Chk(e) {

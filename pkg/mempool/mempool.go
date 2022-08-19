@@ -9,12 +9,11 @@ import (
 	"time"
 
 	"github.com/cybriq/p9/pkg/amt"
-	"github.com/cybriq/p9/pkg/chaincfg"
-	"github.com/cybriq/p9/pkg/constant"
-	"github.com/cybriq/p9/pkg/proc"
-
 	"github.com/cybriq/p9/pkg/blockchain"
+	"github.com/cybriq/p9/pkg/chaincfg"
 	"github.com/cybriq/p9/pkg/chainhash"
+	"github.com/cybriq/p9/pkg/constant"
+	"github.com/cybriq/p9/pkg/helpers"
 	"github.com/cybriq/p9/pkg/indexers"
 	"github.com/cybriq/p9/pkg/mining"
 	"github.com/cybriq/p9/pkg/txscript"
@@ -215,7 +214,8 @@ func (mp *TxPool) MaybeAcceptTransaction(
 ) (hashes []*chainhash.Hash, txD *TxDesc, e error) {
 	// Protect concurrent access.
 	mp.mtx.Lock()
-	hashes, txD, e = mp.maybeAcceptTransaction(b, tx, isNew, rateLimit, true)
+	hashes, txD, e = mp.maybeAcceptTransaction(b, tx, isNew, rateLimit,
+		true)
 	mp.mtx.Unlock()
 	return hashes, txD, e
 }
@@ -288,7 +288,8 @@ func (mp *TxPool) ProcessTransaction(
 		// really always the case.
 		str := fmt.Sprintf(
 			"orphan transaction %v references outputs of"+
-				" unknown or fully-spent transaction %v", tx.Hash(),
+				" unknown or fully-spent transaction %v",
+			tx.Hash(),
 			missingParents[0],
 		)
 		return nil, txRuleError(wire.RejectDuplicate, str)
@@ -303,7 +304,8 @@ func (mp *TxPool) ProcessTransaction(
 func (mp *TxPool) RawMempoolVerbose() map[string]*btcjson.GetRawMempoolVerboseResult {
 	mp.mtx.RLock()
 	defer mp.mtx.RUnlock()
-	result := make(map[string]*btcjson.GetRawMempoolVerboseResult, len(mp.pool))
+	result := make(map[string]*btcjson.GetRawMempoolVerboseResult,
+		len(mp.pool))
 	bestHeight := mp.cfg.BestHeight()
 	for _, desc := range mp.pool {
 		// Calculate the current priority based on the inputs to the transaction. Use zero if one or more of the input
@@ -446,7 +448,8 @@ func (mp *TxPool) addOrphan(tx *util.Tx, tag Tag) {
 		mp.orphansByPrev[txIn.PreviousOutPoint][*tx.Hash()] = tx
 	}
 	D.Ln(
-		"stored orphan transaction", tx.Hash(), "(total:", len(mp.orphans),
+		"stored orphan transaction", tx.Hash(), "(total:",
+		len(mp.orphans),
 		")",
 	)
 }
@@ -467,7 +470,8 @@ func (mp *TxPool) addTransaction(
 			Fee:      fee,
 			FeePerKB: fee * 1000 / GetTxVirtualSize(tx),
 		},
-		StartingPriority: mining.CalcPriority(tx.MsgTx(), utxoView, height),
+		StartingPriority: mining.CalcPriority(tx.MsgTx(), utxoView,
+			height),
 	}
 	mp.pool[*tx.Hash()] = txD
 	for _, txIn := range tx.MsgTx().TxIn {
@@ -581,7 +585,9 @@ func (mp *TxPool) limitNumOrphans() (e error) {
 		if numExpired := origNumOrphans - numOrphans; numExpired > 0 {
 			D.F(
 				"Expired %d %s (remaining: %d)",
-				numExpired, proc.PickNoun(numExpired, "orphan", "orphans"),
+				numExpired,
+				helpers.PickNoun(numExpired, "orphan",
+					"orphans"),
 				numOrphans,
 			)
 		}
@@ -821,7 +827,8 @@ func (mp *TxPool) maybeAcceptTransaction(
 					"priority (%v <= %v)", txHash,
 				currentPriority, mining.MinHighPriority,
 			)
-			return nil, nil, txRuleError(wire.RejectInsufficientFee, str)
+			return nil, nil, txRuleError(wire.RejectInsufficientFee,
+				str)
 		}
 	}
 	// Free-to-relay transactions are rate limited here to prevent penny -flooding with tiny transactions as a form of
@@ -838,9 +845,11 @@ func (mp *TxPool) maybeAcceptTransaction(
 		if mp.pennyTotal >= mp.cfg.Policy.FreeTxRelayLimit*10*1000 {
 			str := fmt.Sprintf(
 				"transaction %v has been rejected "+
-					"by the rate limiter due to low fees", txHash,
+					"by the rate limiter due to low fees",
+				txHash,
 			)
-			return nil, nil, txRuleError(wire.RejectInsufficientFee, str)
+			return nil, nil, txRuleError(wire.RejectInsufficientFee,
+				str)
 		}
 		oldTotal := mp.pennyTotal
 		mp.pennyTotal += float64(serializedSize)

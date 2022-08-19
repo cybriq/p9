@@ -9,8 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cybriq/p9/pkg/proc"
-
+	"github.com/cybriq/p9/pkg/helpers"
 	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/cybriq/p9/pkg/fec"
@@ -91,7 +90,7 @@ func (c *Channel) Send(magic []byte, nonce []byte, data []byte) (
 
 // SendMany sends a BufIter of shards as produced by GetShards
 func (c *Channel) SendMany(magic []byte, b [][]byte) (e error) {
-	D.Ln("magic", string(magic), proc.Caller("sending from", 1))
+	D.Ln("magic", string(magic), helpers.Caller("sending from", 1))
 	var nonce []byte
 	if nonce, e = GetNonce(c.sendCiph); E.Chk(e) {
 	} else {
@@ -160,7 +159,8 @@ func NewUnicastChannel(
 	if channel.Sender, e = NewSender(sender, maxDatagramSize); E.Chk(e) {
 	}
 	D.Ln(
-		"starting unicast multicast:", channel.Creator, sender, receiver,
+		"starting unicast multicast:", channel.Creator, sender,
+		receiver,
 		magics,
 	)
 	return
@@ -186,7 +186,8 @@ func NewSender(address string, maxDatagramSize int) (
 // Listen binds to the UDP Address and port given and writes packets received
 // from that Address to a buffer which is passed to a handler
 func Listen(
-	address string, channel *Channel, maxDatagramSize int, handlers Handlers,
+	address string, channel *Channel, maxDatagramSize int,
+	handlers Handlers,
 	quit qu.C,
 ) (conn *net.UDPConn, e error) {
 	var addr *net.UDPAddr
@@ -209,7 +210,8 @@ func Listen(
 // on a multicast address and specified port. The handlers define the messages
 // that will be processed and any other messages are ignored
 func NewBroadcastChannel(
-	creator string, ctx interface{}, key []byte, port int, maxDatagramSize int,
+	creator string, ctx interface{}, key []byte, port int,
+	maxDatagramSize int,
 	handlers Handlers,
 	quit qu.C,
 ) (channel *Channel, e error) {
@@ -282,7 +284,8 @@ func ListenBroadcast(
 }
 
 func handleNetworkError(address string, e error) (result int) {
-	if len(strings.Split(e.Error(), "use of closed network connection")) >= 2 {
+	if len(strings.Split(e.Error(),
+		"use of closed network connection")) >= 2 {
 		D.Ln("connection closed", address)
 		result = closed
 	} else {
@@ -355,7 +358,8 @@ out:
 						// D.F("received packet with magic %s from %s len %d bytes", magic, src.String(), len(cipherText))
 						bn.Decoded = true
 						if e = handler(
-							channel.context, src, address,
+							channel.context, src,
+							address,
 							cipherText,
 						); E.Chk(e) {
 							continue
@@ -369,7 +373,8 @@ out:
 							// superseded messages can be deleted from the buffers, we don't add more data
 							// for the already decoded. todo: this will be changed to track stats for the
 							// puncture rate and redundancy scaling
-							delete(channel.buffers, i)
+							delete(channel.buffers,
+								i)
 						}
 					}
 				}

@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pkg/qu"
 )
 
@@ -35,7 +36,7 @@ func Consume(
 			n, e = w.StdConn.Read(data)
 			if n == 0 {
 				F.Ln("read zero from pipe", args)
-				LogChanDisabled.Store(true)
+				log.LogChanDisabled.Store(true)
 				break out
 			}
 			if E.Chk(e) && e != io.EOF {

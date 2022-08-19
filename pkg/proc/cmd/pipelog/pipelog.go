@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pkg/proc"
 
 	"os"
@@ -11,7 +12,7 @@ import (
 
 func main() {
 	// var e error
-	proc.SetLogLevel("trace")
+	log.SetLogLevel("trace")
 	// command := "pod -D test0 -n testnet -l trace --solo --lan --pipelog node"
 	quit := qu.T()
 	// splitted := strings.Split(command, " ")

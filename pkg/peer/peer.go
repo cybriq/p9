@@ -13,8 +13,7 @@ import (
 	"time"
 
 	"github.com/cybriq/p9/pkg/chaincfg"
-	"github.com/cybriq/p9/pkg/proc"
-
+	"github.com/cybriq/p9/pkg/helpers"
 	"github.com/cybriq/p9/pkg/qu"
 
 	"github.com/btcsuite/go-socks/socks"
@@ -397,7 +396,8 @@ type Peer struct {
 //
 // This function is safe for concurrent access.
 func (p *Peer) String() string {
-	return fmt.Sprintf("%s (%s)", p.addr, proc.DirectionString(p.inbound))
+	return fmt.Sprintf("%s (%s)", p.addr,
+		helpers.DirectionString(p.inbound))
 }
 
 // UpdateLastBlockHeight updates the last known block for the peer.
@@ -789,7 +789,8 @@ func (p *Peer) PushGetHeadersMsg(
 	p.prevGetHdrsMtx.Unlock()
 	if isDuplicate {
 		T.Ln(
-			"Filtering duplicate [getheaders] with begin hash", beginHash,
+			"Filtering duplicate [getheaders] with begin hash",
+			beginHash,
 		)
 		return nil
 	}
@@ -831,7 +832,8 @@ func (p *Peer) PushRejectMsg(
 	if command == wire.CmdTx || command == wire.CmdBlock {
 		if hash == nil {
 			W.Ln(
-				"Sending a reject message for command type", command,
+				"Sending a reject message for command type",
+				command,
 				"which should have specified a hash but does not",
 			)
 			hash = &zeroHash
@@ -963,7 +965,8 @@ func (p *Peer) writeMessage(
 					summary = " (" + summary + ")"
 				}
 				o := fmt.Sprintf(
-					"Sending %v%s to %s", msg.Command(), summary,
+					"Sending %v%s to %s", msg.Command(),
+					summary,
 					p,
 				)
 				// o += spew.Sdump(msg)
@@ -1115,9 +1118,11 @@ out:
 					fallthrough
 				case wire.CmdNotFound:
 					delete(pendingResponses, wire.CmdBlock)
-					delete(pendingResponses, wire.CmdMerkleBlock)
+					delete(pendingResponses,
+						wire.CmdMerkleBlock)
 					delete(pendingResponses, wire.CmdTx)
-					delete(pendingResponses, wire.CmdNotFound)
+					delete(pendingResponses,
+						wire.CmdNotFound)
 				default:
 					delete(pendingResponses, msgCmd)
 				}
@@ -1145,7 +1150,8 @@ out:
 				handlerActive = false
 			default:
 				W.Ln(
-					"Unsupported message command", msg.command,
+					"Unsupported message command",
+					msg.command,
 				)
 			}
 		case <-stallTicker.C:
@@ -1205,7 +1211,8 @@ func (p *Peer) inHandler() {
 	// The timer is stopped when a new message is received and reset after it is processed.
 	idleTimer := time.AfterFunc(
 		idleTimeout, func() {
-			W.F("peer %s no answer for %s -- disconnecting", p, idleTimeout)
+			W.F("peer %s no answer for %s -- disconnecting", p,
+				idleTimeout)
 			p.Disconnect()
 		},
 	)
@@ -1227,7 +1234,8 @@ out:
 			// Only log the error and send reject message if the local peer is not forcibly disconnecting and the remote
 			// peer has not disconnected.
 			if p.shouldHandleReadError(e) {
-				errMsg := fmt.Sprintf("Can't read message from %s: %v", p, e)
+				errMsg := fmt.Sprintf("Can't read message from %s: %v",
+					p, e)
 				if e != io.ErrUnexpectedEOF {
 					E.Ln(errMsg)
 				}
@@ -1237,7 +1245,8 @@ out:
 				// NOTE: Ideally this would include the command in the header if at least that much of the message was
 				// valid, but that is not currently exposed by wire, so just used malformed for the command.
 				p.PushRejectMsg(
-					"malformed", wire.RejectMalformed, errMsg, nil,
+					"malformed", wire.RejectMalformed,
+					errMsg, nil,
 					true,
 				)
 			}
@@ -1571,12 +1580,14 @@ out:
 					p.statsMtx.Unlock()
 				}
 			}
-			p.stallControl <- stallControlMsg{sccSendMessage, msg.msg}
+			p.stallControl <- stallControlMsg{sccSendMessage,
+				msg.msg}
 			e := p.writeMessage(msg.msg, msg.encoding)
 			if e != nil {
 				p.Disconnect()
 				if p.shouldLogWriteError(e) {
-					E.F("failed to send message to %s: %v", p, e)
+					E.F("failed to send message to %s: %v",
+						p, e)
 				}
 				if msg.doneChan != nil {
 					msg.doneChan <- struct{}{}
@@ -1659,7 +1670,8 @@ func (p *Peer) QueueMessageWithEncoding(
 		}
 		return
 	}
-	p.outputQueue <- outMsg{msg: msg, encoding: encoding, doneChan: doneChan}
+	p.outputQueue <- outMsg{msg: msg, encoding: encoding,
+		doneChan: doneChan}
 }
 
 // QueueInventory adds the passed inventory to the inventory send queue which might not be sent right away, rather it is
@@ -1693,7 +1705,7 @@ func (p *Peer) Disconnect() {
 	if atomic.AddInt32(&p.disconnect, 1) != 1 {
 		return
 	}
-	T.Ln("disconnecting", p, proc.Caller("from", 1))
+	T.Ln("disconnecting", p, helpers.Caller("from", 1))
 	if atomic.LoadInt32(&p.connected) != 0 {
 		_ = p.conn.Close()
 	}
@@ -1946,7 +1958,8 @@ func (p *Peer) start(msgChan chan *wire.MsgVersion) (e error) {
 func (p *Peer) AssociateConnection(conn net.Conn) (msgChan chan *wire.MsgVersion) {
 	// Already connected?
 	if !atomic.CompareAndSwapInt32(&p.connected, 0, 1) {
-		I.Ln("already connected to peer", conn.RemoteAddr(), conn.LocalAddr())
+		I.Ln("already connected to peer", conn.RemoteAddr(),
+			conn.LocalAddr())
 		return
 	}
 	p.conn = conn
@@ -1971,7 +1984,8 @@ func (p *Peer) AssociateConnection(conn net.Conn) (msgChan chan *wire.MsgVersion
 			D.F("cannot start peer %v: %v", p, e)
 			p.Disconnect()
 		}
-		I.Ln("finished starting peer", conn.RemoteAddr(), conn.LocalAddr())
+		I.Ln("finished starting peer", conn.RemoteAddr(),
+			conn.LocalAddr())
 	}()
 	I.Ln(
 		"returning meanwhile starting peer", conn.RemoteAddr(),
@@ -2003,10 +2017,11 @@ func newPeerBase(origCfg *Config, inbound bool) *Peer {
 		cfg.TrickleInterval = DefaultTrickleInterval
 	}
 	p := Peer{
-		inbound:         inbound,
-		wireEncoding:    wire.BaseEncoding,
-		knownInventory:  newMruInventoryMap(maxKnownInventory),
-		stallControl:    make(chan stallControlMsg, 1), // nonblocking sync
+		inbound:        inbound,
+		wireEncoding:   wire.BaseEncoding,
+		knownInventory: newMruInventoryMap(maxKnownInventory),
+		stallControl: make(chan stallControlMsg,
+			1), // nonblocking sync
 		outputQueue:     make(chan outMsg, outputBufferSize),
 		sendQueue:       make(chan outMsg, 1), // nonblocking sync
 		sendDoneQueue:   qu.Ts(1),             // nonblocking sync
@@ -2048,7 +2063,8 @@ func NewOutboundPeer(cfg *Config, addr string) (*Peer, error) {
 		}
 		p.na = na
 	} else {
-		p.na = wire.NewNetAddressIPPort(net.ParseIP(host), uint16(port), 0)
+		p.na = wire.NewNetAddressIPPort(net.ParseIP(host), uint16(port),
+			0)
 	}
 	return p, nil
 }

@@ -16,6 +16,7 @@ import (
 	block2 "github.com/cybriq/p9/pkg/block"
 	"github.com/cybriq/p9/pkg/btcaddr"
 	"github.com/cybriq/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/helpers"
 	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/qu"
@@ -483,7 +484,8 @@ func HandleGetAddedNodeInfo(
 		}
 		var ipList []string
 		switch {
-		case net.ParseIP(host) != nil, strings.HasSuffix(host, ".onion"):
+		case net.ParseIP(host) != nil, strings.HasSuffix(host,
+			".onion"):
 			ipList = make([]string, 1)
 			ipList[0] = host
 		default:
@@ -500,13 +502,14 @@ func HandleGetAddedNodeInfo(
 			}
 		}
 		// Add the addresses and connection info to the result.
-		addrs := make([]btcjson.GetAddedNodeInfoResultAddr, 0, len(ipList))
+		addrs := make([]btcjson.GetAddedNodeInfoResultAddr, 0,
+			len(ipList))
 		for _, ip := range ipList {
 			var addr btcjson.GetAddedNodeInfoResultAddr
 			addr.Address = ip
 			addr.Connected = "false"
 			if ip == host && peer.Connected() {
-				addr.Connected = proc.DirectionString(peer.Inbound())
+				addr.Connected = helpers.DirectionString(peer.Inbound())
 			}
 			addrs = append(addrs, addr)
 		}
@@ -673,9 +676,10 @@ func HandleGetBlockChainInfo(
 		Blocks:        chainSnapshot.Height,
 		Headers:       chainSnapshot.Height,
 		BestBlockHash: chainSnapshot.Hash.String(),
-		Difficulty:    GetDifficultyRatio(chainSnapshot.Bits, params, 2),
-		MedianTime:    chainSnapshot.MedianTime.Unix(),
-		Pruned:        false,
+		Difficulty: GetDifficultyRatio(chainSnapshot.Bits, params,
+			2),
+		MedianTime: chainSnapshot.MedianTime.Unix(),
+		Pruned:     false,
 		// Bip9SoftForks: make(map[string]*btcjson.Bip9SoftForkDescription),
 	}
 	// Next, populate the response with information describing the current status of soft-forks deployed via the
@@ -1047,7 +1051,8 @@ func HandleGetBlockTemplateProposal(
 	}
 	if e := s.Cfg.Chain.CheckConnectBlockTemplate(block); E.Chk(e) {
 		if _, ok := e.(blockchain.RuleError); !ok {
-			errStr := fmt.Sprintf("failed to process block proposal: %v", e)
+			errStr := fmt.Sprintf("failed to process block proposal: %v",
+				e)
 			E.Ln(errStr)
 
 			return nil, &btcjson.RPCError{
@@ -1216,7 +1221,8 @@ func HandleGetCFilterHeader(
 	if e != nil {
 		return nil, DecodeHexError(c.Hash)
 	}
-	headerBytes, e := s.Cfg.CfIndex.FilterHeaderByBlockHash(hash, c.FilterType)
+	headerBytes, e := s.Cfg.CfIndex.FilterHeaderByBlockHash(hash,
+		c.FilterType)
 	if len(headerBytes) > 0 {
 		D.Ln("found header of committed filter for", hash)
 
@@ -1441,7 +1447,8 @@ func HandleGetInfo(
 					lastbitsSHA256D = v.Header().Bits
 					dSHA256D = GetDifficultyRatio(
 						lastbitsSHA256D,
-						s.Cfg.ChainParams, v.Header().Version,
+						s.Cfg.ChainParams,
+						v.Header().Version,
 					)
 				}
 			case fork.Scrypt:
@@ -1450,7 +1457,8 @@ func HandleGetInfo(
 					lastbitsScrypt = v.Header().Bits
 					dScrypt = GetDifficultyRatio(
 						lastbitsScrypt,
-						s.Cfg.ChainParams, v.Header().Version,
+						s.Cfg.ChainParams,
+						v.Header().Version,
 					)
 				}
 			default:
@@ -1496,7 +1504,8 @@ func HandleGetInfo(
 					lastbitsScrypt = v.Header().Bits
 					dScrypt = GetDifficultyRatio(
 						lastbitsScrypt,
-						s.Cfg.ChainParams, v.Header().Version,
+						s.Cfg.ChainParams,
+						v.Header().Version,
 					)
 				}
 			case fork.SHA256d:
@@ -1505,7 +1514,8 @@ func HandleGetInfo(
 					lastbitsSHA256D = v.Header().Bits
 					dSHA256D = GetDifficultyRatio(
 						lastbitsSHA256D,
-						s.Cfg.ChainParams, v.Header().Version,
+						s.Cfg.ChainParams,
+						v.Header().Version,
 					)
 				}
 			default:
@@ -1604,7 +1614,8 @@ func HandleGetMiningInfo(
 					lastbitsSHA256D = v.Header().Bits
 					dSHA256D = GetDifficultyRatio(
 						lastbitsSHA256D,
-						s.Cfg.ChainParams, v.Header().Version,
+						s.Cfg.ChainParams,
+						v.Header().Version,
 					)
 				}
 			case fork.Scrypt:
@@ -1613,7 +1624,8 @@ func HandleGetMiningInfo(
 					lastbitsScrypt = v.Header().Bits
 					dScrypt = GetDifficultyRatio(
 						lastbitsScrypt,
-						s.Cfg.ChainParams, v.Header().Version,
+						s.Cfg.ChainParams,
+						v.Header().Version,
 					)
 				}
 			default:
@@ -1656,7 +1668,8 @@ func HandleGetMiningInfo(
 					lastbitsScrypt = v.Header().Bits
 					dScrypt = GetDifficultyRatio(
 						lastbitsScrypt,
-						s.Cfg.ChainParams, v.Header().Version,
+						s.Cfg.ChainParams,
+						v.Header().Version,
 					)
 				}
 			case fork.SHA256d:
@@ -1665,7 +1678,8 @@ func HandleGetMiningInfo(
 					lastbitsSHA256D = v.Header().Bits
 					dSHA256D = GetDifficultyRatio(
 						lastbitsSHA256D,
-						s.Cfg.ChainParams, v.Header().Version,
+						s.Cfg.ChainParams,
+						v.Header().Version,
 					)
 				}
 			default:
@@ -1848,10 +1862,11 @@ func HandleGetPeerInfo(s *Server, cmd interface{}, closeChan qu.C) (
 				p.ToPeer().LocalAddr().String()
 		}
 		info := &btcjson.GetPeerInfoResult{
-			ID:             statsSnap.ID,
-			Addr:           addr,
-			AddrLocal:      addrLocal,
-			Services:       fmt.Sprintf("%08d", uint64(statsSnap.Services)),
+			ID:        statsSnap.ID,
+			Addr:      addr,
+			AddrLocal: addrLocal,
+			Services: fmt.Sprintf("%08d",
+				uint64(statsSnap.Services)),
 			RelayTxes:      !p.IsTxRelayDisabled(),
 			LastSend:       statsSnap.LastSend.Unix(),
 			LastRecv:       statsSnap.LastRecv.Unix(),
@@ -2216,11 +2231,13 @@ func HandleNode(s *Server, cmd interface{}, closeChan qu.C) (
 	case "disconnect":
 		// If we have a valid uint disconnect by node id. Otherwise, attempt to disconnect by address, returning an
 		// error if a valid IP address is not supplied.
-		if nodeID, errN = strconv.ParseUint(c.Target, 10, 32); errN == nil {
+		if nodeID, errN = strconv.ParseUint(c.Target, 10,
+			32); errN == nil {
 			e = s.Cfg.ConnMgr.DisconnectByID(int32(nodeID))
 		} else {
 			if _, _, errP := net.SplitHostPort(c.Target); errP == nil || net.ParseIP(c.Target) != nil {
-				addr = NormalizeAddress(c.Target, params.DefaultPort)
+				addr = NormalizeAddress(c.Target,
+					params.DefaultPort)
 				e = s.Cfg.ConnMgr.DisconnectByAddr(addr)
 			} else {
 				return nil, &btcjson.RPCError{
@@ -2238,11 +2255,13 @@ func HandleNode(s *Server, cmd interface{}, closeChan qu.C) (
 	case "remove":
 		// If we have a valid uint disconnect by node id. Otherwise, attempt to disconnect by address, returning an
 		// error if a valid IP address is not supplied.
-		if nodeID, errN = strconv.ParseUint(c.Target, 10, 32); errN == nil {
+		if nodeID, errN = strconv.ParseUint(c.Target, 10,
+			32); errN == nil {
 			e = s.Cfg.ConnMgr.RemoveByID(int32(nodeID))
 		} else {
 			if _, _, errP := net.SplitHostPort(c.Target); errP == nil || net.ParseIP(c.Target) != nil {
-				addr = NormalizeAddress(c.Target, params.DefaultPort)
+				addr = NormalizeAddress(c.Target,
+					params.DefaultPort)
 				e = s.Cfg.ConnMgr.RemoveByAddr(addr)
 			} else {
 				return nil, &btcjson.RPCError{
@@ -2297,7 +2316,8 @@ func HandlePing(s *Server, cmd interface{}, closeChan qu.C) (
 	nonce, e := wire.RandomUint64()
 	if e != nil {
 		return nil, InternalRPCError(
-			"Not sending ping - failed to generate nonce: "+e.Error(), "",
+			"Not sending ping - failed to generate nonce: "+e.Error(),
+			"",
 		)
 	}
 	s.Cfg.ConnMgr.BroadcastMessage(wire.NewMsgPing(nonce))
@@ -2428,7 +2448,8 @@ func HandleSearchRawTransactions(
 		// transaction struct is left nil.
 		mpTxns, mpSkipped := FetchMempoolTxnsForAddress(
 			s, addr,
-			uint32(numToSkip)-numSkipped, uint32(numRequested-len(addressTxns)),
+			uint32(numToSkip)-numSkipped,
+			uint32(numRequested-len(addressTxns)),
 		)
 		numSkipped += mpSkipped
 		for _, tx := range mpTxns {
@@ -2594,7 +2615,8 @@ func HandleSendRawTransaction(
 
 		} else {
 			E.F(
-				"failed to process transaction %v: %v", tx.Hash(), e,
+				"failed to process transaction %v: %v",
+				tx.Hash(), e,
 			)
 		}
 		return nil, &btcjson.RPCError{

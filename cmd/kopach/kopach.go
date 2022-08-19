@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/cybriq/gotiny"
+	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pkg/proc"
 
 	"github.com/cybriq/p9/pkg/chainrpc/p2padvt"
@@ -246,7 +247,7 @@ func Run(cx *state.State) (e error) {
 			}
 		}
 		D.Ln("finished kopach miner work loop")
-		proc.LogChanDisabled.Store(true)
+		log.LogChanDisabled.Store(true)
 	}()
 	D.Ln("listening on", transport.MulticastAddress)
 	<-w.quit

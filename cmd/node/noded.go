@@ -36,6 +36,7 @@ import (
 	"path/filepath"
 	"runtime/pprof"
 
+	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -237,7 +238,7 @@ func NodeMain(cx *state.State) (e error) {
 		}
 		server.WaitForShutdown()
 		I.Ln("server shutdown complete")
-		proc.LogChanDisabled.Store(true)
+		log.LogChanDisabled.Store(true)
 		cx.WaitDone()
 		cx.KillAll.Q()
 		cx.NodeKill.Q()

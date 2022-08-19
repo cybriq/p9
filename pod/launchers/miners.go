@@ -10,6 +10,7 @@ import (
 
 	"github.com/cybriq/p9/cmd/kopach"
 	"github.com/cybriq/p9/cmd/kopach/worker"
+	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pod/state"
 
@@ -52,7 +53,7 @@ func Worker(ifc interface{}) (e error) {
 		}
 	}
 	if len(os.Args) > 2 {
-		proc.SetLogLevel(os.Args[4])
+		log.SetLogLevel(os.Args[4])
 	}
 	D.Ln("miner worker starting")
 	w, conn := worker.New(

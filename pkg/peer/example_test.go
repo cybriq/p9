@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/cybriq/p9/pkg/proc"
+	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/version"
 
 	"github.com/cybriq/p9/pkg/qu"
@@ -15,8 +15,8 @@ import (
 	"github.com/cybriq/p9/pkg/wire"
 )
 
-var subsystem = proc.AddLoggerSubsystem(version.PathBase)
-var F, E, W, I, D, T proc.LevelPrinter = proc.GetLogPrinterSet(subsystem)
+var subsystem = log.AddLoggerSubsystem(version.PathBase)
+var F, E, W, I, D, T log.LevelPrinter = log.GetLogPrinterSet(subsystem)
 
 // mockRemotePeer creates a basic inbound peer listening on the simnet port for use with Example_peerConnection. It does
 // not return until the listner is active.

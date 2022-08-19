@@ -8,8 +8,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/cybriq/p9/pkg/proc"
-
+	"github.com/cybriq/p9/pkg/helpers"
 	"github.com/cybriq/p9/pkg/qu"
 )
 
@@ -244,7 +243,8 @@ out:
 						if e := msg.conn.Close(); E.Chk(e) {
 						}
 					}
-					D.Ln("ignoring connection for canceled connreq", connReq)
+					D.Ln("ignoring connection for canceled connreq",
+						connReq)
 					continue
 				}
 				connReq.updateState(ConnEstablished)
@@ -255,7 +255,8 @@ out:
 				cm.failedAttempts = 0
 				delete(pending, connReq.id)
 				if cm.Cfg.OnConnection != nil {
-					go cm.Cfg.OnConnection(connReq, msg.conn)
+					go cm.Cfg.OnConnection(connReq,
+						msg.conn)
 				}
 			case handleDisconnected:
 				connReq, ok := conns[msg.id]
@@ -300,7 +301,8 @@ out:
 			case handleFailed:
 				connReq := msg.c
 				if _, ok := pending[connReq.id]; !ok {
-					D.Ln("ignoring connection for canceled conn req:", connReq)
+					D.Ln("ignoring connection for canceled conn req:",
+						connReq)
 					continue
 				}
 				connReq.updateState(ConnFailing)
@@ -317,7 +319,7 @@ out:
 
 // NewConnReq creates a new connection request and connects to the corresponding address.
 func (cm *ConnManager) NewConnReq() {
-	T.Ln("creating new connreq @", proc.Caller("thingy", 1))
+	T.Ln("creating new connreq @", helpers.Caller("thingy", 1))
 	if atomic.LoadInt32(&cm.stop) != 0 {
 		return
 	}
@@ -386,7 +388,8 @@ func (cm *ConnManager) Connect(c *ConnReq) {
 	T.Ln("response received")
 	if len(cm.Cfg.Listeners) > 0 {
 		T.F(
-			"%s attempting to connect to '%s'", cm.Cfg.Listeners[0].Addr(),
+			"%s attempting to connect to '%s'",
+			cm.Cfg.Listeners[0].Addr(),
 			c.Addr,
 		)
 	}

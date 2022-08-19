@@ -9,6 +9,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/cybriq/p9/pkg/helpers"
 	uberatomic "go.uber.org/atomic"
 
 	"github.com/cybriq/p9/pkg/qu"
@@ -54,7 +55,8 @@ func Listener() {
 		// run handlers in LIFO order.
 		for i := range interruptCallbacks {
 			idx := len(interruptCallbacks) - 1 - i
-			D.Ln("running callback", idx, interruptCallbackSources[idx])
+			D.Ln("running callback", idx,
+				interruptCallbackSources[idx])
 			interruptCallbacks[idx]()
 		}
 		D.Ln("interrupt handlers finished")
@@ -119,7 +121,8 @@ out:
 		case handler := <-addHandlerChan:
 			// if !requested {
 			// D.Ln("adding handler")
-			interruptCallbacks = append(interruptCallbacks, handler.Fn)
+			interruptCallbacks = append(interruptCallbacks,
+				handler.Fn)
 			interruptCallbackSources = append(
 				interruptCallbackSources,
 				handler.Source,
@@ -180,7 +183,7 @@ func GoroutineDump() string {
 // RequestRestart sets the reset flag and requests a restart
 func RequestRestart() {
 	Restart = true
-	D.Ln("requesting restart", Caller("aoeu", 1))
+	D.Ln("requesting restart", helpers.Caller("aoeu", 1))
 	Request()
 }
 

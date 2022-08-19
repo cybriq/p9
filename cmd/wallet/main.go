@@ -6,6 +6,7 @@ import (
 	// _ "net/http/pprof"
 	"sync"
 
+	"github.com/cybriq/p9/pkg/helpers"
 	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -152,7 +153,7 @@ func rpcClientConnectLoop(
 	cx *state.State, legacyServer *Server,
 	loader *Loader,
 ) {
-	T.Ln("rpcClientConnectLoop", proc.Caller("which was started at:", 2))
+	T.Ln("rpcClientConnectLoop", helpers.Caller("which was started at:", 2))
 	// var certs []byte
 	// if !cx.PodConfig.UseSPV {
 	certs := cx.Config.ReadCAFile()
@@ -195,10 +196,12 @@ func rpcClientConnectLoop(
 		// } else {
 		var cc *chainclient.RPCClient
 		T.Ln("starting wallet's ChainClient")
-		cc, e = StartChainRPC(cx.Config, cx.ActiveNet, certs, cx.KillAll)
+		cc, e = StartChainRPC(cx.Config, cx.ActiveNet, certs,
+			cx.KillAll)
 		if e != nil {
 			E.Ln(
-				"unable to open connection to consensus RPC server:", e,
+				"unable to open connection to consensus RPC server:",
+				e,
 			)
 			continue
 		}

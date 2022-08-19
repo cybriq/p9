@@ -7,11 +7,10 @@ import (
 
 	"github.com/cybriq/p9/pkg/bits"
 	"github.com/cybriq/p9/pkg/block"
-	"github.com/cybriq/p9/pkg/fork"
-	"github.com/cybriq/p9/pkg/proc"
-
 	"github.com/cybriq/p9/pkg/chainhash"
 	"github.com/cybriq/p9/pkg/database"
+	"github.com/cybriq/p9/pkg/fork"
+	"github.com/cybriq/p9/pkg/helpers"
 )
 
 // BehaviorFlags is a bitmask defining tweaks to the normal behavior when
@@ -45,7 +44,8 @@ func (b *BlockChain) ProcessBlock(
 	workerNumber uint32, candidateBlock *block.Block,
 	flags BehaviorFlags, blockHeight int32,
 ) (bool, bool, error) {
-	T.Ln("blockchain.ProcessBlock", blockHeight, proc.Caller("\nfrom", 1))
+	T.Ln("blockchain.ProcessBlock", blockHeight,
+		helpers.Caller("\nfrom", 1))
 	var prevBlock *block.Block
 	var e error
 	prevBlock, e = b.BlockByHash(&candidateBlock.WireBlock().Header.PrevBlock)
@@ -101,7 +101,8 @@ func (b *BlockChain) ProcessBlock(
 	var DoNotCheckPow bool
 	pl := fork.GetMinDiff(fork.GetAlgoName(algo, blockHeight), blockHeight)
 	T.F(
-		"powLimit %d %s %d %064x", algo, fork.GetAlgoName(algo, blockHeight),
+		"powLimit %d %s %d %064x", algo,
+		fork.GetAlgoName(algo, blockHeight),
 		blockHeight, pl,
 	)
 	ph := &candidateBlock.WireBlock().Header.PrevBlock
@@ -148,11 +149,13 @@ func (b *BlockChain) ProcessBlock(
 		if blockHeader.Timestamp.Before(checkpointTime) {
 			str := fmt.Sprintf(
 				"candidateBlock %v has timestamp %v before last checkpoint timestamp %v",
-				bhwa(blockHeight).String(), blockHeader.Timestamp,
+				bhwa(blockHeight).String(),
+				blockHeader.Timestamp,
 				checkpointTime,
 			)
 			T.Ln(str)
-			return false, false, ruleError(ErrCheckpointTimeTooOld, str)
+			return false, false, ruleError(ErrCheckpointTimeTooOld,
+				str)
 		}
 		if !fastAdd {
 			// Even though the checks prior to now have already ensured the proof of work
@@ -170,10 +173,12 @@ func (b *BlockChain) ProcessBlock(
 			if currentTarget.Cmp(requiredTarget) > 0 {
 				str := fmt.Sprintf(
 					"processing: candidateBlock target difficulty of %064x is too low when compared to the"+
-						" previous checkpoint", currentTarget,
+						" previous checkpoint",
+					currentTarget,
 				)
 				E.Ln(str)
-				return false, false, ruleError(ErrDifficultyTooLow, str)
+				return false, false, ruleError(ErrDifficultyTooLow,
+					str)
 			}
 		}
 	}

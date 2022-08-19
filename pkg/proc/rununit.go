@@ -1,6 +1,7 @@
 package proc
 
 import (
+	"github.com/cybriq/p9/pkg/log"
 	uberatomic "go.uber.org/atomic"
 
 	"github.com/cybriq/p9/pkg/qu"
@@ -20,7 +21,7 @@ type RunUnit struct {
 // NewUnit creates and starts a new rununit. run and stop functions are executed after starting and stopping. logger
 // receives log entries and processes them (such as logging them).
 func NewUnit(
-	name string, run, stop func(), logger func(ent *Entry) (e error),
+	name string, run, stop func(), logger func(ent *log.Entry) (e error),
 	pkgFilter func(pkg string) (out bool), quit qu.C, args ...string,
 ) (r *RunUnit) {
 	r = &RunUnit{

@@ -2,12 +2,13 @@ package proc
 
 import (
 	"github.com/cybriq/gotiny"
+	"github.com/cybriq/p9/pkg/log"
 	"github.com/cybriq/p9/pkg/qu"
 	"go.uber.org/atomic"
 )
 
 func LogConsume(
-	quit qu.C, handler func(ent *Entry) (e error),
+	quit qu.C, handler func(ent *log.Entry) (e error),
 	filter func(pkg string) (out bool), args ...string,
 ) *Worker {
 	D.Ln("starting log consumer")
@@ -18,7 +19,7 @@ func LogConsume(
 				magic := string(b[:4])
 				switch magic {
 				case "entr":
-					var ent Entry
+					var ent log.Entry
 					n := gotiny.Unmarshal(b, &ent)
 					D.Ln("consume", n)
 					if filter(ent.Package) {
@@ -26,13 +27,13 @@ func LogConsume(
 						return
 					}
 					switch ent.Level {
-					case Fatal:
-					case Error:
-					case Warn:
-					case Info:
-					case Check:
-					case Debug:
-					case Trace:
+					case log.Fatal:
+					case log.Error:
+					case log.Warn:
+					case log.Info:
+					case log.Check:
+					case log.Debug:
+					case log.Trace:
 					default:
 						D.Ln("got an empty log entry")
 						return
@@ -90,8 +91,8 @@ func SetLevel(w *Worker, level string) {
 	}
 	D.Ln("sending set level", level)
 	lvl := 0
-	for i := range Levels {
-		if level == Levels[i] {
+	for i := range log.Levels {
+		if level == log.Levels[i] {
 			lvl = i
 		}
 	}
@@ -106,7 +107,7 @@ func SetLevel(w *Worker, level string) {
 // LogServe starts up a handler to listen to logs from the child process worker
 func LogServe(quit qu.C, appName string) {
 	D.Ln("starting log server")
-	lc := AddLogChan()
+	lc := log.AddLogChan()
 	var logOn atomic.Bool
 	logOn.Store(false)
 	p := Serve(
@@ -122,8 +123,8 @@ func LogServe(quit qu.C, appName string) {
 					D.Ln("stopping")
 					logOn.Store(false)
 				case "slvl":
-					D.Ln("setting level", Levels[b[4]])
-					SetLogLevel(Levels[b[4]])
+					D.Ln("setting level", log.Levels[b[4]])
+					log.SetLogLevel(log.Levels[b[4]])
 				case "kill":
 					D.Ln(
 						"received kill signal from pipe, shutting down",
@@ -141,8 +142,8 @@ func LogServe(quit qu.C, appName string) {
 		for {
 			select {
 			case <-quit.Wait():
-				if !LogChanDisabled.Load() {
-					LogChanDisabled.Store(true)
+				if !log.LogChanDisabled.Load() {
+					log.LogChanDisabled.Store(true)
 				}
 				D.Ln("quitting pipe logger")
 				Request()
@@ -184,8 +185,8 @@ func FilterNone(string) bool {
 }
 
 // SimpleLog is a very simple log printer
-func SimpleLog(name string) func(ent *Entry) (e error) {
-	return func(ent *Entry) (e error) {
+func SimpleLog(name string) func(ent *log.Entry) (e error) {
+	return func(ent *log.Entry) (e error) {
 		D.F(
 			"%s[%s] %s %s",
 			name,

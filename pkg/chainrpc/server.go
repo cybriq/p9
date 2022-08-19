@@ -19,6 +19,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/cybriq/p9/pkg/helpers"
 	"github.com/cybriq/p9/pkg/proc"
 	"github.com/cybriq/p9/pkg/qu"
 
@@ -621,7 +622,8 @@ func (n *Node) HandleAddPeerMsg(state *PeerState, sp *NodePeer) bool {
 	// 	D.Ln("outbound peer:", state.OutboundPeers[i].LocalAddr(), state.OutboundPeers[i].Addr())
 	// }
 	// Add the new peer and start it.
-	D.Ln("new peer", sp.UserAgent(), sp.Addr(), sp.LocalAddr(), sp.Inbound())
+	D.Ln("new peer", sp.UserAgent(), sp.Addr(), sp.LocalAddr(),
+		sp.Inbound())
 	if sp.Inbound() {
 		state.InboundPeers[sp.ID()] = sp
 	} else {
@@ -644,8 +646,9 @@ func (n *Node) HandleBanPeerMsg(state *PeerState, sp *NodePeer) {
 		E.F("can't split ban peer %n %v %n", sp.Addr(), e)
 		return
 	}
-	direction := proc.DirectionString(sp.Inbound())
-	I.F("banned peer %n (%n) for %v", host, direction, *n.Config.BanDuration)
+	direction := helpers.DirectionString(sp.Inbound())
+	I.F("banned peer %n (%n) for %v", host, direction,
+		*n.Config.BanDuration)
 	state.Banned[host] = time.Now().Add(n.Config.BanDuration.V())
 }
 
@@ -718,13 +721,15 @@ func (n *Node) HandleQuery(state *PeerState, querymsg interface{}) {
 				ua := strings.Split(sp.UserAgent(), "nonce")
 				if len(ua) < 2 {
 					nonce = fmt.Sprintf(
-						"%s/%s", sp.Peer.LocalAddr().String(),
+						"%s/%s",
+						sp.Peer.LocalAddr().String(),
 						sp.Peer.Addr(),
 					)
 				} else {
 					nonce = fmt.Sprintf(
 						"%s/%s", ua[1][:8],
-						strings.Split(sp.Peer.LocalAddr().String(), ":")[0],
+						strings.Split(sp.Peer.LocalAddr().String(),
+							":")[0],
 					)
 				}
 				_, ok := nonces[nonce]
@@ -785,7 +790,8 @@ func (n *Node) HandleQuery(state *PeerState, querymsg interface{}) {
 				return
 			}
 		}
-		netAddr, e := AddrStringToNetAddr(n.Config, n.StateCfg, msg.Addr)
+		netAddr, e := AddrStringToNetAddr(n.Config, n.StateCfg,
+			msg.Addr)
 		if e != nil {
 			msg.Reply <- e
 			return
@@ -1036,7 +1042,9 @@ func (n *Node) PeerDoneHandler(sp *NodePeer) {
 		if numEvicted > 0 {
 			D.F(
 				"Evicted %d %n from peer %v (id %d)",
-				numEvicted, proc.PickNoun(int(numEvicted), "orphan", "orphans"),
+				numEvicted,
+				helpers.PickNoun(int(numEvicted), "orphan",
+					"orphans"),
 				sp, sp.ID(),
 			)
 		}
@@ -1097,7 +1105,8 @@ out:
 				for i := range res {
 					if res[i].Connected() {
 						ps = append(
-							ps, peersummary.PeerSummary{
+							ps,
+							peersummary.PeerSummary{
 								IP:      res[i].Peer.NA().IP,
 								Inbound: res[i].Inbound(),
 							},
@@ -1389,7 +1398,8 @@ out:
 			//  listen port?
 			// XXX this assumes timeout is in seconds.
 			listenPort, e := n.NAT.AddPortMapping(
-				"tcp", int(lport), int(lport), "pod listen port",
+				"tcp", int(lport), int(lport),
+				"pod listen port",
 				20*60,
 			)
 			if e != nil {
@@ -1399,14 +1409,16 @@ out:
 				// TODO: look this up periodically to see if upnp domain changed and so did ip.
 				externalip, e := n.NAT.GetExternalAddress()
 				if e != nil {
-					E.F("UPnP can't get external address: %v", e)
+					E.F("UPnP can't get external address: %v",
+						e)
 					continue out
 				}
 				na := wire.NewNetAddressIPPort(
 					externalip, uint16(listenPort),
 					n.Services,
 				)
-				e = n.AddrManager.AddLocalAddress(na, addrmgr.UpnpPrio)
+				e = n.AddrManager.AddLocalAddress(na,
+					addrmgr.UpnpPrio)
 				if e != nil {
 					_ = e
 					// XXX DeletePortMapping?
@@ -1786,7 +1798,8 @@ func (np *NodePeer) OnGetCFHeaders(
 	case wire.GCSFilterRegular:
 		break
 	default:
-		D.Ln("filter request for unknown headers for filter:", msg.FilterType)
+		D.Ln("filter request for unknown headers for filter:",
+			msg.FilterType)
 		return
 	}
 	startHeight := int32(msg.StartHeight)
@@ -1887,7 +1900,8 @@ func (np *NodePeer) OnGetCFilters(
 		return
 	}
 	hashes, e := np.Server.Chain.HeightToHashRange(
-		int32(msg.StartHeight), &msg.StopHash, wire.MaxGetCFiltersReqRange,
+		int32(msg.StartHeight), &msg.StopHash,
+		wire.MaxGetCFiltersReqRange,
 	)
 	if e != nil {
 		E.Ln("invalid getcfilters request:", e)
@@ -2064,7 +2078,8 @@ func (np *NodePeer) OnInv(
 				invVect.Hash, np,
 			)
 			if np.ProtocolVersion() >= wire.BIP0037Version {
-				I.F("peer %v is announcing transactions -- disconnecting", np)
+				I.F("peer %v is announcing transactions -- disconnecting",
+					np)
 				np.Disconnect()
 				return
 			}
@@ -2091,7 +2106,8 @@ func (np *NodePeer) OnMemPool(
 	// Only allow mempool requests if the server has bloom filtering enabled.
 	if np.Server.Services&wire.SFNodeBloom != wire.SFNodeBloom {
 		D.Ln(
-			"peer", np, "sent mempool request with bloom filtering disabled"+
+			"peer", np,
+			"sent mempool request with bloom filtering disabled"+
 				" -- disconnecting",
 		)
 		np.Disconnect()
@@ -2143,7 +2159,8 @@ func (np *NodePeer) OnTx(
 	msg *wire.MsgTx,
 ) {
 	if np.Server.Config.BlocksOnly.True() {
-		T.F("ignoring tx %v from %v - blocksonly enabled", msg.TxHash(), np)
+		T.F("ignoring tx %v from %v - blocksonly enabled", msg.TxHash(),
+			np)
 		return
 	}
 	// Add the transaction to the known inventory for the peer. Convert the raw MsgTx to a util.Tx which provides some
@@ -2190,14 +2207,16 @@ func (np *NodePeer) OnVersion(
 		missingServices := wantServices & ^msg.Services
 		D.F(
 			"rejecting peer %s with services %v due to not providing"+
-				" desired services %v %s", np.Peer, msg.Services,
+				" desired services %v %s", np.Peer,
+			msg.Services,
 			missingServices,
 		)
 		reason := fmt.Sprintf(
 			"required services %#x not offered",
 			uint64(missingServices),
 		)
-		return wire.NewMsgReject(msg.Command(), wire.RejectNonstandard, reason)
+		return wire.NewMsgReject(msg.Command(), wire.RejectNonstandard,
+			reason)
 	}
 	// Update the address manager and request known addresses from the remote peer
 	// for outbound connections.
@@ -2296,11 +2315,13 @@ func (np *NodePeer) AddBanScore(
 	score := np.BanScore.Increase(persistent, transient)
 	if int(score) > warnThreshold {
 		W.F(
-			"misbehaving peer %s: %s -- ban score increased to %d", np, reason,
+			"misbehaving peer %s: %s -- ban score increased to %d",
+			np, reason,
 			score,
 		)
 		if int(score) > np.Server.Config.BanThreshold.V() {
-			W.F("misbehaving peer %s -- banning and disconnecting", np)
+			W.F("misbehaving peer %s -- banning and disconnecting",
+				np)
 			np.Server.BanPeer(np)
 			np.Disconnect()
 			return true
@@ -2341,7 +2362,8 @@ func (np *NodePeer) EnforceNodeBloomFlag(cmd string) bool {
 			return false
 		}
 		// Disconnect the peer regardless of protocol version or banning state.
-		D.F("%s sent an unsupported %s request -- disconnecting %s", np, cmd)
+		D.F("%s sent an unsupported %s request -- disconnecting %s", np,
+			cmd)
 		np.Disconnect()
 		return false
 	}
@@ -2452,7 +2474,8 @@ func AddLocalAddress(
 			if (ip.To4() == nil) != (ifaceIP.To4() == nil) {
 				continue
 			}
-			netAddr := wire.NewNetAddressIPPort(ifaceIP, uint16(port), services)
+			netAddr := wire.NewNetAddressIPPort(ifaceIP,
+				uint16(port), services)
 			e = addrMgr.AddLocalAddress(netAddr, addrmgr.BoundPrio)
 			if e != nil {
 				T.Ln(e)
@@ -2460,7 +2483,8 @@ func AddLocalAddress(
 		}
 	} else {
 		var netAddr *wire.NetAddress
-		netAddr, e = addrMgr.HostToNetAddress(host, uint16(port), services)
+		netAddr, e = addrMgr.HostToNetAddress(host, uint16(port),
+			services)
 		if e != nil {
 			return e
 		}
@@ -2571,7 +2595,8 @@ func GetHasServices(advertised, desired wire.ServiceFlag) bool {
 // the listeners and a upnp.NAT interface, which is non-nil if UPnP is in use.
 func InitListeners(
 	config *config.Config, activeNet *chaincfg.Params,
-	aMgr *addrmgr.AddrManager, listenAddrs []string, services wire.ServiceFlag,
+	aMgr *addrmgr.AddrManager, listenAddrs []string,
+	services wire.ServiceFlag,
 ) (listeners []net.Listener, nat upnp.NAT, e error) {
 	// Listen for TCP connections at the configured addresses
 	T.Ln("listenAddrs ", listenAddrs)
@@ -2592,7 +2617,8 @@ func InitListeners(
 		listeners = append(listeners, listener)
 	}
 	if len(config.ExternalIPs.S()) != 0 {
-		defaultPort, e := strconv.ParseUint(activeNet.DefaultPort, 10, 16)
+		defaultPort, e := strconv.ParseUint(activeNet.DefaultPort, 10,
+			16)
 		if e != nil {
 			E.F(
 				"can not parse default port %s for active chain: %v",
@@ -2810,15 +2836,21 @@ func NewNode(
 	}
 	T.Ln("set genthreads to ", thr)
 	s := Node{
-		ChainParams:          cx.ActiveNet,
-		AddrManager:          aMgr,
-		NewPeers:             make(chan *NodePeer, cx.Config.MaxPeers.V()),
-		DonePeers:            make(chan *NodePeer, cx.Config.MaxPeers.V()),
-		BanPeers:             make(chan *NodePeer, cx.Config.MaxPeers.V()),
-		PeerState:            make(chan chan peersummary.PeerSummaries, 1),
-		Query:                make(chan interface{}),
-		RelayInv:             make(chan RelayMsg, cx.Config.MaxPeers.V()),
-		Broadcast:            make(chan BroadcastMsg, cx.Config.MaxPeers.V()),
+		ChainParams: cx.ActiveNet,
+		AddrManager: aMgr,
+		NewPeers: make(chan *NodePeer,
+			cx.Config.MaxPeers.V()),
+		DonePeers: make(chan *NodePeer,
+			cx.Config.MaxPeers.V()),
+		BanPeers: make(chan *NodePeer,
+			cx.Config.MaxPeers.V()),
+		PeerState: make(chan chan peersummary.PeerSummaries,
+			1),
+		Query: make(chan interface{}),
+		RelayInv: make(chan RelayMsg,
+			cx.Config.MaxPeers.V()),
+		Broadcast: make(chan BroadcastMsg,
+			cx.Config.MaxPeers.V()),
 		Quit:                 qu.T(),
 		ModifyRebroadcastInv: make(chan interface{}),
 		PeerHeightsUpdate:    make(chan UpdatePeerHeightsMsg),
@@ -2915,7 +2947,8 @@ func NewNode(
 				var e error
 				s.FeeEstimator, e = mempool.RestoreFeeEstimator(feeEstimationData)
 				if e != nil {
-					return fmt.Errorf("failed to restore fee estimator %v", e)
+					return fmt.Errorf("failed to restore fee estimator %v",
+						e)
 				}
 			}
 			return nil
@@ -3034,12 +3067,14 @@ func NewNode(
 					continue
 				}
 				// allow non default ports after 50 failed tries.
-				if tries < 50 && fmt.Sprintf("%d", addr.NetAddress().Port) !=
+				if tries < 50 && fmt.Sprintf("%d",
+					addr.NetAddress().Port) !=
 					cx.ActiveNet.DefaultPort {
 					continue
 				}
 				addrString := addrmgr.NetAddressKey(addr.NetAddress())
-				return AddrStringToNetAddr(cx.Config, cx.StateCfg, addrString)
+				return AddrStringToNetAddr(cx.Config,
+					cx.StateCfg, addrString)
 			}
 			return nil, errors.New("no valid connect address")
 		}
@@ -3088,7 +3123,8 @@ func NewNode(
 			fork.SHA256d: cx.Config.RPCListeners.S(),
 		}
 		for l := range listeners {
-			rpcListeners, e := SetupRPCListeners(cx.Config, listeners[l])
+			rpcListeners, e := SetupRPCListeners(cx.Config,
+				listeners[l])
 			if e != nil {
 				return nil, e
 			}
@@ -3100,7 +3136,8 @@ func NewNode(
 					Listeners:   rpcListeners,
 					StartupTime: s.StartupTime,
 					ConnMgr:     &ConnManager{&s},
-					SyncMgr:     &SyncManager{&s, s.SyncManager},
+					SyncMgr: &SyncManager{&s,
+						s.SyncManager},
 					TimeSource:  s.TimeSource,
 					Chain:       s.Chain,
 					ChainParams: cx.ActiveNet,
@@ -3215,8 +3252,10 @@ func ParseListeners(addrs []string) ([]net.Addr, error) {
 		}
 		// Empty host or host of * on plan9 is both IPv4 and IPv6.
 		if host == "" || (host == "*" && runtime.GOOS == "plan9") {
-			netAddrs = append(netAddrs, SimpleAddr{Net: "tcp4", Addr: addr})
-			netAddrs = append(netAddrs, SimpleAddr{Net: "tcp6", Addr: addr})
+			netAddrs = append(netAddrs,
+				SimpleAddr{Net: "tcp4", Addr: addr})
+			netAddrs = append(netAddrs,
+				SimpleAddr{Net: "tcp6", Addr: addr})
 			continue
 		}
 		// Strip IPv6 zone id if present since net.ParseIP does not handle it.
@@ -3227,14 +3266,17 @@ func ParseListeners(addrs []string) ([]net.Addr, error) {
 		// Parse the IP.
 		ip := net.ParseIP(host)
 		if ip == nil {
-			return nil, fmt.Errorf("'%s' is not a valid IP address", host)
+			return nil, fmt.Errorf("'%s' is not a valid IP address",
+				host)
 		}
 		// To4 returns nil when the IP is not an IPv4 address, so use this determine the
 		// address type.
 		if ip.To4() == nil {
-			netAddrs = append(netAddrs, SimpleAddr{Net: "tcp6", Addr: addr})
+			netAddrs = append(netAddrs,
+				SimpleAddr{Net: "tcp6", Addr: addr})
 		} else {
-			netAddrs = append(netAddrs, SimpleAddr{Net: "tcp4", Addr: addr})
+			netAddrs = append(netAddrs,
+				SimpleAddr{Net: "tcp4", Addr: addr})
 		}
 	}
 	return netAddrs, nil
@@ -3250,7 +3292,8 @@ func RandomUint16Number(max uint16) uint16 {
 	var randomNumber uint16
 	var limitRange = (math.MaxUint16 / max) * max
 	for {
-		e := binary.Read(rand.Reader, binary.LittleEndian, &randomNumber)
+		e := binary.Read(rand.Reader, binary.LittleEndian,
+			&randomNumber)
 		if e != nil {
 		}
 		if randomNumber < limitRange {
@@ -3275,7 +3318,8 @@ func SetupRPCListeners(config *config.Config, urls []string) (
 				return nil, e
 			}
 		}
-		keyPair, e := tls.LoadX509KeyPair(config.RPCCert.V(), config.RPCKey.V())
+		keyPair, e := tls.LoadX509KeyPair(config.RPCCert.V(),
+			config.RPCKey.V())
 		if e != nil {
 			return nil, e
 		}
@@ -3285,7 +3329,8 @@ func SetupRPCListeners(config *config.Config, urls []string) (
 			InsecureSkipVerify: config.TLSSkipVerify.True(),
 		}
 		// Change the standard net.Listen function to the tls one.
-		listenFunc = func(net string, laddr string) (net.Listener, error) {
+		listenFunc = func(net string, laddr string) (net.Listener,
+			error) {
 			return tls.Listen(net, laddr, &tlsConfig)
 		}
 	}

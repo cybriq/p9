@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/cybriq/p9/pkg/bits"
-	"github.com/cybriq/p9/pkg/proc"
+	"github.com/cybriq/p9/pkg/helpers"
 )
 
 const (
@@ -64,7 +64,7 @@ var done bool
 
 func ForkCalc() {
 	if done {
-		I.Ln(proc.Caller("called again", 1))
+		I.Ln(helpers.Caller("called again", 1))
 		return
 	}
 	done = true
