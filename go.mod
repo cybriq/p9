@@ -17,13 +17,11 @@ require (
 	github.com/conformal/fastsha256 v0.0.0-20160815193821-637e65642941
 	github.com/cybriq/gotiny v0.0.5
 	github.com/davecgh/go-spew v1.1.1
-	github.com/enceve/crypto v0.0.0-20160707101852-34d48bb93815
 	github.com/gookit/color v1.4.2
 	github.com/jackpal/gateway v1.0.7
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 	github.com/kkdai/bstream v1.0.0
 	github.com/marusama/semaphore v0.0.0-20190110074507-6952cef993b2
-	github.com/programmer10110/gostreebog v0.0.0-20170704145444-a3e1d28291b2
 	github.com/tstranex/gozmq v0.0.0-20160831212417-0daa84a596ba
 	github.com/tyler-smith/go-bip39 v1.1.0
 	github.com/vivint/infectious v0.0.0-20200605153912-25a574ae18a3
@@ -34,7 +32,7 @@ require (
 	golang.org/x/image v0.0.0-20210220032944-ac19c3e999fb
 	golang.org/x/net v0.0.0-20210503060351-7fd8e65b6420
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
-	golang.org/x/sys v0.0.0-20210503073744-b6777538623b
+	golang.org/x/sys v0.1.0
 	golang.org/x/text v0.3.6
 	golang.org/x/tools v0.1.0
 	gopkg.in/src-d/go-git.v4 v4.13.1
